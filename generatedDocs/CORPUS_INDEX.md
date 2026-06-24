@@ -147,6 +147,8 @@ review/patch/audit trail is grouped by category.
 | `Doc-5C_SERIES_FROZEN_v1.0.md` (M1 `identity`) | **Doc-5C FROZEN** — M1 API realization freeze manifest; effective = `Doc-5C_Content_v1.0_Pass1…2` + `Doc-5C_Structure_v1.0_FROZEN` + resolved registers. User-primary/active-org surface; R1–R6 |
 | `Doc-5C_Structure_v1.0_FROZEN.md` · `Doc-5C_Content_v1.0_Pass1…2.md` | Doc-5C source (canonical TOC + §0–§8 + Appendix A) |
 | `Doc-5C_Structure_Proposal_v0.1.md` · `governanceReviews/Doc-5C_Freeze_Readiness_Audit_v1.0.md` | Doc-5C structure authoring history (v0.2; Hard Review) + freeze audit |
+| `Doc-5E_Structure_v1.0_FROZEN.md` (M3 `rfq`) | **Doc-5E STRUCTURE FROZEN** — canonical TOC realizing Doc-4E (38 contracts) on HTTP; matching/routing engine out-of-wire (R1); R1–R7 + DE-1…DE-8. Content passes next (3) |
+| `Doc-5E_Structure_Proposal_v0.1.md` | Doc-5E structure authoring history (v0.2; Hard Review — 3 MAJOR + 6 MINOR + 4 NITPICK resolved) |
 
 ---
 

@@ -9,7 +9,7 @@
 
 > On any conflict, the frozen corpus wins and this file is patched to match.
 > Architecture is COMPLETE/FROZEN. All Doc-4A…4M ratified. Project is in **Implementation Governance**.
-> Doc-5A — API Realization Standards: **FROZEN** (patches ratified 2026-06-24). Doc-5B (M0 `core`): **FROZEN** (`Doc-5B_SERIES_FROZEN_v1.0`; R1 precedent). Doc-5C (M1 Identity): **FROZEN** 2026-06-24 (`Doc-5C_SERIES_FROZEN_v1.0`; 42 contracts; User-primary/active-org; R1–R6; no ratification dependency). Active deliverable next: **Doc-5E (M3 RFQ)** — structure authoring. *Separate Board item: additive Doc-4M correction for M5 delegation rows (O-01).*
+> Doc-5A — API Realization Standards: **FROZEN** (patches ratified 2026-06-24). Doc-5B (M0 `core`): **FROZEN** (`Doc-5B_SERIES_FROZEN_v1.0`; R1 precedent). Doc-5C (M1 Identity): **FROZEN** 2026-06-24 (`Doc-5C_SERIES_FROZEN_v1.0`; 42 contracts). Doc-5E (M3 RFQ): **STRUCTURE FROZEN** 2026-06-24 (`Doc-5E_Structure_v1.0_FROZEN`; 38 contracts; matching/routing engine out-of-wire; R1–R7). Active deliverable next: **Doc-5E content** (3 passes: §0–§3 · §4–§7 · §8–§9+App A). *Separate Board item: additive Doc-4M correction for M5 delegation rows (O-01).*
 
 ---
 
@@ -34,7 +34,8 @@
 | Doc-5A Appendices A–C (Pass-11/10/12) | APPROVED |
 | **Doc-5B (M0 `core`)** | **FROZEN** (`Doc-5B_SERIES_FROZEN_v1.0`); §0–§7 + Appendix A; freeze audit clean (0 B/M/m); one carried item D-2 (non-gate); R1 out-of-wire precedent |
 | **Doc-5C (M1 Identity)** | **FROZEN** (`Doc-5C_SERIES_FROZEN_v1.0`; §0–§8 + App A; 42 contracts; User-primary/active-org; R1–R6; freeze audit clean 0 B/M/m); carried DC-1…DC-5 (non-gate) |
-| Doc-5E…5M (Module API Contracts) | NOT STARTED — Doc-5E (M3 RFQ) next |
+| **Doc-5E (M3 RFQ)** | **STRUCTURE FROZEN** (`Doc-5E_Structure_v1.0_FROZEN`; 38 contracts; matching/routing engine out-of-wire; R1–R7 + DE-1…DE-8); content passes next (3) |
+| Doc-5D · 5F…5M (Module API Contracts) | NOT STARTED |
 | Doc-6 / Doc-7 / Doc-8 | NOT STARTED — planning may proceed in parallel |
 | Application Code | NOT STARTED |
 
@@ -220,7 +221,7 @@ Begins only after Doc-5A FROZEN. All artifacts conform to Doc-5A; Appendix A che
 |---|---|---|---|
 | 1 | Doc-5B | M0 Platform Core | Audit, outbox, ID gen — foundational for all — **✅ FROZEN 2026-06-24** |
 | 2 | Doc-5C | M1 Identity | Auth, org context, permissions — prerequisite pattern — **✅ FROZEN 2026-06-24** |
-| 3 | Doc-5E | M3 RFQ | Platform moat — highest complexity, highest business value — **NEXT** |
+| 3 | Doc-5E | M3 RFQ | Platform moat — highest complexity, highest business value — **STRUCTURE FROZEN 2026-06-24; content next** |
 | 4 | Doc-5D | M2 Marketplace | Vendor profile / discovery — large surface, feeds M3 |
 | 5 | Doc-5F | M4 Operations | Post-award, CRM — depends on M3 award flow |
 | 6 | Doc-5G | M5 Trust | Scores / verification — depends on M2 + M4 data |

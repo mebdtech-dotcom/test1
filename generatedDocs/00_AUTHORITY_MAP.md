@@ -75,6 +75,7 @@ and must conform upward.
 | `Doc-5B_Structure_v1.0_FROZEN.md` · `Doc-5B_Content_v1.0_Pass1…4.md` | FROZEN | v1.0 | ✅ | Doc-5B source (canonical TOC + §0–§7 + Appendix A); read via the freeze manifest |
 | `Doc-5C_SERIES_FROZEN_v1.0.md` (M1 `identity` API realization) | FROZEN | v1.0 | ✅ | Realizes Doc-4C (42 contracts) on HTTP; effective = `Doc-5C_Content_v1.0_Pass1…2` + `Doc-5C_Structure_v1.0_FROZEN` + resolved registers; User-primary/active-org surface; R1–R6; no ratification dependency. Gated by Doc-5A Appendix A |
 | `Doc-5C_Structure_v1.0_FROZEN.md` · `Doc-5C_Content_v1.0_Pass1…2.md` | FROZEN | v1.0 | ✅ | Doc-5C source (canonical TOC + §0–§8 + Appendix A); read via the freeze manifest |
+| `Doc-5E_Structure_v1.0_FROZEN.md` (M3 `rfq` API realization) | STRUCTURE FROZEN | v1.0 | ✅ | Realizes Doc-4E (38 contracts) on HTTP; canonical TOC; matching/routing engine out-of-wire (R1); R1–R7 + DE-1…DE-8; content passes next (3) |
 | `iVendorz_Master_Overview_v1.0.md` | NON-AUTHORITATIVE | v1.3 | — | Consolidated mirror |
 | `CORPUS_INDEX.md` · `00_AUTHORITY_MAP.md` | NON-AUTHORITATIVE | — | — | Navigation + authority pointers |
 | Context Packs / Primers / Status / Roadmap | NON-AUTHORITATIVE | various | — | Orientation only |

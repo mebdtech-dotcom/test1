@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | **PROPOSAL — freeze-ready**; one Independent Hard Review gate → Structure FROZEN (compressed lifecycle: patch only if the review opens a BLOCKER/MAJOR) |
+| Status | **PROPOSAL v0.2 — Independent Hard Review applied** (3 MAJOR + 6 MINOR + 4 NITPICK dispositioned, §Review Disposition). Freeze-ready; promotable to Structure FROZEN |
 | Module | Module 3 — RFQ Procurement Engine (`rfq` schema) — **the procurement moat** |
 | Realizes | `Doc-4E` (M3 contracts, FROZEN — 38 contracts, PassB Part1–5) on the bound HTTP transport |
 | Authority | `Doc-5_Program_Governance_Note_v1.0`; **`Doc-5A_SERIES_FROZEN_v1.0` (FROZEN) governs this document** |
-| Precedent (informational, not authority) | `Doc-5B`/`Doc-5C` (FROZEN) — out-of-wire boundary (R1), User-primary/active-org surface (R2); force derives from `Doc-5A §1.3/§5/§7/§11` |
-| Conforms To | `Master_System_Architecture_v1.0_FINAL`, `ADR_Compendium_v1`, Doc-2 v1.0.3, Doc-3 v1.0.2, Doc-4A v1.0, Doc-4B v1.0, Doc-4C v1.0, Doc-4D v1.0, Doc-4M v1.0 (FROZEN — state machines), Doc-5A v1.0 (FROZEN) |
+| Precedent (informational, not authority) | `Doc-5B`/`Doc-5C` (FROZEN) — out-of-wire boundary (R1); **`Doc-5C §3` is the frozen precedent for a mechanism-only cross-cutting section** + User-primary/active-org surface (R2); force derives from `Doc-5A §1.3/§5/§7/§11` |
+| Conforms To | `Master_System_Architecture_v1.0_FINAL`, `ADR_Compendium_v1`, Doc-2 v1.0.3, Doc-3 v1.0.2, Doc-4A v1.0, Doc-4B v1.0, Doc-4C v1.0, Doc-4D v1.0, **Doc-4E v1.0 (FROZEN — M3 contracts)**, Doc-4M v1.0 (FROZEN — state machines), Doc-5A v1.0 (FROZEN) |
 | Contains | Structure only — section map, surface partition (section-pointer column), ratified realization decisions, carried freeze-gate dependencies. No endpoints, paths, status tables, schemas, or contract bodies |
 | Audience | Architecture Board · API Governance Board · Doc-5E content authors (human + AI) · AI Coding Supervisor · backend, QA |
 
@@ -38,16 +38,18 @@ Two governing rules shape the document:
 |---|---|---|
 | `create_rfq`, `update_rfq`, `submit_rfq`, `approve_rfq`, `reject_internal_rfq`, `cancel_rfq`, `reissue_rfq` | Buyer User command (21.4; §5.4 machine) | **§4** |
 | `moderate_rfq` | Admin (21.6, no org context — DE-5) | **§4** |
-| `get_rfq`, `list_rfqs`, `get_rfq_version` | Buyer User / int-svc Query (21.3) | **§4** |
+| `get_rfq`, `list_rfqs`, `get_rfq_version` (caller leg) | Buyer User Query (21.3) — **int-svc leg → §8** | **§4** |
 | `submit_quotation`, `revise_quotation`, `withdraw_quotation`, `request_late_extension` | Vendor User command (21.4; §5.5 machine; §6B delegation) | **§5** |
 | `respond_to_invitation` | Vendor User command (21.4; invitation accept/decline) | **§5** |
 | `get_quotation`, `list_quotations_for_rfq` | Vendor/Buyer Query (21.3; `quotation_visibility`-gated) | **§5** |
 | `shortlist_quotation`, `manage_clarification`, `invoke_best_and_final`, `award_rfq`, `close_lost_rfq` | Buyer User command (21.4; §5.4 closure) | **§6** |
 | `get_comparison_statement` | Buyer User Query (21.3) | **§6** |
 | `assist_routing`, `manage_routing_rule` | Admin (21.6, no org context; BC-7 control plane) | **§7** |
-| `get_matching_results` (Admin leg), `get_routing_log`, `get_invitation`, `list_invitations` | Admin / Buyer / Vendor Query (21.3) | **§7** |
+| `get_matching_results` (Admin leg), `get_routing_log`, `get_invitation`, `list_invitations` (caller legs) | Admin / Buyer / Vendor Query (21.3) — **int-svc legs → §8** | **§7** |
 | `run_matching_pipeline`, `rematch_incremental`, `regenerate_matching_results`, `assemble_and_route_wave`, `replenish_wave`, `drain_deferred_queue`, `expire_rfq`, `generate_comparison_statement` | System (21.5, `Response: none`) — the engine | **§8** out-of-wire |
-| `get_matching_results` internal-service leg · DE-1…DE-8 integrations · emitted events (outbox) | internal-service / Integration | **§8** out-of-wire |
+| **internal-service read legs** of `get_rfq`/`list_rfqs`/`get_rfq_version`/`get_matching_results`/`get_routing_log`/`get_invitation`/`list_invitations` · DE-1…DE-8 integrations · emitted events (outbox) | internal-service / Integration | **§8** out-of-wire |
+
+**Dual-path rule (structural, applies throughout):** where a Doc-4E contract has **both** a caller-facing path and an internal-service path, **§4–§7 realize the caller-facing leg only; the internal-service consumption is §8 out-of-wire** (in-process module composition via `rfq/contracts/`, never HTTP — frozen Doc-5C precedent). Contract count (38) is unchanged — these are legs of existing contracts, not new contracts. §3 is the cross-cutting wire model and owns no endpoint.
 
 ---
 
@@ -57,15 +59,16 @@ Two governing rules shape the document:
 
 ## §1 — Scope, Audience & M3 Surface Partition
 - **Purpose:** what Doc-5E governs (the M3 caller-facing HTTP surface) and does not; carry the partition table; the **§1.x dependency boundary** (M3 owns realization only for M3 surfaces; cross-module → owning module's Doc-5x — Identity Doc-5C, Marketplace Doc-5D, Trust/Ops/Comms/Billing/Admin their own); register carried **DE-1…DE-8** + `[ESC-RFQ-AUDIT]` / `[ESC-RFQ-POLICY]` / `[ESC-RFQ-SLUG]` by pointer (resolved only via Doc-4E/Doc-2/Doc-3 channels).
-- **Dependencies:** `Doc-5A §1`; `Doc-4E §E0/§E2`, Appendix C. **Detail:** scope + partition + carried-dependency table.
+- **Dependencies:** `Doc-5A §1`; `Doc-4E §E0/§E2`, Appendix C. **Detail:** scope + partition + carried-dependency table. *Section ownership (the Doc-5E § column) is authoritative; the grouping of contracts within the partition rows is informational.*
 
 ## §2 — Realized Endpoint Inventory
 - **Purpose:** the `rfq`-namespace HTTP surface — one row per **caller-facing** endpoint (the 30): method (§5.2), path grammar (§5.3), actor (buyer/vendor User · Admin) + active-org applicability, async classification (`202` where the engine runs behind a command — §10), success status (§5.5). Command tokens = exact `rfq.<operation>` operation names **verbatim from the Doc-4E PassB Contract-ID** (`rfq.<operation>.v1`).
-- **Dependencies:** `Doc-5A §5/§10`, App B.1 (`rfq`); `Doc-4E` PassB Part1–5. **Detail:** inventory table (paths in content pass).
+- **Dependencies:** `Doc-5A §5/§10`, App B.1 (`rfq`); `Doc-4E` PassB Part1–5. **Detail:** inventory table (paths in content pass). *Inventory row ordering is non-authoritative.*
 
 ## §3 — Cross-Cutting Authorization, Context & Non-Disclosure Wire Model *(mechanism only — owns no endpoint)*
-- **Purpose:** the cross-cutting mechanism §4–§7 depend on: `Authorization` bearer (auth only); **`Iv-Active-Organization` server-validated** for buyer-org and vendor-controlling-org context (R2); vendor **representative action via §6B delegation grant**, resolved server-side in `check_permission` (out-of-wire — no delegation wire input); **Admin no-org context** (moderation/routing governance); the three-layer authorization check server-side (slugs only, never a wire input); and the **R5 non-disclosure invariant on the wire** — blacklist/deferral/gate-fail indistinguishable from non-match across reads/counts/errors/logs, no public RFQ-board discovery, banded loss feedback (`Doc-5A §6.3/§7`; `Doc-3 §2.1/§4.2/§9.5`; `Doc-2 §10.11`; `Doc-4A §7.5`). **R7 firewall:** no plan/entitlement value is ever a wire input to matching/routing.
-- **Dependencies:** `Doc-5A §6.3/§7`; `Doc-4A §5/§6/§6B/§7.5/§9.7/§4B`; `Doc-4E §E11/§E13`; `Doc-4C §C3/§C9` (check_permission, delegation — consumed). **Detail:** cross-cutting wire-model declaration; no endpoint instantiation.
+- **Section-form authority:** a standalone mechanism-only cross-cutting section is the **frozen `Doc-5C §3` precedent**, grounded in `Doc-5A §7` (identity/context/authorization carriage). Its use here is a **[realization convention]**: M3's four surface sections (§4–§7) all depend on the same dual-actor / active-org / delegation / non-disclosure model — factoring it into §3 prevents a four-way restatement (which would itself violate realize-never-restate). It contradicts nothing upstream.
+- **Purpose:** the cross-cutting mechanism §4–§7 depend on: `Authorization` bearer (auth only); **`Iv-Active-Organization` server-validated** for buyer-org and vendor-controlling-org context (R2); vendor **representative action via §6B delegation grant** — **delegation grants are resolved only via Identity `check_permission` (out-of-wire, DE-1); Doc-5E performs no direct grant inspection and accepts no delegation wire input**; **Admin no-org context** (moderation/routing governance); the three-layer authorization check server-side (slugs only, never a wire input); and the **R5 non-disclosure invariant on the wire** — blacklist/deferral/gate-fail indistinguishable from non-match across reads/counts/errors/logs, no public RFQ-board discovery, banded loss feedback (`Doc-5A §6.3/§7`; `Doc-3 §2.1/§4.2/§9.5`; `Doc-2 §10.11`; `Doc-4A §7.5`). **R7 firewall:** no plan/entitlement value is ever a wire input to matching/routing.
+- **Dependencies:** `Doc-5A §6.3/§7`; `Doc-4A §5/§6/§6B/§7.5/§9.7/§4B`; `Doc-4E §E11/§E13`; `Doc-4C §C3/§C9` (check_permission, delegation — consumed); `Doc-5C §3` (mechanism-only precedent). **Detail:** cross-cutting wire-model declaration; no endpoint instantiation.
 
 ## §4 — RFQ Authoring & Lifecycle Surface Realization
 - **Purpose:** BC-1 buyer commands (`create_rfq` create; `update_rfq` versioned edit; `submit_rfq`/`approve_rfq`/`reject_internal_rfq`/`cancel_rfq`/`reissue_rfq` state commands) + `moderate_rfq` (Admin, DE-5) + RFQ reads; the **§5.4 RFQ state machine** (incl. patched `under_review → draft`, `matching → expired` edges) realized as legal transitions only (`Doc-4M`; `Doc-4A §13`); idempotency/concurrency (§9); error mapping (§6); top-level `reference_id`. Submission emitting `RFQSubmitted` and entering the async engine is realized per §10 (the engine itself is §8). **No public board** — `list_rfqs` is buyer-org-scoped only (R5).
@@ -84,7 +87,9 @@ Two governing rules shape the document:
 - **Dependencies:** `Doc-5A §5/§6/§7/§8`; `Doc-4E §E5/§E6 (BC-7)`; `Doc-3 §3.6/§12`; `Doc-4A §18/§18B`. **Detail:** Admin command + read realization.
 
 ## §8 — Out-of-Wire Boundary (the engine · internal reads · integration · events)
-- **Purpose:** declare that the **8 System engine workers** (matching pipeline, incremental rematch, regenerate, wave assemble/replenish/drain, expire, comparison generation), the **internal-service read legs**, the **DE-1…DE-8 cross-module integrations** (Identity/Marketplace/Trust/Operations/Admin/Communication/Billing/Core consumption + the emitted-event consumer legs), and the **emitted domain events** (`RFQCreated`/`RFQSubmitted`/`RFQMatched`/`RFQRouted`/`VendorInvited`/`QuotationSubmitted`/`RFQClosedWon`/`RFQClosedLost`/… via the Doc-4B outbox) have **no HTTP wire** — async workers / in-process services / outbox emission consumed within other modules' transactions. **RFQ authors no consumer or notification contract** (DE-6 single-authorship; no webhook — R1/R8-in-R1). Caller-visible async results are observed via the §4–§7 reads (`Doc-5A §10` status pattern), never a synchronous engine facade. **Flag-and-halt if any wire surface is proposed** for the engine, the internal reads, or the integrations (architecture change).
+- **Purpose:** declare that the **8 System engine workers** (matching pipeline, incremental rematch, regenerate, wave assemble/replenish/drain, expire, comparison generation), the **internal-service read legs** (of `get_rfq`/`list_rfqs`/`get_rfq_version`/`get_matching_results`/`get_routing_log`/`get_invitation`/`list_invitations` — the dual-path rule, §1), the **DE-1…DE-8 cross-module integrations** (Identity/Marketplace/Trust/Operations/Admin/Communication/Billing/Core consumption + the emitted-event consumer legs), and the **emitted domain events** (`RFQCreated`/`RFQSubmitted`/`RFQMatched`/`RFQRouted`/`VendorInvited`/`QuotationSubmitted`/`RFQClosedWon`/`RFQClosedLost`/… via the Doc-4B outbox) have **no HTTP wire** — async workers / in-process services / outbox emission consumed within other modules' transactions. **RFQ authors no consumer or notification contract** (DE-6 single-authorship; no webhook — subsumed by R1: integrations have no wire). Caller-visible async results are observed via the §4–§7 reads (`Doc-5A §10` status pattern), never a synchronous engine facade.
+- **Explicit protocol exclusion (defense-in-depth):** for every §8 mechanism — engine workers, internal-service reads, and DE-1…DE-8 integrations — **no REST endpoint, no SSE/WebSocket stream, and no webhook** is defined or may be added. **Comparison generation (`generate_comparison_statement`) is engine computation: no caller-facing endpoint exists or may be added; the buyer reads the *result* via `get_comparison_statement` (§6), which is not the generation.**
+- **Flag-and-halt** if any wire surface (any protocol) is proposed for the engine, the internal reads, or the integrations — an architecture change.
 - **Dependencies:** `Doc-4E §E5/§E6/§E9/§E10`; `Doc-2 §8` (event catalog); `Doc-5A §1.3/§10/§11`; `Doc-4B` outbox. **Detail:** boundary statement only — no realization.
 
 ## §9 — Conformance & Carried Items
@@ -92,7 +97,7 @@ Two governing rules shape the document:
 - **Dependencies:** `Doc-5A Appendix A`; `Doc-4E §E0/§E12`, Appendix C. **Detail:** attestation + carried-item register.
 
 ## Appendix A — Doc-5E Conformance Attestation
-- **Purpose:** per-band pass/fail against the applicable `CHK-5A-xxx` checks for the realized M3 surface; the freeze evidence.
+- **Purpose:** per-band pass/fail against the applicable `CHK-5A-xxx` checks for the realized M3 surface; the freeze evidence. **Includes a dedicated attestation item for the R5 non-disclosure invariant** (the highest-risk M3 audit area — blacklist/deferral/gate-fail indistinguishability across every read/count/error/log; no public board; banded loss), attested against `CHK-5A-050…053` + `Doc-4A §7.5`.
 - **Dependencies:** `Doc-5A Appendix A`. **Detail:** attestation table (content pass).
 
 ---
@@ -110,7 +115,7 @@ Two governing rules shape the document:
 | **DE-7** | Billing entitlement/quota — firewall | Quota read/consumed at submission per three-instrument identity (R7, §5); no ledger owned; payment never influences matching | **No** |
 | **DE-8** | Platform Core (`core.*` audit/outbox/id/POLICY/flags) | Consumed by pointer; events via outbox (§8); audit via `core.append_audit_record` | **No** |
 | `[ESC-RFQ-AUDIT]` | Audit actions not separately enumerated in Doc-2 §9 (moderation-reject, coverage-exhausted, incremental-rematch, buyer_directed) | Bound to nearest Doc-2 §9 action by pointer; channel Doc-2 §9 additive; never invented | **No** |
-| `[ESC-RFQ-POLICY]` | `rfq.*` POLICY keys | Referenced by exact Doc-3 §12.2 name; if a key is absent, carry — never invent (Doc-3 §12.2 additive) | **Tracked** — not finalized until registered |
+| `[ESC-RFQ-POLICY]` | `rfq.*` POLICY keys | Referenced by exact Doc-3 §12.2 name; if a key is absent, carry — never invent (Doc-3 §12.2 additive) | **Conditional** — No if all referenced keys exist in Doc-3 §12.2; **blocks** if a content pass references an unregistered key (`CHK-5A-121`; Doc-3 §12.2 additive registration required first) |
 | `[ESC-RFQ-SLUG]` | Human-assist / routing-rule admin slugs | Interim `staff_*` authority; least-privilege slug = future Doc-2 §7 patch; escalate, never invent | **No** |
 
 ## Fences / Out of scope
@@ -135,10 +140,31 @@ Cross-module realization (owning module's Doc-5x — §1.x) · any other module'
 | Async engine realized per §10 (no synchronous facade) | ✅ — §2/§4/§8 |
 | Carried DE-1…DE-8 + `[ESC-RFQ-*]` by pointer; none resolved here | ✅ |
 | Nothing coined; `rfq` prefix + `rfq_` codes bound to registries; no event coined | ✅ — R3/R4 |
-| Section count: 9 (§0–§8) + App A; 30 caller-facing grouped into 4 realization sections | ✅ — compressed, not per-contract |
-
-**Proposed gate:** one Independent Hard Review. 0 BLOCKER/MAJOR → promote directly to `Doc-5E_Structure_v1.0_FROZEN` (authoring history retained here). A BLOCKER/MAJOR triggers a single structure patch, then freeze.
+| Section count: **10 (§0–§9) + App A**; 30 caller-facing grouped into 4 realization sections (§4–§7) | ✅ — compressed, not per-contract |
+| Dual-path rule stated (§1); int-svc legs → §8 (M-03) | ✅ |
 
 ---
 
-*End of Doc-5E Structure Proposal v0.1. Structure only. On any conflict, Doc-5A (FROZEN) and the frozen corpus win; flag-and-halt; Doc-3 operational rules bound by pointer, never re-derived. Next: Independent Hard Review → Structure FROZEN, then compressed content passes (proposed: Pass-1 = §0–§3 + inventory; Pass-2 = §4–§7; Pass-3 = §8–§9 + Appendix A — three passes given the moat's size), each conforming to the frozen structure.*
+## Review Disposition (Independent Hard Review v0.1 → v0.2)
+
+| Finding | Sev | Disposition |
+|---|---|---|
+| **M-01** §8 "R8-in-R1" — R8 undefined | MAJOR | **FIXED** — replaced with "subsumed by R1: integrations have no wire." No R8. |
+| **M-02** self-audit count "9 (§0–§8)" | MAJOR | **FIXED** — §9 exists; corrected to "10 (§0–§9) + App A." |
+| **M-03** `get_rfq`/`list_rfqs`/`get_rfq_version` int-svc legs absent from §8 | MAJOR | **FIXED** — partition + §8 split the int-svc legs (matching the `get_matching_results` treatment); added the **dual-path structural rule** (§1) covering all dual caller+internal contracts. Contract count unchanged (38). |
+| **m-01** `[ESC-RFQ-POLICY]` gate ambiguous | MINOR | **FIXED** — "Conditional — blocks if a content pass references an unregistered key (CHK-5A-121)." |
+| **m-02** Conforms-To omits Doc-4E | MINOR | **FIXED** — Doc-4E v1.0 (FROZEN) added. |
+| **m-03** §3 section-form authority not cited | MINOR | **FIXED** — cited frozen `Doc-5C §3` precedent + `Doc-5A §7`; marked `[realization convention]` (prevents four-way restatement). |
+| **m-04** §3 delegation explicit | MINOR | **FIXED** — "delegation grants resolved only via Identity `check_permission`; no direct grant inspection; no delegation wire input." |
+| **m-05** §8 protocol exclusions | MINOR | **FIXED** — explicit "no REST/SSE/WebSocket/webhook" for engine workers + integrations. |
+| **m-06** comparison-generation exclusion | MINOR | **FIXED** — §8: generation is engine computation, no caller endpoint; buyer reads the *result* via `get_comparison_statement` (§6). |
+| **NP-01** footer "+ inventory" redundant | NIT | **FIXED** — "Pass-1 = §0–§3." |
+| **NP-02** inventory ordering | NIT | **FIXED** — §2: "Inventory row ordering is non-authoritative." |
+| **NP-03** section ownership authoritative | NIT | **FIXED** — §1: "Section ownership authoritative; within-section grouping informational." |
+| **NP-04** non-disclosure attestation item | NIT | **FIXED** — Appendix A dedicated R5 non-disclosure attestation item (CHK-5A-050…053 + Doc-4A §7.5). |
+
+**Proposed gate:** Hard Review v0.1 applied (3 MAJOR + 6 MINOR + 4 NITPICK resolved). Promotable to `Doc-5E_Structure_v1.0_FROZEN` (authoring history retained here).
+
+---
+
+*End of Doc-5E Structure Proposal v0.2 — Hard Review applied. Structure only. On any conflict, Doc-5A (FROZEN) and the frozen corpus win; flag-and-halt; Doc-3 operational rules bound by pointer, never re-derived. Next: promote to `Doc-5E_Structure_v1.0_FROZEN`, then compressed content passes (Pass-1 = §0–§3; Pass-2 = §4–§7; Pass-3 = §8–§9 + Appendix A — three passes given the moat's size), each conforming to the frozen structure.*
