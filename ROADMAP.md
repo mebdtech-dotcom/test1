@@ -35,7 +35,8 @@
 | **Doc-5B (M0 `core`)** | **FROZEN** (`Doc-5B_SERIES_FROZEN_v1.0`); §0–§7 + Appendix A; freeze audit clean (0 B/M/m); one carried item D-2 (non-gate); R1 out-of-wire precedent |
 | **Doc-5C (M1 Identity)** | **FROZEN** (`Doc-5C_SERIES_FROZEN_v1.0`; §0–§8 + App A; 42 contracts; User-primary/active-org; R1–R6; freeze audit clean 0 B/M/m); carried DC-1…DC-5 (non-gate) |
 | **Doc-5E (M3 RFQ — the moat)** | **FROZEN** (`Doc-5E_SERIES_FROZEN_v1.0`; §0–§9 + App A; 38 contracts; matching/routing engine out-of-wire; R1–R7; non-disclosure + engine-execution attestations; freeze audit clean 0 B/M/m); carried DE-1…DE-8 (non-gate); applied `Doc-3_Policy_Key_Registration_Patch_v1.1_RFQ` (cleared `[ESC-RFQ-POLICY]`) |
-| Doc-5D · 5F…5M (Module API Contracts) | NOT STARTED |
+| **Doc-5D (M2 Marketplace)** | **STRUCTURE FROZEN** (`Doc-5D_Structure_v1.0_FROZEN`; 71 contracts = 64 caller-facing + 7 out-of-wire; tri-actor Public/User/Admin; R1–R10 + DD-1…DD-8; partition independently verified); content passes next (3). DD-6 `marketplace.*` POLICY-key patch = content-freeze gate |
+| Doc-5F…5M (Module API Contracts) | NOT STARTED |
 | Doc-6 / Doc-7 / Doc-8 | NOT STARTED — planning may proceed in parallel |
 | Application Code | NOT STARTED |
 
