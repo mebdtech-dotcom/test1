@@ -36,7 +36,8 @@
 | **Doc-5C (M1 Identity)** | **FROZEN** (`Doc-5C_SERIES_FROZEN_v1.0`; §0–§8 + App A; 42 contracts; User-primary/active-org; R1–R6; freeze audit clean 0 B/M/m); carried DC-1…DC-5 (non-gate) |
 | **Doc-5E (M3 RFQ — the moat)** | **FROZEN** (`Doc-5E_SERIES_FROZEN_v1.0`; §0–§9 + App A; 38 contracts; matching/routing engine out-of-wire; R1–R7; non-disclosure + engine-execution attestations; freeze audit clean 0 B/M/m); carried DE-1…DE-8 (non-gate); applied `Doc-3_Policy_Key_Registration_Patch_v1.1_RFQ` (cleared `[ESC-RFQ-POLICY]`) |
 | **Doc-5D (M2 Marketplace)** | **FROZEN** (`Doc-5D_SERIES_FROZEN_v1.0`; §0–§10 + App A; 71 contracts = 64 caller-facing + 7 out-of-wire; tri-actor Public/User/Admin; R1–R10; R5 projection-separation + R9 non-disclosure attestations; freeze audit clean 0 B/M/m); applied `Doc-3_Policy_Key_Registration_Patch_v1.2_Marketplace` (cleared DD-6); DD-7 tracked (`claim_vendor_profile` content-finalization only, Board-gated) |
-| Doc-5G (M5 Trust) · Doc-5F…5M (Module API Contracts) | NOT STARTED |
+| **Doc-5G (M5 Trust)** | **STRUCTURE FROZEN** (`Doc-5G_Structure_v1.0_FROZEN`; 40 contracts = 34 caller-facing + 6 out-of-wire; governance-signal owner; multi-actor Public/User/Admin; R1–R12 score-computation + governance/Billing firewalls; DG-1…DG-8; SR-1 reconciled to 40, partition independently verified); content passes next (3). `[ESC-TRUST-POLICY]` wire-referenced keys + `reference_id` (C-05) = content-freeze obligations |
+| Doc-5F · 5H…5M (Module API Contracts) | NOT STARTED (Doc-5F = M4, v0.2 freeze-ready per plan) |
 | Doc-6 / Doc-7 / Doc-8 | NOT STARTED — planning may proceed in parallel |
 | Application Code | NOT STARTED |
 

@@ -155,6 +155,8 @@ review/patch/audit trail is grouped by category.
 | `Doc-5D_SERIES_FROZEN_v1.0.md` (M2 `marketplace`) | **Doc-5D FROZEN** — M2 Marketplace & Discovery API realization freeze manifest; effective = `Doc-5D_Content_v1.0_Pass1…3` + `Doc-5D_Structure_v1.0_FROZEN` + resolved registers. Realizes Doc-4D (71 contracts); first large public/anonymous surface; tri-actor (Public/User/Admin); R1–R10; R5 projection-separation + R9 non-disclosure attestations |
 | `Doc-5D_Structure_v1.0_FROZEN.md` · `Doc-5D_Content_v1.0_Pass1…3.md` | Doc-5D source (canonical TOC + §0–§10 + Appendix A) |
 | `Doc-5D_Structure_Proposal_v0.1.md` · `governanceReviews/Doc-5D_Freeze_Readiness_Audit_v1.0.md` | Doc-5D structure authoring history (v0.2 + round-3 ADD-1/ADD-2; Hard Review) + freeze audit (DD-6 gate → cleared by Patch v1.2) |
+| `Doc-5G_Structure_v1.0_FROZEN.md` (M5 `trust`) | **Doc-5G STRUCTURE FROZEN** — canonical TOC realizing Doc-4G (40 contracts: 34 caller-facing + 6 out-of-wire) on HTTP; the governance-signal owner; multi-actor (Public/User/Admin); R1–R12 (score-computation + governance/Billing firewalls); DG-1…DG-8; SR-1 reconciled to 40. Content passes next (3); `[ESC-TRUST-POLICY]` wire-referenced keys + `reference_id` = content-freeze obligations |
+| `Doc-5G_Structure_Proposal_v0.1.md` | Doc-5G structure authoring history (Hard Review — SR-1 40-contract reconciliation + ADD-1 POLICY-key gate split + ADD-2 reference_id declaration point) |
 
 ---
 
