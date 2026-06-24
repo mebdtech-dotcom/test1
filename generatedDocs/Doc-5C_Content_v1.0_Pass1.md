@@ -58,14 +58,23 @@
 
 ### 1.2 M1 Surface Partition
 
-The 42 Doc-4C contracts partition by wire-realizability (structure R1) — **35 caller-facing**, **7 out-of-wire**:
+The 42 Doc-4C contracts partition by wire-realizability (structure R1) — **35 caller-facing**, **7 out-of-wire**. The canonical partition (from `Doc-5C_Structure_v1.0_FROZEN`, with the explicit **Doc-5C §** owner per group):
 
-| Doc-4C contracts | Doc-5C treatment |
-|---|---|
-| §C4/§C5 user + org commands (incl. Admin governance) · §C6 membership commands · §C7 role commands + reads · §C8 context (switch + reads) · §C9 delegation commands + party reads · §C10/§C11 profile/settings commands + owning-org reads | **Caller-facing HTTP** — realized here (inventory §2; full template §4–§6) |
-| §C3 `get_user`/`get_organization`/`get_membership`/`check_permission` (internal-service authorization root) · §C6/§C9 System timers (`activate_membership`, `expire_invitation`, `expire_delegation_grant`) · the dual-audience reads' internal-service (M3/M6) leg · DC-1 cross-module cascade/teardown | **Out-of-wire** — no HTTP surface (§7); implementation is code / Doc-6 |
+| Doc-4C contracts | Nature | **Doc-5C §** |
+|---|---|---|
+| §C4 `update_user_profile`, `update_user_2fa_settings`, `deactivate_own_account` | User command (21.4) | **§4** `POST` |
+| §C4 `set_user_account_status` · §C5 `set_organization_status`, `admin_recover_ownership` | Admin governance (21.6, no org context) | **§4** `POST` |
+| §C5 `create_organization`, `update_organization_profile`, `transfer_ownership`, `soft_delete_organization`, `restore_organization` | User command (21.4; §5.1 machine) | **§4** `POST` |
+| §C6 `invite_member`, `accept_invitation`, `set_membership_status`, `remove_member`, `revoke_invitation` | User command (21.4; §5.2 machine) | **§5** `POST` |
+| §C7 `create_role`, `update_role`, `set_role_permissions`, `delete_role` · `list_roles`, `list_permissions` | User command / Query (21.4 / 21.3) | **§5** `POST` / `GET` |
+| §C9 `create/suspend/reinstate/revoke_delegation_grant` · `get_delegation_grant`, `list_delegation_grants` | User command / Query (21.4 / 21.3; §5.10 machine; R5) | **§5** `POST` / `GET` |
+| §C8 `switch_active_organization` · `get_active_context`, `list_my_organizations` | User command / Query (21.4 / 21.3) | **§6** `POST` / `GET` |
+| §C10 `upsert_buyer_profile` · §C11 `update_workflow_settings` | User command (21.4) | **§6** `POST` |
+| §C10 `get_buyer_profile` · §C11 `get_workflow_settings` (owning-org read) | Query (21.3), dual-audience | **§6** `GET` (internal-service M3/M6 leg → §7) |
+| §C3 `get_user`, `get_organization`, `get_membership`, `check_permission` (authorization root) | internal-service (21.3) | **§7** out-of-wire |
+| §C6 `activate_membership`, `expire_invitation` · §C9 `expire_delegation_grant` · DC-1 cross-module cascade/teardown | System (21.5) / Integration | **§7** out-of-wire |
 
-- **Binds:** Doc-4C PassB Appendix A (partition); `Doc-5A §1.3`. **Rationale:** only contracts with a caller-facing wire are realized; the authorization root, timers, and cross-module integration are fenced (§7), never given a wire.
+- **Binds:** `Doc-5C_Structure_v1.0_FROZEN` (canonical partition); Doc-4C PassB Appendix A; `Doc-5A §1.3`. **Rationale:** only contracts with a caller-facing wire are realized; the authorization root, timers, and cross-module integration are fenced (§7), never given a wire. §3 is the cross-cutting mechanism and owns no endpoint.
 
 ### 1.3 Dependency Boundary
 
@@ -90,16 +99,18 @@ The 42 Doc-4C contracts partition by wire-realizability (structure R1) — **35 
 
 ### 2.2 Inventory — §4 User & Organization Surface (11)
 
+> **Methods conform to `Doc-5A §5.2` (realized in Pass-2):** create → `POST` collection (`201`); partial update → `PATCH` item; ADR-012 soft-delete → `DELETE` item; state/domain command → `POST` named sub-resource; read → `GET`.
+
 | # | Doc-4C Contract-ID | Actor | Method | Path | Active-Org | Success |
 |---|---|---|---|---|---|---|
-| 1 | `identity.update_user_profile.v1` | User (self) | `POST` | `/identity/users/{id}/update_user_profile` | N (self) | `200` |
+| 1 | `identity.update_user_profile.v1` | User (self) | `PATCH` | `/identity/users/{id}` | N (self) | `200` |
 | 2 | `identity.update_user_2fa_settings.v1` | User (self) | `POST` | `/identity/users/{id}/update_user_2fa_settings` | N (self) | `200` |
 | 3 | `identity.deactivate_own_account.v1` | User (self) | `POST` | `/identity/users/{id}/deactivate_own_account` | N (self) | `200` |
 | 4 | `identity.set_user_account_status.v1` | Admin | `POST` | `/identity/users/{id}/set_user_account_status` | N (admin) | `200` |
-| 5 | `identity.create_organization.v1` | User | `POST` | `/identity/organizations/create_organization` | N (bootstrap) | `201` |
-| 6 | `identity.update_organization_profile.v1` | User | `POST` | `/identity/organizations/{id}/update_organization_profile` | Y | `200` |
+| 5 | `identity.create_organization.v1` | User | `POST` | `/identity/organizations` | N (bootstrap) | `201` |
+| 6 | `identity.update_organization_profile.v1` | User | `PATCH` | `/identity/organizations/{id}` | Y | `200` |
 | 7 | `identity.transfer_ownership.v1` | User (Owner) | `POST` | `/identity/organizations/{id}/transfer_ownership` | Y | `200` |
-| 8 | `identity.soft_delete_organization.v1` | User (Owner) | `POST` | `/identity/organizations/{id}/soft_delete_organization` | Y | `200` |
+| 8 | `identity.soft_delete_organization.v1` | User (Owner) | `DELETE` | `/identity/organizations/{id}` | Y | `200` |
 | 9 | `identity.restore_organization.v1` | User (Owner) / Admin | `POST` | `/identity/organizations/{id}/restore_organization` | Y / N (admin) | `200` |
 | 10 | `identity.set_organization_status.v1` | Admin | `POST` | `/identity/organizations/{id}/set_organization_status` | N (admin) | `200` |
 | 11 | `identity.admin_recover_ownership.v1` | Admin | `POST` | `/identity/organizations/{id}/admin_recover_ownership` | N (admin) | `200` |
@@ -108,18 +119,18 @@ The 42 Doc-4C contracts partition by wire-realizability (structure R1) — **35 
 
 | # | Doc-4C Contract-ID | Actor | Method | Path | Active-Org | Success |
 |---|---|---|---|---|---|---|
-| 12 | `identity.invite_member.v1` | User | `POST` | `/identity/memberships/invite_member` | Y | `201` |
+| 12 | `identity.invite_member.v1` | User | `POST` | `/identity/memberships` | Y | `201` |
 | 13 | `identity.accept_invitation.v1` | User (invitee) | `POST` | `/identity/memberships/{id}/accept_invitation` | N (pre-membership) | `200` |
 | 14 | `identity.set_membership_status.v1` | User | `POST` | `/identity/memberships/{id}/set_membership_status` | Y | `200` |
 | 15 | `identity.remove_member.v1` | User | `POST` | `/identity/memberships/{id}/remove_member` | Y | `200` |
 | 16 | `identity.revoke_invitation.v1` | User | `POST` | `/identity/memberships/{id}/revoke_invitation` | Y | `200` |
 | 17 | `identity.list_permissions.v1` | User / int-svc | `GET` | `/identity/permissions` | N (platform catalog) | `200` |
 | 18 | `identity.list_roles.v1` | User | `GET` | `/identity/roles` | Y | `200` |
-| 19 | `identity.create_role.v1` | User | `POST` | `/identity/roles/create_role` | Y | `201` |
-| 20 | `identity.update_role.v1` | User | `POST` | `/identity/roles/{id}/update_role` | Y | `200` |
+| 19 | `identity.create_role.v1` | User | `POST` | `/identity/roles` | Y | `201` |
+| 20 | `identity.update_role.v1` | User | `PATCH` | `/identity/roles/{id}` | Y | `200` |
 | 21 | `identity.set_role_permissions.v1` | User | `POST` | `/identity/roles/{id}/set_role_permissions` | Y | `200` |
-| 22 | `identity.delete_role.v1` | User | `POST` | `/identity/roles/{id}/delete_role` | Y | `200` |
-| 23 | `identity.create_delegation_grant.v1` | User (controlling) | `POST` | `/identity/delegation_grants/create_delegation_grant` | Y | `201` |
+| 22 | `identity.delete_role.v1` | User | `DELETE` | `/identity/roles/{id}` | Y | `200` (soft-delete) |
+| 23 | `identity.create_delegation_grant.v1` | User (controlling) | `POST` | `/identity/delegation_grants` | Y | `201` |
 | 24 | `identity.suspend_delegation_grant.v1` | User (controlling) | `POST` | `/identity/delegation_grants/{id}/suspend_delegation_grant` | Y | `200` |
 | 25 | `identity.reinstate_delegation_grant.v1` | User (controlling) | `POST` | `/identity/delegation_grants/{id}/reinstate_delegation_grant` | Y | `200` *(`[ESC-IDN-DELEG-EXPIRY]` — not finalized)* |
 | 26 | `identity.revoke_delegation_grant.v1` | User (controlling) | `POST` | `/identity/delegation_grants/{id}/revoke_delegation_grant` | Y | `200` |
@@ -130,20 +141,21 @@ The 42 Doc-4C contracts partition by wire-realizability (structure R1) — **35 
 
 | # | Doc-4C Contract-ID | Actor | Method | Path | Active-Org | Success |
 |---|---|---|---|---|---|---|
-| 29 | `identity.switch_active_organization.v1` | User | `POST` | `/identity/memberships/switch_active_organization` | establishes context | `200` |
+| 29 | `identity.switch_active_organization.v1` | User | `POST` | `/identity/active_context/switch_active_organization` *(context command — §6.2 flag)* | establishes context | `200` |
 | 30 | `identity.get_active_context.v1` | User | `GET` | `/identity/active_context` | principal-scoped | `200` |
 | 31 | `identity.list_my_organizations.v1` | User | `GET` | `/identity/organizations` *(principal-scoped, server-derived)* | principal-scoped | `200` |
-| 32 | `identity.upsert_buyer_profile.v1` | User | `POST` | `/identity/buyer_profiles/upsert_buyer_profile` | Y | `200` |
-| 33 | `identity.get_buyer_profile.v1` | User / int-svc | `GET` | `/identity/buyer_profiles` *(owning-org)* | Y (owning-org) | `200` |
-| 34 | `identity.update_workflow_settings.v1` | User | `POST` | `/identity/organization_workflow_settings/update_workflow_settings` | Y | `200` |
-| 35 | `identity.get_workflow_settings.v1` | User / int-svc | `GET` | `/identity/organization_workflow_settings` *(owning-org)* | Y (owning-org) | `200` |
+| 32 | `identity.upsert_buyer_profile.v1` | User | `PATCH` | `/identity/buyer_profiles` *(active-org singleton — §6.2 flag)* | Y | `200` |
+| 33 | `identity.get_buyer_profile.v1` | User (owning-org) | `GET` | `/identity/buyer_profiles` *(owning-org)* | Y (owning-org) | `200` |
+| 34 | `identity.update_workflow_settings.v1` | User | `PATCH` | `/identity/organization_workflow_settings` *(active-org singleton)* | Y | `200` |
+| 35 | `identity.get_workflow_settings.v1` | User (owning-org) | `GET` | `/identity/organization_workflow_settings` *(owning-org)* | Y (owning-org) | `200` |
 
 ### 2.5 Inventory Notes
 
-- **Methods (§5.2):** reads are `GET` (safe); state-changing operations are `POST` to a **named command sub-resource** (`{command-name}`), never arbitrary field replacement (§5.1/§5.2).
-- **Success (§5.5):** resource-creating commands (`create_organization`, `invite_member`, `create_role`, `create_delegation_grant`) realize `201`; all other commands and reads realize `200` (synchronous; no async — none returns `202`/`204`). `Doc-4A §10.2/§10.3`.
+- **Methods (§5.2):** create → `POST` to the **collection** (`201` + `Location`); partial non-state field update → `PATCH` on the item; ADR-012 soft-delete → `DELETE` on the item; state-transition / domain command → `POST` to a **named command sub-resource**; read → `GET` (safe). Never arbitrary field replacement; never `PUT` (§5.2).
+- **Success (§5.5):** creates (`create_organization`, `invite_member`, `create_role`, `create_delegation_grant`) realize `201`; all other commands and reads realize `200` (synchronous; no async — none returns `202`/`204`). `Doc-4A §10.2/§10.3`.
 - **Active-Org column** records, by pointer, whether the §3 `Iv-Active-Organization` mechanism applies; the **rule is §3** and the per-endpoint application is finalized in §4–§6. Self-user ops (1–3) act on the platform-owned `users` record (no org); Admin ops (4, 10, 11; admin leg of 9) carry no org context (§7.3); `create_organization` (5) is the bootstrap (no prior org); `accept_invitation` (13) is pre-membership (the invitation scopes it server-side); the context surface (29–31) establishes/reads principal context.
-- **⚠ Context-surface addressing [realization convention] — flagged for Hard Review:** endpoints 29–31 do not address a single entity row. Realized as: `switch_active_organization` = a collection-level command on `memberships` with the target `organization_id` in the **body** (server-validated per §3, never trusted); `get_active_context` = a principal-scoped context singleton `GET /identity/active_context`; `list_my_organizations` = a principal-scoped `GET /identity/organizations` whose scope is **server-derived from the principal's memberships** (not a client filter — `Doc-4A §9.7`). Surfaced, not silently fixed.
+- **⚠ Context / singleton addressing [realization convention] — flagged for Hard Review (detailed in Pass-2 §6.2):** endpoints 29–32, 34 do not address a single child-entity row by `{id}`. Realized as: `switch_active_organization` = a context command `POST /identity/active_context/switch_active_organization` (target `organization_id` in body, server-validated per §3, never trusted); `get_active_context` = `GET /identity/active_context` (principal-scoped context singleton); `list_my_organizations` = `GET /identity/organizations` scoped **server-side to the principal's memberships** (not a client filter — `Doc-4A §9.7`); `upsert_buyer_profile` / `update_workflow_settings` = `PATCH` on the **active-org singleton** (`/identity/buyer_profiles`, `/identity/organization_workflow_settings`). Surfaced, not silently fixed.
+- **Dual-audience reads (33, 35):** the **internal-service (M3/M6) consumption** of `get_buyer_profile` and `get_workflow_settings` is **out-of-wire** (§7, structure R1) — only the **owning-org** wire face appears here, so the `int-svc` leg is **not** a wire actor. Row 17 (`list_permissions`) is genuinely dual-actor on the wire (`Doc-4C §C7` — User / internal-service, no split leg) and stays `User / int-svc`.
 - The full §5.7 template instantiation (request/response binding, error-status set, idempotency/concurrency, audit) for each endpoint is authored in **§4 (user/org), §5 (membership/role/delegation), §6 (context/profile/settings)** — not here.
 - **Binds:** `Doc-5A §5.1/§5.2/§5.5/§5.7`, §7.3; Doc-4C PassB Appendix A.
 
@@ -172,7 +184,7 @@ The 42 Doc-4C contracts partition by wire-realizability (structure R1) — **35 
 
 ### 3.4 Delegation Context (§7.4) — R5
 
-- Delegation is **resolved server-side, never asserted on the wire.** A request carries the principal (§3.1), active-org context (§3.3), and the target resource (path); from these the server resolves any applicable Delegation Grant via the **§6B five-condition delegated-access check** (`Doc-5A §7.4`; `Doc-4A §6B.2`). **No delegation header or delegation request field exists** (R4 — none added). A grant id, `permission_set`, or "acting under grant X" assertion is a **forbidden input** (`Doc-4A §9.7`).
+- Delegation is **resolved server-side, never asserted on the wire.** A request carries the principal (§3.1), active-org context (§3.3), and the target resource (path); from these the server resolves any applicable Delegation Grant via the **§6B five-condition delegated-access check** (`Doc-5A §7.4`; `Doc-4A §6B.2`). **No delegation header or delegation request field exists** (R5 — none added). A grant id, `permission_set`, or "acting under grant X" assertion is a **forbidden input** (`Doc-4A §9.7`).
 - The five-condition check and four-attribution rule are computed inside **`identity.check_permission.v1`**, which is the authorization-resolution engine — **out-of-wire** (§7, R1). Attribution is server-populated (`Doc-4A §6B.3`); Doc-5C carries no attribution input.
 - **Binds:** `Doc-5A §7.4`; `Doc-4A §6B.1/§6B.2/§6B.3`; Doc-4C §C9 (grant lifecycle, realized §5) / §C3 (check_permission, out-of-wire §7).
 
