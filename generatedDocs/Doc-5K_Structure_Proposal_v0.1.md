@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **PROPOSAL v0.1 — Board pre-authoring findings incorporated** (5 MINOR + 6 NITPICK folded into the R-list / section map / partition; §Board-Findings Map). Structure only. Pre-incorporates the Doc-5D/5F/5H structure-review lessons. **Structure freeze BLOCKED on `[REC-AI-WIRE]`** (REC-1); content authoring may proceed |
+| Status | **PROPOSAL v0.2 — Independent Hard Review applied; REC-1 RECONCILED + 3 MINOR + 1 NITPICK resolved** (Board pre-authoring findings 5 MINOR + 6 NITPICK incorporated; §Board-Findings Map · §Review Disposition). Structure only. **`[REC-AI-WIRE]` SATISFIED — structure freeze UNBLOCKED**; freeze-ready → Structure FROZEN |
 | Module | Module 9 — AI Layer (`ai` schema; the reserved advisory / derived-artifact layer) |
 | Realizes | `Doc-4K` (M9 contracts, FROZEN — **16 contracts**, 4 families × 4 ops, BC-AI-1…4) on the bound HTTP transport |
 | Authority | `Doc-5_Program_Governance_Note_v1.0`; **`Doc-5A_SERIES_FROZEN_v1.0` (FROZEN) governs this document** |
@@ -23,25 +23,27 @@ Two governing rules shape this document (the Doc-5B/5G/5H precedent):
 - **R3 — `ai` route prefix; `ai.` Contract-ID token** (token == route — `Doc-5A Appendix B.1` registers the M9 route namespace `ai`, `Doc-2 §0.3`; the Doc-4K token is `ai.<operation>.v1`, error-code namespace `ai_`). Paths derive from `ai` (e.g. `GET /ai/recommendations/{id}`); **the surface version is an `Iv-Api-Version` header / `Doc-5A §12` concern, never a path segment** (there is **no** `/ai/v1/…` path). Coins neither.
 - **R4 — No token invented.** Endpoints bind existing Doc-2 §7 slugs, §9 audit actions, and the §8 event catalog; carried gaps are bound by pointer and **escalated, never invented**: `[ESC-AI-SLUG]` (Doc-2 §7 — no `ai_` slug; reuse upstream entitlements), `[ESC-AI-AUDIT]` (Doc-2 §9), `[ESC-AI-POLICY]` (Doc-3 §12.2 — TTL keys `policy.ai.<bc>.ttl_seconds`), `[ESC-AI-EVENT]` (Doc-2 §8 — none today) — `CHK-5A-121` (anti-invention) · `CHK-5A-154` (namespace token) · `Doc-4A §6.4`/§18.2.
 - **R5 — Advisory / AI-suggests-modules-decide (M9 signature; Invariant #12).** Every artifact is **non-authoritative**; **no caller is bound by it**; **M9 owns only `ai.*` persistence and SHALL NOT directly or indirectly mutate any authoritative table owned by another bounded context** (no indirect-write path); **no authoritative write is ever attributed to the AI Agent** — an authoritative action arising from an AI advisory is executed by a User/System contract in the **owning** module (DF-AI-3). **Expired (or live) artifacts can never become authoritative historical evidence** — they are advisory only. Doc-5K realizes **no** decision, mutation, matching, routing, award, or score surface on any module.
-- **R6 — Firewall (DF-AI score/decision boundary).** **AI confidence ≠ Trust score**; M9 computes/owns/re-publishes **no** Trust/Performance/Verification/Governance score, and produces **no** matching/routing/award/eligibility decision (RFQ owns — DF-AI-3). M9 reads published score outputs only where the org is entitled, and **as a point-in-time score *snapshot* only — never a live coupling** to the owning module's score state. Realized as §3 wire constraints, never a gating header/param.
-- **R7 — Regenerable disposable cache (M9-unique; NOT append-only).** Artifacts carry a TTL (`expires_at = generated_at + policy.ai.<bc>.ttl_seconds` — `[ESC-AI-POLICY]`) and are **hard-deleted on expiry** by the System `expire_*` sweep — a **legitimate hard-delete** because artifacts are derived, disposable, and regenerable (explicitly **not** the Invariant #8 append-only / soft-delete of the authoritative modules). Generation is an **idempotent upsert** on the **cache identity `(subject_org_id, entity_ref_id, model_version)`, which SHALL be globally unique** (no duplicate advisory artifact). **TTL expiration ≠ business invalidation** (distinct concepts — TTL is cache-freshness, not a business-state change). **Regeneration is deterministic for identical inputs unless `model_version` changes.** The **model-version lifecycle is owned by AI infrastructure, not the API realization** (Doc-5K does not govern model versioning).
+- **R6 — Firewall (DF-AI score/decision boundary).** **AI confidence ≠ Trust score**; M9 computes/owns/re-publishes **no** Trust/Performance/Verification/Governance score, and produces **no** matching/routing/award/eligibility decision (RFQ owns — DF-AI-3). M9 reads published score outputs only where the org is entitled (DF-AI-5 — Trust read-only score output), and **as a point-in-time score *snapshot* only — never a live coupling** to the owning module's score state. Realized as §3 wire constraints, never a gating header/param.
+- **R7 — Regenerable disposable cache (M9-unique; NOT append-only).** Artifacts carry a TTL (`expires_at = generated_at + policy.ai.<bc>.ttl_seconds` — `[ESC-AI-POLICY]`) and are **hard-deleted on expiry** by the System `expire_*` sweep — a **legitimate hard-delete** because artifacts are derived, disposable, and regenerable (explicitly **not** the Invariant #8 append-only / soft-delete of the authoritative modules). Generation is an **idempotent upsert** on the **cache identity `(subject_org_id, entity_ref_id, model_version)`, which SHALL be globally unique** (no duplicate advisory artifact). **TTL expiration ≠ business invalidation** (distinct concepts — TTL is cache-freshness, not a business-state change). **Regeneration is deterministic for identical inputs unless `model_version` changes.** The **model-version lifecycle is owned by AI infrastructure, not the API realization** (Doc-5K does not govern model versioning). An artifact has a **cache lifecycle only — `generated → refreshed → expired/invalidated → regenerated` — and NO business state machine** (`Doc-4K §K13`); there is no domain state-edge to realize (distinct from the state-machine-bearing authoritative modules).
 - **R8 — No emitted/consumed event surface.** M9 emits and consumes **no** Doc-2 §8 event (pull/derive-on-demand, not event-driven — `[ESC-AI-EVENT]`); the Doc-5A §11 surface is **N/A**; no caller webhook/push.
 - **R9 — Tenancy & non-disclosure.** Artifacts are tenancy-scoped (`subject_org_id`); a cross-tenant read collapses to a uniform `NOT_FOUND` (`Doc-5A §6.3/§7`; `Doc-4A §7.5`). `similar_vendors` results hold **bare UUIDv7 refs only** (no vendor-data copies — single-owner boundary).
 
 ## M9 surface partition (the structural spine)
 
-> **16 Doc-4K contracts** (4 families × 4 ops, BC-AI-1…4) — **8 caller-facing**, **8 out-of-wire** (**PROVISIONAL — REC-1**). Each row carries an explicit **Doc-5K §** owner; **every contract has exactly one owner section — never partial, duplicated, inherited, or implied** (any ambiguity is a structure defect). §3 is a cross-cutting wire-model section and **owns no endpoint**.
+> **16 Doc-4K contracts** (4 families × 4 ops, BC-AI-1…4) — **8 caller-facing**, **8 out-of-wire** (**REC-1 RECONCILED — final**). Each row carries an explicit **Doc-5K §** owner; **every contract has exactly one owner section — never partial, duplicated, inherited, or implied** (any ambiguity is a structure defect). §3 is a cross-cutting wire-model section and **owns no endpoint**.
+>
+> **REC-1 reconciliation (Hard Review):** verified against the Doc-4K per-contract Identity blocks (`B-AI-x`) — `generate_*` carry **Operation `21.4 Command / 21.5 System`, Actor `AI Agent / System`** (**no User, no Admin** caller actor); `get_*`/`list_*` carry **`21.3`, Actor `User / System`**; `expire_*` carry **`21.5`, Actor `System`**. Since `generate_*` has **no caller-facing actor** (User/Admin/Public), it is **out-of-wire** (the "12+4" alternative is refuted — there is no tenant generate wire). The caller-facing surface is the **User leg of the 8 `get_*`/`list_*` reads**; the System/internal-service consumption leg is out-of-wire. **Final split: 8 caller + 8 out = 16.**
 
 | Doc-4K contracts | Nature | **Doc-5K §** |
 |---|---|---|
 | BC-AI-1…4 `get_recommendation`, `get_prediction`, `get_classification`, `get_similar_vendors` · `list_recommendations`, `list_predictions`, `list_classifications`, `list_similar_vendors` | User read (21.3 User/System — caller-facing User leg) | **§4** `GET` |
-| BC-AI-1…4 `generate_recommendation`, `generate_prediction`, `generate_classification`, `generate_similar_vendors` | AI-Agent on-demand + System scheduled (21.4/21.5; in-process; **provisional REC-1**) | **§5** out-of-wire |
+| BC-AI-1…4 `generate_recommendation`, `generate_prediction`, `generate_classification`, `generate_similar_vendors` | AI-Agent on-demand + System scheduled (21.4/21.5; Actor AI-Agent/System — no caller actor; in-process — **REC-1 resolved**) | **§5** out-of-wire |
 | BC-AI-1…4 `expire_recommendations`, `expire_predictions`, `expire_classifications`, `expire_similar_vendors` | System TTL hard-delete sweep (21.5) | **§5** out-of-wire |
 | BC-AI-1…4 `get_*`/`list_*` internal-service leg | dual-audience consumption by owning modules (21.3 System) | **§5** out-of-wire (mechanism) |
 
-> **REC-1:** if reconciliation resolves `generate_*` as a caller-facing AI-Agent/User wire, the split becomes **12 caller + 4 out**; resolve via `[REC-AI-WIRE]` before structure freeze. The get/list internal-service leg is a **mechanism, not a counted contract** — it adds no row to the 16.
+> **REC-1 (resolved):** `generate_*` confirmed **out-of-wire** (no User/Admin actor — Doc-4K Identity blocks); the "12+4" alternative is refuted. The get/list internal-service leg is a **mechanism, not a counted contract** — it adds no row to the 16.
 
-### Section-level count reconciliation (PROVISIONAL)
+### Section-level count reconciliation (FINAL)
 
 | Doc-5K § | Surface | Caller-facing | Out-of-wire (§5) |
 |---|---|---|---|
@@ -68,7 +70,7 @@ Two governing rules shape this document (the Doc-5B/5G/5H precedent):
 - **Dependencies:** `Doc-5A §6.3/§7`; `Doc-4A §5/§5.3/§6/§7/§7.5`; `Doc-4C §C3/§C8` (consumed authorization root); `Doc-4K` (DF-AI firewall — by pointer). **Detail:** cross-cutting wire-model declaration; bound, not redefined; no endpoint instantiation.
 
 ## §4 — Derived-Artifact Read Surface Realization (BC-AI-1…4)
-- **Purpose:** the 8 caller-facing reads across the 4 artifact families (recommendation · prediction · classification · similar_vendors) — **point-lookup** `GET /ai/{artifact-plural}/{id}` (returns `found` + detail | null; carries the `is_expired` flag — R7) and **cursor-paginated** `GET /ai/{artifact-plural}` list (default excludes expired; `include_expired` filter; `Doc-5A §8`), each scoped to `subject_org_id` with optional `entity_ref_id`/`entity_ref_type` filters; each **declares Subject-Org disclosure scope** (§3 rule); **non-authoritative presentation** (R5 — advisory only); cross-tenant → `NOT_FOUND` (R9); reads not audited (`Doc-5A §17.1`). The dual-audience internal-service consumption leg is **out-of-wire** (§5).
+- **Purpose:** the 8 caller-facing reads across the 4 artifact families (recommendation · prediction · classification · similar_vendors) — **point-lookup** `GET /ai/{artifact-plural}/{id}` (returns `found` + detail | null; carries the `is_expired` flag — R7) and **cursor-paginated** `GET /ai/{artifact-plural}` list (default excludes expired; `include_expired` filter; `Doc-5A §8`), each scoped to `subject_org_id` with optional `entity_ref_id`/`entity_ref_type` filters; each **declares Subject-Org disclosure scope** (§3 rule); **non-authoritative presentation** (R5 — advisory only); cross-tenant → `NOT_FOUND` (R9); reads not audited (`Doc-5A §17.1`). **Expired rows (`expires_at < now()`) may be returned with `is_expired: true` until the System sweep deletes them; a read NEVER extends TTL; callers treat an expired artifact as stale** (`Doc-4K §K13`). The dual-audience internal-service consumption leg is **out-of-wire** (§5).
 - **Dependencies:** `Doc-5A §5/§6/§7/§8`; `Doc-4K` BC-AI-1…4; `Doc-4C §C3` (consumed). **Detail:** read realization (point + list, 4 families).
 
 ## §5 — Out-of-Wire Boundary (generate · expire · internal-service leg)
@@ -90,14 +92,16 @@ Two governing rules shape this document (the Doc-5B/5G/5H precedent):
 | ID | Item | Doc-5K handling | Freeze gate? |
 |---|---|---|---|
 | **DF-AI-1** | Identity — `check_permission` / tenancy, consumed | Authorization server-side via Identity (`Doc-4C §C3/§C8`); no shadow authz (§3); no Identity surface realized | **No** |
-| **DF-AI-2** | (consumed-input boundary — referenced, not restated) | Bound by pointer to `Doc-4K`; confirm verbatim at content | **No** |
+| **DF-AI-2** | Marketplace — entitled vendor refs (read-only), referenced not restated | Bound by pointer to `Doc-4K`; vendor data by bare UUID (R9) | **No** |
 | **DF-AI-3** | RFQ owns matching/routing/ranking/supplier-selection/award/eligibility; AI advisory-only | M9 realizes no matching/routing/award surface (R5/R6); RFQ bound by pointer | **No** |
-| **DF-AI-6** | (referenced, not restated; + confirm DF-AI-4/5 + VO-1/VO-2 at content) | Bound by pointer to `Doc-4K`; firewall/value-object semantics not restated | **No** |
+| **DF-AI-4** | Operations — entitled private-record/engagement reads; buyer-private stays buyer-private | M9 derives from entitled reads only; widens/leaks no protected fact (R9); bound by pointer | **No** |
+| **DF-AI-5** | Trust — read-only score output (firewall) | M9 reads a score snapshot only where entitled; computes/owns/re-publishes no score (R6); bound by pointer | **No** |
+| **DF-AI-6** | Platform Core — audit-write / UUIDv7, consumed (+ confirm VO-1/VO-2 value-object semantics at content) | Consumed via Doc-4B by pointer; firewall/value-object semantics not restated | **No** |
 | `[ESC-AI-AUDIT]` | Doc-2 §9 enumerates no AI audit action | `generate_*`/`expire_*` mutations bound to nearest §9 action by pointer; reads not audited; never invented; channel Doc-2 §9 additive | **No** |
 | `[ESC-AI-EVENT]` | M9 emits/consumes no Doc-2 §8 event | §11 N/A (R8); if ever required, additive Doc-2 §8 patch; **never coin an event** | **No** |
 | `[ESC-AI-POLICY]` | No `ai` POLICY namespace key (TTL `policy.ai.<bc>.ttl_seconds`) | Referenced by intended key name by pointer; channel Doc-3 §12.2 additive; **`[ESC-AI-POLICY]`-keyed contracts not finalized until registered** | **Tracked** — per-contract finalization; not a structural gate |
 | `[ESC-AI-SLUG]` | No `ai_` slug in Doc-2 §7 | Caller-gating reuses upstream entitlements via `check_permission`; channel Doc-2 §7 additive; no slug invented | **No** |
-| **`[REC-AI-WIRE]`** | Wire classification of `generate_*` (AI-Agent on-demand) + get/list internal leg is provisional (REC-1) | Partition PROVISIONAL until reconciled against Doc-4K PassB Actor/Audience fields verbatim; **structure freeze BLOCKED until reconciled; content authoring MAY proceed** | **YES — structure-freeze gate** |
+| **`[REC-AI-WIRE]`** | Wire classification of `generate_*` + get/list internal leg (REC-1) | **RESOLVED at Hard Review** — `generate_*` Actor = `AI Agent / System` (no User/Admin caller actor) ⇒ **out-of-wire**; get/list User leg = caller-facing (§4), System leg out-of-wire (§5). Verified against Doc-4K Identity blocks. Final split 8+8 | **Satisfied — gate cleared; reconfirm verbatim at content** |
 
 ## Fences / Out of scope
 
@@ -123,14 +127,29 @@ Cross-module realization (owning module's Doc-5x — §1.x) · any other module'
 
 ---
 
-## Structure self-audit (pre-review)
+## Review Disposition (Independent Hard Review v0.1 → v0.2)
+
+| Finding | Sev | Disposition |
+|---|---|---|
+| **HR-MAJOR-01** REC-1 wire classification unresolved (`[REC-AI-WIRE]` blocking freeze) | MAJOR | **RECONCILED** — verified Doc-4K Identity blocks: `generate_*` Actor `AI Agent / System` (no User/Admin) ⇒ **out-of-wire**; `get/list` `User/System` ⇒ User leg caller-facing; `expire_*` System. Final 8+8; `[REC-AI-WIRE]` satisfied; **structure freeze unblocked**. |
+| **HR-m-01** DF-AI-4 (Operations) + DF-AI-5 (Trust) absent from carried-items table | MINOR | **FIXED** — both added verbatim (DF-AI-4 entitled Operations reads; DF-AI-5 Trust read-only score output); "confirm 4/5 at content" placeholder removed. |
+| **HR-m-02** "no business state machine" not stated | MINOR | **FIXED** — R7 now states the cache lifecycle (`generated → refreshed → expired → regenerated`) and **no business state machine** (`Doc-4K §K13`); no domain edge to realize. |
+| **HR-m-03** read TTL behavior under-specified | MINOR | **FIXED** — §4 now binds: expired rows returned with `is_expired: true` until sweep; a read never extends TTL; callers treat as stale (`Doc-4K §K13`). |
+| **HR-NP-01** DF-AI-5 not cited at the score-firewall | NITPICK | **APPLIED** — R6 cites DF-AI-5 (Trust read-only score output) for the snapshot-only read. |
+
+---
+
+## Structure self-audit (post-review v0.2)
 
 | Check | Result |
 |---|---|
 | Every Doc-4K contract assigned to exactly one section (no partial/dup/inherited/implied — M-3) | ✅ — 8 → §4; 8 → §5 |
 | Total = 16 (4 families × 4 ops) | ✅ — 8 caller + 8 out (PROVISIONAL — REC-1) |
-| `generate_*` actor = AI-Agent/System (no User) honored → out-of-wire (provisional) | ✅ — R1/REC-1 |
-| `[REC-AI-WIRE]` registered as structure-freeze gate | ✅ |
+| `generate_*` actor = AI-Agent/System (no User/Admin) → out-of-wire (REC-1 **resolved**) | ✅ — R1/REC-1 |
+| `[REC-AI-WIRE]` reconciled → satisfied; structure freeze unblocked | ✅ |
+| DF-AI-1…6 all registered by pointer (4 Operations, 5 Trust added) | ✅ — HR-m-01 |
+| No business state machine (cache lifecycle only) | ✅ — R7/HR-m-02 |
+| Read never extends TTL; `is_expired` exposed | ✅ — §4/HR-m-03 |
 | Advisory / non-authoritative: no caller bound; no AI-attributed authoritative write; only `ai.*`; no indirect cross-BC mutation | ✅ — R5/M-1 |
 | Expired ≠ authoritative historical evidence | ✅ — R5/N4 |
 | Firewall: AI confidence ≠ Trust score; snapshot-only reads; no matching/routing/award | ✅ — R6/M-2 |
