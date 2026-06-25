@@ -47,7 +47,7 @@ Architecture (Doc-2/3/4): **COMPLETE/FROZEN.** **Doc-5 (API realization): COMPLE
 | Doc-5G | M5 `trust` | **FROZEN** |
 | Doc-5H | M6 `communication` | **FROZEN** |
 | **Doc-5I** | **M7 `billing`** | **FROZEN 2026-06-26** |
-| Doc-5K | M9 `ai` | **FROZEN** (`Doc-5K_Content_v1.0_FROZEN`, 2026-06-26; 16 contracts = 8 read + 8 out-of-wire). **Not yet corpus-folded** (no index rows; `[ESC-AI-POLICY]` carried to implementation) |
+| Doc-5K | M9 `ai` | **FROZEN** (`Doc-5K_SERIES_FROZEN_v1.0` + `Doc-5K_Content_v1.0_FROZEN`, 2026-06-26; 16 = 8 read + 8 out-of-wire). Advisory-only; no score/§8 event; `[ESC-AI-POLICY]` cleared by Doc-3 v1.8; corpus-folded |
 | Doc-5J | M8 `admin` | **FROZEN** (`Doc-5J_SERIES_FROZEN_v1.0`, 2026-06-26); 34 tokens (32 + 2). Admin-only; sole event `VendorBanned`; `[ESC-ADM-POLICY]` cleared by Doc-3 v1.7 |
 
 **Doc-5 API realization program — COMPLETE.** All 10 module realizations (M0–M9) content-FROZEN (5B–5K), gated by the FROZEN Doc-5A metastandard. **Next program: Doc-6 (Database).** Detailed ledger: `Program_Status_And_Roadmap.md`.
@@ -102,7 +102,7 @@ Structure Proposal → Independent Hard Review → Structure Patch → Structure
 2. **Doc-7 (Frontend):** Next.js App Router UI over the frozen API contracts.
 3. **Doc-8 (Tests):** conformance + contract + integration suites.
 
-*(Optional non-blocking tidy: add `Doc-5K_SERIES_FROZEN` + an `ai.*` Doc-3 patch for peer-parity; Doc-5K froze via `Content_v1.0_FROZEN` with `[ESC-AI-POLICY]` carried to implementation.)*
+*(Tidy DONE: `Doc-5K_SERIES_FROZEN_v1.0` + `Doc-3 …v1.8_AI` added — all 10 modules have a freeze manifest + cleared POLICY gate.)*
 
 ---
 
