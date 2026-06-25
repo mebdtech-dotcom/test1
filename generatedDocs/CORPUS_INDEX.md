@@ -159,8 +159,10 @@ review/patch/audit trail is grouped by category.
 | `Doc-5G_Structure_v1.0_FROZEN.md` · `Doc-5G_Content_v1.0_Pass1…3.md` | Doc-5G source (canonical TOC + §0–§9 + Appendix A) |
 | `Doc-5G_Structure_Proposal_v0.1.md` · `governanceReviews/Doc-5G_Freeze_Readiness_Audit_v1.0.md` | Doc-5G structure authoring history (Hard Review — SR-1 reconciliation + ADD-1/ADD-2) + freeze audit (`[ESC-TRUST-POLICY]` gate → cleared by Patch v1.3) |
 | `Doc-3_Policy_Key_Registration_Patch_v1.3_Trust.md` | Additive Doc-3 §12.2 registration of 2 `trust.*` API-realization keys; clears the Doc-5G `[ESC-TRUST-POLICY]` gate (Doc-4A §18.2) |
-| `Doc-5F_Structure_v1.0_FROZEN.md` (M4 `operations`) | **Doc-5F STRUCTURE FROZEN** — canonical TOC realizing Doc-4F (50 contracts: 46 caller-facing + 4 out-of-wire) on HTTP; post-award ERP-Lite; two-sided tenant User (no Admin/public); R1–R10 (non-disclosure load-bearing, money-boundary, async doc-gen); DF-1…DF-8. Content passes next (3); `[ESC-OPS-POLICY]` (create `operations.*` namespace) + `reference_id` = content-freeze obligations |
-| `Doc-5F_Structure_Proposal_v0.1.md` · `generatedDocs/Doc-5F_Structure_Independent_Hard_Review_v1.0.md` | Doc-5F structure authoring history (v0.2 Board Hard Review + round-2 ADD-1/ADD-2; partition independently verified 50=46+4) |
+| `Doc-5F_SERIES_FROZEN_v1.0.md` (M4 `operations`) | **Doc-5F FROZEN** — M4 Business Operations (post-award ERP-Lite layer) API realization freeze manifest; effective = `Doc-5F_Content_v1.0_Pass1…3` + `Doc-5F_Structure_v1.0_FROZEN` + resolved registers. Realizes Doc-4F (50 contracts: 46 caller-facing + 4 out-of-wire); two-sided tenant User (no Admin/public); R1–R10; non-disclosure (R5) + money-boundary (R8) attestations |
+| `Doc-5F_Structure_v1.0_FROZEN.md` · `Doc-5F_Content_v1.0_Pass1…3.md` | Doc-5F source (canonical TOC + §0–§10 + Appendix A) |
+| `Doc-5F_Structure_Proposal_v0.1.md` · `governanceReviews/Doc-5F_Freeze_Readiness_Audit_v1.0.md` | Doc-5F structure authoring history (Board Hard Review + round-2 ADD-1/ADD-2; partition independently verified 50=46+4) + freeze audit (`[ESC-OPS-POLICY]` gate → cleared by Patch v1.4) |
+| `Doc-3_Policy_Key_Registration_Patch_v1.4_Operations.md` | Additive Doc-3 §12.2 registration of 2 `operations.*` API-realization keys (new `operations` namespace); clears the Doc-5F `[ESC-OPS-POLICY]` gate (Doc-4A §18.2) |
 
 ---
 
