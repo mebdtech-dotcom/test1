@@ -40,7 +40,7 @@
 
 ## Carried items (per-suite gates for Doc-8B…8G — resolved only via named channels)
 
-`DR-8-HARNESS` (Doc-8B frozen first; consumed by pointer) · `DR-8-CONTRACT` (Doc-5/6/7 testability cross-check) · `DR-8-STATE` (Doc-4M drives state suites) · `DR-8-RLS` (mandatory byte-equivalence band) · `[ESC-8-TOOLING]` (test-framework ratification — Board) · `[ESC-8-API]` (additive Doc-5x patch) · `[ESC-8-CORPUS]` (corpus defect — flag-and-halt, never weaken the test) · `[ESC-8-POLICY]` (additive Doc-3 §12.2 patch) · `[ESC-8-SCOPE]` (cross-discipline allocation). **Per-suite oracle-readiness:** 8A/8B/8C/8E oracle-ready now (Doc-5 frozen; Doc-2/3/4M frozen); 8D/8F/8G freeze as Doc-6/7 freeze.
+`DR-8-HARNESS` (Doc-8B frozen first; consumed by pointer) · `DR-8-CONTRACT` (Doc-5/6/7 testability cross-check) · `DR-8-STATE` (Doc-4M drives state suites) · `DR-8-RLS` (mandatory byte-equivalence band) · `[ESC-8-TOOLING]` **(RESOLVED 2026-06-26 — Board-ratified at `Doc-8B_Structure_v1.0_FROZEN` D1: Vitest + Playwright + TS-native transactional SQL, single TypeScript toolchain; pgTAP not selected. The POLICY-patch precedent — resolution recorded here at the owning ledger.)** · `[ESC-8-API]` (additive Doc-5x patch) · `[ESC-8-CORPUS]` (corpus defect — flag-and-halt, never weaken the test) · `[ESC-8-POLICY]` (additive Doc-3 §12.2 patch) · `[ESC-8-SCOPE]` (cross-discipline allocation). **Per-suite oracle-readiness:** 8A/8B/8C/8E oracle-ready now (Doc-5 frozen; Doc-2/3/4M frozen); 8D/8F/8G freeze as Doc-6/7 freeze.
 
 ## Provenance (reference only)
 

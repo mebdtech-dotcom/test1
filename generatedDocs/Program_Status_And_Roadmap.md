@@ -108,14 +108,14 @@ Staged-freeze, mirroring Doc-5/6/7: a metastandard (Doc-8A — the Doc-5A/6A/7A 
 | Doc-8 | Scope | Status |
 |---|---|---|
 | **8A** | Test & Conformance Realization Metastandard | **FROZEN 2026-06-26** (`Doc-8A_SERIES_FROZEN_v1.0`) — structure + content (Pass-1 §0–§4 · Pass-2 §5–§9 · Pass-3 §10–§12 + Appendix A) + freeze audits. R1–R12; test-discipline partition; cross-cutting conformance-concern allocation (assert-once); Appendix A = **39 `CHK-8-001…081` / 9 bands (A–I)** (per-suite freeze gate); inherits RLS byte-equivalence gate (`Doc-6A R8/§4`) + migration gate (`Doc-6A §11`); `ERR-8A-1` folded in. Structure + 3 content passes each Hard-Reviewed + patched + closure-checked (0 BLOCKER/MAJOR/MINOR; 4 REJECTED-false across passes) + Content Freeze Audit PASS. Conformance harness yet subordinate to its oracle. Coins nothing. **Doc-8B NEXT** |
-| 8B | Test Foundation & Harness *(frozen first)* | NOT STARTED — runner, ephemeral test DB, fixtures/factories, multi-tenant seeding (≥2 orgs), seeded clock + deterministic UUIDv7 provider, out-of-wire mock boundary, CI merge-gate |
+| 8B | Test Foundation & Harness *(frozen first)* | **STRUCTURE FROZEN 2026-06-26** (`Doc-8B_Structure_v1.0_FROZEN`) — realizes Doc-8A §4/§10 + Appendix A bands A/H/I: runner, ephemeral test DB, fixtures/factories (through-contracts), ≥2-org seeding, seeded clock + deterministic UUIDv7 provider, out-of-wire mock boundary + **outbox observer/drainer** (Band-F enabler), CI merge-gate. **D1 Board-ratified → `[ESC-8-TOOLING]` RESOLVED: Vitest + Playwright + TS-native transactional SQL** (single TS toolchain; pgTAP not selected). Hard Review (2 MINOR+1 OBS+1 NIT; 1 REJECTED) + Freeze Audit PASS. **Content passes NEXT** |
 | 8C | Contract & API Conformance | NOT STARTED — realizes `Doc-5A…5K` (envelope/pagination/error/idempotency/prohibited-field/actor-scope); **oracle-ready now** (Doc-5 frozen) |
 | 8D | Persistence, Migration & RLS Conformance | NOT STARTED — realizes `Doc-6A…6K` (schema constraints + immutability + migration + the load-bearing RLS positive/negative/cross-tenant byte-equivalence gate); awaits Doc-6 |
 | 8E | Domain, Invariant & State-Machine Conformance | NOT STARTED — realizes Doc-2/3/4M + 12 invariants + firewall + moat; **oracle-ready now** |
 | 8F | Integration & Event-Flow Conformance | NOT STARTED — realizes Doc-2 §8 / Doc-4J / Doc-4L (transactional write+emit, outbox→Inngest); awaits Doc-6 outbox table |
 | 8G | Frontend & E2E Conformance | NOT STARTED — realizes `Doc-7B…7H` (component/a11y/visual-regression/e2e + UI non-disclosure byte-equivalence); awaits Doc-7 |
 
-**Carried into Doc-8B…8G (per-suite gates):** `DR-8-HARNESS` (8B frozen first) · `DR-8-CONTRACT` (Doc-5/6/7 testability cross-check) · `DR-8-STATE` (Doc-4M drives state suites) · `DR-8-RLS` (mandatory byte-equivalence band) · `[ESC-8-TOOLING]` (test-framework ratification — Board; candidates Vitest/Playwright/pgTAP, not coined) · `[ESC-8-API]` · `[ESC-8-CORPUS]` (corpus defect — flag-and-halt) · `[ESC-8-POLICY]` · `[ESC-8-SCOPE]` · `ERR-8A-1` (erratum, folded into manifest). **Per-suite oracle-readiness:** 8B/8C/8E ready now; 8D/8F/8G await Doc-6/7.
+**Carried into Doc-8C…8G (per-suite gates):** `DR-8-HARNESS` (satisfied by Doc-8B; consumed by pointer) · `DR-8-CONTRACT` (Doc-5/6/7 testability cross-check) · `DR-8-STATE` (Doc-4M drives state suites) · `DR-8-RLS` (mandatory byte-equivalence band) · `[ESC-8-TOOLING]` **RESOLVED** (Doc-8B D1: Vitest + Playwright + TS-native SQL) · `[ESC-8-API]` · `[ESC-8-CORPUS]` (corpus defect — flag-and-halt) · `[ESC-8-POLICY]` · `[ESC-8-SCOPE]` · `ERR-8A-1` (erratum, folded into manifest). **Per-suite oracle-readiness:** 8B/8C/8E ready now; 8D growing (Doc-6B+6C frozen); 8F/8G await Doc-6/7.
 
 ---
 
@@ -125,13 +125,13 @@ Staged-freeze, mirroring Doc-5/6/7: a metastandard (Doc-8A — the Doc-5A/6A/7A 
 
 **Doc-6 Database program — STARTED.** `Doc-6A` (metastandard) + `Doc-6B` (M0 `core`) + `Doc-6C` (M1 `identity`) FROZEN 2026-06-26 (+ Doc-3 v1.9 `identity.*` POLICY). **Next: Doc-6D (M2 `marketplace`).**
 **Doc-7 Frontend program — STARTED.** `Doc-7A` (metastandard) FROZEN.
-**Doc-8 Test & Conformance program — STARTED.** `Doc-8A` (metastandard) FROZEN 2026-06-26 (structure + content + Appendix A 39 checks); `Doc-8B` (Foundation/Harness) next.
+**Doc-8 Test & Conformance program — STARTED.** `Doc-8A` (metastandard) FROZEN + `Doc-8B` (Foundation/Harness) STRUCTURE FROZEN 2026-06-26 (`[ESC-8-TOOLING]` RESOLVED: Vitest + Playwright + TS-native SQL). **Next: Doc-8B content passes** → discipline suites Doc-8C…8G.
 
 Next:
 1. **Doc-6C (M1 `identity`)** — next per-module schema; first org-tenant-anchored (RLS load-bearing) + `human_ref`-carrying tables; resolves the open `[ESC-6-POLICY]` identity-namespace question.
 2. **Doc-6D…6K** — remaining module schemas, dependency order, each gated by Doc-6A Appendix A.
 3. **Doc-7B/7C** (Design System + App Shell, frozen first) then Doc-7D…7H surface docs.
-4. **Doc-8B** (Test Foundation & Harness, frozen first per DR-8-HARNESS) → discipline suites Doc-8C…8G. Per-suite oracle-readiness governs freeze order: 8C/8E ready now (Doc-5 + Doc-2/3/4M frozen); 8D/8F/8G freeze as Doc-6/7 freeze. The RLS positive/negative/cross-tenant byte-equivalence gate is `Doc-6A R8/§4`; migration gate `Doc-6A §11`. (Doc-8A metastandard FROZEN — Appendix A 39 `CHK-8-xxx` checks gate every suite.)
+4. **Doc-8B content passes** (harness conventions §0–§9; structure FROZEN, tooling = Vitest + Playwright + TS-native SQL) → discipline suites Doc-8C…8G. Per-suite oracle-readiness governs freeze order: 8C/8E ready now (Doc-5 + Doc-2/3/4M frozen); 8D growing (Doc-6B+6C frozen); 8F/8G freeze as Doc-6/7 freeze. The RLS positive/negative/cross-tenant byte-equivalence gate is `Doc-6A R8/§4`; migration gate `Doc-6A §11`. (Doc-8A metastandard FROZEN — Appendix A 39 `CHK-8-xxx` checks gate every suite.)
 5. Then: Development Decomposition → Build Roadmap → Implementation.
 
 *(Corpus tidy DONE: `Doc-5K_SERIES_FROZEN_v1.0` manifest added for peer-parity; `Doc-3 …v1.8_AI` registers the `ai.*` keys and clears `[ESC-AI-POLICY]`. All 10 modules now have a `SERIES_FROZEN` (or `Content_v1.0_FROZEN`) manifest + a cleared POLICY gate.)*
