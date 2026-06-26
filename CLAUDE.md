@@ -211,10 +211,15 @@ ratified. Authoritative blueprint lives in `generatedDocs/`.
   (M6 transmits, owns no business content); **participant-grant RLS** (third grant pattern; `thread_participants` simple anchor, terminates);
   **append-only System-written delivery logs** (email/sms/whatsapp; column-scoped status); notifications/logs **M0-event consumers**; Realtime
   messages (SD=hidden); org+staff support; **schema = `communication`** (the prior `comms` slip patched, §3 above); no human_ref; Appendix A 37/37
-  (4 justified N/A); carries `[ESC-COMM-AUDIT]`. **Next: Doc-6I (M7 `billing`, the platform's own revenue — `platform_invoices ≠ trade_invoices` + billing firewall)** · 6J…6K ·
+  (4 justified N/A); carries `[ESC-COMM-AUDIT]`. **`Doc-6I` (M7 `billing`) FROZEN (2026-06-26):** 13 tables / 6 groupings (DDL+Prisma+RLS)
+  realizing Doc-2 §10.8 — **the platform's OWN revenue** (`platform_invoices` `INV-P-…` via gateway; **`≠ operations.trade_invoices`** — no
+  `operations` FK; the trade flow untouched); **the billing firewall** (no billing state gates trust/eligibility/routing/matching);
+  **entitlements (boolean/numeric/enum), never plan-name** (Financial Tier ≠ Subscription Plan); subscription §5.7 + one-active partial-unique
+  + 3 §8 events; `record_payment`=gateway callback (not §8); append-only ledgers + column-scoped invoices/payments; money-vs-points; Appendix A
+  37/37; carries `[ESC-BILL-AUDIT]`. **Next: Doc-6J (M8 `admin`, the authoritative event catalog — Admin decides, owning module owns)** · 6K ·
   **Doc-7 COMPLETE (7A–7H frozen)** · Doc-8D then 8E…8G (8G Frontend/E2E now unblocked by Doc-7). Per-module ledger: `generatedDocs/Program_Status_And_Roadmap.md`.
 - **Status:** architecture = COMPLETE/FROZEN · Doc-5 API contracts = COMPLETE/FROZEN (M0–M9) ·
-  Doc-6 DB = STARTED (Doc-6A + Doc-6B M0 `core` + Doc-6C M1 `identity` + Doc-6D M2 `marketplace` + Doc-6E M3 `rfq` + Doc-6F M4 `operations` + Doc-6G M5 `trust` + Doc-6H M6 `communication` FROZEN; Doc-6I…6K NOT STARTED) ·
+  Doc-6 DB = STARTED (Doc-6A + Doc-6B M0 `core` + Doc-6C M1 `identity` + Doc-6D M2 `marketplace` + Doc-6E M3 `rfq` + Doc-6F M4 `operations` + Doc-6G M5 `trust` + Doc-6H M6 `communication` + Doc-6I M7 `billing` FROZEN; Doc-6J…6K NOT STARTED) ·
   Doc-7 FE = **COMPLETE/FROZEN (7A–7H all frozen; `Doc-7_SERIES_FROZEN_v1.0`)** ·
   Doc-8 Test = STARTED (Doc-8A metastandard FROZEN; Doc-8B…8G NOT STARTED) ·
   code = NOT STARTED.
