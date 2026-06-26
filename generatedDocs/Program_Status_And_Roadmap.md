@@ -74,10 +74,11 @@ Staged-freeze, mirroring Doc-5: a metastandard (Doc-6A — the Doc-5A analog) + 
 |---|---|---|
 | **6A** | DB Realization Metastandard | **FROZEN 2026-06-26** (`Doc-6A_SERIES_FROZEN_v1.0`) — R1–R12 + §2.5 attribution; Appendix A = 10 bands / 37 `CHK-6-xxx`; Appendix B = Global Conventions Registry; R3(b) one-Prisma-namespace-per-module Board-ratified. Coins nothing |
 | **6B** | M0 `core` schema | **FROZEN 2026-06-26** (`Doc-6B_SERIES_FROZEN_v1.0`) — 5 platform-owned tables (DDL+Prisma); CR1–CR10 + **CR4′** column-scoped immutability (5 triggers); human-ref allocator; 18 `core.*` keys seeded; Appendix A 37/37 (0 FAIL); **DR-6-CORE resolved** |
-| 6C | M1 `identity` schema | NEXT — users/orgs/memberships/roles/permissions/delegation; first org-tenant-anchored (RLS load-bearing) + `human_ref` carriers; carries `[ESC-6-POLICY]` identity-namespace question |
-| 6D…6K | M2…M9 schemas | NOT STARTED |
+| **6C** | M1 `identity` schema | **FROZEN 2026-06-26** (`Doc-6C_SERIES_FROZEN_v1.0`) — 9 tables (DDL+Prisma+RLS); first real org-anchor RLS (all 9 explicit) + roles-NULL-seed + dual-party `delegation_grants`; auth boundary (no secret); `human_ref` via `core`; 3 state machines; 45-slug+4-bundle seed; **7 `identity.*` keys (Doc-3 v1.9 RATIFIED)**; Appendix A 37/37. `[ESC-6-POLICY]` cleared |
+| 6D | M2 `marketplace` schema | NEXT — vendor profiles/microsites/products/categories/ads; first **public/anonymous** surface (tri-actor RLS Public/User/Admin); visibility-scope invariant (`buyer_private`\|`public`); FTS |
+| 6E…6K | M3…M9 schemas | NOT STARTED |
 
-**Carried into Doc-6B…6K (per-module gates):** `DR-6-CORE/API/STATE` · `[ESC-6-SCHEMA]` · `[ESC-6-POLICY]` (incl. open M1 `identity` namespace — no v1.x patch; Doc-6C cross-check) · `[ESC-6-API]`.
+**Carried into Doc-6D…6K (per-module gates):** `DR-6-CORE/API/STATE` · `[ESC-6-SCHEMA]` · `[ESC-6-POLICY]` (additive Doc-3 §12.2 patch per module — M1 `identity` cleared by **Doc-3 v1.9**) · `[ESC-6-API]`.
 
 ---
 
@@ -89,7 +90,7 @@ Staged-freeze, mirroring Doc-5/Doc-6: a metastandard (Doc-7A — the Doc-5A/Doc-
 |---|---|---|
 | **7A** | Frontend Realization Metastandard | **FROZEN 2026-06-26** (`Doc-7A_SERIES_FROZEN_v1.0`) — structure + content §0–§12 + Appendix A (**25 `CHK-7-xxx` checks / 10 bands A–J**); R1–R12; surface partition; **§3.7 wired-contracts-only boundary**; coins nothing. Structure + 3 content passes each: Pass → Board Hard Review → Patch → closure check PASS; Structure + Content Freeze Audits PASS |
 | 7B | Design System & Component Kit *(frozen first)* | **FROZEN 2026-06-26** (`Doc-7B_SERIES_FROZEN_v1.0`) — structure + content §0–§9 + Appendix; BR1–BR12; presentation-only kit (primitives→app components, no content/state/fetch); defines shared embedded components (trust badge/billing/AI panel/thread presentation; **notification center = Doc-7C**); microsite theme-override; status/error/not-found primitives encode non-disclosure once; applicable Appendix A subset (N/A reasons). Structure + 2 content passes each: Pass → Board Hard Review → Patch → closure check PASS; both Freeze Audits PASS |
-| 7C | App Shell & Data Layer *(frozen second)* | **STRUCTURE FROZEN 2026-06-26** (`Doc-7C_Structure_v1.0_FROZEN`) — SR1–SR10; App Router topology (Public/auth-entry/authenticated/Admin areas); server-resolved active-org boundary + org-switcher (seam vs 7E mgmt screens); **server-side-only** typed wired Doc-5 API-client; defines global notification center (composes 7B primitives, non-disclosure-bound); blob→Storage directly (file_ref only). Hard Review (1 MAJOR + 3 MINOR + 1 NIT) + Structure Freeze Audit PASS. **Content passes NEXT** |
+| 7C | App Shell & Data Layer *(frozen second)* | **FROZEN 2026-06-26** (`Doc-7C_SERIES_FROZEN_v1.0`) — structure + content §0–§9 + Appendix; SR1–SR10; App Router topology (`(public)`/`(auth)`/`(app)`/`(admin)`); server-resolved active-org boundary + org-switcher (re-resolves on switch; seam vs 7E mgmt screens); **server-side-only** typed wired Doc-5 API-client (single data-access seam); defines notification center (composes 7B primitives; mutations = verified `mark_notification_read`/`archive_notification` Doc-5H §5); blob via M0/Doc-4B Storage by pointer (file_ref only; upload-grant = `[ESC-7-API]`). Structure + 2 content passes each Pass→Review→Patch→closure PASS; both Freeze Audits PASS (Content incl. CC-1: CHK-7-042 kept N/A per frozen SR9). **DR-7-SHELL satisfied (7B+7C frozen)** |
 | 7D | Public Surface (anonymous) | NOT STARTED — realizes `Doc-5D` public/anon |
 | 7E | Account & Identity Shell | NOT STARTED — realizes `Doc-5C` mgmt screens + `Doc-5I` account/billing |
 | 7F | Buyer Workspace | NOT STARTED — realizes `Doc-5E` buyer + `Doc-5F` ops + `Doc-5D` discovery; the moat surface |
@@ -122,7 +123,7 @@ Staged-freeze, mirroring Doc-5/6/7: a metastandard (Doc-8A — the Doc-5A/6A/7A 
 
 **Doc-5 API realization program — COMPLETE.** All 10 module realizations (M0–M9) content-FROZEN: 5B/5C/5D/5E/5F/5G/5H/5I/5J/5K, gated by the FROZEN Doc-5A metastandard. Doc-3 POLICY patches v1.0–v1.8 applied (one namespace per registered module; M1 identity none).
 
-**Doc-6 Database program — STARTED.** `Doc-6A` (metastandard) + `Doc-6B` (M0 `core`) FROZEN 2026-06-26.
+**Doc-6 Database program — STARTED.** `Doc-6A` (metastandard) + `Doc-6B` (M0 `core`) + `Doc-6C` (M1 `identity`) FROZEN 2026-06-26 (+ Doc-3 v1.9 `identity.*` POLICY). **Next: Doc-6D (M2 `marketplace`).**
 **Doc-7 Frontend program — STARTED.** `Doc-7A` (metastandard) FROZEN.
 **Doc-8 Test & Conformance program — STARTED.** `Doc-8A` (metastandard) FROZEN 2026-06-26 (structure + content + Appendix A 39 checks); `Doc-8B` (Foundation/Harness) next.
 

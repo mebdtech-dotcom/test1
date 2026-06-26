@@ -177,11 +177,15 @@ ratified. Authoritative blueprint lives in `generatedDocs/`.
   analog of Doc-5A/6A/7A (R1–R12; test-discipline partition Doc-8B…8G with Doc-8B Foundation/Harness
   frozen first; cross-cutting conformance-concern allocation assert-once; Appendix A **39 `CHK-8-xxx`
   checks / 9 bands**; conformance harness yet subordinate to its oracle — a red test = code defect or
-  corpus defect (`[ESC-8-CORPUS]`), never weaken the assertion; coins nothing). **Next: Doc-6C (M1 `identity`)** ·
-  6D…6K · Doc-7B/7C then 7D…7H · Doc-8B then 8C…8G. Per-module ledger:
+  corpus defect (`[ESC-8-CORPUS]`), never weaken the assertion; coins nothing). **`Doc-6C` (M1 `identity`)
+  FROZEN (2026-06-26):** 9 tables (DDL+Prisma+RLS) realizing Doc-2 §10.2 — first real org-anchor RLS (all 9
+  explicit) + roles-NULL-seed + dual-party `delegation_grants`; auth boundary (no secret); `human_ref` via
+  `core`; 3 state machines; **Doc-3 v1.9 registers the 7 `identity.*` POLICY keys** (clears `[ESC-6-POLICY]`);
+  Appendix A 37/37. **Next: Doc-6D (M2 `marketplace`, first public/anonymous surface)** ·
+  6E…6K · Doc-7B/7C then 7D…7H · Doc-8B then 8C…8G. Per-module ledger:
   `generatedDocs/Program_Status_And_Roadmap.md`.
 - **Status:** architecture = COMPLETE/FROZEN · Doc-5 API contracts = COMPLETE/FROZEN (M0–M9) ·
-  Doc-6 DB = STARTED (Doc-6A + Doc-6B M0 `core` FROZEN; Doc-6C…6K NOT STARTED) ·
+  Doc-6 DB = STARTED (Doc-6A + Doc-6B M0 `core` + Doc-6C M1 `identity` FROZEN; Doc-6D…6K NOT STARTED) ·
   Doc-7 FE = STARTED (Doc-7A FROZEN; Doc-7B…7H NOT STARTED) ·
   Doc-8 Test = STARTED (Doc-8A metastandard FROZEN; Doc-8B…8G NOT STARTED) ·
   code = NOT STARTED.
