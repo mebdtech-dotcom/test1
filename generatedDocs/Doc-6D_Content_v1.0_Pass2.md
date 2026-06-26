@@ -108,31 +108,16 @@ CREATE TABLE marketplace.spec_documents (
 CREATE INDEX spec_documents_entry_active_idx ON marketplace.spec_documents (spec_entry_id) WHERE is_active_revision;   -- [§2.5] active revision lookup
 CREATE INDEX spec_documents_owner_idx ON marketplace.spec_documents (owner_organization_id);                          -- [§2.5] buyer-uploaded docs
 
--- Column-scoped immutability (Doc-6A R7; pattern = Doc-6B CR4′) — only is_active_revision (+ audit cols) may change; all spec content immutable; no DELETE:
-CREATE FUNCTION marketplace.spec_documents_revision_immutable() RETURNS trigger
-  LANGUAGE plpgsql SECURITY DEFINER SET search_path = marketplace, pg_temp AS $$
-BEGIN
-  IF TG_OP = 'DELETE' THEN
-    PERFORM core.raise_immutable_violation();                     -- [Doc-6B §4] never deleted
-  END IF;
-  IF NEW.doc_type IS DISTINCT FROM OLD.doc_type
-     OR NEW.spec_entry_id IS DISTINCT FROM OLD.spec_entry_id
-     OR NEW.owner_organization_id IS DISTINCT FROM OLD.owner_organization_id
-     OR NEW.version_no IS DISTINCT FROM OLD.version_no
-     OR NEW.revision_label IS DISTINCT FROM OLD.revision_label
-     OR NEW.revision_reason IS DISTINCT FROM OLD.revision_reason
-     OR NEW.storage_ref IS DISTINCT FROM OLD.storage_ref
-     OR NEW.supersedes_id IS DISTINCT FROM OLD.supersedes_id
-     OR NEW.created_at IS DISTINCT FROM OLD.created_at THEN
-    PERFORM core.raise_immutable_violation();                     -- [Doc-6B §4] content frozen; only is_active_revision toggles
-  END IF;
-  RETURN NEW;
-END $$;
+-- Column-scoped immutability (Doc-6A R7; pattern = Doc-6B CR4′) — attach the M0 generic guard DIRECTLY with the protected
+-- columns as TG_ARGV. No M2-local wrapper: core.raise_immutable_violation is a RETURNS-trigger function and CANNOT be PERFORM-ed
+-- from plpgsql (Postgres: "trigger functions can only be called as triggers" — HR-2). is_active_revision (+ updated_at/_by) omitted
+-- from the protected list = the only mutable columns (toggled on supersession); every spec-content column immutable; DELETE blocked.
 CREATE TRIGGER spec_documents_immutable
-  BEFORE UPDATE OR DELETE ON marketplace.spec_documents
-  FOR EACH ROW EXECUTE FUNCTION marketplace.spec_documents_revision_immutable();
+  BEFORE UPDATE OR DELETE ON marketplace.spec_documents FOR EACH ROW
+  EXECUTE FUNCTION core.raise_immutable_violation(
+    'id','spec_entry_id','owner_organization_id','doc_type','version_no','revision_label','revision_reason','storage_ref','supersedes_id','created_at','created_by');  -- [Doc-6B §4]
 ```
-- **Versioned, never overwritten (Doc-2 §10.3):** a new revision = a **new row** (`supersedes_id` → prior; the prior's `is_active_revision` set false). The content columns are immutable; **only `is_active_revision` toggles** — realized by the column-scoped trigger (M2-local function; the violation raiser reused from `core` — Doc-6B §4, reference-never-restate). The trigger function is a **[§2.5]** realization, not a coined schema element.
+- **Versioned, never overwritten (Doc-2 §10.3):** a new revision = a **new row** (`supersedes_id` → prior; the prior's `is_active_revision` set false). The content columns are immutable; **only `is_active_revision` toggles** — realized by attaching the M0 generic guard `core.raise_immutable_violation` **directly** (column names as `TG_ARGV`; **no M2-local wrapper** — a `RETURNS trigger` function is not PERFORM-callable, HR-2). The trigger **attachment** + arg list is a **[§2.5]** realization, not a coined schema element.
 - **Cross-RFQ disclosure (out of scope — M3):** buyer-uploaded docs attached to an RFQ become readable to invited vendors **only** through `rfq.rfq_document_grants` (M3-owned). Doc-6D realizes the document + its `owner_organization_id`/public RLS **only**; the grant table is M3 (referenced, never realized).
 - **RLS:** public (library docs, `owner_organization_id IS NULL`) OR owner-org (buyer uploads) OR admin (§RLS). **Prisma [§2.5]:** `SpecDocument`, self-relation `supersedes`, enum `SpecDocType`.
 
@@ -354,7 +339,7 @@ Reviewer: independent (Architecture Board / DDD / Security / DBA). Verified CORR
 | Finding | Sev | Disposition |
 |---|---|---|
 | **CAT-STATUS** structure shorthand "draft→active→retired" implied a `status` enum on `categories` — Doc-2 §10.3 lists none | BLOCKER (anti-coining) | **FIXED** — **no status enum** realized; "retired" = soft-delete; a `categories.status` would **coin**. §3.2 documents the mapping. |
-| **SPEC-IMM** `spec_documents` "never overwritten" but `is_active_revision` must toggle — full-row immutability would break supersession | MAJOR | **FIXED** — **column-scoped** trigger (`marketplace.spec_documents_revision_immutable`, SECURITY DEFINER + pinned search_path) allows only `is_active_revision`; reuses `core.raise_immutable_violation` (Doc-6B §4). Pattern = Doc-6B CR4′. |
+| **SPEC-IMM** `spec_documents` "never overwritten" but `is_active_revision` must toggle — full-row immutability would break supersession | MAJOR | **FIXED** — **column-scoped**: `core.raise_immutable_violation` attached directly with the protected columns as `TG_ARGV` (is_active_revision omitted = mutable). Pattern = Doc-6B CR4′. *(Cross-pass HR-2 later corrected the attachment from a PERFORM-wrapper to a direct trigger — a trigger function is not PERFORM-callable.)* |
 | **SPEC-LEAK** buyer-uploaded `spec_documents` could leak to public if RLS keyed only on library membership | MAJOR | **FIXED** — public-read only `WHERE owner_organization_id IS NULL` (library); buyer uploads = owner-org only; cross-RFQ disclosure = `rfq.rfq_document_grants` (M3), **not** realized here. |
 | **PUB-1** `profile_sections.publish_state` values undefined in Doc-2 | MAJOR | **RESOLVED (attributed)** — enum = the two states Doc-2 names in the §10.3 tenancy cell ("draft: … / published: …"); no third value (sections have no `unpublished`). Surfaced, not coined. |
 | **CAT-TREE** `level BETWEEN 1 AND 4` CHECK present, but parent-level consistency (`child=parent+1`) is cross-row | MINOR | **CONFIRMED service** — §3.2: column CHECK bounds the range; the tree-depth invariant + `path` maintenance are service (DR-6-STATE-class), per Doc-2 "CHECK + service". |

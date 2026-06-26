@@ -191,10 +191,13 @@ CREATE TABLE marketplace.financial_tier_history (
 );
 CREATE INDEX financial_tier_history_current_idx ON marketplace.financial_tier_history (vendor_profile_id, tier_type) WHERE effective_to IS NULL;  -- [§2.5] current tier per type
 
--- Append-only immutability (Doc-6A R7) — block UPDATE + DELETE via the M0 shared guard (Doc-6B §4, by pointer):
+-- Append-only immutability (Doc-6A R7) — attach the M0 shared guard with the protected columns as TG_ARGV (Doc-6B §4).
+-- The guard blocks DELETE unconditionally and raises on any change to a NAMED column; effective_to is OMITTED = the bounded-mutable
+-- temporal-close column (NULL→timestamp on supersession). (HR-1: a no-arg call would block DELETE only, leaving UPDATE open.)
 CREATE TRIGGER financial_tier_history_immutable
-  BEFORE UPDATE OR DELETE ON marketplace.financial_tier_history
-  FOR EACH ROW EXECUTE FUNCTION core.raise_immutable_violation();   -- [Doc-6B §4] shared kernel function (reference-never-restate)
+  BEFORE UPDATE OR DELETE ON marketplace.financial_tier_history FOR EACH ROW
+  EXECUTE FUNCTION core.raise_immutable_violation(
+    'id','vendor_profile_id','tier_type','old_tier','new_tier','effective_from','change_reason','approved_by','created_at','created_by');  -- [Doc-6B §4] payload/identity immutable; effective_to closable; DELETE blocked
 ```
 - **Idempotency (consumer side, not a coined column):** the `verified` consumer-write is made idempotent by the **outbox-consumer dedup** (Doc-6A R6 — processed-event ledger / `marketplace.idempotency_dedup_window`), **not** by a `source_event_id` column (none in Doc-2 §10.3; none coined). A replayed `VendorTierChanged` writes **no second row**.
 - **Exclusive writer:** only M2 INSERTs (declared txn + verified consumer). The immutability trigger + the "no Trust write" rule = the §10.3 binding realized.
@@ -221,8 +224,9 @@ CREATE TABLE marketplace.vendor_ownership_history (
 CREATE INDEX vendor_ownership_history_current_idx ON marketplace.vendor_ownership_history (vendor_profile_id) WHERE valid_to IS NULL;  -- [§2.5] current owner row
 
 CREATE TRIGGER vendor_ownership_history_immutable
-  BEFORE UPDATE OR DELETE ON marketplace.vendor_ownership_history
-  FOR EACH ROW EXECUTE FUNCTION core.raise_immutable_violation();   -- [Doc-6B §4]
+  BEFORE UPDATE OR DELETE ON marketplace.vendor_ownership_history FOR EACH ROW
+  EXECUTE FUNCTION core.raise_immutable_violation(
+    'id','vendor_profile_id','old_organization_id','new_organization_id','valid_from','transfer_reason','approved_by','created_at','created_by');  -- [Doc-6B §4] valid_to closable; DELETE blocked (HR-1)
 ```
 - **`controlling_organization_id` on `vendor_profiles` = the current owner; this table is the audit trail.** Transfer is service-orchestrated (Trust Protection Workflow — freeze→review→reactivate); the row is appended in that workflow's transaction. **RLS:** read = controlling-org-of-parent OR admin (§3.1.9). **Prisma [§2.5]:** `VendorOwnershipHistory`.
 

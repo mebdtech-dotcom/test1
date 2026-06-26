@@ -159,7 +159,7 @@ CREATE INDEX vendor_profiles_fts_idx ON marketplace.vendor_profiles USING GIN (s
 2. Enums (claim/status/visibility/tier/assignment/tier-change/claim-source/product/spec-doc/microsite/layout/publish/domain/ad/favorite).
 3. `categories` (self-FK) → `vendor_profiles` → §3.1 children → `products`/`spec_library_entries`/`spec_documents`/`product_spec_links` → presentation → `advertisements`/`showcase_projects`/`catalog_favorites`.
 4. Deferred intra-schema FKs (`category_assignments_category_fk` — Pass-1 DDL-1).
-5. Functions + triggers (immutability: `financial_tier_history`, `vendor_ownership_history`, `spec_documents`).
+5. Immutability triggers — each **attaches `core.raise_immutable_violation` directly** (protected columns as `TG_ARGV`; no M2-local function): `financial_tier_history`, `vendor_ownership_history`, `spec_documents` (column-scoped — closable/active-flag columns omitted).
 6. FTS generated columns + GIN; cursor/partial/band indexes.
 7. RLS enable + policies (all tables).
 8. Seeds: **none owned by M2** (POLICY seeded by M0; categories seed = admin-runtime import unless Doc-4D/an admin migration declares a pointer — none coined).

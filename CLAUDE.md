@@ -181,11 +181,17 @@ ratified. Authoritative blueprint lives in `generatedDocs/`.
   FROZEN (2026-06-26):** 9 tables (DDL+Prisma+RLS) realizing Doc-2 §10.2 — first real org-anchor RLS (all 9
   explicit) + roles-NULL-seed + dual-party `delegation_grants`; auth boundary (no secret); `human_ref` via
   `core`; 3 state machines; **Doc-3 v1.9 registers the 7 `identity.*` POLICY keys** (clears `[ESC-6-POLICY]`);
-  Appendix A 37/37. **Next: Doc-6D (M2 `marketplace`, first public/anonymous surface)** ·
-  6E…6K · Doc-7B/7C then 7D…7H · Doc-8B then 8C…8G. Per-module ledger:
+  Appendix A 37/37. **`Doc-6D` (M2 `marketplace`) FROZEN (2026-06-26):** 21 tables / 8 aggregates (DDL+Prisma+RLS+FTS)
+  realizing Doc-2 §10.3 — **first public/anonymous tri-actor RLS** (Public/User/Admin; visibility-scope = publish-state,
+  **no `buyer_private` coined**); capability matrix (4 booleans); §5.3 two-dimension + §5.8 state; **score firewall**
+  (no score column; bands reflected, never calculated); `financial_tier_history` exclusive-writer-as-consumer (Trust never
+  writes; append-only); `vendor_matching_attributes` derived read-model (admin-only; RFQ via service); versioned
+  `spec_documents` (column-scoped immutability); 4-level admin-governed category tree; **first real FTS**; ad money = M7
+  by reference; Appendix A 37/37; carries `[ESC-6-DD7]`/`[ESC-MKT-AUDIT]`/`[ESC-6-SCHEMA-SHOWCASE]`. **Next: Doc-6E (M3 `rfq`,
+  matching/quotation engine)** · 6F…6K · Doc-7B/7C then 7D…7H · Doc-8D then 8E…8G. Per-module ledger:
   `generatedDocs/Program_Status_And_Roadmap.md`.
 - **Status:** architecture = COMPLETE/FROZEN · Doc-5 API contracts = COMPLETE/FROZEN (M0–M9) ·
-  Doc-6 DB = STARTED (Doc-6A + Doc-6B M0 `core` + Doc-6C M1 `identity` FROZEN; Doc-6D…6K NOT STARTED) ·
+  Doc-6 DB = STARTED (Doc-6A + Doc-6B M0 `core` + Doc-6C M1 `identity` + Doc-6D M2 `marketplace` FROZEN; Doc-6E…6K NOT STARTED) ·
   Doc-7 FE = STARTED (Doc-7A FROZEN; Doc-7B…7H NOT STARTED) ·
   Doc-8 Test = STARTED (Doc-8A metastandard FROZEN; Doc-8B…8G NOT STARTED) ·
   code = NOT STARTED.

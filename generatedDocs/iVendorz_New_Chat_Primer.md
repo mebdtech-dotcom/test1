@@ -99,9 +99,9 @@ Structure Proposal → Independent Hard Review → Structure Patch → Structure
 
 ## Immediate Next Actions
 
-**Doc-5 API realization is COMPLETE (M0–M9 frozen). Doc-6 Database program STARTED — `Doc-6A` metastandard + `Doc-6B` (M0 `core`) FROZEN.** Next:
-1. **Doc-6C (M1 `identity`):** next per-module schema; gated by Doc-6A Appendix A (`CHK-6-xxx`, 10 bands / 37 checks). First org-tenant-anchored tables (RLS load-bearing, unlike platform-owned `core`) + first `human_ref` carriers; resolves the open `[ESC-6-POLICY]` identity-namespace question. Then Doc-6D…6K.
-   - Doc-6A is the DB metastandard (the Doc-5A analog): R1–R12 + §2.5 attribution + Appendix B Global Conventions Registry. Doc-6B…6K **realize** its conventions, coin nothing. **Doc-6B (M0 `core`) FROZEN** — 5 platform-owned tables, CR4′ column-scoped immutability, human-ref allocator, DR-6-CORE resolved (the foundation every module references). Per-module carried gates: `[ESC-6-SCHEMA/POLICY/API]`.
+**Doc-5 API realization is COMPLETE (M0–M9 frozen). Doc-6 Database program STARTED — `Doc-6A` metastandard + `Doc-6B` (M0 `core`) + `Doc-6C` (M1 `identity`) + `Doc-6D` (M2 `marketplace`) FROZEN.** Next:
+1. **Doc-6E (M3 `rfq`):** next per-module schema; gated by Doc-6A Appendix A (`CHK-6-xxx`, 10 bands / 37 checks). The matching/quotation engine — consumes M2 `vendor_matching_attributes` (via service) + `vendor_profiles` (by UUID); first vendor-side materialized RLS anchor (`rfq_invitation_grantees`). Then Doc-6F…6K.
+   - Doc-6A is the DB metastandard (the Doc-5A analog): R1–R12 + §2.5 attribution + Appendix B Global Conventions Registry. Doc-6B…6K **realize** its conventions, coin nothing. **Doc-6B (M0 `core`) + Doc-6C (M1 `identity`) + Doc-6D (M2 `marketplace`) FROZEN** — `core` (5 platform tables, CR4′, allocator, DR-6-CORE) → `identity` (9 tables, first org-anchor RLS, dual-party, 3 machines) → `marketplace` (21 tables, first public/anonymous tri-actor RLS, capability matrix, score firewall, first-real-FTS; carries `[ESC-6-DD7]`/`[ESC-MKT-AUDIT]`/`[ESC-6-SCHEMA-SHOWCASE]`). Per-module carried gates: `[ESC-6-SCHEMA/POLICY/API]`.
 2. **Doc-7 (Frontend):** Next.js App Router UI over the frozen API contracts (design track may run in parallel now).
 3. **Doc-8 (Tests):** conformance + contract + integration suites (incl. RLS byte-equivalence gate).
 
