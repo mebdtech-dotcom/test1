@@ -228,8 +228,8 @@ ratified. Authoritative blueprint lives in `generatedDocs/`.
 - **Status:** architecture = COMPLETE/FROZEN · Doc-5 API contracts = COMPLETE/FROZEN (M0–M9) ·
   Doc-6 DB = **COMPLETE/FROZEN (Doc-6A + Doc-6B…6K, M0–M9 — all 11 deliverables frozen)** ·
   Doc-7 FE = **COMPLETE/FROZEN (7A–7H all frozen; `Doc-7_SERIES_FROZEN_v1.0`)** ·
-  Doc-8 Test = STARTED (Doc-8A metastandard FROZEN; Doc-8B…8G NOT STARTED) ·
-  code = NOT STARTED.
+  Doc-8 Test = **COMPLETE/FROZEN (Doc-8A…8G — all 7 deliverables frozen; `Doc-8_SERIES_FROZEN_v1.0`; the conformance fabric, authored-not-run)** ·
+  code = NOT STARTED (gated by the Doc-8 conformance fabric). **All design + realization (Doc-5/6/7) + verification (Doc-8) programs COMPLETE/FROZEN; next phase = Development Decomposition → Build Roadmap → Implementation.**
 
 ---
 
