@@ -201,6 +201,19 @@ review/patch/audit trail is grouped by category.
 
 ---
 
+## 5c. Doc-7 Program (Frontend Realization — current phase, parallel with Doc-6)
+
+> The presentation sibling of the Doc-5 API / Doc-6 DB programs. **Doc-7A is the metastandard** (the Doc-5A/Doc-6A analog); it governs the surface-partitioned realizations Doc-7B…7H via Appendix A (`CHK-7-xxx`). Realizes the frozen Doc-5 API surface + Doc-4M state machines + Doc-2 §6/§7/§0.4 on Next.js 15 App Router + React + Tailwind + shadcn/ui. Consistent-with (not conformant-to) the frozen Doc-5 surface (governance §8 rule 5); conforms to Doc-4M/Doc-2 (upstream).
+
+| File | Purpose |
+|------|---------|
+| `Doc-7A_Structure_v1.0_FROZEN.md` | **Doc-7A structure FROZEN** — Frontend Realization Metastandard (structure); effective = `Doc-7A_Structure_Proposal_v0.1` + `Doc-7A_Structure_Patch_v0.1.1`. Fixes R1–R12; **surface-based partition** (Doc-7B Design System + Doc-7C App Shell *(frozen first)* + Doc-7D Public + 7E Account/Identity + 7F Buyer + 7G Vendor + 7H Admin); Appendix A = 9 `CHK-7-xxx` bands (per-surface freeze gate); cross-surface embedded-component allocation table (M5/M6/M7/M9 single-owned, no orphan UI). **Content passes NOT STARTED.** Coins nothing |
+| `Doc-7A_Structure_Proposal_v0.1.md` · `Doc-7A_Structure_Independent_Hard_Review_v0.1.md` · `Doc-7A_Structure_Patch_v0.1.1.md` · `Doc-7A_Structure_Freeze_Audit_v1.0.md` | Doc-7A structure authoring history (Pass → Board Hard Review [2 MAJOR + 3 MINOR + 2 NIT resolved, 1 REJECTED] → Structure Patch + short re-review PASS → Structure Freeze Audit PASS) |
+
+**Carried into Doc-7A content + Doc-7B…7H (per-surface gates):** `DR-7-SHELL` · `DR-7-API` · `DR-7-STATE` · `[ESC-7-API]` (additive Doc-5x patch) · `[ESC-7-POLICY]` (additive Doc-3 §12.2 patch) · `[ESC-7-DESIGN]`. **Next:** Doc-7A content passes (§0–§12 + Appendix A check IDs), then Doc-7B (Design System) + Doc-7C (App Shell) before the surface docs.
+
+---
+
 ## 6. Program Status, Roadmap & Context Packs
 
 | File | Purpose |

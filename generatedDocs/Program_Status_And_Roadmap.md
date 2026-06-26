@@ -81,6 +81,25 @@ Staged-freeze, mirroring Doc-5: a metastandard (Doc-6A — the Doc-5A analog) + 
 
 ---
 
+## 4c. Doc-7 Frontend Realization program (STARTED — runs in parallel with Doc-6)
+
+Staged-freeze, mirroring Doc-5/Doc-6: a metastandard (Doc-7A — the Doc-5A/Doc-6A analog) + **surface-partitioned** realizations Doc-7B…7H. Realizes the frozen Doc-5 API surface (`Doc-5A…5K`) + Doc-4M state machines + Doc-2 §6/§7/§0.4 on Next.js 15 App Router + React + Tailwind + shadcn/ui (the fixed Master-Architecture stack). **Consistent-with (not conformant-to) the frozen Doc-5 surface** (governance §8 rule 5); conforms to Doc-4M/Doc-2 (upstream). Partition departs from the backend-module letter map by intent — the UI is composed by deployable surface/route-group, not by module.
+
+| Doc-7 | Scope | Status |
+|---|---|---|
+| **7A** | Frontend Realization Metastandard | **STRUCTURE FROZEN 2026-06-26** (`Doc-7A_Structure_v1.0_FROZEN`) — R1–R12; surface partition; Appendix A = 9 `CHK-7-xxx` bands (per-surface freeze gate); coins nothing. Independent Hard Review (2 MAJOR + 3 MINOR + 2 NIT resolved, 1 REJECTED) + Structure Freeze Audit PASS. **Content passes NEXT** |
+| 7B | Design System & Component Kit *(frozen first)* | NOT STARTED — shared shadcn/ui kit, tokens/theme, presentation boundary, a11y/i18n/currency baseline, shared embedded components |
+| 7C | App Shell & Data Layer *(frozen second)* | NOT STARTED — App Router skeleton, active-org context boundary + switcher, typed Doc-5 API-client, notification center |
+| 7D | Public Surface (anonymous) | NOT STARTED — realizes `Doc-5D` public/anon |
+| 7E | Account & Identity Shell | NOT STARTED — realizes `Doc-5C` mgmt screens + `Doc-5I` account/billing |
+| 7F | Buyer Workspace | NOT STARTED — realizes `Doc-5E` buyer + `Doc-5F` ops + `Doc-5D` discovery; the moat surface |
+| 7G | Vendor Workspace | NOT STARTED — realizes `Doc-5E` vendor + `Doc-5D` presentation + `Doc-5F`; byte-equivalence non-disclosure load-bearing |
+| 7H | Admin Console | NOT STARTED — realizes `Doc-5J` + cross-module Admin reads; no active-org |
+
+**Carried into Doc-7A content + Doc-7B…7H (per-surface gates):** `DR-7-SHELL` (7B+7C frozen before surfaces) · `DR-7-API` (Doc-5 consumability cross-check) · `DR-7-STATE` (Doc-4M drives lifecycle UI) · `[ESC-7-API]` (additive Doc-5x patch — Board) · `[ESC-7-POLICY]` (additive Doc-3 §12.2 patch) · `[ESC-7-DESIGN]` (embedded-component allocation).
+
+---
+
 ## 5. Live work queue
 
 **Doc-5 API realization program — COMPLETE.** All 10 module realizations (M0–M9) content-FROZEN: 5B/5C/5D/5E/5F/5G/5H/5I/5J/5K, gated by the FROZEN Doc-5A metastandard. Doc-3 POLICY patches v1.0–v1.8 applied (one namespace per registered module; M1 identity none).
