@@ -73,8 +73,9 @@ Staged-freeze, mirroring Doc-5: a metastandard (Doc-6A — the Doc-5A analog) + 
 | Doc-6 | Scope | Status |
 |---|---|---|
 | **6A** | DB Realization Metastandard | **FROZEN 2026-06-26** (`Doc-6A_SERIES_FROZEN_v1.0`) — R1–R12 + §2.5 attribution; Appendix A = 10 bands / 37 `CHK-6-xxx`; Appendix B = Global Conventions Registry; R3(b) one-Prisma-namespace-per-module Board-ratified. Coins nothing |
-| 6B | M0 `core` schema | NEXT — `outbox_events`/`audit_records`/`id_sequences`/`system_configuration` (DR-6-CORE) |
-| 6C…6K | M1…M9 schemas | NOT STARTED |
+| **6B** | M0 `core` schema | **FROZEN 2026-06-26** (`Doc-6B_SERIES_FROZEN_v1.0`) — 5 platform-owned tables (DDL+Prisma); CR1–CR10 + **CR4′** column-scoped immutability (5 triggers); human-ref allocator; 18 `core.*` keys seeded; Appendix A 37/37 (0 FAIL); **DR-6-CORE resolved** |
+| 6C | M1 `identity` schema | NEXT — users/orgs/memberships/roles/permissions/delegation; first org-tenant-anchored (RLS load-bearing) + `human_ref` carriers; carries `[ESC-6-POLICY]` identity-namespace question |
+| 6D…6K | M2…M9 schemas | NOT STARTED |
 
 **Carried into Doc-6B…6K (per-module gates):** `DR-6-CORE/API/STATE` · `[ESC-6-SCHEMA]` · `[ESC-6-POLICY]` (incl. open M1 `identity` namespace — no v1.x patch; Doc-6C cross-check) · `[ESC-6-API]`.
 
@@ -84,11 +85,11 @@ Staged-freeze, mirroring Doc-5: a metastandard (Doc-6A — the Doc-5A analog) + 
 
 **Doc-5 API realization program — COMPLETE.** All 10 module realizations (M0–M9) content-FROZEN: 5B/5C/5D/5E/5F/5G/5H/5I/5J/5K, gated by the FROZEN Doc-5A metastandard. Doc-3 POLICY patches v1.0–v1.8 applied (one namespace per registered module; M1 identity none).
 
-**Doc-6 Database program — STARTED.** `Doc-6A` (metastandard) FROZEN 2026-06-26.
+**Doc-6 Database program — STARTED.** `Doc-6A` (metastandard) + `Doc-6B` (M0 `core`) FROZEN 2026-06-26.
 
 Next:
-1. **Doc-6B (M0 `core`)** — first per-module schema realization (DR-6-CORE) — the tables every module depends on.
-2. **Doc-6C…6K** — remaining module schemas, dependency order, each gated by Doc-6A Appendix A.
+1. **Doc-6C (M1 `identity`)** — next per-module schema; first org-tenant-anchored (RLS load-bearing) + `human_ref`-carrying tables; resolves the open `[ESC-6-POLICY]` identity-namespace question.
+2. **Doc-6D…6K** — remaining module schemas, dependency order, each gated by Doc-6A Appendix A.
 3. **Doc-7 (Frontend)** — Next.js App Router UI composition over the frozen API contracts (design track may run in parallel now).
 4. **Doc-8 (Tests)** — conformance + contract + integration suites (incl. the RLS positive/negative/cross-tenant byte-equivalence gate — Doc-6A §4.4/§11.5).
 5. Then: Development Decomposition → Build Roadmap → Implementation.

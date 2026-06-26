@@ -32,7 +32,7 @@ Corpus navigation: `generatedDocs/CORPUS_INDEX.md` · `generatedDocs/00_AUTHORIT
 ## Current Phase
 
 **Implementation Governance.**
-Architecture (Doc-2/3/4): **COMPLETE/FROZEN.** **Doc-5 (API realization): COMPLETE/FROZEN** — all 10 module realizations (M0–M9). **Doc-6 (Database): STARTED — metastandard `Doc-6A` FROZEN (2026-06-26); next = `Doc-6B` (M0 `core`).** Doc-7 (FE)/8 (Tests): NOT STARTED. Code: NOT STARTED.
+Architecture (Doc-2/3/4): **COMPLETE/FROZEN.** **Doc-5 (API realization): COMPLETE/FROZEN** — all 10 module realizations (M0–M9). **Doc-6 (Database): STARTED — `Doc-6A` (metastandard) + `Doc-6B` (M0 `core`) FROZEN (2026-06-26); next = `Doc-6C` (M1 `identity`).** Doc-7 (FE)/8 (Tests): NOT STARTED. Code: NOT STARTED.
 
 ### Doc-5 Program Status
 
@@ -97,9 +97,9 @@ Structure Proposal → Independent Hard Review → Structure Patch → Structure
 
 ## Immediate Next Actions
 
-**Doc-5 API realization is COMPLETE (M0–M9 frozen). Doc-6 Database program STARTED — `Doc-6A` metastandard FROZEN.** Next:
-1. **Doc-6B (M0 `core`):** first per-module schema realization (DR-6-CORE — `outbox_events`/`audit_records`/`id_sequences`/`system_configuration`); gated by Doc-6A Appendix A (`CHK-6-xxx`, 10 bands / 37 checks). Then Doc-6C…6K.
-   - Doc-6A is the DB metastandard (the Doc-5A analog): R1–R12 + §2.5 attribution + Appendix B Global Conventions Registry. Doc-6B…6K **realize** its conventions, coin nothing. Per-module carried gates: `[ESC-6-SCHEMA/POLICY/API]` (incl. open M1 `identity` POLICY namespace).
+**Doc-5 API realization is COMPLETE (M0–M9 frozen). Doc-6 Database program STARTED — `Doc-6A` metastandard + `Doc-6B` (M0 `core`) FROZEN.** Next:
+1. **Doc-6C (M1 `identity`):** next per-module schema; gated by Doc-6A Appendix A (`CHK-6-xxx`, 10 bands / 37 checks). First org-tenant-anchored tables (RLS load-bearing, unlike platform-owned `core`) + first `human_ref` carriers; resolves the open `[ESC-6-POLICY]` identity-namespace question. Then Doc-6D…6K.
+   - Doc-6A is the DB metastandard (the Doc-5A analog): R1–R12 + §2.5 attribution + Appendix B Global Conventions Registry. Doc-6B…6K **realize** its conventions, coin nothing. **Doc-6B (M0 `core`) FROZEN** — 5 platform-owned tables, CR4′ column-scoped immutability, human-ref allocator, DR-6-CORE resolved (the foundation every module references). Per-module carried gates: `[ESC-6-SCHEMA/POLICY/API]`.
 2. **Doc-7 (Frontend):** Next.js App Router UI over the frozen API contracts (design track may run in parallel now).
 3. **Doc-8 (Tests):** conformance + contract + integration suites (incl. RLS byte-equivalence gate).
 

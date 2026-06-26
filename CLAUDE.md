@@ -168,11 +168,14 @@ ratified. Authoritative blueprint lives in `generatedDocs/`.
   `Doc-6A` FROZEN (2026-06-26):** the DB analog of Doc-5A (R1–R12 + §2.5 realization-choice
   attribution; Appendix A = 10 bands / 37 `CHK-6-xxx` per-module freeze gate; Appendix B Global
   Conventions Registry; R3(b) one-Prisma-namespace-per-module Board-ratified; coins nothing).
-  **Next: Doc-6B (M0 `core`)** · then 6C…6K · Doc-7 (Frontend) · Doc-8 (Tests). Per-module
-  ledger: `generatedDocs/Program_Status_And_Roadmap.md`.
+  **`Doc-6B` (M0 `core`) FROZEN (2026-06-26):** 5 platform-owned tables (DDL+Prisma) realizing
+  Doc-2 §10.1; CR1–CR10 + **CR4′** column-scoped immutability (5 triggers); human-ref allocator;
+  18 `core.*` POLICY keys seeded; Appendix A 37/37 (0 FAIL); DR-6-CORE resolved (the foundation
+  every module references). **Next: Doc-6C (M1 `identity`)** · then 6D…6K · Doc-7 (Frontend) ·
+  Doc-8 (Tests). Per-module ledger: `generatedDocs/Program_Status_And_Roadmap.md`.
 - **Status:** architecture = COMPLETE/FROZEN · Doc-5 API contracts = COMPLETE/FROZEN (M0–M9) ·
-  Doc-6 DB = STARTED (Doc-6A metastandard FROZEN; Doc-6B…6K NOT STARTED) · Doc-7/8 = NOT STARTED ·
-  code = NOT STARTED.
+  Doc-6 DB = STARTED (Doc-6A metastandard + Doc-6B M0 `core` FROZEN; Doc-6C…6K NOT STARTED) ·
+  Doc-7/8 = NOT STARTED · code = NOT STARTED.
 
 ---
 
