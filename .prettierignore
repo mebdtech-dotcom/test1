@@ -1,0 +1,22 @@
+# Frozen corpus + governance docs — never reformat (authoritative; not WP-0.11's concern).
+generatedDocs/
+governanceReviews/
+*.md
+
+# Generated / build artifacts (gitignored).
+generated-contracts-registry/
+src/generated/
+.next/
+out/
+build/
+coverage/
+playwright-report/
+test-results/
+
+# Lockfile (managed by npm).
+package-lock.json
+
+# Local/editor + tooling files (not Wave-0 managed code).
+.claude/
+.husky/_/
+.git.code-workspace
