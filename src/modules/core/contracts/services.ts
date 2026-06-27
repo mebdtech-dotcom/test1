@@ -8,6 +8,7 @@
 // optional transaction executor so allocation/audit-append join the caller's single
 // transaction; absent one, the service runs on the shared client.
 
+import { allocateHumanReference as allocateHumanReferenceImpl } from "../infrastructure";
 import type {
   AllocateHumanReferenceInput,
   AllocateHumanReferenceResult,
@@ -52,3 +53,20 @@ export interface CoreServices {
   allocateHumanReference: AllocateHumanReference;
   appendAuditRecord: AppendAuditRecord;
 }
+
+// ── Concrete contract facades (WP-1.4 — closes the WP-1.3 deferred MINOR) ─────────────────────
+// The cross-module surface above is the TYPE; the concrete callable was previously reachable only
+// via `core.module.ts` (a `module-root`, NOT importable by `src/server`). These concrete facades let
+// the app-layer composition edge consume the M0 service through `@/modules/core/contracts` — strictly
+// contracts/-only cross-module access. The binding is same-module-legal: `core/contracts` →
+// `core/infrastructure` (the canonical DDD contracts-facade pattern; `${from.module}` constrains it to
+// THIS module — no cross-module internal access is opened). The infrastructure adapter IS the M0
+// `core.allocate_human_reference.v1` realization (Doc-4B §A7 / Doc-6B §3.3); this only re-exposes it on
+// the public surface, coining nothing.
+
+/**
+ * Concrete `core.allocate_human_reference.v1` (Doc-4B §A7) — the year-scoped `human_ref` allocator,
+ * bound to the M0 infrastructure adapter. Participates in the caller's transaction when an executor is
+ * supplied (Doc-4B §A7 atomicity). Consumed cross-module via `@/modules/core/contracts`.
+ */
+export const allocateHumanReference: AllocateHumanReference = allocateHumanReferenceImpl;

@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
@@ -6,6 +7,13 @@ import react from "@vitejs/plugin-react";
 // (tests/_harness/mocks.ts); domain/data/contract paths are never mocked (Band I).
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    // Mirror the tsconfig `@/*` → `./src/*` path alias so the app-layer (`src/server`) — which imports
+    // module contracts via `@/...` — is resolvable under Vitest. Pure test-infra parity; no architecture.
+    alias: [
+      { find: /^@\/(.*)$/, replacement: `${fileURLToPath(new URL("./src/", import.meta.url))}$1` },
+    ],
+  },
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
