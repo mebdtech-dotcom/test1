@@ -185,6 +185,7 @@ enum UserStatus {
   suspended
   soft_deleted
 
+  @@map("user_status")
   @@schema("identity")
 }
 
@@ -221,6 +222,7 @@ enum OrgStatus {
   suspended
   soft_deleted
 
+  @@map("org_status")
   @@schema("identity")
 }
 
@@ -229,6 +231,7 @@ enum VerificationLevel {
   verified
   enhanced_verified
 
+  @@map("verification_level")
   @@schema("identity")
 }
 
@@ -285,6 +288,7 @@ enum MembershipState {
   suspended
   removed
 
+  @@map("membership_state")
   @@schema("identity")
 }
 
