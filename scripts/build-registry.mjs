@@ -13,13 +13,7 @@
 // are DISCOVERED (any src/modules/<m> with a contracts/ dir), so the registry tracks the
 // real skeleton; the closed frozen module list is enforced separately by check-structure.mjs.
 
-import {
-  readdirSync,
-  statSync,
-  existsSync,
-  mkdirSync,
-  writeFileSync,
-} from "node:fs";
+import { readdirSync, statSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -43,17 +37,14 @@ const manifest = {
   modules: modules.map((name) => ({
     module: name,
     entry: `src/modules/${name}/contracts/index.ts`,
-    files: CONTRACT_FILES.filter((f) =>
-      existsSync(join(MODULES_DIR, name, "contracts", f)),
-    ).map((f) => `src/modules/${name}/contracts/${f}`),
+    files: CONTRACT_FILES.filter((f) => existsSync(join(MODULES_DIR, name, "contracts", f))).map(
+      (f) => `src/modules/${name}/contracts/${f}`,
+    ),
   })),
 };
 
 mkdirSync(OUT_DIR, { recursive: true });
-writeFileSync(
-  join(OUT_DIR, "contracts-manifest.json"),
-  JSON.stringify(manifest, null, 2) + "\n",
-);
+writeFileSync(join(OUT_DIR, "contracts-manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
 
 console.log(
   `registry: wrote contracts-manifest.json for ${modules.length} modules → generated-contracts-registry/`,

@@ -9,9 +9,7 @@ export const metadata: Metadata = {
   description: "Industrial Procurement Operating System for Bangladesh",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <body>{children}</body>
