@@ -1,0 +1,127 @@
+name: CI
+
+# Wave 0 merge-gate (Build_Roadmap §6; Doc-8B §8; REPOSITORY_STRUCTURE §10).
+# All jobs are intended to be REQUIRED checks on `main` (branch protection is a repo-admin
+# action — see governanceReviews/ for the Wave-0 external actions). A red/skipped/.only test
+# is a red gate (never-weaken, Doc-8B §8).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least-privilege: a build/test-only gate needs no write scope.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # CI uses a Postgres service container (no secrets). CREATE SCHEMA is pure Postgres, faithful
+  # for the Wave-0 gate; the real Supabase project + secrets are wired at Wave 1. Migrations use
+  # the direct connection (never the Supabase pooler).
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ivendorz
+  DIRECT_URL: postgresql://postgres:postgres@localhost:5432/ivendorz
+
+jobs:
+  verify:
+    name: Verify (types · lint · format · build · structure · secrets · FK)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # The Prisma client is gitignored — it MUST be regenerated on the runner before any
+      # typecheck/build (postinstall also does this; explicit here as a safety net).
+      - name: Generate Prisma client
+        run: npm run db:generate
+      - name: Validate Prisma schema
+        run: npx prisma validate
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint (incl. import-boundary)
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Structure conformance
+        run: node scripts/check-structure.mjs
+      - name: Secret scan
+        run: node scripts/check-no-secrets.mjs
+      - name: No cross-schema FK (migrations)
+        run: node scripts/check-no-cross-schema-fk.mjs
+      - name: No suppressed conformance tests (.only/.skip = red gate, Doc-8B §8)
+        run: |
+          if grep -rnE '\.(only|skip)\(' tests/; then
+            echo "::error::A .only/.skip test was found — suppressed tests are a red gate (Doc-8B §8)."
+            exit 1
+          fi
+          echo "no suppressed tests."
+      - name: Build (Next.js)
+        run: npm run build
+      - name: Generated-path drift check
+        run: |
+          npm run db:generate
+          npm run registry:build
+          if [ -n "$(git ls-files generated-contracts-registry src/generated)" ]; then
+            echo "::error::A generated artifact is tracked (must be gitignored)."
+            exit 1
+          fi
+          if ! git diff --quiet; then
+            echo "::error::Regeneration modified a tracked source file (hand-edited generated path?)."
+            git diff --stat
+            exit 1
+          fi
+          echo "generated paths clean."
+
+  unit:
+    name: Unit / integration (Vitest)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ivendorz
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      # Apply the forward-only migration set. At Wave 0 this is the PARKED baseline
+      # (ESC-W0-MIGRATE-SCHEMAS) — a no-op that proves the migrate runner. The
+      # "10 schemas migrate clean" PROBE is PARKED pending the Board ruling: do NOT assert
+      # schema existence here until R-a/R-b is decided.
+      - name: Apply migrations (parked baseline)
+        run: npm run db:migrate
+      - name: Vitest (runner + hermetic mock boundary)
+        run: npm run test
+
+  e2e:
+    name: E2E + a11y (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Playwright (smoke + axe a11y)
+        run: npm run test:e2e
