@@ -269,12 +269,15 @@ review/patch/audit trail is grouped by category.
 
 ---
 
-## 5e. Implementation Planning (Development Decomposition — current phase)
+## 5e. Implementation Planning & Build (Implementation — **current phase: Wave 1 — Foundation**)
 
 > The bridge from the frozen corpus to application code. **Non-authoritative**; decomposes
 > only — coins no architecture/API/schema/UI/event/permission/route/module/state/contract.
 > The corpus's declared phase sequence is **Development Decomposition → Build Roadmap →
-> Implementation (Code)**; this is the first step.
+> Implementation (Code)**; both planning artifacts are produced and the build has begun.
+> **Wave 0 — Repository Bootstrap is DELIVERED** to `main` (2026-06-27; baseline tag
+> `wave0-complete`; `Wave0_Baseline_Report_v1.0.md`). **Current phase: Wave 1 — Foundation**
+> (Walking Skeleton, `Build_Roadmap_v1.0.md` §3).
 
 | File | Purpose |
 |------|---------|
