@@ -279,6 +279,7 @@ review/patch/audit trail is grouped by category.
 | File | Purpose |
 |------|---------|
 | `Development_Decomposition_v1.0.md` | **Development Decomposition** — translates the frozen corpus (Doc-2…Doc-8) into buildable work: engineering streams · per-module work packages (uniform WP template + Build Artifact Checklist) · cross-cutting work · repository bootstrap (Wave 0) · walking skeleton · **dependency-ordered implementation waves** (M0→M1 serial → M2/M5/M6/M7 parallel → M3 moat → M4/M8 → M9) · parallelization plan · acceptance gates (Doc-8 bands A–I) · engineering risks + build-time rollback · milestones. No dates/estimates. Every item traces by pointer to a frozen authority; gaps → `[ESC-*]`. **Next:** the Build Roadmap |
+| `Build_Roadmap_v1.0.md` | **Build Roadmap** — the engineering *execution* plan that **sequences** the Development Decomposition into a gated build program: §0 summary · §1 build principles · §2 Repository Bootstrap (Wave 0) · §3 Walking Skeleton (Wave 1) · §4 module build waves (W2 M0→M1 · W3 M2/M5/M6/M7 parallel · W4 M3 moat · W5 M4/M8 · W6 M9) with per-wave Doc-8 suites + a reconciliation table to Decomposition §7 (finer re-partition, zero edge change) · §5 parallel streams · §6 merge strategy (one module scope per PR; multiple WP PRs) · §7 quality gates (DoR/DoD) · §8 engineering risks · §9 milestones incl. MVP-Ready/Production-Ready as engineering gate-states · §10 transition to code. No dates/estimates; coins nothing. **Final planning artifact before code — drives Wave 0.** |
 
 ---
 

@@ -9,11 +9,13 @@
 - **Frontend realization (Doc-7):** `Doc-7A`…`Doc-7H` — **all FROZEN** (`Doc-7_SERIES_FROZEN_v1.0`).
 - **Test & conformance (Doc-8):** `Doc-8A`…`Doc-8G` — **all FROZEN** (`Doc-8_SERIES_FROZEN_v1.0`; the conformance fabric, authored-not-run, gates the eventual Code).
 
-**Current phase: Development Decomposition → Build Roadmap → Implementation (Code).** The
-**Development Decomposition** has been produced (`generatedDocs/Development_Decomposition_v1.0.md`) —
-the non-authoritative bridge translating the frozen corpus into buildable work (engineering streams,
-per-module work packages, dependency-ordered build waves, acceptance gates). **Application code has
-not started**, and is gated by the Doc-8 conformance fabric.
+**Current phase: Development Decomposition → Build Roadmap → Implementation (Code).** Both planning
+artifacts are produced: the **Development Decomposition** (`generatedDocs/Development_Decomposition_v1.0.md`)
+— the non-authoritative bridge translating the frozen corpus into buildable work (engineering streams,
+per-module work packages, acceptance gates) — and the **Build Roadmap** (`generatedDocs/Build_Roadmap_v1.0.md`)
+— the gated execution sequence (Wave 0 Repository Bootstrap → Wave 6 M9; per-wave Doc-8 gates; merge
+strategy; Definitions of Ready/Done). **Next: Wave 0 (Repository Bootstrap) — the first code.**
+**Application code has not started**, and is gated by the Doc-8 conformance fabric.
 
 This is the entry point for any implementation work. Read it first, then follow the order below.
 
@@ -44,7 +46,8 @@ This is the entry point for any implementation work. Read it first, then follow 
 | 4 | [generatedDocs/CORPUS_INDEX.md](generatedDocs/CORPUS_INDEX.md) + [00_AUTHORITY_MAP.md](generatedDocs/00_AUTHORITY_MAP.md) | Find the canonical document for your task |
 | 5 | `generatedDocs/Doc-4A_Structure_v1.0_FROZEN.md` | API conventions (mandatory before contract work) |
 | 6 | The owning module's frozen contracts (Doc-4B…4M + its Doc-5x API + Doc-6x DB + Doc-7x FE + Doc-8x test) | The rules for the module you're touching |
-| 7 | `generatedDocs/Development_Decomposition_v1.0.md` | Current phase — how the frozen corpus decomposes into buildable work (streams, work packages, waves, gates) |
+| 7 | `generatedDocs/Development_Decomposition_v1.0.md` | How the frozen corpus decomposes into buildable work (streams, work packages, waves, gates) |
+| 8 | `generatedDocs/Build_Roadmap_v1.0.md` | Current phase — the gated build sequence (Wave 0 → Wave 6); start here to pick the next work package |
 
 ---
 
@@ -86,7 +89,7 @@ is insufficient.
 | Which doc is canonical | `generatedDocs/CORPUS_INDEX.md`, `generatedDocs/00_AUTHORITY_MAP.md` |
 | API conventions | Doc-4A |
 | State machines | Doc-4M · Event catalog | Doc-4J · Cross-module flows | Doc-4L |
-| Current phase | `generatedDocs/Development_Decomposition_v1.0.md` (decomposition → Build Roadmap → Code) · all module realizations FROZEN (Doc-5/6/7) + the Doc-8 conformance fabric (`Doc-8_SERIES_FROZEN_v1.0`) |
+| Current phase | `generatedDocs/Build_Roadmap_v1.0.md` (the gated build sequence; **Wave 0 next**) · `generatedDocs/Development_Decomposition_v1.0.md` (work breakdown) · all module realizations FROZEN (Doc-5/6/7) + the Doc-8 conformance fabric (`Doc-8_SERIES_FROZEN_v1.0`) |
 | Per-module ledger | `generatedDocs/Program_Status_And_Roadmap.md` · `CORPUS_INDEX.md` · `00_AUTHORITY_MAP.md` |
 
 ---

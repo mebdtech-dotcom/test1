@@ -77,13 +77,13 @@ imports (only `contracts/` is importable). **One module, one owner.**
 
 ## Project status
 
-The **architecture program is complete and frozen** (Master System Architecture, ADR Compendium,
-Doc-2, Doc-3, Doc-4A…4M). The project is in **Implementation Governance**; the active deliverable
-is **Doc-5A — API Realization Standards**, now **FROZEN** (`Doc-5A_SERIES_FROZEN_v1.0`; both freeze
-patches ratified 2026-06-24) — §0–§12 + Appendices A–C complete; freeze audit clean (0 open
-BLOCKER/MAJOR/MINOR). Per-module contracts (Doc-5B…5M) are next, each gated by the Appendix A
-conformance checklist; Doc-6/7/8 may plan in parallel. Application code is **not started** — the
-frozen corpus is the blueprint.
+The full design + realization + verification corpus — architecture, Doc-5 (API), Doc-6 (DB),
+Doc-7 (frontend), Doc-8 (test & conformance) — is **complete and frozen**; application code is
+gated by the Doc-8 conformance fabric. Program status has a **single source of truth** — it is
+not tracked in this file:
+
+- **Per-document authority & status:** [generatedDocs/00_AUTHORITY_MAP.md](generatedDocs/00_AUTHORITY_MAP.md)
+- **Current build phase & gated sequence:** [generatedDocs/Build_Roadmap_v1.0.md](generatedDocs/Build_Roadmap_v1.0.md)
 
 **Scaling target:** optimize for **100 → 1,000 → 10,000** vendors before 1,000,000.
 

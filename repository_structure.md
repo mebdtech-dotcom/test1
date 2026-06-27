@@ -1,11 +1,12 @@
 # iVendorz — Repository Structure
 
-**Document type:** Repository Constitution — non-authoritative engineering reference defining
+**Document type:** Structural Constitution — non-authoritative engineering reference defining
 **ownership, boundaries, and folder shape** (not implementation design; that is Doc-5…8).
-**Date:** 2026-06-23
-**Version:** v0.1 
-**Status:** FREEZE-READY. Conforms to the frozen architecture corpus; awaiting final
-board sign-off, after which work moves to Doc-5.
+**Date:** 2026-06-23 · **Governance freeze:** 2026-06-27
+**Version:** v1.0
+**Status:** **FROZEN v1.0** (governance layer freeze `governance-frozen-v1`, 2026-06-27). The
+governance *architecture* is ratified; content remains non-authoritative under, and patched to
+match, the frozen corpus.
 **Authoritative source:** On any conflict, the frozen document wins. See [`project_details.md`](project_details.md)
 
 ---

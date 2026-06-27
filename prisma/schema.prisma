@@ -1,0 +1,33 @@
+// iVendorz — Prisma schema (Wave 0 bootstrap).
+//
+// One PostgreSQL schema per module (Doc-2; one Prisma namespace per module, Doc-6A R3(b)).
+// multiSchema is GA in Prisma 6 — the 10 module namespaces are declared here; their tables
+// (models) are realized per module in later waves per the frozen Doc-6B…6K DDL.
+// NO business models at bootstrap — coin nothing; models land with their owning module.
+//
+// Codegen output lands in generated-contracts-registry/ — GENERATED, gitignored,
+// never hand-edited (Doc-6A §11.4; CLAUDE.md §10).
+//
+// Namespace → module → DB doc:
+//   core          M0 Platform Core / Shared Kernel  Doc-6B
+//   identity      M1 Identity & Organization        Doc-6C
+//   marketplace   M2 Marketplace & Discovery        Doc-6D
+//   rfq           M3 RFQ Procurement Engine (moat)  Doc-6E
+//   operations    M4 Business Operations            Doc-6F
+//   trust         M5 Trust & Verification           Doc-6G
+//   communication M6 Communication                  Doc-6H
+//   billing       M7 Monetization                   Doc-6I
+//   admin         M8 Admin Operations               Doc-6J
+//   ai            M9 AI Layer (reserved)            Doc-6K
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated-contracts-registry/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas   = ["core", "identity", "marketplace", "rfq", "operations", "trust", "communication", "billing", "admin", "ai"]
+}

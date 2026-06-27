@@ -1,8 +1,18 @@
 # CLAUDE.md — iVendorz
 
-> **Non-authoritative orientation + guardrails for AI agents.** Mirrors the frozen
-> architecture corpus; never overrides it. On any conflict, **the frozen document in
-> `generatedDocs/` wins** and this file is patched to match. Source: `generatedDocs/iVendorz_Master_Overview_v1.0.md` (v1.3).
+**Status:** Governance Constitution — **FROZEN v1.0** (`governance-frozen-v1`, 2026-06-27). The
+governance architecture/ownership model is ratified; changes require an additive patch + version
+bump. Content remains **non-authoritative under the frozen corpus** and is patched to match it.
+
+> **The repository Governance Constitution + guardrails for AI agents.** Owns the repository-wide,
+> permanent governance rules: authority order (§7), AI behavior (§8), **Review & Findings Governance**
+> (severity ladder · Validate Findings gate · Raise ≠ Accept · review philosophy), and the Red-Flag
+> Checklist. **Non-authoritative *under the frozen corpus*** — it never overrides architecture; on any
+> conflict **the frozen document in `generatedDocs/` wins** and this file is patched to match.
+> Companions (each a distinct single owner): `REPOSITORY_STRUCTURE.md` = the **Structural Constitution**
+> (repository layout & boundaries); program status/roadmap live in `generatedDocs/00_AUTHORITY_MAP.md`
+> + `generatedDocs/Program_Status_And_Roadmap.md` — **never restated here.**
+> Source: `generatedDocs/iVendorz_Master_Overview_v1.0.md` (v1.3).
 
 ---
 
@@ -143,10 +153,14 @@ requires an additive architecture patch **with human approval** — never a skil
 
 ---
 
-## 9. Document Map & Current State
+## 9. Document Map
 
-The **architecture program is COMPLETE/FROZEN.** Full Doc-4 series (Doc-4A → Doc-4M)
-ratified. Authoritative blueprint lives in `generatedDocs/`.
+> **Program status, phase, and history are NOT tracked here** (a constitution holds permanent
+> rules, not state). Single source of truth: `generatedDocs/00_AUTHORITY_MAP.md`
+> (authority/status/version per document) + `generatedDocs/Program_Status_And_Roadmap.md` (live
+> ledger). This section is a durable *map* of where things live.
+
+The authoritative blueprint lives in `generatedDocs/` (the frozen corpus).
 
 - **FROZEN:** Master System Architecture (FINAL) · ADR Compendium (v1) · Doc-2 (v1.0.3) ·
   Doc-3 (v1.0.2) · Doc-4A…4M (series freeze: `Doc-4_SERIES_FROZEN_v1.0.md`).
@@ -158,85 +172,20 @@ ratified. Authoritative blueprint lives in `generatedDocs/`.
 - **Authority pointers:** state machines = **Doc-4M** · authoritative event catalog = **Doc-4J** ·
   cross-module event-flow map = **Doc-4L** · outbox owned by **M0**.
 - **Non-authoritative orientation set (root):** `README.md` · `project_details.md` ·
-  `REPOSITORY_STRUCTURE.md` (repository constitution) · this file. All mirror the corpus and
-  are patched to match it.
-- **Current phase:** Implementation Governance. **Doc-5 API Realization program = COMPLETE** —
-  **Doc-5A metastandard FROZEN** (gates 5B…5M via Appendix A) + **all 10 module realizations
-  content-FROZEN: Doc-5B (M0) · 5C (M1) · 5D (M2) · 5E (M3) · 5F (M4) · 5G (M5) · 5H (M6) ·
-  5I (M7) · 5J (M8, 2026-06-26) · 5K (M9).** Doc-3 POLICY patches v1.0–v1.8 applied (one namespace
-  per registered module; M1 identity none). **Doc-6 (Database) program COMPLETE/FROZEN (2026-06-26) — Doc-6A + Doc-6B…6K (M0–M9) all frozen; metastandard
-  `Doc-6A`:** the DB analog of Doc-5A (R1–R12 + §2.5 realization-choice
-  attribution; Appendix A = 10 bands / 37 `CHK-6-xxx` per-module freeze gate; Appendix B Global
-  Conventions Registry; R3(b) one-Prisma-namespace-per-module Board-ratified; coins nothing).
-  **`Doc-6B` (M0 `core`) FROZEN (2026-06-26):** 5 platform-owned tables (DDL+Prisma) realizing
-  Doc-2 §10.1; CR1–CR10 + **CR4′** column-scoped immutability (5 triggers); human-ref allocator;
-  18 `core.*` POLICY keys seeded; Appendix A 37/37 (0 FAIL); DR-6-CORE resolved (the foundation
-  every module references). **`Doc-7` (Frontend program, all 8 surfaces 7A–7H) COMPLETE/FROZEN
-  (2026-06-26; `Doc-7_SERIES_FROZEN_v1.0`)** and **`Doc-8A` (Test &
-  Conformance metastandard) FROZEN (2026-06-26; structure + content)** — three sibling implementation-contract
-  programs (DB/FE/Test); Doc-7 is now complete, Doc-6/Doc-8 continue, each gated by its Appendix A. **Doc-8A** = the test
-  analog of Doc-5A/6A/7A (R1–R12; test-discipline partition Doc-8B…8G with Doc-8B Foundation/Harness
-  frozen first; cross-cutting conformance-concern allocation assert-once; Appendix A **39 `CHK-8-xxx`
-  checks / 9 bands**; conformance harness yet subordinate to its oracle — a red test = code defect or
-  corpus defect (`[ESC-8-CORPUS]`), never weaken the assertion; coins nothing). **`Doc-6C` (M1 `identity`)
-  FROZEN (2026-06-26):** 9 tables (DDL+Prisma+RLS) realizing Doc-2 §10.2 — first real org-anchor RLS (all 9
-  explicit) + roles-NULL-seed + dual-party `delegation_grants`; auth boundary (no secret); `human_ref` via
-  `core`; 3 state machines; **Doc-3 v1.9 registers the 7 `identity.*` POLICY keys** (clears `[ESC-6-POLICY]`);
-  Appendix A 37/37. **`Doc-6D` (M2 `marketplace`) FROZEN (2026-06-26):** 21 tables / 8 aggregates (DDL+Prisma+RLS+FTS)
-  realizing Doc-2 §10.3 — **first public/anonymous tri-actor RLS** (Public/User/Admin; visibility-scope = publish-state,
-  **no `buyer_private` coined**); capability matrix (4 booleans); §5.3 two-dimension + §5.8 state; **score firewall**
-  (no score column; bands reflected, never calculated); `financial_tier_history` exclusive-writer-as-consumer (Trust never
-  writes; append-only); `vendor_matching_attributes` derived read-model (admin-only; RFQ via service); versioned
-  `spec_documents` (column-scoped immutability); 4-level admin-governed category tree; **first real FTS**; ad money = M7
-  by reference; Appendix A 37/37; carries `[ESC-6-DD7]`/`[ESC-MKT-AUDIT]`/`[ESC-6-SCHEMA-SHOWCASE]`. **`Doc-6E` (M3 `rfq`) FROZEN
-  (2026-06-26) — the moat:** 12 tables / 5 groupings (DDL+Prisma+RLS) realizing Doc-2 §10.4 — **first dual-sided buyer+vendor
-  grant-row RLS** (materialized `rfq_invitation_grantees`/`rfq_document_grants`/`quotation_visibility` anchors + party columns;
-  never cross-schema traversal; refresh-on-revocation); **blacklist undetectable — first real in-scope CHK-6-022 byte-equivalence**
-  (gate-excluded never written to `matching_results`; `rfq_routing_log` aggregate-only + no vendor policy; matching/log/comparison
-  buyer-side-only); RFQ §5.4 (13) + Quotation §5.5 (6) state machines; one-active-quotation partial-unique; `rfq_versions.is_immutable`-
-  once-quoted; two human_refs (RFQ-…/QTN-…); reads M2 matching-attrs via service, owns matching; Appendix A 37/37; carries
-  `[ESC-RFQ-AUDIT]`/`[ESC-RFQ-SCHEMA-RULES]`. **`Doc-6F` (M4 `operations`) FROZEN (2026-06-26):** 19 tables / 6 groupings (DDL+Prisma+RLS)
-  realizing Doc-2 §10.5 — **the blacklist's owning side** (`buyer_vendor_statuses` + private CRM strictly `organization_id`-tenant —
-  **no vendor, no admin-all**; non-disclosure byte-equivalence in-scope CHK-6-022; served to M3 via CRM service only); **two-sided engagement
-  party-column RLS** (`active_org IN (buyer_organization_id, vendor_controlling_org_id)`); **money-record boundary — no funds custody**
-  (`trade_invoices ≠ billing.platform_invoices`; no balance/gateway/escrow; money facts immutable); governance signal #5 never mutates
-  platform scores; versioned post-award docs; idempotent `VendorInvited` lead; human_refs ENG-/DOC-/INV-; Appendix A 37/37; carries
-  `[ESC-OPS-AUDIT]`. **`Doc-6G` (M5 `trust`) FROZEN (2026-06-26):** 11 tables / 5 groupings (DDL+Prisma+RLS) realizing Doc-2 §10.6 —
-  **the governance-signal owner — the firewall's authoritative side** (Trust/Performance/verified-Tier/Capacity computed independently;
-  no cross-score column/FK; **Buyer Vendor Status never enters**); **scores System-written, never hand-edited** (no in-band write policy;
-  System owner-role/`SECURITY DEFINER`); **public band = M2 reflection** (no public raw-score read); **Admin decides, Trust owns**;
-  `verified_financial_tiers` emits `VendorTierChanged`; idempotent `performance_inputs`; `public_reviews` post-award/published-public;
-  `admin_ratings` staff-only; no human_ref (CHK-6-002 N/A); Appendix A 37/37 (4 justified N/A); carries `[ESC-TRUST-AUDIT]`.
-  **`Doc-6H` (M6 `communication`) FROZEN (2026-06-26):** 9 tables / 4 groupings (DDL+Prisma+RLS) realizing Doc-2 §10.7 — **delivery-only**
-  (M6 transmits, owns no business content); **participant-grant RLS** (third grant pattern; `thread_participants` simple anchor, terminates);
-  **append-only System-written delivery logs** (email/sms/whatsapp; column-scoped status); notifications/logs **M0-event consumers**; Realtime
-  messages (SD=hidden); org+staff support; **schema = `communication`** (the prior `comms` slip patched, §3 above); no human_ref; Appendix A 37/37
-  (4 justified N/A); carries `[ESC-COMM-AUDIT]`. **`Doc-6I` (M7 `billing`) FROZEN (2026-06-26):** 13 tables / 6 groupings (DDL+Prisma+RLS)
-  realizing Doc-2 §10.8 — **the platform's OWN revenue** (`platform_invoices` `INV-P-…` via gateway; **`≠ operations.trade_invoices`** — no
-  `operations` FK; the trade flow untouched); **the billing firewall** (no billing state gates trust/eligibility/routing/matching);
-  **entitlements (boolean/numeric/enum), never plan-name** (Financial Tier ≠ Subscription Plan); subscription §5.7 + one-active partial-unique
-  + 3 §8 events; `record_payment`=gateway callback (not §8); append-only ledgers + column-scoped invoices/payments; money-vs-points; Appendix A
-  37/37; carries `[ESC-BILL-AUDIT]`. **`Doc-6J` (M8 `admin`) FROZEN (2026-06-26):** 10 tables / 5 groupings (DDL+Prisma+RLS) realizing Doc-2 §10.9 —
-  **the authoritative event catalog (Doc-4J)**; **"Admin decides, owning module owns"** (M8 writes no owning-module authoritative table; ban→M2,
-  verification→M5, link→M4, import→M2 via event/service); the ban authority (`ban_actions` emits `VendorBanned`); **`link_suggestions` never
-  vendor-visible** (A-03; CHK-6-022 in-scope); append-only `import_rows`; no event coined; no human_ref (CHK-6-002 N/A); Appendix A 37/37; carries
-  `[ESC-ADMIN-AUDIT]`/`[ESC-ADMIN-SCHEMA-OUTREACH]`. **`Doc-6K` (M9 `ai`) FROZEN (2026-06-26) — the FINAL Doc-6 module:** 4 cache tables (DDL+Prisma+RLS)
-  realizing Doc-2 §10.10 — **"AI suggests; modules decide"** (Invariant #12 — owns no authoritative data; never source of truth; no §8 event/no score);
-  **the sole `ai.*` TTL hard-delete exception** (Doc-6A R7 — hard-DELETE permitted; no SD, no immutability; **CHK-6-033 the active PASS**); requesting-org RLS;
-  no human_ref; Appendix A 37/37; carries `[ESC-AI-AUDIT]`. **→ Doc-6 Database program COMPLETE/FROZEN (Doc-6A + Doc-6B…6K, M0–M9).**
-  **Doc-7 COMPLETE (7A–7H frozen)** · Doc-8D (Persistence/RLS — now fully unblocked: full schema oracle) then 8E…8G. Per-module ledger: `generatedDocs/Program_Status_And_Roadmap.md`.
-- **Status:** architecture = COMPLETE/FROZEN · Doc-5 API contracts = COMPLETE/FROZEN (M0–M9) ·
-  Doc-6 DB = **COMPLETE/FROZEN (Doc-6A + Doc-6B…6K, M0–M9 — all 11 deliverables frozen)** ·
-  Doc-7 FE = **COMPLETE/FROZEN (7A–7H all frozen; `Doc-7_SERIES_FROZEN_v1.0`)** ·
-  Doc-8 Test = **COMPLETE/FROZEN (Doc-8A…8G — all 7 deliverables frozen; `Doc-8_SERIES_FROZEN_v1.0`; the conformance fabric, authored-not-run)** ·
-  code = NOT STARTED (gated by the Doc-8 conformance fabric). **All design + realization (Doc-5/6/7) + verification (Doc-8) programs COMPLETE/FROZEN; next phase = Development Decomposition → Build Roadmap → Implementation.**
+  `REPOSITORY_STRUCTURE.md` (Structural Constitution) · this file (Governance Constitution). All
+  mirror the corpus and are patched to match it.
+- **Current state (not restated here):** the status SSoT is `generatedDocs/00_AUTHORITY_MAP.md`
+  (authority/status/version per document) + `generatedDocs/Program_Status_And_Roadmap.md` (live
+  ledger). Current build phase + gated sequence: `generatedDocs/Build_Roadmap_v1.0.md`. No
+  per-module freeze narrative is mirrored in this constitution.
 
 ---
 
-## 10. Repository Layout (Repository Constitution)
+## 10. Repository Layout (Structural Constitution)
 
-Authoritative layout reference: **`REPOSITORY_STRUCTURE.md`** (Repository Constitution,
-non-authoritative under the frozen corpus; freeze-ready). Read it before any code-layout work.
+Authoritative layout reference: **`REPOSITORY_STRUCTURE.md`** (the **Structural Constitution** —
+repository layout & boundaries; non-authoritative under the frozen corpus; freeze-ready). Read it
+before any code-layout work.
 Project description: **`project_details.md`**.
 
 ```
@@ -297,6 +246,44 @@ the transactional write model are governed by Doc-2/4B/4J/4L (reference, never r
 
 Caveman plugin mode may be active in this environment (terse output). Code, commits, and
 security/irreversible-action confirmations are always written in normal prose.
+
+---
+
+## 13. Review & Findings Governance
+
+Repository-wide rules for **every** review in this repo — documentation, architecture,
+implementation, database, frontend, test, AI, and code reviews. These codify the practice already
+used throughout the frozen corpus's Hard Reviews and Freeze Audits; **they coin nothing.**
+
+**Severity ladder** (the labels used in every corpus Hard Review / Freeze Audit):
+
+| Severity | Meaning | Gating? |
+|---|---|---|
+| **BLOCKER** | Violates the frozen corpus, an invariant, or a Golden Rule; or makes the deliverable wrong/unsafe. | Yes |
+| **MAJOR** | Substantive defect/omission that materially degrades correctness, security, or conformance. | Yes |
+| **MINOR** | Real but contained defect; does not threaten correctness or conformance. | Yes |
+| **NITPICK (NIT)** | Style/clarity/polish. | No (deferrable) |
+| **OBS** | Observation — neutral note or future-watch item; no action implied. | No |
+
+**Freeze/merge gate:** a deliverable does not freeze or merge until **BLOCKER = 0 · MAJOR = 0 ·
+MINOR = 0**. NITPICK and OBS never block (the corpus freeze-audit convention).
+
+**Separation of Duties — Raise ≠ Accept:**
+- The **reviewer raises** findings (each with a severity); the reviewer **never decides implementation.**
+- The **author** — or the presiding authority per §7 — **evaluates** each finding and rules on it.
+- **Only validated findings are implemented.** A raised finding is a claim, not a mandate; an
+  independent review may override a document's self-classification.
+
+**Validate Findings gate** — every finding is adjudicated against four questions before it is actioned:
+1. **Valid?** — is the finding factually correct?
+2. **Applicable?** — does it apply in this scope/context?
+3. **Best for the product?** — is acting on it the right outcome, not just a local fix?
+4. **Consistent with the frozen corpus?** — does the resolution conform upward (§7)? If a finding
+   conflicts with a frozen document, **Flag-and-Halt** (§11) and escalate — never resolve locally.
+
+A finding that fails any of the four is recorded with its disposition and **not** implemented.
+Implementation-execution gates (Definition of Ready/Done, Wave Integration/Exit audits) apply this
+governance and are owned by `generatedDocs/Build_Roadmap_v1.0.md`.
 
 ---
 
