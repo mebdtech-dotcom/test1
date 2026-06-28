@@ -6,24 +6,30 @@
  * iVendorz Design System — Wave 0 Foundation
  * Enterprise industrial B2B marketplace tokens.
  * Color model: HSL channel triplets consumed via hsl(var(--token)).
- * Hues: Industrial Blue (brand) + Slate neutrals + functional status colors.
+ * Brand: Deep Industrial Navy (primary) + Amber/Gold (highlight CTA)
+ *        + Slate neutrals + functional status colors.
  */
 
 @layer base {
   :root {
     /* Surfaces */
     --background: 210 25% 98%;
-    --foreground: 215 30% 16%;
+    --foreground: 215 32% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 30% 16%;
+    --card-foreground: 215 32% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 30% 16%;
+    --popover-foreground: 215 32% 15%;
 
-    /* Brand — Industrial Blue */
-    --primary: 214 84% 39%;
+    /* Brand — Deep Industrial Navy */
+    --primary: 212 58% 24%;
     --primary-foreground: 0 0% 100%;
+
+    /* Highlight — Amber/Gold (high-emphasis CTAs, brand moments) */
+    --highlight: 36 96% 50%;
+    --highlight-foreground: 25 60% 14%;
+    --highlight-subtle: 40 96% 95%;
 
     /* Secondary — subtle neutral surface */
     --secondary: 214 28% 94%;
@@ -34,8 +40,8 @@
     --muted-foreground: 215 16% 46%;
 
     /* Accent — interactive hover surfaces */
-    --accent: 214 32% 93%;
-    --accent-foreground: 214 84% 32%;
+    --accent: 212 34% 93%;
+    --accent-foreground: 212 58% 24%;
 
     /* Destructive / Error */
     --destructive: 0 72% 48%;
@@ -57,27 +63,27 @@
     /* Lines & fields */
     --border: 214 22% 88%;
     --input: 214 22% 86%;
-    --ring: 214 84% 39%;
+    --ring: 212 58% 32%;
 
     /* Corner rounding (base) */
     --radius: 0.5rem;
 
-    /* Charts */
-    --chart-1: 214 84% 39%;
-    --chart-2: 152 56% 35%;
-    --chart-3: 35 92% 48%;
-    --chart-4: 262 60% 52%;
-    --chart-5: 188 70% 38%;
+    /* Charts — navy, teal, amber, green, slate (no purple) */
+    --chart-1: 212 58% 32%;
+    --chart-2: 188 70% 38%;
+    --chart-3: 36 96% 50%;
+    --chart-4: 152 56% 35%;
+    --chart-5: 215 16% 52%;
 
-    /* Sidebar shell — dark industrial graphite */
-    --sidebar: 216 38% 13%;
+    /* Sidebar shell — deep industrial navy */
+    --sidebar: 214 44% 13%;
     --sidebar-foreground: 214 20% 82%;
-    --sidebar-primary: 214 90% 56%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 216 30% 20%;
+    --sidebar-primary: 36 96% 52%;
+    --sidebar-primary-foreground: 25 60% 14%;
+    --sidebar-accent: 214 34% 20%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 216 28% 22%;
-    --sidebar-ring: 214 90% 56%;
+    --sidebar-border: 214 30% 22%;
+    --sidebar-ring: 36 96% 52%;
   }
 
   .dark {
@@ -90,8 +96,12 @@
     --popover: 216 34% 12%;
     --popover-foreground: 214 20% 92%;
 
-    --primary: 214 90% 56%;
-    --primary-foreground: 216 40% 8%;
+    --primary: 210 70% 62%;
+    --primary-foreground: 216 44% 10%;
+
+    --highlight: 36 96% 54%;
+    --highlight-foreground: 25 60% 12%;
+    --highlight-subtle: 36 40% 16%;
 
     --secondary: 216 28% 18%;
     --secondary-foreground: 214 20% 92%;
@@ -100,7 +110,7 @@
     --muted-foreground: 214 14% 62%;
 
     --accent: 216 28% 20%;
-    --accent-foreground: 214 90% 70%;
+    --accent-foreground: 210 70% 72%;
 
     --destructive: 0 65% 52%;
     --destructive-foreground: 0 0% 100%;
@@ -119,22 +129,22 @@
 
     --border: 216 24% 22%;
     --input: 216 24% 24%;
-    --ring: 214 90% 56%;
+    --ring: 210 70% 62%;
 
-    --chart-1: 214 90% 60%;
-    --chart-2: 152 56% 50%;
-    --chart-3: 35 92% 58%;
-    --chart-4: 262 70% 66%;
-    --chart-5: 188 70% 50%;
+    --chart-1: 210 70% 62%;
+    --chart-2: 188 70% 50%;
+    --chart-3: 36 96% 58%;
+    --chart-4: 152 56% 50%;
+    --chart-5: 215 20% 64%;
 
-    --sidebar: 216 42% 7%;
+    --sidebar: 214 46% 8%;
     --sidebar-foreground: 214 20% 80%;
-    --sidebar-primary: 214 90% 60%;
-    --sidebar-primary-foreground: 216 40% 8%;
-    --sidebar-accent: 216 30% 16%;
+    --sidebar-primary: 36 96% 56%;
+    --sidebar-primary-foreground: 25 60% 12%;
+    --sidebar-accent: 214 32% 16%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 216 26% 18%;
-    --sidebar-ring: 214 90% 60%;
+    --sidebar-border: 214 28% 18%;
+    --sidebar-ring: 36 96% 56%;
   }
 }
 

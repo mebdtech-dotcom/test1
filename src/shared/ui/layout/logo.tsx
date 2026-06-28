@@ -1,5 +1,3 @@
-import { Boxes } from "lucide-react";
-
 import { cn } from "@/shared/ui/lib/cn";
 
 interface LogoProps {
@@ -20,12 +18,14 @@ export function Logo({ className, collapsed = false, tone = "default" }: LogoPro
     <span className={cn("flex items-center gap-2.5", className)}>
       <span
         className={cn(
-          "flex size-8 shrink-0 items-center justify-center rounded-md",
-          isInverted ? "bg-sidebar-primary text-sidebar-primary-foreground" : "bg-primary text-primary-foreground",
+          "flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-extrabold tracking-tight",
+          isInverted
+            ? "bg-sidebar-accent text-sidebar-primary"
+            : "bg-primary text-highlight",
         )}
         aria-hidden="true"
       >
-        <Boxes className="size-5" />
+        iV
       </span>
       {!collapsed && (
         <span

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import {
+  ArrowRight,
   Bell,
   Box,
   ChevronDown,
@@ -66,6 +67,12 @@ import {
   DropdownMenuTrigger,
   EmptyState,
   ErrorState,
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldRow,
   Input,
   Label,
   Pagination,
@@ -133,6 +140,7 @@ const TOKEN_SWATCHES = [
   { name: "Background", className: "bg-background border border-border", text: "text-foreground" },
   { name: "Card", className: "bg-card border border-border", text: "text-card-foreground" },
   { name: "Primary", className: "bg-primary", text: "text-primary-foreground" },
+  { name: "Highlight", className: "bg-highlight", text: "text-highlight-foreground" },
   { name: "Secondary", className: "bg-secondary", text: "text-secondary-foreground" },
   { name: "Accent", className: "bg-accent", text: "text-accent-foreground" },
   { name: "Muted", className: "bg-muted", text: "text-muted-foreground" },
@@ -180,6 +188,13 @@ export function ShowcaseClient() {
               </code>{" "}
               and themed entirely through design tokens.
             </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <Button variant="highlight">
+                Post RFQ — 100% Free
+                <ArrowRight data-icon="inline-end" />
+              </Button>
+              <Button variant="outline">Browse suppliers</Button>
+            </div>
           </div>
         </header>
 
@@ -207,7 +222,7 @@ export function ShowcaseClient() {
             <Section
               id="tokens"
               title="Color tokens"
-              description="Industrial blue brand, slate neutrals, and functional status colors. Never hard-code hex values — always reference semantic tokens."
+              description="Deep industrial navy brand with an amber highlight for high-emphasis CTAs, slate neutrals, and functional status colors. Never hard-code hex values — always reference semantic tokens."
             >
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
                 {TOKEN_SWATCHES.map((s) => (
@@ -262,6 +277,10 @@ export function ShowcaseClient() {
                     <Plus data-icon="inline-start" />
                     Create RFQ
                   </Button>
+                  <Button variant="highlight">
+                    Post RFQ — Free
+                    <ArrowRight data-icon="inline-end" />
+                  </Button>
                   <Button variant="secondary">Secondary</Button>
                   <Button variant="outline">
                     <Filter data-icon="inline-start" />
@@ -297,6 +316,7 @@ export function ShowcaseClient() {
             >
               <div className="flex flex-wrap items-center gap-2">
                 <Badge>Default</Badge>
+                <Badge variant="highlight">Featured</Badge>
                 <Badge variant="secondary">Draft</Badge>
                 <Badge variant="success">Verified</Badge>
                 <Badge variant="warning">Pending</Badge>
@@ -314,29 +334,43 @@ export function ShowcaseClient() {
               <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Text inputs</CardTitle>
-                    <CardDescription>Labels, placeholders and multi-line entry.</CardDescription>
+                    <CardTitle>Text inputs &amp; fields</CardTitle>
+                    <CardDescription>
+                      Composed with <code className="font-mono text-xs">FieldGroup</code> +{" "}
+                      <code className="font-mono text-xs">Field</code>, including validation.
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="ds-company">Company name</Label>
-                      <Input id="ds-company" placeholder="e.g. Meghna Industrial Ltd." />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="ds-email">Work email</Label>
-                      <Input id="ds-email" type="email" placeholder="procurement@company.com" />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="ds-note">Requirement notes</Label>
-                      <Textarea
-                        id="ds-note"
-                        placeholder="Describe quantity, specs, delivery timeline…"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="ds-disabled">Disabled</Label>
-                      <Input id="ds-disabled" disabled placeholder="Unavailable" />
-                    </div>
+                  <CardContent>
+                    <FieldGroup>
+                      <Field>
+                        <FieldLabel htmlFor="ds-company">Company name</FieldLabel>
+                        <Input id="ds-company" placeholder="e.g. Meghna Industrial Ltd." />
+                        <FieldDescription>
+                          As registered with the RJSC.
+                        </FieldDescription>
+                      </Field>
+                      <Field data-invalid>
+                        <FieldLabel htmlFor="ds-email">Work email</FieldLabel>
+                        <Input
+                          id="ds-email"
+                          type="email"
+                          defaultValue="procurement@company"
+                          aria-invalid
+                        />
+                        <FieldError>Enter a valid work email address.</FieldError>
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="ds-note">Requirement notes</FieldLabel>
+                        <Textarea
+                          id="ds-note"
+                          placeholder="Describe quantity, specs, delivery timeline…"
+                        />
+                      </Field>
+                      <Field data-disabled>
+                        <FieldLabel htmlFor="ds-disabled">Disabled</FieldLabel>
+                        <Input id="ds-disabled" disabled placeholder="Unavailable" />
+                      </Field>
+                    </FieldGroup>
                   </CardContent>
                 </Card>
 
@@ -382,12 +416,12 @@ export function ShowcaseClient() {
                       </RadioGroup>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <FieldRow>
                       <Checkbox id="ds-terms" defaultChecked />
                       <Label htmlFor="ds-terms" className="font-normal">
                         Save as default shipping address
                       </Label>
-                    </div>
+                    </FieldRow>
 
                     <div className="flex items-center justify-between rounded-lg border border-border p-3">
                       <div className="flex flex-col">
