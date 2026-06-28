@@ -4,6 +4,8 @@
 
 export {
   handleGetBuyerProfile,
+  loadActiveOrgBuyerProfile,
+  type ActiveOrgBuyerProfileOutcome,
   type GetBuyerProfileHandlerDeps,
   type ResolveSession,
 } from "./get-buyer-profile.route-handler";

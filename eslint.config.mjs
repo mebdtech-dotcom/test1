@@ -107,8 +107,12 @@ const config = [
             { from: ["app"], allow: ["app", "module-contracts", "server", "shared"] },
             { from: ["inngest"], allow: ["inngest", "module-contracts", "server", "shared"] },
             // Tests may compose any module's contracts/ + shared + server, never internals
-            // (§10: no cross-module import bypasses contracts/, including from test code).
-            { from: ["tests"], allow: ["tests", "module-contracts", "shared", "server"] },
+            // (§10: no cross-module import bypasses contracts/, including from test code). E2E/a11y
+            // specs may ALSO import the `app` presentation layer they exercise (render a page/view for
+            // an axe scan) — `app` is the composition/UI layer, NOT a module internal, so this opens NO
+            // cross-module-internal access and the One-Module rule is untouched. [WP-1.6 test-infra:
+            // tests→app for e2e/a11y rendering, mirrors the WP-1.3 same-module boundaries refinement.]
+            { from: ["tests"], allow: ["tests", "module-contracts", "shared", "server", "app"] },
           ],
         },
       ],
