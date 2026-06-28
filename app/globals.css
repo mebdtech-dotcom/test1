@@ -1,3 +1,157 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * iVendorz Design System — Wave 0 Foundation
+ * Enterprise industrial B2B marketplace tokens.
+ * Color model: HSL channel triplets consumed via hsl(var(--token)).
+ * Hues: Industrial Blue (brand) + Slate neutrals + functional status colors.
+ */
+
+@layer base {
+  :root {
+    /* Surfaces */
+    --background: 210 25% 98%;
+    --foreground: 215 30% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 30% 16%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 30% 16%;
+
+    /* Brand — Industrial Blue */
+    --primary: 214 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary — subtle neutral surface */
+    --secondary: 214 28% 94%;
+    --secondary-foreground: 215 30% 22%;
+
+    /* Muted — low-emphasis surfaces / text */
+    --muted: 214 24% 95%;
+    --muted-foreground: 215 16% 46%;
+
+    /* Accent — interactive hover surfaces */
+    --accent: 214 32% 93%;
+    --accent-foreground: 214 84% 32%;
+
+    /* Destructive / Error */
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Functional status — Success / Warning / Info */
+    --success: 152 56% 35%;
+    --success-foreground: 0 0% 100%;
+    --success-subtle: 152 50% 95%;
+
+    --warning: 35 92% 48%;
+    --warning-foreground: 30 60% 12%;
+    --warning-subtle: 40 90% 95%;
+
+    --info: 205 88% 45%;
+    --info-foreground: 0 0% 100%;
+    --info-subtle: 205 90% 95%;
+
+    /* Lines & fields */
+    --border: 214 22% 88%;
+    --input: 214 22% 86%;
+    --ring: 214 84% 39%;
+
+    /* Corner rounding (base) */
+    --radius: 0.5rem;
+
+    /* Charts */
+    --chart-1: 214 84% 39%;
+    --chart-2: 152 56% 35%;
+    --chart-3: 35 92% 48%;
+    --chart-4: 262 60% 52%;
+    --chart-5: 188 70% 38%;
+
+    /* Sidebar shell — dark industrial graphite */
+    --sidebar: 216 38% 13%;
+    --sidebar-foreground: 214 20% 82%;
+    --sidebar-primary: 214 90% 56%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 30% 20%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 216 28% 22%;
+    --sidebar-ring: 214 90% 56%;
+  }
+
+  .dark {
+    --background: 216 38% 9%;
+    --foreground: 214 20% 92%;
+
+    --card: 216 34% 12%;
+    --card-foreground: 214 20% 92%;
+
+    --popover: 216 34% 12%;
+    --popover-foreground: 214 20% 92%;
+
+    --primary: 214 90% 56%;
+    --primary-foreground: 216 40% 8%;
+
+    --secondary: 216 28% 18%;
+    --secondary-foreground: 214 20% 92%;
+
+    --muted: 216 26% 16%;
+    --muted-foreground: 214 14% 62%;
+
+    --accent: 216 28% 20%;
+    --accent-foreground: 214 90% 70%;
+
+    --destructive: 0 65% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 50% 44%;
+    --success-foreground: 0 0% 100%;
+    --success-subtle: 152 40% 16%;
+
+    --warning: 35 88% 56%;
+    --warning-foreground: 30 60% 10%;
+    --warning-subtle: 38 50% 16%;
+
+    --info: 205 85% 58%;
+    --info-foreground: 216 40% 8%;
+    --info-subtle: 205 50% 16%;
+
+    --border: 216 24% 22%;
+    --input: 216 24% 24%;
+    --ring: 214 90% 56%;
+
+    --chart-1: 214 90% 60%;
+    --chart-2: 152 56% 50%;
+    --chart-3: 35 92% 58%;
+    --chart-4: 262 70% 66%;
+    --chart-5: 188 70% 50%;
+
+    --sidebar: 216 42% 7%;
+    --sidebar-foreground: 214 20% 80%;
+    --sidebar-primary: 214 90% 60%;
+    --sidebar-primary-foreground: 216 40% 8%;
+    --sidebar-accent: 216 30% 16%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 216 26% 18%;
+    --sidebar-ring: 214 90% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1, "cv11" 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Tabular figures for numeric/data-heavy enterprise surfaces */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}
