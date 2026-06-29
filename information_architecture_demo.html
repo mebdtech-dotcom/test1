@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<!--
+  iVendorz — Wave 0C-R · Visual Reference Demo (single page, NON-PRODUCTION)
+  ============================================================================
+  Realizes : information_architecture.md (Wave 0C) — app-shell anatomy (§3.3),
+             global navigation (§4), wayfinding (§5), surface sitemap (§6.3 Buyer).
+  Tokens   : design_philosophy.md §2 / app/globals.css — bound, never re-coined.
+  Theme    : DARK — mirrors the shipped globals.css (light-default divergence is
+             deliberately deferred; this demo reflects what the code renders today).
+  Status   : Non-authoritative companion. Coins no route, contract, or token.
+             On any conflict, the frozen corpus wins (CLAUDE.md §7, §11).
+  Note     : Lucide icons + Inter/JetBrains Mono load from CDN; offline the layout
+             still holds. This is a reference artifact, not a production component.
+-->
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>iVendorz · Wave 0C-R — IA Visual Reference Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+/* =========================================================================
+   DESIGN TOKENS — copied verbatim from app/globals.css (--iv- namespace)
+   ========================================================================= */
+:root{
+  /* === THEME-INDEPENDENT PRIMITIVES === */
+  /* Brand — Deep Navy + Electric Indigo (constant ramp) */
+  --iv-brand-50:#eef2ff;--iv-brand-100:#e0e7ff;--iv-brand-500:#6366f1;--iv-brand-600:#4f46e5;
+  --iv-brand-700:#4338ca;--iv-brand-800:#3730a3;--iv-brand-900:#312e81;--iv-brand-950:#1e1b4b;
+  /* Procurement Amber */
+  --iv-amber-300:#fcd34d;--iv-amber-400:#fbbf24;--iv-amber-500:#f59e0b;--iv-amber-600:#d97706;
+  /* Status — base/bright (constant) */
+  --iv-success-base:#16a34a;--iv-success-bright:#22c55e;
+  --iv-warning-base:#ca8a04;--iv-warning-bright:#eab308;
+  --iv-danger-base:#dc2626;--iv-danger-bright:#ef4444;
+  --iv-info-base:#2563eb;--iv-info-bright:#3b82f6;
+  --iv-neutral-base:#94a3b8;
+  /* Trust / Tier / Capability (constant) */
+  --iv-trust-low:#ef4444;--iv-trust-medium:#f59e0b;--iv-trust-high:#22c55e;--iv-trust-elite:#6366f1;
+  --iv-tier-c:#60a5fa;--iv-tier-d:#fbbf24;
+  --iv-cap-supply:#3b82f6;--iv-cap-service:#818cf8;--iv-cap-fabricate:#fbbf24;--iv-cap-consult:#22c55e;
+  /* Type */
+  --iv-font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --iv-font-mono:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+  --iv-text-2xs:.625rem;--iv-text-xs:.75rem;--iv-text-sm:.875rem;--iv-text-base:1rem;
+  --iv-text-lg:1.125rem;--iv-text-xl:1.25rem;--iv-text-2xl:1.5rem;--iv-text-3xl:1.875rem;
+  /* Spacing */
+  --iv-space-1:4px;--iv-space-2:8px;--iv-space-3:12px;--iv-space-4:16px;--iv-space-5:20px;
+  --iv-space-6:24px;--iv-space-8:32px;--iv-space-10:40px;--iv-space-12:48px;
+  /* Radius */
+  --iv-radius-sm:4px;--iv-radius-md:8px;--iv-radius-lg:12px;--iv-radius-xl:16px;--iv-radius-full:9999px;
+  /* Motion */
+  --iv-duration-fast:100ms;--iv-duration-normal:200ms;--iv-ease-in-out:cubic-bezier(.4,0,.2,1);
+  /* Z-index */
+  --iv-z-raised:10;--iv-z-dropdown:100;--iv-z-sticky:200;--iv-z-overlay:300;--iv-z-modal:400;--iv-z-toast:500;
+  /* Layout tokens (design_philosophy.md §2.9) */
+  --iv-sidebar-width:264px;--iv-sidebar-collapsed:64px;--iv-topbar-height:56px;
+  --iv-content-max:1440px;--iv-page-max:1600px;--iv-rail-width:320px;
+
+  /* ============================================================
+     THEME-VARYING TOKENS — LIGHT = DEFAULT (design_philosophy §3.1)
+     The shipped globals.css still defaults dark; this demo follows
+     the philosophy's primary theme. Theme = presentation-only swap
+     of these aliases (Doc-7B §3.4). Toggle via html[data-theme].
+     ============================================================ */
+  --iv-surface-base:#f8fafc;--iv-surface-raised:#ffffff;--iv-surface-overlay:#ffffff;
+  --iv-surface-muted:#f1f5f9;--iv-surface-border:#e2e8f0;--iv-surface-hover:#f1f5f9;--iv-surface-selected:#e0e7ff;
+  --iv-fg:#0f172a;                 /* primary text (slate-900) */
+  --iv-neutral-text:#475569;       /* secondary / body (slate-600) */
+  --iv-neutral-bright:#64748b;     /* muted (slate-500) */
+  --iv-neutral-muted:#cbd5e1;      /* hairline fills / scrollbar */
+  --iv-brand-200:#4338ca;--iv-brand-300:#4338ca;--iv-brand-400:#4f46e5;  /* accent text/icons on light */
+  --iv-success-subtle:rgba(22,163,74,.10);--iv-success-text:#15803d;
+  --iv-warning-subtle:rgba(202,138,4,.12);--iv-warning-text:#a16207;
+  --iv-danger-subtle:rgba(220,38,38,.10);--iv-danger-text:#b91c1c;
+  --iv-info-subtle:rgba(37,99,235,.10);--iv-info-text:#1d4ed8;
+  --iv-neutral-subtle:rgba(100,116,139,.12);
+  --iv-shadow-sm:0 1px 2px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.10);
+  --iv-shadow-md:0 4px 8px rgba(15,23,42,.08),0 2px 4px rgba(15,23,42,.06);
+  --iv-shadow-lg:0 10px 28px rgba(15,23,42,.12),0 4px 8px rgba(15,23,42,.08);
+  --iv-shadow-xl:0 18px 44px rgba(15,23,42,.16),0 8px 16px rgba(15,23,42,.10);
+  --iv-glow-brand:0 0 0 1px rgba(99,102,241,.40),0 0 0 3px rgba(99,102,241,.12);
+  --iv-glow-amber:0 0 0 1px rgba(245,158,11,.40),0 0 0 3px rgba(245,158,11,.12);
+}
+
+/* ============================================================
+   DARK THEME — mirrors the shipped app/globals.css token values
+   ============================================================ */
+html[data-theme="dark"]{
+  --iv-surface-base:#0a0e1a;--iv-surface-raised:#0f1424;--iv-surface-overlay:#151b2e;
+  --iv-surface-muted:#1c2340;--iv-surface-border:#252d47;--iv-surface-hover:#1e2540;--iv-surface-selected:#202745;
+  --iv-fg:#ffffff;
+  --iv-neutral-text:#d1d5db;--iv-neutral-bright:#9ca3af;--iv-neutral-muted:#374151;--iv-neutral-base:#6b7280;
+  --iv-brand-200:#c7d2fe;--iv-brand-300:#a5b4fc;--iv-brand-400:#818cf8;
+  --iv-success-subtle:rgba(22,163,74,.08);--iv-success-text:#4ade80;
+  --iv-warning-subtle:rgba(202,138,4,.08);--iv-warning-text:#fde047;
+  --iv-danger-subtle:rgba(220,38,38,.08);--iv-danger-text:#fca5a5;
+  --iv-info-subtle:rgba(37,99,235,.08);--iv-info-text:#93c5fd;
+  --iv-neutral-subtle:rgba(107,114,128,.08);
+  --iv-shadow-sm:0 2px 4px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3);
+  --iv-shadow-md:0 4px 8px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.4);
+  --iv-shadow-lg:0 8px 24px rgba(0,0,0,.6),0 4px 8px rgba(0,0,0,.4);
+  --iv-shadow-xl:0 16px 40px rgba(0,0,0,.7),0 8px 16px rgba(0,0,0,.5);
+  --iv-glow-brand:0 0 0 1px rgba(99,102,241,.3),0 0 20px rgba(99,102,241,.15);
+  --iv-glow-amber:0 0 0 1px rgba(251,191,36,.3),0 0 20px rgba(251,191,36,.12);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{font-size:16px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{
+  margin:0;font-family:var(--iv-font-sans);background:var(--iv-surface-base);
+  color:var(--iv-neutral-text);line-height:1.5;min-height:100dvh;font-size:var(--iv-text-sm);
+}
+[data-type="ref"],[data-type="amount"],[data-type="id"],.mono{font-family:var(--iv-font-mono);font-variant-numeric:tabular-nums}
+[data-numeric]{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--iv-brand-500);outline-offset:2px;border-radius:var(--iv-radius-sm)}
+::selection{background:rgba(99,102,241,.25)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--iv-surface-raised)}
+::-webkit-scrollbar-thumb{background:var(--iv-surface-border);border-radius:var(--iv-radius-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--iv-neutral-muted)}
+button{font-family:inherit}
+.lucide,[data-lucide]{width:18px;height:18px;stroke-width:1.5;flex:none}
+
+/* =========================================================================
+   DEMO BANNER
+   ========================================================================= */
+.demo-banner{
+  display:flex;align-items:center;gap:var(--iv-space-3);flex-wrap:wrap;
+  padding:var(--iv-space-2) var(--iv-space-4);
+  background:var(--iv-surface-raised);color:var(--iv-neutral-text);
+  border-bottom:1px solid var(--iv-surface-border);box-shadow:inset 0 -1px 0 var(--iv-surface-border);font-size:var(--iv-text-xs);
+}
+.demo-banner b{color:var(--iv-fg);letter-spacing:.02em}
+.demo-banner .muted{color:var(--iv-neutral-bright)}
+.demo-banner .spacer{flex:1}
+.demo-banner button{
+  display:inline-flex;align-items:center;gap:6px;background:var(--iv-surface-raised);
+  color:var(--iv-neutral-text);border:1px solid var(--iv-surface-border);
+  border-radius:var(--iv-radius-md);padding:5px 10px;font-size:var(--iv-text-xs);cursor:pointer;
+  transition:all var(--iv-duration-normal) var(--iv-ease-in-out);
+}
+.demo-banner button{background:var(--iv-surface-muted)}
+.demo-banner button:hover{border-color:var(--iv-brand-700);color:var(--iv-fg)}
+.demo-banner button[data-on="true"]{background:rgba(99,102,241,.16);border-color:var(--iv-brand-600);color:var(--iv-brand-200)}
+
+/* =========================================================================
+   IA ANNOTATION TAGS (toggleable) — ties each region back to the IA spec
+   ========================================================================= */
+.ia-tag{
+  position:absolute;top:4px;right:6px;z-index:var(--iv-z-raised);
+  font-family:var(--iv-font-mono);font-size:9px;letter-spacing:.02em;
+  background:rgba(99,102,241,.92);color:#fff;padding:2px 6px;border-radius:var(--iv-radius-sm);
+  box-shadow:var(--iv-shadow-sm);pointer-events:none;white-space:nowrap;display:none;
+}
+body[data-ia="true"] .ia-tag{display:inline-block}
+body[data-ia="true"] [data-region]{outline:1px dashed rgba(99,102,241,.4);outline-offset:-1px}
+[data-region]{position:relative}
+
+/* =========================================================================
+   TOPBAR — IA §3.3 / §4.2
+   ========================================================================= */
+.topbar{
+  position:sticky;top:0;z-index:var(--iv-z-sticky);height:var(--iv-topbar-height);
+  display:flex;align-items:center;gap:var(--iv-space-3);
+  padding:0 var(--iv-space-4);background:var(--iv-surface-raised);
+  border-bottom:1px solid var(--iv-surface-border);box-shadow:var(--iv-shadow-sm);
+}
+.brand{display:flex;align-items:center;gap:var(--iv-space-2);font-weight:800;color:var(--iv-fg);font-size:var(--iv-text-base);letter-spacing:-.02em}
+.brand-mark{
+  width:30px;height:30px;border-radius:var(--iv-radius-md);display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--iv-brand-500),var(--iv-brand-700));color:#fff;box-shadow:var(--iv-glow-brand)
+}
+.brand-mark [data-lucide]{width:18px;height:18px;stroke-width:2}
+.brand em{color:var(--iv-amber-400);font-style:normal}
+.tb-divider{width:1px;height:24px;background:var(--iv-surface-border)}
+
+/* Org switcher */
+.org-switch{
+  display:flex;align-items:center;gap:var(--iv-space-2);padding:6px 10px;cursor:pointer;
+  background:var(--iv-surface-muted);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-md);
+  transition:all var(--iv-duration-normal) var(--iv-ease-in-out);max-width:230px;
+}
+.org-switch:hover{border-color:var(--iv-brand-700);background:var(--iv-surface-hover)}
+.org-avatar{width:24px;height:24px;border-radius:var(--iv-radius-sm);background:var(--iv-brand-800);color:#fff;display:grid;place-items:center;font-size:var(--iv-text-2xs);font-weight:700;flex:none}
+.org-meta{min-width:0}
+.org-name{color:var(--iv-fg);font-weight:600;font-size:var(--iv-text-xs);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.org-role{color:var(--iv-neutral-bright);font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+
+/* Generic topbar button */
+.tb-btn{
+  display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 var(--iv-space-3);
+  background:transparent;color:var(--iv-neutral-bright);border:1px solid transparent;
+  border-radius:var(--iv-radius-md);cursor:pointer;font-size:var(--iv-text-sm);
+  transition:all var(--iv-duration-normal) var(--iv-ease-in-out);position:relative;
+}
+.tb-btn:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.tb-create{background:var(--iv-brand-600);color:#fff;border-color:var(--iv-brand-500);font-weight:500}
+.tb-create:hover{background:var(--iv-brand-500);color:#fff;box-shadow:var(--iv-glow-brand)}
+
+/* Command palette trigger */
+.cmd-trigger{
+  display:inline-flex;align-items:center;gap:var(--iv-space-2);height:36px;padding:0 10px;cursor:pointer;
+  background:var(--iv-surface-muted);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-md);
+  color:var(--iv-neutral-bright);font-size:var(--iv-text-xs);transition:all var(--iv-duration-normal) var(--iv-ease-in-out);
+}
+.cmd-trigger:hover{border-color:var(--iv-brand-700);color:var(--iv-fg)}
+kbd{
+  font-family:var(--iv-font-mono);font-size:10px;background:var(--iv-surface-base);color:var(--iv-neutral-text);
+  border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-sm);padding:1px 5px;line-height:1.4
+}
+
+/* Search */
+.search{position:relative;flex:1;max-width:340px}
+.search [data-lucide]{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--iv-neutral-base);width:16px;height:16px}
+.search input{
+  width:100%;height:36px;background:var(--iv-surface-muted);border:1px solid var(--iv-surface-border);
+  border-radius:var(--iv-radius-md);color:var(--iv-fg);font-size:var(--iv-text-sm);padding:0 var(--iv-space-3) 0 32px;outline:none;
+  transition:all var(--iv-duration-normal) var(--iv-ease-in-out);
+}
+.search input::placeholder{color:var(--iv-neutral-base)}
+.search input:focus{border-color:var(--iv-brand-500);box-shadow:var(--iv-glow-brand);background:var(--iv-surface-overlay)}
+
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:var(--iv-space-1)}
+.icon-btn{
+  position:relative;width:36px;height:36px;display:grid;place-items:center;background:transparent;
+  border:1px solid transparent;border-radius:var(--iv-radius-md);color:var(--iv-neutral-bright);cursor:pointer;
+  transition:all var(--iv-duration-normal) var(--iv-ease-in-out);
+}
+.icon-btn:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.icon-btn.ai{color:var(--iv-brand-300)}
+.badge-count{
+  position:absolute;top:1px;right:1px;min-width:16px;height:16px;padding:0 3px;border-radius:var(--iv-radius-full);
+  background:var(--iv-danger-base);color:#fff;font-size:9px;font-weight:700;display:grid;place-items:center;border:2px solid var(--iv-surface-raised)
+}
+.user-btn{display:flex;align-items:center;gap:6px;padding:3px 6px 3px 3px;border-radius:var(--iv-radius-full);background:var(--iv-surface-muted);border:1px solid var(--iv-surface-border);cursor:pointer;transition:all var(--iv-duration-normal) var(--iv-ease-in-out)}
+.user-btn:hover{border-color:var(--iv-brand-700)}
+.user-avatar{width:28px;height:28px;border-radius:var(--iv-radius-full);background:linear-gradient(135deg,var(--iv-brand-500),var(--iv-amber-500));color:#fff;display:grid;place-items:center;font-size:var(--iv-text-xs);font-weight:700}
+
+/* =========================================================================
+   POPOVERS / DROPDOWNS
+   ========================================================================= */
+.pop{
+  position:absolute;z-index:var(--iv-z-dropdown);background:var(--iv-surface-overlay);
+  border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-lg);box-shadow:var(--iv-shadow-lg);
+  padding:var(--iv-space-2);min-width:240px;display:none;animation:pop .15s var(--iv-ease-in-out)
+}
+.pop.open{display:block}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pop-title{font-size:var(--iv-text-2xs);text-transform:uppercase;letter-spacing:.08em;color:var(--iv-neutral-base);padding:6px 10px}
+.pop-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--iv-radius-md);color:var(--iv-neutral-text);cursor:pointer;font-size:var(--iv-text-sm);transition:background var(--iv-duration-fast)}
+.pop-item:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.pop-item [data-lucide]{width:16px;height:16px;color:var(--iv-neutral-bright)}
+.pop-item .meta{margin-left:auto;color:var(--iv-neutral-base);font-size:var(--iv-text-xs)}
+.pop-sep{height:1px;background:var(--iv-surface-border);margin:6px 0}
+.pop-item.current{background:rgba(99,102,241,.12)}
+.pop-item.current .check{margin-left:auto;color:var(--iv-brand-300)}
+
+/* =========================================================================
+   SHELL — IA §3.3
+   ========================================================================= */
+.shell{display:flex;align-items:stretch;min-height:calc(100dvh - var(--iv-topbar-height))}
+
+/* Sidebar — IA §4.3 */
+.sidebar{
+  width:var(--iv-sidebar-width);flex:none;background:var(--iv-surface-raised);
+  border-right:1px solid var(--iv-surface-border);display:flex;flex-direction:column;
+  position:sticky;top:var(--iv-topbar-height);height:calc(100dvh - var(--iv-topbar-height));
+  transition:width var(--iv-duration-normal) var(--iv-ease-in-out);
+}
+body[data-rail="true"] .sidebar{width:var(--iv-sidebar-collapsed)}
+.side-scroll{flex:1;overflow-y:auto;padding:var(--iv-space-3) var(--iv-space-2)}
+.nav-group{margin-bottom:var(--iv-space-4)}
+.nav-label{font-size:var(--iv-text-2xs);text-transform:uppercase;letter-spacing:.1em;color:var(--iv-neutral-base);padding:6px 12px;font-weight:600}
+body[data-rail="true"] .nav-label{opacity:0;height:6px;padding:0;overflow:hidden}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:9px 12px;margin:1px 0;border-radius:var(--iv-radius-md);
+  color:var(--iv-neutral-bright);cursor:pointer;font-size:var(--iv-text-sm);font-weight:500;text-decoration:none;
+  transition:all var(--iv-duration-fast) var(--iv-ease-in-out);position:relative;white-space:nowrap;
+}
+.nav-item [data-lucide]{width:18px;height:18px;flex:none;color:var(--iv-neutral-base)}
+.nav-item:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.nav-item:hover [data-lucide]{color:var(--iv-neutral-text)}
+.nav-item.active{background:rgba(99,102,241,.14);color:var(--iv-fg)}
+.nav-item.active [data-lucide]{color:var(--iv-brand-300)}
+.nav-item.active::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:var(--iv-brand-400)}
+.nav-count{margin-left:auto;font-family:var(--iv-font-mono);font-size:var(--iv-text-2xs);background:var(--iv-surface-muted);color:var(--iv-neutral-text);border-radius:var(--iv-radius-full);padding:1px 7px;min-width:20px;text-align:center}
+.nav-item.active .nav-count{background:var(--iv-brand-700);color:#fff}
+body[data-rail="true"] .nav-label,body[data-rail="true"] .nav-item span,body[data-rail="true"] .nav-count{display:none}
+body[data-rail="true"] .nav-item{justify-content:center;padding:9px 0}
+.side-footer{border-top:1px solid var(--iv-surface-border);padding:var(--iv-space-2)}
+.collapse-btn{display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;background:transparent;border:none;color:var(--iv-neutral-bright);cursor:pointer;border-radius:var(--iv-radius-md);font-size:var(--iv-text-xs)}
+.collapse-btn:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+body[data-rail="true"] .collapse-btn span{display:none}
+body[data-rail="true"] .collapse-btn{justify-content:center}
+
+/* =========================================================================
+   MAIN COLUMN
+   ========================================================================= */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.main-inner{flex:1;width:100%;max-width:var(--iv-page-max);margin:0 auto;padding:0}
+
+/* Breadcrumb — IA §4.5 */
+.breadcrumb{
+  display:flex;align-items:center;gap:8px;padding:10px var(--iv-space-6);
+  font-size:var(--iv-text-xs);color:var(--iv-neutral-bright);border-bottom:1px solid var(--iv-surface-border);
+  background:var(--iv-surface-base);
+}
+.breadcrumb a{color:var(--iv-neutral-bright);text-decoration:none}
+.breadcrumb a:hover{color:var(--iv-brand-300)}
+.breadcrumb [data-lucide]{width:13px;height:13px;color:var(--iv-neutral-base)}
+.breadcrumb .leaf{color:var(--iv-fg);font-weight:500;font-family:var(--iv-font-mono)}
+
+/* Page header — IA §3.3 / design_philosophy §5.3 */
+.page-header{padding:var(--iv-space-5) var(--iv-space-6) var(--iv-space-4)}
+.ph-top{display:flex;align-items:flex-start;gap:var(--iv-space-4);flex-wrap:wrap}
+.ph-title-wrap{min-width:0;flex:1}
+.ph-title{display:flex;align-items:center;gap:var(--iv-space-3);flex-wrap:wrap}
+.ph-title h1{margin:0;font-size:var(--iv-text-3xl);font-weight:700;color:var(--iv-fg);letter-spacing:-.02em}
+.ph-sub{margin-top:6px;color:var(--iv-neutral-bright);font-size:var(--iv-text-sm)}
+.ph-actions{display:flex;align-items:center;gap:var(--iv-space-2);flex-wrap:wrap}
+
+/* Buttons (design_philosophy / globals.css .iv-btn family) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 var(--iv-space-4);
+  font-size:var(--iv-text-sm);font-weight:500;border-radius:var(--iv-radius-md);border:1px solid transparent;cursor:pointer;
+  transition:all var(--iv-duration-normal) var(--iv-ease-in-out);white-space:nowrap}
+.btn [data-lucide]{width:16px;height:16px}
+.btn-primary{background:var(--iv-brand-600);color:#fff;border-color:var(--iv-brand-500)}
+.btn-primary:hover{background:var(--iv-brand-500);box-shadow:var(--iv-glow-brand)}
+.btn-amber{background:var(--iv-amber-500);color:#0a0e1a;border-color:var(--iv-amber-400);font-weight:600}
+.btn-amber:hover{background:var(--iv-amber-400);box-shadow:var(--iv-glow-amber)}
+.btn-secondary{background:var(--iv-surface-muted);color:var(--iv-neutral-text);border-color:var(--iv-surface-border)}
+.btn-secondary:hover{background:var(--iv-surface-hover);border-color:var(--iv-brand-800);color:var(--iv-fg)}
+.btn-ghost{background:transparent;color:var(--iv-neutral-bright)}
+.btn-ghost:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.btn-icon{width:36px;padding:0}
+
+/* Status chip */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:var(--iv-radius-full);
+  font-size:var(--iv-text-2xs);font-weight:600;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.chip .dot{width:6px;height:6px;border-radius:50%}
+.chip-info{background:var(--iv-info-subtle);color:var(--iv-info-text);border:1px solid rgba(37,99,235,.25)}
+.chip-info .dot{background:var(--iv-info-bright)}
+.chip-warn{background:var(--iv-warning-subtle);color:var(--iv-warning-text);border:1px solid rgba(202,138,4,.25)}
+.chip-warn .dot{background:var(--iv-warning-bright)}
+.chip-success{background:var(--iv-success-subtle);color:var(--iv-success-text);border:1px solid rgba(34,197,94,.25)}
+.chip-success .dot{background:var(--iv-success-bright)}
+.chip-neutral{background:var(--iv-neutral-subtle);color:var(--iv-neutral-text);border:1px solid rgba(107,114,128,.25)}
+.chip-neutral .dot{background:var(--iv-neutral-bright)}
+.chip-brand{background:rgba(99,102,241,.15);color:var(--iv-brand-300);border:1px solid rgba(99,102,241,.3)}
+.chip-brand .dot{background:var(--iv-brand-400)}
+
+/* Tabs — IA §4.4 */
+.tabs{display:flex;align-items:center;gap:2px;border-bottom:1px solid var(--iv-surface-border);padding:0 var(--iv-space-6);margin-top:var(--iv-space-4)}
+.tab{padding:10px 14px;color:var(--iv-neutral-bright);font-size:var(--iv-text-sm);font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color var(--iv-duration-fast);display:flex;align-items:center;gap:7px}
+.tab:hover{color:#fff}
+.tab.active{color:#fff;border-bottom-color:var(--iv-brand-500)}
+.tab .pill{font-family:var(--iv-font-mono);font-size:var(--iv-text-2xs);background:var(--iv-surface-muted);color:var(--iv-neutral-text);border-radius:var(--iv-radius-full);padding:1px 7px}
+.tab.active .pill{background:var(--iv-brand-700);color:#fff}
+
+/* Content layout: main + right rail — IA §3.3 */
+.content{display:grid;grid-template-columns:minmax(0,1fr) var(--iv-rail-width);gap:var(--iv-space-5);padding:var(--iv-space-5) var(--iv-space-6) var(--iv-space-8)}
+@media(max-width:1180px){.content{grid-template-columns:minmax(0,1fr)}.rail{display:none}}
+
+/* Stat cards (design_philosophy §5 stat-card) */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--iv-space-4);margin-bottom:var(--iv-space-5)}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--iv-surface-raised);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-lg);padding:var(--iv-space-4);box-shadow:var(--iv-shadow-sm)}
+.stat-card .label{display:flex;align-items:center;gap:8px;color:var(--iv-neutral-bright);font-size:var(--iv-text-xs);font-weight:500}
+.stat-card .label [data-lucide]{width:15px;height:15px}
+.stat-card .value{font-size:var(--iv-text-3xl);font-weight:700;color:#fff;margin-top:8px;letter-spacing:-.02em}
+.stat-card .delta{font-size:var(--iv-text-xs);margin-top:4px;display:flex;align-items:center;gap:4px}
+.delta.up{color:var(--iv-success-text)}.delta.down{color:var(--iv-danger-text)}.delta.flat{color:var(--iv-neutral-bright)}
+.delta [data-lucide]{width:13px;height:13px}
+
+/* Filter bar — IA §6 / design_philosophy §5.1 */
+.panel{background:var(--iv-surface-raised);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-lg);box-shadow:var(--iv-shadow-sm);overflow:hidden}
+.filter-bar{display:flex;align-items:center;gap:var(--iv-space-2);padding:var(--iv-space-3);border-bottom:1px solid var(--iv-surface-border);flex-wrap:wrap}
+.filter-search{position:relative;flex:1;min-width:200px}
+.filter-search [data-lucide]{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--iv-neutral-base);width:15px;height:15px}
+.filter-search input{width:100%;height:32px;background:var(--iv-surface-muted);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-md);color:#fff;font-size:var(--iv-text-xs);padding:0 10px 0 30px;outline:none}
+.filter-search input:focus{border-color:var(--iv-brand-500);box-shadow:var(--iv-glow-brand)}
+.fchip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;background:var(--iv-surface-muted);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-md);color:var(--iv-neutral-text);font-size:var(--iv-text-xs);cursor:pointer;transition:all var(--iv-duration-fast)}
+.fchip:hover{border-color:var(--iv-brand-700);color:var(--iv-fg)}
+.fchip [data-lucide]{width:14px;height:14px;color:var(--iv-neutral-bright)}
+.fchip.on{background:rgba(99,102,241,.14);border-color:var(--iv-brand-600);color:var(--iv-brand-200)}
+.density{margin-left:auto;display:flex;border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-md);overflow:hidden}
+.density button{width:32px;height:32px;display:grid;place-items:center;background:var(--iv-surface-muted);border:none;color:var(--iv-neutral-bright);cursor:pointer}
+.density button [data-lucide]{width:15px;height:15px}
+.density button.on{background:var(--iv-brand-700);color:#fff}
+
+/* Table — design_philosophy §5.1 */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:var(--iv-text-sm)}
+thead th{
+  position:sticky;top:0;z-index:var(--iv-z-raised);background:var(--iv-surface-overlay);
+  text-align:left;font-size:var(--iv-text-2xs);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--iv-neutral-bright);font-weight:600;padding:10px var(--iv-space-3);border-bottom:1px solid var(--iv-surface-border);white-space:nowrap;
+}
+tbody td{padding:12px var(--iv-space-3);border-bottom:1px solid var(--iv-surface-border);color:var(--iv-neutral-text);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background var(--iv-duration-fast)}
+tbody tr:hover{background:var(--iv-surface-hover)}
+tbody tr.selected{background:var(--iv-surface-selected)}
+tbody tr.selected td:first-child{box-shadow:inset 3px 0 0 var(--iv-brand-400)}
+body[data-density="compact"] tbody td{padding:6px var(--iv-space-3)}
+body[data-density="comfortable"] tbody td{padding:16px var(--iv-space-3)}
+.cell-ref{font-family:var(--iv-font-mono);color:var(--iv-brand-300);font-size:var(--iv-text-xs);font-weight:500}
+.cell-title{color:#fff;font-weight:500}
+.cell-sub{color:var(--iv-neutral-base);font-size:var(--iv-text-xs);margin-top:2px}
+.amount{font-family:var(--iv-font-mono);font-variant-numeric:tabular-nums;color:#fff;font-weight:500;white-space:nowrap}
+.amount .cur{color:var(--iv-amber-400);margin-right:3px}
+.cb{width:16px;height:16px;border:1.5px solid var(--iv-surface-border);border-radius:var(--iv-radius-sm);background:var(--iv-surface-muted);display:grid;place-items:center;cursor:pointer;flex:none}
+.cb [data-lucide]{width:12px;height:12px;color:#fff;opacity:0}
+.cb.on{background:var(--iv-brand-600);border-color:var(--iv-brand-500)}
+.cb.on [data-lucide]{opacity:1}
+.av-stack{display:flex}
+.av-stack .av{width:22px;height:22px;border-radius:50%;border:2px solid var(--iv-surface-raised);margin-left:-7px;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff}
+.av-stack .av:first-child{margin-left:0}
+.table-foot{display:flex;align-items:center;justify-content:space-between;padding:var(--iv-space-3);color:var(--iv-neutral-bright);font-size:var(--iv-text-xs)}
+
+/* Bulk action bar */
+.bulk-bar{display:none;align-items:center;gap:var(--iv-space-3);padding:10px var(--iv-space-3);background:rgba(99,102,241,.12);border-bottom:1px solid var(--iv-brand-800)}
+.bulk-bar.show{display:flex}
+.bulk-bar .count{color:var(--iv-brand-200);font-weight:600;font-size:var(--iv-text-xs)}
+
+/* =========================================================================
+   RIGHT CONTEXT PANEL — IA §3.3 (optional right rail)
+   ========================================================================= */
+.rail{display:flex;flex-direction:column;gap:var(--iv-space-4)}
+.rail .panel{padding:var(--iv-space-4)}
+.rail-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--iv-space-3)}
+.rail-head h3{margin:0;font-size:var(--iv-text-sm);font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+.rail-head h3 [data-lucide]{width:16px;height:16px;color:var(--iv-brand-300)}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--iv-surface-border);font-size:var(--iv-text-xs)}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--iv-neutral-bright)}
+.kv .v{color:#fff;font-weight:500}
+
+/* Lifecycle stepper (Doc-4M states are authoritative; this only displays) */
+.stepper{display:flex;flex-direction:column;gap:0;margin-top:4px}
+.step{display:flex;gap:10px;align-items:flex-start;position:relative;padding-bottom:14px}
+.step:not(:last-child)::before{content:"";position:absolute;left:8px;top:18px;bottom:-2px;width:2px;background:var(--iv-surface-border)}
+.step.done:not(:last-child)::before{background:var(--iv-brand-600)}
+.step .node{width:18px;height:18px;border-radius:50%;flex:none;display:grid;place-items:center;border:2px solid var(--iv-surface-border);background:var(--iv-surface-raised);z-index:1}
+.step .node [data-lucide]{width:10px;height:10px;color:#fff}
+.step.done .node{background:var(--iv-brand-600);border-color:var(--iv-brand-500)}
+.step.current .node{background:var(--iv-amber-500);border-color:var(--iv-amber-400);box-shadow:var(--iv-glow-amber)}
+.step .lbl{font-size:var(--iv-text-xs);color:var(--iv-neutral-bright);line-height:1.3}
+.step.done .lbl,.step.current .lbl{color:#fff}
+.step .when{font-size:9px;color:var(--iv-neutral-base);margin-top:1px}
+
+/* AI advisory panel (Doc-7B §5 ai-advisory-panel — non-recommending) */
+.ai-panel{border:1px solid rgba(99,102,241,.35);background:linear-gradient(160deg,rgba(99,102,241,.10),var(--iv-surface-raised))}
+.ai-disclaimer{font-size:9px;color:var(--iv-neutral-bright);background:var(--iv-surface-base);border:1px dashed var(--iv-surface-border);border-radius:var(--iv-radius-sm);padding:6px 8px;margin-top:10px;line-height:1.4}
+.ai-line{display:flex;gap:8px;font-size:var(--iv-text-xs);color:var(--iv-neutral-text);padding:6px 0}
+.ai-line [data-lucide]{width:14px;height:14px;color:var(--iv-brand-300);flex:none;margin-top:1px}
+
+/* Trust ring (read-only M5 display) */
+.trust-ring{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:conic-gradient(var(--iv-trust-high) 0 84%,var(--iv-surface-muted) 84% 100%)}
+.trust-ring .inner{width:36px;height:36px;border-radius:50%;background:var(--iv-surface-raised);display:grid;place-items:center;font-weight:700;color:#fff;font-size:var(--iv-text-sm)}
+
+/* =========================================================================
+   FOOTER — IA §4.6 (app: minimal)
+   ========================================================================= */
+.footer{display:flex;align-items:center;gap:var(--iv-space-4);flex-wrap:wrap;padding:var(--iv-space-4) var(--iv-space-6);
+  border-top:1px solid var(--iv-surface-border);color:var(--iv-neutral-base);font-size:var(--iv-text-xs);background:var(--iv-surface-raised)}
+.footer a{color:var(--iv-neutral-bright);text-decoration:none}
+.footer a:hover{color:var(--iv-brand-300)}
+.footer .spacer{flex:1}
+.footer .ver{font-family:var(--iv-font-mono)}
+
+/* =========================================================================
+   COMMAND PALETTE — IA §5.2 (Universal Command Center)
+   ========================================================================= */
+.overlay{position:fixed;inset:0;z-index:var(--iv-z-modal);background:rgba(5,8,16,.6);backdrop-filter:blur(2px);display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+.overlay.open{display:flex}
+.palette{width:min(640px,92vw);background:var(--iv-surface-overlay);border:1px solid var(--iv-surface-border);border-radius:var(--iv-radius-xl);box-shadow:var(--iv-shadow-xl);overflow:hidden;animation:pop .15s var(--iv-ease-in-out)}
+.palette-input{display:flex;align-items:center;gap:10px;padding:var(--iv-space-4);border-bottom:1px solid var(--iv-surface-border)}
+.palette-input [data-lucide]{width:18px;height:18px;color:var(--iv-neutral-bright)}
+.palette-input input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:var(--iv-text-base)}
+.palette-body{max-height:50vh;overflow-y:auto;padding:var(--iv-space-2)}
+.pal-group{font-size:var(--iv-text-2xs);text-transform:uppercase;letter-spacing:.08em;color:var(--iv-neutral-base);padding:8px 10px 4px}
+.pal-item{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:var(--iv-radius-md);color:var(--iv-neutral-text);cursor:pointer;font-size:var(--iv-text-sm)}
+.pal-item:hover,.pal-item.hi{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.pal-item [data-lucide]{width:16px;height:16px;color:var(--iv-neutral-bright)}
+.pal-item .meta{margin-left:auto;color:var(--iv-neutral-base);font-size:var(--iv-text-xs)}
+.pal-item .tagk{font-family:var(--iv-font-mono);font-size:9px;background:var(--iv-surface-base);border:1px solid var(--iv-surface-border);border-radius:4px;padding:1px 5px;color:var(--iv-neutral-bright)}
+.palette-foot{display:flex;align-items:center;gap:var(--iv-space-4);padding:8px var(--iv-space-4);border-top:1px solid var(--iv-surface-border);font-size:var(--iv-text-2xs);color:var(--iv-neutral-base)}
+.palette-foot kbd{font-size:9px}
+
+/* Industrial Category Explorer — IA §5.3 (PUBLIC surface only) */
+.explorer{position:absolute;left:0;right:0;top:var(--iv-topbar-height);z-index:var(--iv-z-overlay);background:var(--iv-surface-overlay);border-bottom:1px solid var(--iv-surface-border);box-shadow:var(--iv-shadow-lg);display:none}
+.explorer.open{display:block;animation:pop .15s var(--iv-ease-in-out)}
+.explorer-inner{max-width:var(--iv-page-max);margin:0 auto;padding:var(--iv-space-4) var(--iv-space-6)}
+.explorer-note{display:flex;align-items:center;gap:8px;font-size:var(--iv-text-xs);color:var(--iv-warning-text);background:var(--iv-warning-subtle);border:1px solid rgba(202,138,4,.25);border-radius:var(--iv-radius-md);padding:8px 12px;margin-bottom:var(--iv-space-4)}
+.explorer-note [data-lucide]{width:15px;height:15px}
+.explorer-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--iv-space-4)}
+.ex-col h4{margin:0 0 8px;font-size:var(--iv-text-2xs);text-transform:uppercase;letter-spacing:.08em;color:var(--iv-neutral-base)}
+.ex-link{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:var(--iv-radius-md);color:var(--iv-neutral-text);font-size:var(--iv-text-xs);cursor:pointer}
+.ex-link:hover{background:var(--iv-surface-hover);color:var(--iv-fg)}
+.ex-link [data-lucide]{width:14px;height:14px;color:var(--iv-brand-300)}
+.ex-link .cnt{margin-left:auto;font-family:var(--iv-font-mono);font-size:9px;color:var(--iv-neutral-base)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);z-index:var(--iv-z-toast);
+  background:var(--iv-surface-overlay);border:1px solid var(--iv-brand-700);border-radius:var(--iv-radius-md);
+  box-shadow:var(--iv-shadow-lg);padding:10px 16px;color:#fff;font-size:var(--iv-text-sm);display:flex;align-items:center;gap:10px;
+  opacity:0;pointer-events:none;transition:all var(--iv-duration-normal) var(--iv-ease-in-out)}
+.toast [data-lucide]{width:16px;height:16px;color:var(--iv-brand-300)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-ia="false" data-rail="false" data-density="default">
+
+<!-- ============================ DEMO BANNER ============================ -->
+<div class="demo-banner">
+  <b>Wave 0C-R</b><span class="muted">· Visual Reference Demo · non-production</span>
+  <span class="muted">realizes <b>information_architecture.md</b> (Wave 0C) · tokens from <b>design_philosophy.md</b></span>
+  <span class="spacer"></span>
+  <button id="iaToggle" onclick="toggleIA()"><i data-lucide="tag"></i> IA labels</button>
+  <button onclick="document.body.dataset.rail = document.body.dataset.rail==='true'?'false':'true'"><i data-lucide="panel-left"></i> Toggle rail</button>
+  <button onclick="openPalette()"><i data-lucide="command"></i> Command Center</button>
+</div>
+
+<!-- ============================ TOPBAR (IA §3.3 / §4.2) ============================ -->
+<header class="topbar" data-region>
+  <span class="ia-tag">IA §4.2 · Topbar</span>
+  <div class="brand"><span class="brand-mark"><i data-lucide="factory"></i></span>i<em>V</em>endorz</div>
+  <div class="tb-divider"></div>
+
+  <!-- Org switcher (Doc-7C-owned mechanism — IA §4.8) -->
+  <div style="position:relative">
+    <div class="org-switch" onclick="togglePop('orgPop',this)" data-region>
+      <span class="ia-tag">§4.8 org-switcher</span>
+      <span class="org-avatar">MG</span>
+      <div class="org-meta">
+        <div class="org-name">Meghna Group of Industries</div>
+        <div class="org-role">Hybrid · Manager</div>
+      </div>
+      <i data-lucide="chevrons-up-down" style="width:15px;color:var(--iv-neutral-base)"></i>
+    </div>
+    <div class="pop" id="orgPop" style="left:0;top:46px">
+      <div class="pop-title">Switch organization</div>
+      <div class="pop-item current"><span class="org-avatar">MG</span><div><div style="color:#fff;font-weight:600">Meghna Group</div><div class="org-role">Hybrid · Manager</div></div><i data-lucide="check" class="check"></i></div>
+      <div class="pop-item"><span class="org-avatar" style="background:var(--iv-amber-700,#b45309)">BR</span><div><div style="color:#fff;font-weight:600">BRAC Engineering</div><div class="org-role">Buyer · Officer</div></div></div>
+      <div class="pop-item"><span class="org-avatar" style="background:var(--iv-success-base)">SP</span><div><div style="color:#fff;font-weight:600">Square Pharma Plant 3</div><div class="org-role">Vendor · Owner</div></div></div>
+      <div class="pop-sep"></div>
+      <div class="pop-item"><i data-lucide="plus"></i> Create organization</div>
+    </div>
+  </div>
+
+  <!-- Quick Create (IA §4.9) -->
+  <div style="position:relative">
+    <button class="tb-btn tb-create" onclick="togglePop('createPop',this)" data-region>
+      <span class="ia-tag">§4.9 Quick&nbsp;Create</span>
+      <i data-lucide="plus"></i> Create <i data-lucide="chevron-down" style="width:14px"></i>
+    </button>
+    <div class="pop" id="createPop" style="left:0;top:42px">
+      <div class="pop-title">Create</div>
+      <div class="pop-item" onclick="toast('create_rfq (Doc-5E §4)')"><i data-lucide="clipboard-list"></i> New RFQ <span class="tagk meta">create_rfq</span></div>
+      <div class="pop-item" onclick="toast('create_product (BC-MKT-3)')"><i data-lucide="package"></i> Add Product <span class="tagk meta">BC-MKT-3</span></div>
+      <div class="pop-item" onclick="toast('create_advertisement (BC-MKT-5)')"><i data-lucide="megaphone"></i> Create Advertisement <span class="tagk meta">BC-MKT-5</span></div>
+      <div class="pop-item" onclick="toast('invite_member (Doc-5C §C6)')"><i data-lucide="user-plus"></i> Invite Team Member <span class="tagk meta">Doc-5C</span></div>
+    </div>
+  </div>
+
+  <!-- Universal Command Center (IA §5.2) -->
+  <div class="cmd-trigger" onclick="openPalette()" data-region>
+    <span class="ia-tag">§5.2 ⌘K</span>
+    <i data-lucide="search"></i> Search & commands <kbd>⌘K</kbd>
+  </div>
+
+  <!-- Global search (IA §5.1) -->
+  <div class="search" data-region>
+    <span class="ia-tag">§5.1 search</span>
+    <i data-lucide="search"></i>
+    <input placeholder="Search RFQs, vendors, products…" />
+  </div>
+
+  <div class="tb-right">
+    <!-- AI assistant (IA §4.10) -->
+    <button class="icon-btn ai" title="AI Assistant — suggests; you decide (IA §4.10)" onclick="toast('AI Assistant — Doc-5K advisory · non-recommending (reserved / future activation)')" data-region>
+      <span class="ia-tag" style="right:-2px">§4.10 AI</span>
+      <i data-lucide="sparkles"></i>
+    </button>
+    <!-- Notifications (IA §5.4 — Doc-7C slot) -->
+    <div style="position:relative">
+      <button class="icon-btn" onclick="togglePop('notifPop',this)" data-region>
+        <span class="ia-tag" style="right:-2px">§5.4 bell</span>
+        <i data-lucide="bell"></i><span class="badge-count">3</span>
+      </button>
+      <div class="pop" id="notifPop" style="right:0;top:42px;min-width:320px">
+        <div class="pop-title">Notifications · M6 (Doc-5H)</div>
+        <div class="pop-item"><i data-lucide="file-check"></i><div><div style="color:#fff">3 new quotations on <span class="mono" style="color:var(--iv-brand-300)">RFQ-2026-000482</span></div><div class="org-role">12 min ago</div></div></div>
+        <div class="pop-item"><i data-lucide="shield-check"></i><div><div style="color:#fff">Vendor verification approved</div><div class="org-role">1 hr ago</div></div></div>
+        <div class="pop-item"><i data-lucide="clock"></i><div><div style="color:#fff">RFQ <span class="mono" style="color:var(--iv-brand-300)">RFQ-2026-000475</span> closes in 24h</div><div class="org-role">3 hr ago</div></div></div>
+        <div class="pop-sep"></div>
+        <div class="pop-item" style="justify-content:center;color:var(--iv-brand-300)">Mark all read</div>
+      </div>
+    </div>
+    <!-- User menu (IA §4.7) -->
+    <div style="position:relative">
+      <button class="user-btn" onclick="togglePop('userPop',this)" data-region>
+        <span class="ia-tag" style="right:-2px">§4.7 user</span>
+        <span class="user-avatar">AR</span><i data-lucide="chevron-down" style="width:14px;color:var(--iv-neutral-base)"></i>
+      </button>
+      <div class="pop" id="userPop" style="right:0;top:46px">
+        <div class="pop-item" style="pointer-events:none"><span class="user-avatar">AR</span><div><div style="color:#fff;font-weight:600">Arefin Rahman</div><div class="org-role">arefin@meghna.com.bd</div></div></div>
+        <div class="pop-sep"></div>
+        <div class="pop-item"><i data-lucide="user"></i> Account profile</div>
+        <div class="pop-item"><i data-lucide="shield"></i> Security &amp; 2FA</div>
+        <div class="pop-item"><i data-lucide="moon"></i> Theme <span class="meta">Dark</span></div>
+        <div class="pop-item"><i data-lucide="life-buoy"></i> Help</div>
+        <div class="pop-sep"></div>
+        <div class="pop-item" style="color:var(--iv-danger-text)"><i data-lucide="log-out" style="color:var(--iv-danger-text)"></i> Log out</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Industrial Category Explorer (IA §5.3 — PUBLIC surface only; shown here for reference) -->
+<div class="explorer" id="explorer">
+  <div class="explorer-inner">
+    <div class="explorer-note"><i data-lucide="info"></i> Industrial Category Explorer is a <b>Public-surface</b> element (IA §5.3) — <b>not</b> part of the authenticated app shell. Shown here for completeness. Full anonymous tree is gated by <span class="mono">[ESC-7-API-CATNAV]</span>; interim = <span class="mono">search_catalog</span> facets only.</div>
+    <div class="explorer-cols">
+      <div class="ex-col"><h4>Parent</h4>
+        <div class="ex-link"><i data-lucide="cog"></i> Mechanical & Power <span class="cnt">1,204</span></div>
+        <div class="ex-link"><i data-lucide="zap"></i> Electrical <span class="cnt">980</span></div>
+        <div class="ex-link"><i data-lucide="flask-conical"></i> Chemical & Process <span class="cnt">642</span></div>
+        <div class="ex-link"><i data-lucide="hard-hat"></i> Safety & PPE <span class="cnt">410</span></div>
+      </div>
+      <div class="ex-col"><h4>Child</h4>
+        <div class="ex-link"><i data-lucide="settings-2"></i> Pumps & Valves <span class="cnt">512</span></div>
+        <div class="ex-link"><i data-lucide="layers"></i> Bearings & Gears <span class="cnt">388</span></div>
+        <div class="ex-link"><i data-lucide="wind"></i> Compressors <span class="cnt">201</span></div>
+      </div>
+      <div class="ex-col"><h4>Child-2</h4>
+        <div class="ex-link"><i data-lucide="circle-dot"></i> Centrifugal Pumps <span class="cnt">240</span></div>
+        <div class="ex-link"><i data-lucide="circle-dot"></i> Gate Valves <span class="cnt">156</span></div>
+        <div class="ex-link"><i data-lucide="circle-dot"></i> Ball Valves <span class="cnt">118</span></div>
+      </div>
+      <div class="ex-col"><h4>Child-3 · Featured</h4>
+        <div class="ex-link"><i data-lucide="building-2"></i> KSB Bangladesh <span class="cnt">★</span></div>
+        <div class="ex-link"><i data-lucide="building-2"></i> Grundfos Distributor <span class="cnt">★</span></div>
+        <div class="ex-link" style="color:var(--iv-brand-300)"><i data-lucide="arrow-right"></i> View all in category</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ SHELL ============================ -->
+<div class="shell">
+
+  <!-- SIDEBAR (IA §4.3 / sitemap §6.3) -->
+  <aside class="sidebar" data-region>
+    <span class="ia-tag">IA §4.3 · Sidebar</span>
+    <nav class="side-scroll">
+      <div class="nav-group">
+        <a class="nav-item"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Procurement</div>
+        <a class="nav-item"><i data-lucide="compass"></i><span>Discover Vendors</span></a>
+        <a class="nav-item active"><i data-lucide="clipboard-list"></i><span>RFQs</span><span class="nav-count">12</span></a>
+        <a class="nav-item"><i data-lucide="file-spreadsheet"></i><span>Quotations</span><span class="nav-count">28</span></a>
+        <a class="nav-item"><i data-lucide="file-check-2"></i><span>Post-Award Ops</span></a>
+        <a class="nav-item"><i data-lucide="contact"></i><span>Vendor CRM</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Marketplace</div>
+        <a class="nav-item"><i data-lucide="search"></i><span>Catalog</span></a>
+        <a class="nav-item"><i data-lucide="store"></i><span>Vendor Directory</span></a>
+        <a class="nav-item"><i data-lucide="star"></i><span>Favorites</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Account</div>
+        <a class="nav-item"><i data-lucide="building"></i><span>Organization</span></a>
+        <a class="nav-item"><i data-lucide="users"></i><span>Members &amp; Roles</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Billing</div>
+        <a class="nav-item"><i data-lucide="credit-card"></i><span>Plan &amp; Usage</span></a>
+        <a class="nav-item"><i data-lucide="coins"></i><span>Lead Credits</span><span class="nav-count">45</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-label">Settings</div>
+        <a class="nav-item"><i data-lucide="sliders-horizontal"></i><span>Workflow</span></a>
+        <a class="nav-item"><i data-lucide="settings"></i><span>Preferences</span></a>
+      </div>
+    </nav>
+    <div class="side-footer">
+      <button class="collapse-btn" onclick="document.body.dataset.rail = document.body.dataset.rail==='true'?'false':'true'">
+        <i data-lucide="panel-left-close"></i><span>Collapse</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+   <div class="main-inner">
+
+    <!-- BREADCRUMB (IA §4.5) -->
+    <div class="breadcrumb" data-region>
+      <span class="ia-tag">IA §4.5 · Breadcrumb</span>
+      <a>Dashboard</a><i data-lucide="chevron-right"></i>
+      <a>Procurement</a><i data-lucide="chevron-right"></i>
+      <span class="leaf">RFQs</span>
+    </div>
+
+    <!-- PAGE HEADER (IA §3.3) -->
+    <div class="page-header" data-region>
+      <span class="ia-tag">IA §3.3 · Page header</span>
+      <div class="ph-top">
+        <div class="ph-title-wrap">
+          <div class="ph-title">
+            <h1>Request for Quotations</h1>
+            <span class="chip chip-brand"><span class="dot"></span>12 Active</span>
+          </div>
+          <div class="ph-sub">Author, route, and award RFQs across your vendor network · <span class="mono" style="color:var(--iv-neutral-bright)">organization-scoped</span></div>
+        </div>
+        <div class="ph-actions">
+          <button class="btn btn-ghost btn-icon" title="Filter"><i data-lucide="sliders-horizontal"></i></button>
+          <button class="btn btn-secondary"><i data-lucide="download"></i> Export</button>
+          <button class="btn btn-amber" onclick="toast('create_rfq (Doc-5E §4)')"><i data-lucide="plus"></i> New RFQ</button>
+        </div>
+      </div>
+
+      <!-- TABS (IA §4.4) -->
+      <div class="tabs" data-region>
+        <span class="ia-tag">IA §4.4 · Tabs</span>
+        <div class="tab active" onclick="setTab(this)">All RFQs <span class="pill">12</span></div>
+        <div class="tab" onclick="setTab(this)">Active <span class="pill">7</span></div>
+        <div class="tab" onclick="setTab(this)">Drafts <span class="pill">2</span></div>
+        <div class="tab" onclick="setTab(this)">Awaiting Award <span class="pill">3</span></div>
+        <div class="tab" onclick="setTab(this)">Closed</div>
+      </div>
+    </div>
+
+    <!-- CONTENT (IA §3.3 — content + right rail) -->
+    <div class="content">
+
+      <!-- ===== MAIN CONTENT COLUMN ===== -->
+      <section data-region>
+        <span class="ia-tag">Content · Cards + Filters + Table</span>
+
+        <!-- STAT CARDS -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="label"><i data-lucide="clipboard-list"></i> Active RFQs</div>
+            <div class="value" data-numeric>12</div>
+            <div class="delta up"><i data-lucide="trending-up"></i> +3 this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="label"><i data-lucide="file-spreadsheet"></i> Quotations Received</div>
+            <div class="value" data-numeric>28</div>
+            <div class="delta up"><i data-lucide="trending-up"></i> +9 this week</div>
+          </div>
+          <div class="stat-card">
+            <div class="label"><i data-lucide="gavel"></i> Awaiting Award</div>
+            <div class="value" data-numeric>3</div>
+            <div class="delta flat"><i data-lucide="minus"></i> action needed</div>
+          </div>
+          <div class="stat-card">
+            <div class="label"><i data-lucide="timer"></i> Avg. Response</div>
+            <div class="value" data-numeric>2.4<span style="font-size:var(--iv-text-lg);color:var(--iv-neutral-bright)">d</span></div>
+            <div class="delta down"><i data-lucide="trending-down"></i> −0.6d faster</div>
+          </div>
+        </div>
+
+        <!-- TABLE PANEL -->
+        <div class="panel">
+          <!-- FILTER BAR -->
+          <div class="filter-bar" data-region>
+            <span class="ia-tag">Filters (§5.1 · presentation, not M3 re-rank)</span>
+            <div class="filter-search"><i data-lucide="search"></i><input placeholder="Filter these RFQs…" /></div>
+            <button class="fchip on"><i data-lucide="circle"></i> Status: Active</button>
+            <button class="fchip"><i data-lucide="folder"></i> Category</button>
+            <button class="fchip"><i data-lucide="calendar"></i> Date</button>
+            <button class="fchip"><i data-lucide="arrow-up-down"></i> Sort: Updated</button>
+            <div class="density">
+              <button title="Compact" onclick="setDensity('compact',this)"><i data-lucide="rows-3"></i></button>
+              <button class="on" title="Default" onclick="setDensity('default',this)"><i data-lucide="rows-2"></i></button>
+              <button title="Comfortable" onclick="setDensity('comfortable',this)"><i data-lucide="rows"></i></button>
+            </div>
+          </div>
+
+          <!-- BULK ACTION BAR -->
+          <div class="bulk-bar" id="bulkBar">
+            <span class="count" id="bulkCount">0 selected</span>
+            <button class="btn btn-ghost" style="height:30px"><i data-lucide="folder-input"></i> Move</button>
+            <button class="btn btn-ghost" style="height:30px"><i data-lucide="download"></i> Export</button>
+            <button class="btn btn-ghost" style="height:30px;color:var(--iv-danger-text)"><i data-lucide="archive"></i> Archive</button>
+          </div>
+
+          <!-- DATA TABLE -->
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:36px"><div class="cb" onclick="toggleAll(this)"><i data-lucide="check"></i></div></th>
+                  <th>RFQ Ref</th>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Vendors</th>
+                  <th style="text-align:right">Quotes</th>
+                  <th style="text-align:right">Est. Value</th>
+                  <th>Updated</th>
+                  <th style="width:36px"></th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <tr class="selected" onclick="selectRow(this,event)">
+                  <td><div class="cb on" onclick="toggleRow(this,event)"><i data-lucide="check"></i></div></td>
+                  <td><span class="cell-ref">RFQ-2026-000482</span></td>
+                  <td><div class="cell-title">Centrifugal Pumps — 50 m³/hr</div><div class="cell-sub">Mechanical · Pumps &amp; Valves</div></td>
+                  <td><span class="chip chip-brand"><span class="dot"></span>Quotations Received</span></td>
+                  <td><div class="av-stack"><span class="av" style="background:var(--iv-brand-600)">KS</span><span class="av" style="background:var(--iv-amber-600)">GR</span><span class="av" style="background:var(--iv-success-base)">FL</span><span class="av" style="background:var(--iv-surface-muted)">+5</span></div></td>
+                  <td style="text-align:right" data-numeric>6</td>
+                  <td style="text-align:right"><span class="amount"><span class="cur">৳</span>12,50,000</span></td>
+                  <td><span style="color:var(--iv-neutral-bright)">12 min ago</span></td>
+                  <td><i data-lucide="chevron-right" style="color:var(--iv-neutral-base)"></i></td>
+                </tr>
+                <tr onclick="selectRow(this,event)">
+                  <td><div class="cb" onclick="toggleRow(this,event)"><i data-lucide="check"></i></div></td>
+                  <td><span class="cell-ref">RFQ-2026-000479</span></td>
+                  <td><div class="cell-title">VFD Drives 75 kW — 12 units</div><div class="cell-sub">Electrical · Motor Control</div></td>
+                  <td><span class="chip chip-info"><span class="dot"></span>Vendors Notified</span></td>
+                  <td><div class="av-stack"><span class="av" style="background:var(--iv-brand-600)">AB</span><span class="av" style="background:var(--iv-info-base)">SE</span><span class="av" style="background:var(--iv-surface-muted)">+3</span></div></td>
+                  <td style="text-align:right" data-numeric>2</td>
+                  <td style="text-align:right"><span class="amount"><span class="cur">৳</span>34,00,000</span></td>
+                  <td><span style="color:var(--iv-neutral-bright)">2 hr ago</span></td>
+                  <td><i data-lucide="chevron-right" style="color:var(--iv-neutral-base)"></i></td>
+                </tr>
+                <tr onclick="selectRow(this,event)">
+                  <td><div class="cb" onclick="toggleRow(this,event)"><i data-lucide="check"></i></div></td>
+                  <td><span class="cell-ref">RFQ-2026-000475</span></td>
+                  <td><div class="cell-title">Industrial Safety Helmets — 2,000 pcs</div><div class="cell-sub">Safety &amp; PPE · Head Protection</div></td>
+                  <td><span class="chip chip-warn"><span class="dot"></span>Buyer Reviewing</span></td>
+                  <td><div class="av-stack"><span class="av" style="background:var(--iv-brand-600)">RP</span><span class="av" style="background:var(--iv-amber-600)">SF</span></div></td>
+                  <td style="text-align:right" data-numeric>4</td>
+                  <td style="text-align:right"><span class="amount"><span class="cur">৳</span>8,40,000</span></td>
+                  <td><span style="color:var(--iv-neutral-bright)">3 hr ago</span></td>
+                  <td><i data-lucide="chevron-right" style="color:var(--iv-neutral-base)"></i></td>
+                </tr>
+                <tr onclick="selectRow(this,event)">
+                  <td><div class="cb" onclick="toggleRow(this,event)"><i data-lucide="check"></i></div></td>
+                  <td><span class="cell-ref">RFQ-2026-000468</span></td>
+                  <td><div class="cell-title">Stainless Steel Sheets 304 — 5 MT</div><div class="cell-sub">Materials · Steel &amp; Metals</div></td>
+                  <td><span class="chip chip-success"><span class="dot"></span>Shortlisted</span></td>
+                  <td><div class="av-stack"><span class="av" style="background:var(--iv-brand-600)">BS</span><span class="av" style="background:var(--iv-success-base)">MT</span><span class="av" style="background:var(--iv-surface-muted)">+2</span></div></td>
+                  <td style="text-align:right" data-numeric>5</td>
+                  <td style="text-align:right"><span class="amount"><span class="cur">৳</span>1.2 Cr</span></td>
+                  <td><span style="color:var(--iv-neutral-bright)">Yesterday</span></td>
+                  <td><i data-lucide="chevron-right" style="color:var(--iv-neutral-base)"></i></td>
+                </tr>
+                <tr onclick="selectRow(this,event)">
+                  <td><div class="cb" onclick="toggleRow(this,event)"><i data-lucide="check"></i></div></td>
+                  <td><span class="cell-ref">RFQ-2026-000461</span></td>
+                  <td><div class="cell-title">PLC Control Panel — Custom Fabrication</div><div class="cell-sub">Electrical · Automation</div></td>
+                  <td><span class="chip chip-neutral"><span class="dot"></span>Draft</span></td>
+                  <td><span style="color:var(--iv-neutral-base)">—</span></td>
+                  <td style="text-align:right" data-numeric>0</td>
+                  <td style="text-align:right"><span class="amount" style="color:var(--iv-neutral-base)"><span class="cur" style="color:var(--iv-neutral-base)">৳</span>—</span></td>
+                  <td><span style="color:var(--iv-neutral-bright)">2 days ago</span></td>
+                  <td><i data-lucide="chevron-right" style="color:var(--iv-neutral-base)"></i></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- CURSOR PAGINATION (IA §8 · no offset/page numbers) -->
+          <div class="table-foot">
+            <span>Showing <b style="color:#fff">5</b> of 12 · cursor-paginated (<span class="mono">page_size</span> from POLICY key)</span>
+            <button class="btn btn-secondary" style="height:30px"><i data-lucide="chevron-down"></i> Load more</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== RIGHT CONTEXT PANEL (IA §3.3) ===== -->
+      <aside class="rail" data-region>
+        <span class="ia-tag">IA §3.3 · Right context panel</span>
+
+        <!-- Selected RFQ detail -->
+        <div class="panel">
+          <div class="rail-head">
+            <h3><i data-lucide="clipboard-list"></i> RFQ Detail</h3>
+            <span class="chip chip-brand"><span class="dot"></span>Quotations Received</span>
+          </div>
+          <div style="font-family:var(--iv-font-mono);color:var(--iv-brand-300);font-size:var(--iv-text-sm);font-weight:600">RFQ-2026-000482</div>
+          <div style="color:#fff;font-weight:500;margin:4px 0 12px">Centrifugal Pumps — 50 m³/hr</div>
+          <div class="kv"><span class="k">Est. value</span><span class="v"><span style="color:var(--iv-amber-400)">৳</span> 12,50,000</span></div>
+          <div class="kv"><span class="k">Vendors invited</span><span class="v" data-numeric>8</span></div>
+          <div class="kv"><span class="k">Quotations</span><span class="v" data-numeric>6</span></div>
+          <div class="kv"><span class="k">Closes</span><span class="v">in 3 days</span></div>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button class="btn btn-primary" style="flex:1;height:34px"><i data-lucide="git-compare"></i> Compare</button>
+            <button class="btn btn-amber" style="flex:1;height:34px"><i data-lucide="gavel"></i> Award</button>
+          </div>
+          <div class="ai-disclaimer" style="margin-top:12px"><b>Award is an explicit, unranked buyer choice</b> (R6). Comparison is decision <i>support</i>; the platform never ranks-to-winner or re-ranks M3 matching.</div>
+        </div>
+
+        <!-- Lifecycle stepper (Doc-4M states; UI only displays) -->
+        <div class="panel">
+          <div class="rail-head"><h3><i data-lucide="git-branch"></i> Lifecycle</h3></div>
+          <div class="stepper">
+            <div class="step done"><span class="node"><i data-lucide="check"></i></span><div><div class="lbl">Submitted</div><div class="when">Jun 24</div></div></div>
+            <div class="step done"><span class="node"><i data-lucide="check"></i></span><div><div class="lbl">Matching &amp; Routing</div><div class="when">Jun 24 · M3 engine</div></div></div>
+            <div class="step done"><span class="node"><i data-lucide="check"></i></span><div><div class="lbl">Vendors Notified</div><div class="when">Jun 25 · 8 invited</div></div></div>
+            <div class="step current"><span class="node"></span><div><div class="lbl">Quotations Received</div><div class="when">6 of 8 responded</div></div></div>
+            <div class="step"><span class="node"></span><div><div class="lbl">Buyer Reviewing</div></div></div>
+            <div class="step"><span class="node"></span><div><div class="lbl">Award</div></div></div>
+          </div>
+        </div>
+
+        <!-- AI advisory panel (Doc-7B §5 — non-recommending) -->
+        <div class="panel ai-panel">
+          <div class="rail-head"><h3><i data-lucide="sparkles"></i> AI Assistant</h3><span class="chip chip-neutral" style="font-size:9px">Advisory</span></div>
+          <div class="ai-line"><i data-lucide="file-text"></i> 2 quotations omit a delivery lead-time — worth a clarification.</div>
+          <div class="ai-line"><i data-lucide="ruler"></i> Spec asks IP55; one quote lists IP54 — flagged for your review.</div>
+          <div class="ai-disclaimer"><b>AI suggests; modules decide</b> (Invariant #12). The assistant explains and drafts — it never ranks vendors, auto-selects, or reveals private signals. You confirm; the owning module commits.</div>
+        </div>
+
+        <!-- Top responding vendor (trust read-only, M5) -->
+        <div class="panel">
+          <div class="rail-head"><h3><i data-lucide="building-2"></i> Responding Vendors</h3></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="trust-ring"><div class="inner">84</div></div>
+            <div style="min-width:0">
+              <div style="color:#fff;font-weight:600;font-size:var(--iv-text-sm)">KSB Bangladesh Ltd.</div>
+              <div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
+                <span class="chip chip-success" style="font-size:9px">Verified</span>
+                <span class="chip" style="font-size:9px;background:rgba(96,165,250,.12);color:var(--iv-tier-c);border:1px solid rgba(96,165,250,.25)">Tier C</span>
+              </div>
+              <div style="display:flex;gap:5px;margin-top:5px">
+                <span class="chip" style="font-size:9px;background:rgba(59,130,246,.12);color:var(--iv-cap-supply);border:1px solid rgba(59,130,246,.25)">Supply</span>
+                <span class="chip" style="font-size:9px;background:rgba(34,197,94,.12);color:var(--iv-cap-consult);border:1px solid rgba(34,197,94,.25)">Consult</span>
+              </div>
+            </div>
+          </div>
+          <div class="ai-disclaimer" style="margin-top:12px">Trust &amp; tier are <b>read-only</b> presentation of M5 signals (M2 reads; M5 owns). Blacklist / private exclusion is <b>never rendered</b> (Invariant #11).</div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- FOOTER (IA §4.6 — app: minimal) -->
+    <footer class="footer" data-region>
+      <span class="ia-tag">IA §4.6 · Footer</span>
+      <span>© 2026 iVendorz · Industrial Procurement OS for Bangladesh</span>
+      <a>Privacy</a><a>Terms</a><a>Support</a>
+      <span class="spacer"></span>
+      <span class="ver">v0.0.0-wave2 · build dev</span>
+    </footer>
+
+   </div>
+  </main>
+</div>
+
+<!-- ============================ COMMAND PALETTE (IA §5.2) ============================ -->
+<div class="overlay" id="paletteOverlay" onclick="if(event.target===this)closePalette()">
+  <div class="palette">
+    <div class="palette-input">
+      <i data-lucide="search"></i>
+      <input id="palInput" placeholder="Search, navigate, run a command, or ask AI…" />
+      <kbd>ESC</kbd>
+    </div>
+    <div class="palette-body">
+      <div class="pal-group">Navigate</div>
+      <div class="pal-item"><i data-lucide="clipboard-list"></i> Go to RFQs <span class="meta tagk">G then R</span></div>
+      <div class="pal-item"><i data-lucide="file-spreadsheet"></i> Go to Quotations</div>
+      <div class="pal-item"><i data-lucide="store"></i> Go to Vendor Directory</div>
+      <div class="pal-group">Run command</div>
+      <div class="pal-item"><i data-lucide="plus"></i> Create RFQ <span class="meta tagk">create_rfq</span></div>
+      <div class="pal-item"><i data-lucide="user-plus"></i> Invite team member <span class="meta tagk">invite_member</span></div>
+      <div class="pal-group">Ask AI <span style="text-transform:none;color:var(--iv-neutral-base)">· suggests; you decide</span></div>
+      <div class="pal-item"><i data-lucide="sparkles"></i> Compare quotations on RFQ-2026-000482 <span class="meta">support, not ranking</span></div>
+      <div class="pal-item"><i data-lucide="sparkles"></i> Explain spec: IP55 ingress rating</div>
+    </div>
+    <div class="palette-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> select</span><span><kbd>ESC</kbd> close</span>
+      <span style="margin-left:auto">Universal Command Center · IA §5.2</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="zap"></i><span id="toastMsg"></span></div>
+
+<script>
+  lucide.createIcons();
+
+  /* IA annotation toggle */
+  function toggleIA(){
+    const on = document.body.dataset.ia === 'true';
+    document.body.dataset.ia = on ? 'false':'true';
+    document.getElementById('iaToggle').dataset.on = (!on).toString();
+  }
+
+  /* Popovers */
+  let openPopEl=null;
+  function togglePop(id){
+    const el=document.getElementById(id);
+    const isOpen=el.classList.contains('open');
+    document.querySelectorAll('.pop.open').forEach(p=>p.classList.remove('open'));
+    if(!isOpen){el.classList.add('open');openPopEl=el;}else{openPopEl=null;}
+  }
+  document.addEventListener('click',e=>{
+    if(openPopEl && !e.target.closest('.pop') && !e.target.closest('[onclick*="togglePop"]')){
+      document.querySelectorAll('.pop.open').forEach(p=>p.classList.remove('open'));openPopEl=null;
+    }
+  });
+
+  /* Tabs */
+  function setTab(el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+
+  /* Density */
+  function setDensity(d,btn){
+    document.body.dataset.density=d;
+    btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  }
+
+  /* Row selection */
+  function selectRow(tr){
+    document.querySelectorAll('#tbody tr').forEach(r=>r.classList.remove('selected'));
+    tr.classList.add('selected');
+  }
+  function toggleRow(cb,e){
+    e.stopPropagation();cb.classList.toggle('on');updateBulk();
+  }
+  function toggleAll(cb){
+    const on=!cb.classList.contains('on');cb.classList.toggle('on',on);
+    document.querySelectorAll('#tbody .cb').forEach(c=>c.classList.toggle('on',on));updateBulk();
+  }
+  function updateBulk(){
+    const n=document.querySelectorAll('#tbody .cb.on').length;
+    const bar=document.getElementById('bulkBar');
+    document.getElementById('bulkCount').textContent=n+' selected';
+    bar.classList.toggle('show',n>0);
+  }
+
+  /* Command palette */
+  function openPalette(){document.getElementById('paletteOverlay').classList.add('open');setTimeout(()=>document.getElementById('palInput').focus(),50);}
+  function closePalette(){document.getElementById('paletteOverlay').classList.remove('open');}
+  document.addEventListener('keydown',e=>{
+    if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();
+      const o=document.getElementById('paletteOverlay');o.classList.contains('open')?closePalette():openPalette();}
+    if(e.key==='Escape'){closePalette();document.getElementById('explorer').classList.remove('open');}
+  });
+
+  /* Toast */
+  let toastT;
+  function toast(msg){
+    document.getElementById('toastMsg').textContent='Wired command → '+msg;
+    const t=document.getElementById('toast');t.classList.add('show');
+    document.querySelectorAll('.pop.open').forEach(p=>p.classList.remove('open'));
+    clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600);
+  }
+</script>
+</body>
+</html>
