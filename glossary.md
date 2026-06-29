@@ -55,6 +55,15 @@ This **coins no domain concept** — domain terms remain owned by the frozen cor
 | **Command Center** | The landing-page floating "Industrial Procurement Command Center" (LP §2). Marketing/UI term. | LP |
 | **Industrial Procurement Operating System** | The product's positioning phrase (CLAUDE.md §1). Marketing term. | CLAUDE.md §1 |
 
+## 4. Realization & tooling terms
+
+| Term | Canonical meaning | Owner / pointer |
+|---|---|---|
+| **UI Realization Framework** (`RF`) | The AI-tool-agnostic prompt-assembly layer: composes a production-quality UI-realization prompt for any `P-*` page by binding the design corpus (`H-001…H-004` + tokens/components/template/screen/context). Coins nothing. | `RF` |
+| **Realization lifecycle** | `Prompt → AI UI → Board Review (Validate-Findings) → Freeze UI → Implementation` — the Board stays the designer; the AI never self-approves. | `RF §7` · CLAUDE.md §13 |
+| **Provenance stamp** | A prompt's reproducibility line = `RF` version + bound-doc versions + Page ID; the same inputs reassemble the same prompt. | `RF §8` |
+| **Prompt Generator** | Deferred Wave-3 tooling that materializes per-page prompts into a generated, gitignored dir (never hand-edited); does not fork `SS`. | `RF §9` |
+
 ---
 
 *Non-authoritative. Conforms upward; coins no domain concept. On any conflict the frozen document wins.*

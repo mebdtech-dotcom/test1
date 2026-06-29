@@ -143,6 +143,7 @@ Cite companions by **code-§** instead of prose, going forward (e.g. `DP §2.9`,
 | **SC** | shared_conventions.md (this) |
 | **ER** | esc_registry.md |
 | **GL** | glossary.md |
+| **RF** | ui_realization_framework.md |
 
 Frozen-corpus pointers keep their native form (`Doc-7C §5`, `Invariant #11`, `CHK-7-040`).
 
