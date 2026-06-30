@@ -4,7 +4,7 @@
 |---|---|
 | **Type** | Architecture Board work package (additive resolution of a Flag-and-Halt) |
 | **Owner** | **Architecture Board** (presiding authority — CLAUDE.md §7); realization by Engineering once ruled |
-| **Status** | **OPEN — Board ruled R-b (D1); D2/D3 + ADR-021 APPROVED (human) + FOLDED into the corpus (2026-06-30).** See [`ESC-W2-AUDIT-RLS` §7](ESC-W2-AUDIT-RLS_v1.0.md). Corpus artifacts: `generatedDocs/Doc-4B_AuditAppendRLS_Patch_v1.0.1.md` · `generatedDocs/Doc-6B_Structure_Additive_Patch_v1.0.1.md` · `generatedDocs/ADR-021_Audit-Records-RLS-Asymmetry.md` (registered in `00_AUTHORITY_MAP.md`; carried alongside frozen docs, none edited in place). **M0 implementation (D4) PAUSED per owner directive** — bound by the Doc-6B patch's normative Deployment Constraint. |
+| **Status** | **✅ CLOSED — Definition of Done met (2026-06-30).** Board ruled **R-b** (D1); D2/D3 + **ADR-021** folded into the corpus (`generatedDocs/Doc-4B_AuditAppendRLS_Patch_v1.0.1.md` · `Doc-6B_Structure_Additive_Patch_v1.0.1.md` · `ADR-021_Audit-Records-RLS-Asymmetry.md`, registered in `00_AUTHORITY_MAP.md`); M0 mechanism realized (D4 — context-bound INSERT policy + non-`RETURNING` `createMany` append + `appendAuditRecord` facade); **conformance suite GREEN against real PostgreSQL (D5 — 16/16 audit, full suite 52/52, idempotent)**; **`ESC-W2-AUDIT-RLS` RESOLVED (D6).** The reusable platform audit-write mechanism is proven; **D7 (resume the M1 buyer-profile write) unblocked.** |
 | **Opened by** | Wave 2 execution, M1 buyer-profile WRITE slice |
 | **Date** | 2026-06-30 |
 | **Resolves** | [`ESC-W2-AUDIT-RLS_v1.0`](ESC-W2-AUDIT-RLS_v1.0.md) (BLOCKER) — full problem statement + evidence there; **referenced by pointer, not restated** |

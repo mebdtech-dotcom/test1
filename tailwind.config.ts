@@ -57,6 +57,15 @@ const config: Config = {
           DEFAULT: "var(--popover)",
           foreground: "var(--popover-foreground)",
         },
+        // Semantic typography ink — navy headings/labels/links + slate body/secondary/muted.
+        "iv-ink": {
+          DEFAULT: "var(--iv-fg)",
+          strong: "var(--iv-fg-strong)",
+          secondary: "var(--iv-fg-secondary)",
+          muted: "var(--iv-fg-muted)",
+          heading: "var(--iv-fg-heading)",
+          "heading-strong": "var(--iv-fg-heading-strong)",
+        },
         "iv-brand": {
           50: "var(--iv-brand-50)",
           100: "var(--iv-brand-100)",

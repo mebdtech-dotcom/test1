@@ -122,7 +122,7 @@ export function CommandCenter({ popularSearches = DEFAULT_POPULAR_SEARCHES }: Co
     >
       {/* Header row — title + ⌘K hint */}
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-2xs font-semibold uppercase tracking-wide text-iv-ink-heading">
           Industrial Procurement Command Center
         </p>
         <span

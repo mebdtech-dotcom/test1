@@ -8,7 +8,6 @@
 //
 // A11y: an ordered list (`<ol>`) under a labelled section; each entry's timestamp uses a `<time>` element.
 
-import * as React from "react";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/frontend/primitives/card";
 import { EmptyState } from "@/frontend/components/empty-state";

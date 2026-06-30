@@ -80,23 +80,27 @@ Until promotion completes, the component stays at its current scope; the second 
 
 ### 5.2 Tier 1 — Platform Shell (Doc-7C)
 
-*Not yet extracted to a shared module.* Buyer M1 realized a **buyer-scoped** shell (topbar/sidebar/mobile-nav) under `app/(app)/(buyer)/_components/`. **Open shared-platform item:** when a second workspace needs the same `(app)` chrome, lift the shell frame to a shared Doc-7C module (cross-team) rather than duplicating it. Tracked here so Vendor (Team 3) coordinates rather than forks.
+**LANDED 2026-06-30 — the canonical `AppShell` is live** at `app/(app)/_components/shell/` (Doc-7C realization; PLATFORM-owned, cross-team). It frames every authenticated `(app)` surface: skip-link → `Topbar` → optional breadcrumb bar → `Sidebar` + `<main>` + footer → mobile `BottomBar`. Fed by a typed `ShellViewModel`; wires nothing (presentation-only). **Exports (reuse, do not fork):** `AppShell` · `Topbar` · `Sidebar` · `MobileNav` · `BottomBar` · `OrgSwitcher` · `NotificationCenter` · `UserMenu` · `QuickCreate` · **`PageHeader`** (owns the page `<h1>`: title · ref-mono · status · actions) · **`Breadcrumbs`** (IA §4.5, non-disclosing) · types (`ShellViewModel`/`NavSection`/`NavItem`/`BreadcrumbItem`/…) · `NavIconKey` registry.
+
+> **Buyer M1's bespoke shell (`BuyerTopbar`/`BuyerSidebar`/`BuyerMobileNav`) was RETIRED into this canonical `AppShell`** — exactly the Tier-1 promotion this registry's §4.3 anticipated (one shell, multiple workspaces). The buyer `layout.tsx` now mounts `<AppShell vm={BUYER_SHELL_VM}>`; `buyer-nav-model.ts` expresses the nav as the shell's `NavSection[]` with serializable icon keys. **Team 3 (Vendor) must mount this same `AppShell` with its own nav VM — never build a second shell.**
 
 ### 5.3 Tier 2 — Buyer-scoped compositions (Team 2)
 
-| Component | Composes (Tier-0) | Used by | Reuse signal | Promotion candidate? |
+| Component | Composes | Used by | Reuse signal | Promotion candidate? |
 |---|---|---|---|---|
-| `BuyerTopbar` / `BuyerSidebar` / `BuyerMobileNav` (shell) | Button, Sheet, DropdownMenu, Separator | Buyer shell (all P-BUY) | 1 workspace (Buyer) | **Shell-candidate** → Tier 1 when Vendor needs `(app)` chrome (§5.2) |
+| ~~`BuyerTopbar`/`BuyerSidebar`/`BuyerMobileNav`~~ **RETIRED** → Tier-1 `AppShell` | — | — | — | **Promoted** to Tier 1 (§5.2) |
 | `KpiStatCard` | Card | P-BUY-01 | 1 (Buyer) | No |
 | `WorkQueueCard` | Card, Button, EmptyState, `DataListTable` | P-BUY-01 | 1 (Buyer) | No |
-| `DataListTable<T>` | (semantic table) Button | P-BUY-01, P-BUY-06 | 1 (Buyer, 2 screens) | **Watch** — a generic table; **Doc-7B `data-table` candidate** if Vendor/Public need it (→ §4.2) |
+| `DataListTable<T>` | (semantic table) | P-BUY-01, P-BUY-06 | 1 workspace (2 screens) | **Watch** — generic; **Doc-7B `data-table` candidate** if Vendor/Public need it (→ §4.2) |
 | `ListToolbar` | Input, Button | P-BUY-06 | 1 (Buyer) | Watch |
-| `ActivityTimeline` | Card, EmptyState | P-BUY-01, P-BUY-08 | 1 (Buyer, 2 screens) | Watch |
-| `DetailHero` | Card, StatusChip, Button | P-BUY-08 | 1 (Buyer) | Watch (reused across P-BUY-04/08/14/20…) |
-| `Breadcrumbs` | (semantic nav) | P-BUY-08 | 1 (Buyer) | **Watch** — generic; Doc-7B candidate if any other workspace needs it |
-| `kpi/list/detail skeleton presets` | Skeleton, Card | P-BUY-01/06/08 | 1 (Buyer) | Watch |
+| `ActivityTimeline` | Card, EmptyState | P-BUY-01, P-BUY-08 (lifecycle) | 1 workspace (2 screens) | Watch |
+| `format` (Money/Ref/formatDate/formatInstant) | CurrencyDisplay | P-BUY-01/06/08 | 1 (Buyer) | Watch |
+| `RfqDetailTabs` (client tab chrome) | Tabs | P-BUY-08 | 1 (Buyer) | No (RFQ-specific) |
+| `state-display` (Doc-4M state → label/tone) | — | P-BUY-01/06/08 | 1 (Buyer) | No (domain mapping) |
+| list/detail/dashboard skeleton presets | Skeleton, Card | P-BUY-01/06/08 | 1 (Buyer) | Watch |
 
-> **Note (DataListTable):** Doc-7F §11.3 lists `data-table` as a Doc-7B-kit (Tier 0) item not yet on disk. Team 2 realized it as a **buyer-scoped** `DataListTable` (Tier 2) to avoid unilaterally modifying the frozen kit. It is an explicit **Doc-7B promotion candidate** — when a second workspace needs a cursor-paginated table, promote via §4.2 (kit owner + Board) rather than each team building its own.
+> **Reused, NOT rebuilt (P-BUY-06/08):** the page `<h1>` + detail hero use the **shell `PageHeader`**; the detail breadcrumb uses the **shell `Breadcrumbs`** — Team 2's earlier plan to build a bespoke `DetailHero`/`Breadcrumbs` was **dropped** in favour of the canonical shell components (search-before-build, §6.1).
+> **Note (DataListTable):** Doc-7F §11.3 lists `data-table` as a Doc-7B-kit (Tier 0) item not yet on disk. Team 2 realized it as a **buyer-scoped** `DataListTable` (Tier 2) to avoid unilaterally modifying the frozen kit — an explicit **Doc-7B promotion candidate** (§4.2) the moment a second workspace needs a cursor-paginated table.
 
 ### 5.4 Tier 2 — Public-scoped (Team 1) · Vendor-scoped (Team 3)
 

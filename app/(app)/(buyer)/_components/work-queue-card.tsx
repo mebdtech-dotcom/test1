@@ -9,7 +9,6 @@
 // an exclusion count — GI-12; Inv #11). The empty copy must never imply exclusion. Status cells use the
 // kit `StatusChip` (text + tone, never colour alone — GI-06).
 
-import * as React from "react";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent } from "@/frontend/primitives/card";
 import { Button } from "@/frontend/primitives/button";

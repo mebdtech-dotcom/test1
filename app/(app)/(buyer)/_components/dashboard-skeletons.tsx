@@ -4,7 +4,6 @@
 // presets back those per-widget Suspense boundaries (and the route-level `loading.tsx`). They render no
 // data and infer nothing.
 
-import * as React from "react";
 import { Card, CardContent, CardHeader } from "@/frontend/primitives/card";
 import { Skeleton } from "@/frontend/primitives/skeleton";
 

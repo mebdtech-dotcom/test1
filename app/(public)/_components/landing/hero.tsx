@@ -27,10 +27,10 @@ export function Hero() {
 
       <div className="relative mx-auto w-full max-w-[var(--iv-content-max)] px-4 pt-20 sm:px-6 sm:pt-24">
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-iv-ink-heading sm:text-5xl">
             The Industrial Procurement Operating System for Bangladesh
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-iv-ink-secondary">
             Source, compare, and award — from RFQ to delivery — with verified suppliers.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

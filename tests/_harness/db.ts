@@ -106,6 +106,10 @@ function withParam(url: string, param: string): string {
   return url + (url.includes("?") ? "&" : "?") + param;
 }
 
+/** Private sentinel thrown to force a restricted-role transaction to roll back without surfacing as a real
+ *  failure (so an admitted INSERT probe never persists; see `asRestrictedRole`). */
+class TxRollback extends Error {}
+
 /**
  * Run `fn` as the restricted NON-privileged RLS role inside ONE transaction, with the supplied GUCs set
  * TRANSACTION-LOCAL (`set_config(.,.,true)` — the production `withActiveOrgContext` pattern; discarded at
@@ -119,7 +123,8 @@ function withParam(url: string, param: string): string {
  * disconnected in `finally`.
  *
  * @param gucs the RLS GUCs to pin (omit `activeOrg` to assert the no-context fail-closed path).
- * @param fn   the restricted-role read work; receives the RLS-scoped transaction.
+ * @param fn   the restricted-role work — a read, OR an INSERT probe that is rolled back (never persisted);
+ *             receives the RLS-scoped transaction. The transaction ALWAYS rolls back.
  */
 export async function asRestrictedRole<T>(
   gucs: RlsGucs,
@@ -128,8 +133,15 @@ export async function asRestrictedRole<T>(
   const client = new PrismaClient({
     datasources: { db: { url: withParam(BASE_DB_URL(), "connection_limit=1") } },
   });
+  // Force the transaction to ALWAYS roll back (the documented contract above): a callback may READ, or may
+  // ADMIT an INSERT to prove an RLS WITH CHECK passes — but it must NEVER PERSIST. Append-only tables (e.g.
+  // core.audit_records) cannot be cleaned up by DELETE, so a committed probe row would break re-runs with a
+  // PK/unique collision. We capture the callback result, throw a private sentinel to force the rollback,
+  // swallow that sentinel, and re-surface the captured value. A REAL error raised by the callback's own
+  // statement (e.g. an RLS WITH CHECK rejection) is NOT the sentinel and propagates to the caller.
+  let captured: T | undefined;
   try {
-    return await client.$transaction(async (tx) => {
+    await client.$transaction(async (tx) => {
       // Enter the NON-privileged role; from here RLS enforces (no bypass).
       await tx.$executeRawUnsafe(`SET LOCAL ROLE ${RESTRICTED_RLS_ROLE}`);
       // Pin only the GUCs explicitly supplied (transaction-local). An omitted GUC stays unset → NULL →
@@ -146,11 +158,15 @@ export async function asRestrictedRole<T>(
           gucs.isPlatformStaff ? "true" : "false",
         );
       }
-      return fn(tx);
+      captured = await fn(tx);
+      throw new TxRollback(); // force rollback — never persist a probe (read OR admitted write).
     });
+  } catch (e) {
+    if (!(e instanceof TxRollback)) throw e; // a real failure (e.g. an RLS rejection) propagates.
   } finally {
     await client.$disconnect();
   }
+  return captured as T;
 }
 
 /**

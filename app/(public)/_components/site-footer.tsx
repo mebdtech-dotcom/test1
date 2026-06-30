@@ -18,13 +18,13 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {COLUMNS.map((col) => (
             <div key={col.title}>
-              <h2 className="text-sm font-semibold text-foreground">{col.title}</h2>
+              <h2 className="text-sm font-semibold text-iv-ink-heading-strong">{col.title}</h2>
               <ul className="mt-3 space-y-2">
                 {col.links.map((label) => (
                   <li key={label}>
                     <Link
                       href="/"
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="text-sm text-iv-ink-secondary transition-colors hover:text-iv-ink-heading"
                     >
                       {label}
                     </Link>

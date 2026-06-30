@@ -256,10 +256,14 @@
     --iv-hover: var(--iv-light-hover);
     --iv-selected: var(--iv-light-selected);
 
-    /* Foreground / ink (semantic) */
-    --iv-fg: #0f172a; /* primary ink — slate-900 */
-    --iv-fg-secondary: #334155; /* secondary — slate-700 */
-    --iv-fg-muted: #64748b; /* meta / disabled — slate-500 */
+    /* Foreground / ink (semantic) — Navy typography hierarchy (2026-06-30 migration):
+       headings · section titles · key labels · links = brand navy; body/secondary/muted = slate. */
+    --iv-fg-strong: #0f172a; /* crisp ink — slate-900 (input text, key values) */
+    --iv-fg: #334155; /* body — slate-700 */
+    --iv-fg-secondary: #475569; /* secondary — slate-600 */
+    --iv-fg-muted: #5f6f86; /* meta / disabled — slate-500, nudged from #64748b for AA on gray surfaces */
+    --iv-fg-heading: #23438f; /* H1 · key labels · links (default) — brand navy */
+    --iv-fg-heading-strong: #1e3a8a; /* section/footer headings · link hover — deep navy */
     --iv-fg-inverse: #ffffff; /* ink on brand / dark fills */
 
     /* Elevation (semantic) — maps onto the shadow scale */
@@ -288,7 +292,7 @@
 
     /* Primary brand gradient — Deep Navy → Electric Indigo (premium fills, e.g.
        primary buttons). Subtle; no neon, no glassmorphism. */
-    --iv-gradient-primary: linear-gradient(135deg, var(--iv-navy-800) 0%, var(--iv-brand-600) 100%);
+    --iv-gradient-primary: linear-gradient(135deg, #23438f 0%, #2f5eb8 100%);
 
     /* Navigation rail — always Deep Navy (the industrial sidebar; light content).
        Selected = soft Indigo highlight; hover = subtle. */
@@ -340,9 +344,12 @@
     --iv-hover: var(--iv-surface-hover);
     --iv-selected: var(--iv-surface-selected);
 
+    --iv-fg-strong: #ffffff;
     --iv-fg: #ffffff;
     --iv-fg-secondary: var(--iv-neutral-text);
     --iv-fg-muted: var(--iv-neutral-bright);
+    --iv-fg-heading: #e2e8f0;
+    --iv-fg-heading-strong: #f1f5f9;
     --iv-fg-inverse: #0a0e1a;
 
     /* Dark-tuned shadows (the original heavy set) */
@@ -382,6 +389,17 @@
     color: var(--iv-fg);
     line-height: 1.5;
     min-height: 100dvh;
+  }
+
+  /* Headings default to brand navy (typography hierarchy 2026-06-30); body stays slate.
+     A surface may override per element — explicit `text-*` utilities win over this base rule. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--iv-fg-heading);
   }
 
   /* Monospace for IDs, refs, financial figures */

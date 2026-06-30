@@ -6,7 +6,7 @@
 | **Raised by** | Wave 2 execution, M1 buyer-profile WRITE slice (`upsert_buyer_profile`) |
 | **Date** | 2026-06-30 |
 | **Severity** | **BLOCKER** — gates **every tenant-scoped business write** that is Audit-Required (M1 `upsert_buyer_profile` and all `update_*`/`create_*` tenant writes; later M2–M9 tenant writes). Platform-wide, not M1-local. |
-| **Status** | **OPEN — Board ruled R-b (D1, 2026-06-30); not yet RESOLVED.** See §7. Realization (additive Doc-4B/Doc-6B patches) is **architecture-affecting → awaits HUMAN approval** (§8) before any M0 work; ESC reaches RESOLVED at sprint **D6** after the conformance test. No privilege-elevation mechanism introduced; no required audit omitted. |
+| **Status** | **✅ RESOLVED — 2026-06-30 (D6).** Board ruled **R-b** (D1); D2/D3 + **ADR-021** authored, human-approved, and folded into the corpus; D4 realized in M0 (the `audit_records_context_append` INSERT policy + the non-`RETURNING` `createMany` append + the `appendAuditRecord` facade); **D5 conformance suite GREEN against real PostgreSQL — 16/16 audit tests, full suite 52/52, idempotent re-runs.** The platform audit-write mechanism is realized and proven; every Audit-Required tenant write now has a conforming path. No privilege-elevation mechanism introduced; no `SECURITY DEFINER`; read posture unchanged; no required audit omitted. See §7 + the D4/D5/D6 addenda. |
 | **Authority** | CLAUDE.md §7 (Authority Order), §8 (architecture-affecting → human approval), §11 (Flag-and-Halt), §13 (Raise ≠ Accept); Doc-4B §A10 (audit atomicity); Doc-6B §2.2/§5.1 (audit RLS / platform-staff backstop); Doc-6C §2.1 (tenant GUC context) |
 | **Disposition rule** | Do **not** resolve locally. The `upsert_buyer_profile` slice and all Audit-Required tenant writes **park** until ruled. The kit `form-field`, the account read leg, and non-write FE are unaffected but have nothing to drive until the write lands. |
 
@@ -197,9 +197,20 @@ prettier); **4/4 adversarial verification lenses PASS** (migration-SQL/RLS · Pr
 local Postgres / Docker daemon is down. **The green D5 run against `postgres:16` is the gate before D6 (ESC RESOLVED);
 D6/D7 are not started.**
 
-**Status after D1:** the ESC stays **OPEN — ruled R-b**, not yet RESOLVED (RESOLVED at D6, after the
-human-approved patches + the green conformance test). The feature-work freeze (`BOARD-SPRINT` §7) remains in
-effect until sprint exit.
+**D5/D6 closure (2026-06-30, owner-authorized runtime verification).** The D5 conformance suite was executed against a
+real PostgreSQL 16 instance (ephemeral `docker compose` DB; all four migrations applied cleanly, incl.
+`20260630090000_audit_context_append_policy`). Result: **16/16 audit RLS tests PASS; the full integration suite is 52/52
+(no regression — incl. the Wave-1 `buyer_profiles` RLS gate); consecutive re-runs are idempotent.** The matrix proved,
+under the non-bypassing `ivendorz_test_rls` role: tenant-context append admitted via the **real service** (no
+`RETURNING`/42501); forged actor_id / cross-tenant org / forged actor_type rejected; fail-closed on unset GUC; staff leg
+admits System/NULL-org; tenant **cannot** SELECT (staff-only read, with a superuser no-false-pass contrast); UPDATE/DELETE
+trigger-blocked. (One test-infra fix landed during the run: `tests/_harness/db.ts` `asRestrictedRole` now **always rolls
+back** — honoring its documented contract — so an admitted INSERT probe never persists into the append-only table; the
+`buyer_profiles` gate is unaffected.) **D6: this ESC is now RESOLVED;** `WP-AUDIT-MECH` DoD is met. The platform
+audit-write mechanism is a **stable, proven platform capability**; the feature-work freeze lifts and D7 (resume the M1
+buyer-profile write) may proceed.
+
+**Status:** **✅ RESOLVED (D6, 2026-06-30)** — ruled R-b, realized, and proven green against real PostgreSQL.
 
 ---
 

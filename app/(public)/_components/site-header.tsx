@@ -43,7 +43,13 @@ export function SiteHeader() {
 
         <nav className="ml-6 hidden items-center gap-1 md:flex" aria-label="Primary">
           {NAV_LINKS.map((l) => (
-            <Button key={l.label} asChild variant="ghost" size="sm">
+            <Button
+              key={l.label}
+              asChild
+              variant="ghost"
+              size="sm"
+              className="hover:text-iv-ink-heading"
+            >
               <Link href={l.href}>{l.label}</Link>
             </Button>
           ))}

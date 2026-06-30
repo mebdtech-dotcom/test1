@@ -1,0 +1,158 @@
+// P-BUY-08 Buyer RFQ detail (overview host) — PRESENTATION (`T-DETAILS`, Doc-7F §3.1/§4.2/§10 Section 2).
+// Pure function of its view-model (a Server Component; no hooks, no fetch, no mutation — Content ≠
+// Presentation, Inv #9). The server page resolves the data via the wired `get_rfq` (GI-02) and passes it.
+//
+// REUSE: the canonical platform-shell `Breadcrumbs` + `PageHeader` (the detail "hero": title · ref-mono ·
+// status chip · actions) and the shared `ActivityTimeline` (lifecycle). Only the tab chrome hydrates.
+//
+// State plan (§II.6): `null` → **not-found ≡ genuine absence** (byte-identical to a real 404 — no copy/
+// layout/timing tell; Inv #11 / GI-12). Terminal/expired states render read-only via a Doc-4M status chip.
+//
+// GOVERNANCE (load-bearing):
+//  • GI-10 — only Doc-4M-permitted buyer actions are offered; the SERVER derives `permittedActions`, the
+//    UI renders them and decides nothing. These RFQ-lifecycle writes are audit-backed and PARKED behind
+//    `ESC-W2-AUDIT-RLS` + the write-wiring milestone — this milestone renders the affordance only.
+//  • The buyer NEVER dispatches an invitation and there is NO engine-bypass dispatch control (R6 / §0.3).
+//  • Deferral/exclusion is invisible; no excluded/deferred vendor is ever shown (Doc-3 §4.2 / Inv #11).
+//  • Quotations (P-BUY-09) and Activity (P-BUY-10) tabs are later-milestone placeholders, not data.
+
+import * as React from "react";
+import Link from "next/link";
+import { FileText } from "lucide-react";
+import { Button } from "@/frontend/primitives/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
+import { EmptyState } from "@/frontend/components/empty-state";
+import { StatusChip } from "@/frontend/components/status-chip";
+import { PageHeader, Breadcrumbs } from "../../../_components/shell";
+import { RfqDetailTabs } from "./rfq-detail-tabs";
+import { ActivityTimeline } from "../../_components/activity-timeline";
+import { formatDate, Money, Ref } from "../../_components/format";
+import { rfqStateDisplay } from "../../_components/state-display";
+import type { RfqDetailData, RfqLifecycleAction } from "../../_components/rfq-view-models";
+
+/** Map a lifecycle action's presentation emphasis to a kit Button variant. */
+function actionVariant(a: RfqLifecycleAction): "primary" | "outline" | "secondary" {
+  if (a.emphasis === "primary") return "primary";
+  if (a.emphasis === "danger") return "outline";
+  return "secondary";
+}
+
+/**
+ * Doc-4M-permitted lifecycle actions (GI-10). Presentation affordances only — the underlying writes
+ * (`submit_rfq`/`cancel_rfq`/`reissue_rfq`) are audit-backed and wired at a later milestone (parked
+ * behind `ESC-W2-AUDIT-RLS`). Rendered only in the populated view; never in the not-found state.
+ */
+function LifecycleActions({ actions }: { actions: RfqLifecycleAction[] }) {
+  if (actions.length === 0) return null;
+  return (
+    <>
+      {actions.map((a) => (
+        <Button key={a.key} variant={actionVariant(a)} size="sm">
+          {a.label}
+        </Button>
+      ))}
+    </>
+  );
+}
+
+/** A definition-list meta row (a11y-correct `<dt>`/`<dd>` pair). */
+function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-1 gap-1 py-2 sm:grid-cols-3 sm:gap-4">
+      <dt className="text-sm font-medium text-muted-foreground">{label}</dt>
+      <dd className="text-sm text-foreground sm:col-span-2">{children}</dd>
+    </div>
+  );
+}
+
+/** Overview tab — RFQ meta (left) + read-only lifecycle timeline (right). This IS P-BUY-08. */
+function OverviewTab({ data }: { data: RfqDetailData }) {
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <Card className="lg:col-span-2">
+        <CardHeader className="p-4">
+          <CardTitle className="text-sm font-semibold">Request details</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 pt-0">
+          <dl className="divide-y divide-border">
+            {data.summary ? <MetaRow label="Summary">{data.summary}</MetaRow> : null}
+            <MetaRow label="Category">{data.category ?? "—"}</MetaRow>
+            <MetaRow label="Budget">
+              <Money value={data.value} />
+            </MetaRow>
+            <MetaRow label="Delivery location">{data.deliveryLocation ?? "—"}</MetaRow>
+            <MetaRow label="Needed by">{data.neededBy ? formatDate(data.neededBy) : "—"}</MetaRow>
+            <MetaRow label="Created">{formatDate(data.createdAt)}</MetaRow>
+            <MetaRow label="Last updated">{formatDate(data.updatedAt)}</MetaRow>
+          </dl>
+        </CardContent>
+      </Card>
+      <ActivityTimeline entries={data.lifecycle} />
+    </div>
+  );
+}
+
+/** Placeholder for a tab whose screen is authorized in a later milestone (no fabricated data). */
+function TabPlaceholder({ title, screen }: { title: string; screen: string }) {
+  return (
+    <EmptyState
+      title={title}
+      description={`This view is delivered in a later milestone (${screen}).`}
+      className="py-12"
+    />
+  );
+}
+
+function NotFoundState() {
+  // Not-found ≡ genuine absence (byte-identical; Inv #11 / GI-12). The breadcrumb shows only the parent
+  // list (never a leaf ref that would imply the RFQ exists).
+  return (
+    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6">
+      <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
+      <EmptyState
+        icon={<FileText aria-hidden />}
+        title="RFQ not found"
+        description="This RFQ doesn't exist or isn't available."
+        action={
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/rfqs">Back to RFQs</Link>
+          </Button>
+        }
+        className="py-16"
+      />
+    </div>
+  );
+}
+
+export function RfqDetailView({ data }: { data: RfqDetailData | null }) {
+  if (data === null) {
+    return <NotFoundState />;
+  }
+
+  const status = rfqStateDisplay(data.state);
+
+  return (
+    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6">
+      <Breadcrumbs
+        items={[{ label: "RFQs", href: "/rfqs" }, { label: data.humanRef }]}
+        className="mb-4"
+      />
+      <PageHeader
+        title={data.title}
+        meta={
+          <>
+            <Ref>{data.humanRef}</Ref>
+            <StatusChip label={status.label} tone={status.tone} />
+          </>
+        }
+        actions={<LifecycleActions actions={data.permittedActions} />}
+      />
+      {/* The (server-rendered) tab contents are handed to the thin client tab chrome (only it hydrates). */}
+      <RfqDetailTabs
+        overview={<OverviewTab data={data} />}
+        quotations={<TabPlaceholder title="Quotations" screen="P-BUY-09" />}
+        activity={<TabPlaceholder title="Activity" screen="P-BUY-10" />}
+      />
+    </div>
+  );
+}
