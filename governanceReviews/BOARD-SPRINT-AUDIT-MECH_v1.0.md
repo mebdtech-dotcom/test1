@@ -93,6 +93,43 @@ write, the authenticated shell, M2, and the public landing. The only sanctioned 
 already-built, non-audit-dependent generic `FormField` kit component stands as-is and is **not** further
 extended into a surface during the freeze.
 
+## 8. D1 Session Charter
+
+> **A scope-setting charter, not a decision.** This section convenes the D1 session and bounds it. It
+> **authors no ruling, selects no mechanism (R-a…R-d or any other), and contains no implementation
+> detail** — those are produced **in-session** by the panel below and recorded in `ESC-W2-AUDIT-RLS` §7.
+
+**Session title:** Architecture Board — D1: Platform Audit Mechanism Decision
+
+**Single objective:** Answer — *how does a tenant-scoped business write satisfy a platform-owned audit
+obligation while preserving atomicity and security?* Nothing else.
+
+**Review panel** (eight roles; **no frontend / React / UI seats** — this is a platform architecture decision):
+1. Architecture Board Chair (presiding — CLAUDE.md §7)
+2. Principal Enterprise Architect
+3. Principal Security Architect
+4. Principal Persistence Architect
+5. PostgreSQL / RLS Specialist
+6. DDD Architect
+7. API Governance Reviewer
+8. Virtual CTO
+
+**Inputs** (read-only; bound by pointer, never restated):
+- `ESC-W2-AUDIT-RLS_v1.0.md` — the BLOCKER (problem, evidence, and options R-a…R-d).
+- `WP-AUDIT-MECH_v1.0.md` — the work package (scope, decision required, acceptance, DoD).
+- **Doc-4B** §A10 / §17.1 — `core.append_audit_record.v1` audit append + atomicity (audit atomic with the business write).
+- **Doc-6B** §2.2 / §5.1 — `core.audit_records` RLS / platform-staff backstop; §4.1 — audit immutability triggers.
+- Context (by pointer): Doc-4C §C10 (the Audit-Required obligation); Doc-6C §2.1 (the tenant GUC context).
+
+**Expected outputs** (produced in-session; the session **authorizes** — it does not pre-author the artifacts):
+1. **Board ruling** — the selected mechanism, recorded in `ESC-W2-AUDIT-RLS` §7 with binding conditions.
+2. **Additive Doc-4B patch — authorization** to author the audit-write-mechanism patch (human-approved, frozen via the corpus process).
+3. **Additive Doc-6B patch — authorization** to author the audit-table RLS / realization patch (human-approved, frozen via the corpus process).
+4. **ADR — if required** — authorization to record the decision as an ADR where the ruling sets durable precedent.
+5. **M0 implementation authorization** — engineering may realize the mechanism in `src/modules/core` (D4) **only after** the patches are ratified.
+
+**Guardrails:** additive patches only; no frozen decision reopened; no tenant-table RLS weakened; architecture-affecting artifacts require **human approval** (CLAUDE.md §8). Engineering implements **after** the Board rules (D1 → D2/D3 → D4). **This charter selects nothing and designs nothing** — the mechanism decision is the panel's, made in session.
+
 ---
 
 *Opened under Flag-and-Halt / Raise ≠ Accept (CLAUDE.md §11/§13). The reviewer frames; the Architecture
