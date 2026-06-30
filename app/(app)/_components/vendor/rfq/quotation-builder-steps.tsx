@@ -1,56 +1,44 @@
 "use client";
 
-// S4 Quote Authoring — the staged step rail (companion §13.1). Seven steps, directly clickable in ANY
-// order [M-Q1]; Preview is skippable. This is a thin client wrapper around the kit Tabs (the desktop
-// rail; the mobile [ESC-7B-SEGMENTED] stepper is a pending kit addition); the seven section contents
-// are server-rendered and passed in as props (no duplication, no business logic). RSC content streams
-// through this boundary.
+// Stepped-navigation wrapper for the staged quotation builder (companion §13.1). INFRASTRUCTURE ONLY:
+// this is a thin client wrapper around the kit Tabs that renders whatever steps the caller supplies and
+// makes NO workflow decisions — it knows nothing about Price/Delivery/Submit or any quotation concept.
+// The caller defines the steps (value/label/content), so future steps (e.g. an AI-review or commercial
+// step) can be added with zero change here. Steps are directly clickable in ANY order [M-Q1]. The
+// desktop rail is Tabs; the mobile [ESC-7B-SEGMENTED] stepper is a pending kit addition. RSC content
+// streams through this client boundary.
 import type { ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/primitives/tabs";
 
-export interface QuotationBuilderStepsProps {
-  price: ReactNode;
-  delivery: ReactNode;
-  warranty: ReactNode;
-  compliance: ReactNode;
-  attachments: ReactNode;
-  preview: ReactNode;
-  submit: ReactNode;
+export interface WorkspaceStep {
+  value: string;
+  label: string;
+  content: ReactNode;
 }
 
-const STEPS: { value: string; label: string }[] = [
-  { value: "price", label: "1 · Price" },
-  { value: "delivery", label: "2 · Delivery" },
-  { value: "warranty", label: "3 · Warranty" },
-  { value: "compliance", label: "4 · Compliance" },
-  { value: "attachments", label: "5 · Attachments" },
-  { value: "preview", label: "6 · Preview" },
-  { value: "submit", label: "7 · Submit" },
-];
+export interface QuotationBuilderStepsProps {
+  steps: WorkspaceStep[];
+  defaultValue?: string;
+  ariaLabel?: string;
+}
 
-export function QuotationBuilderSteps(props: QuotationBuilderStepsProps) {
-  const content: Record<string, ReactNode> = {
-    price: props.price,
-    delivery: props.delivery,
-    warranty: props.warranty,
-    compliance: props.compliance,
-    attachments: props.attachments,
-    preview: props.preview,
-    submit: props.submit,
-  };
-
+export function QuotationBuilderSteps({
+  steps,
+  defaultValue,
+  ariaLabel,
+}: QuotationBuilderStepsProps) {
   return (
-    <Tabs defaultValue="price" className="w-full">
-      <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-        {STEPS.map((step) => (
+    <Tabs defaultValue={defaultValue ?? steps[0]?.value} className="w-full">
+      <TabsList aria-label={ariaLabel} className="flex h-auto w-full flex-wrap justify-start gap-1">
+        {steps.map((step) => (
           <TabsTrigger key={step.value} value={step.value}>
             {step.label}
           </TabsTrigger>
         ))}
       </TabsList>
-      {STEPS.map((step) => (
+      {steps.map((step) => (
         <TabsContent key={step.value} value={step.value} className="mt-4">
-          {content[step.value]}
+          {step.content}
         </TabsContent>
       ))}
     </Tabs>

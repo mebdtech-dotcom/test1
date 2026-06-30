@@ -18,7 +18,11 @@ export {
 } from "./quotation-version-timeline";
 export { QuotationOutcomePanel, type QuotationOutcomePanelProps } from "./quotation-outcome-panel";
 export { QuotationBuilder, type QuotationBuilderProps } from "./quotation-builder";
-export { QuotationBuilderSteps, type QuotationBuilderStepsProps } from "./quotation-builder-steps";
+export {
+  QuotationBuilderSteps,
+  type QuotationBuilderStepsProps,
+  type WorkspaceStep,
+} from "./quotation-builder-steps";
 export { PriceBreakdownTable, type PriceBreakdownTableProps } from "./price-breakdown-table";
 export {
   QuotationTermsField,

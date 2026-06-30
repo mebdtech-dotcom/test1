@@ -83,22 +83,53 @@ export function QuotationBuilder({
       </Card>
 
       <QuotationBuilderSteps
-        price={<PriceBreakdownTable lines={lines} currency={currency} subtotal={subtotal} />}
-        delivery={<QuotationTermsField section="delivery" value={deliveryTerms} />}
-        warranty={<QuotationTermsField section="warranty" value={warrantyTerms} />}
-        compliance={<QuotationTermsField section="compliance" value={specComplianceDeclaration} />}
-        attachments={<QuotationAttachments attachments={attachments} />}
-        preview={
-          <QuotationPreview
-            lines={lines}
-            currency={currency}
-            subtotal={subtotal}
-            deliveryTerms={deliveryTerms}
-            warrantyTerms={warrantyTerms}
-            specComplianceDeclaration={specComplianceDeclaration}
-          />
-        }
-        submit={<QuotationSubmitPanel quota={quota} />}
+        ariaLabel="Quotation steps"
+        steps={[
+          {
+            value: "price",
+            label: "1 · Price",
+            content: <PriceBreakdownTable lines={lines} currency={currency} subtotal={subtotal} />,
+          },
+          {
+            value: "delivery",
+            label: "2 · Delivery",
+            content: <QuotationTermsField section="delivery" value={deliveryTerms} />,
+          },
+          {
+            value: "warranty",
+            label: "3 · Warranty",
+            content: <QuotationTermsField section="warranty" value={warrantyTerms} />,
+          },
+          {
+            value: "compliance",
+            label: "4 · Compliance",
+            content: <QuotationTermsField section="compliance" value={specComplianceDeclaration} />,
+          },
+          {
+            value: "attachments",
+            label: "5 · Attachments",
+            content: <QuotationAttachments attachments={attachments} />,
+          },
+          {
+            value: "preview",
+            label: "6 · Preview",
+            content: (
+              <QuotationPreview
+                lines={lines}
+                currency={currency}
+                subtotal={subtotal}
+                deliveryTerms={deliveryTerms}
+                warrantyTerms={warrantyTerms}
+                specComplianceDeclaration={specComplianceDeclaration}
+              />
+            ),
+          },
+          {
+            value: "submit",
+            label: "7 · Submit",
+            content: <QuotationSubmitPanel quota={quota} />,
+          },
+        ]}
       />
     </div>
   );
