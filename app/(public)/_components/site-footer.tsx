@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Separator } from "@/frontend/primitives/separator";
+import { BrandLogo } from "@/frontend/brand";
 
 const COLUMNS = [
   { title: "Marketplace", links: ["Browse categories", "Find vendors", "Search products"] }, // *
@@ -36,7 +37,10 @@ export function SiteFooter() {
         </div>
         <Separator className="my-8" />
         <div className="flex flex-col items-center justify-between gap-3 text-sm text-muted-foreground sm:flex-row">
-          <p>© iVendorz — Industrial Procurement OS for Bangladesh.</p>
+          <div className="flex items-center gap-3">
+            <BrandLogo height={24} />
+            <p>© iVendorz — Industrial Procurement OS for Bangladesh.</p>
+          </div>
           <p>Made in Bangladesh · BDT</p>
         </div>
       </div>

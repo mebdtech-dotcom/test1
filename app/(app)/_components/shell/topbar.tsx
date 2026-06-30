@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
+import { BrandMark } from "@/frontend/brand";
 import { MobileNav } from "./mobile-nav";
 import { OrgSwitcher } from "./org-switcher";
 import { QuickCreate } from "./quick-create";
@@ -29,12 +30,9 @@ export function Topbar({ vm, orgSwitcherSlot, notificationSlot, userMenuSlot }: 
       <MobileNav nav={nav} org={identity.activeOrg} organizations={identity.organizations} />
       <Link
         href="/dashboard"
-        className="flex items-center gap-2 font-semibold tracking-tight text-foreground"
+        className="inline-flex items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-sm text-primary-foreground">
-          iV
-        </span>
-        <span className="hidden sm:inline">iVendorz</span>
+        <BrandMark height={28} />
       </Link>
 
       <div className="ml-1 hidden md:block">

@@ -4,6 +4,8 @@
 // (Doc-7E §2 / [ESC-7-API-SIGNUP]). Minimal placeholder chrome — the Doc-7B kit + full Doc-7E
 // content land in their own wave.
 
+import Link from "next/link";
+import { BrandLogo } from "@/frontend/brand";
 import { LoginForm } from "./login-form";
 
 export const metadata = {
@@ -13,6 +15,9 @@ export const metadata = {
 export default function LoginPage() {
   return (
     <main>
+      <Link href="/" className="inline-flex">
+        <BrandLogo height={40} />
+      </Link>
       <h1>Sign in</h1>
       <LoginForm />
     </main>

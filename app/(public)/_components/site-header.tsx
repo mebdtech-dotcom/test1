@@ -8,6 +8,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
+import { BrandLogo } from "@/frontend/brand";
 import {
   Sheet,
   SheetContent,
@@ -33,12 +34,9 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 w-full max-w-[var(--iv-page-max)] items-center gap-4 px-4 sm:px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 font-semibold tracking-tight text-foreground"
+          className="inline-flex items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-sm text-primary-foreground">
-            iV
-          </span>
-          iVendorz
+          <BrandLogo height={32} />
         </Link>
 
         <nav className="ml-6 hidden items-center gap-1 md:flex" aria-label="Primary">

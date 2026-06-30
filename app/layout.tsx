@@ -40,6 +40,11 @@ export const metadata: Metadata = {
     "industrial suppliers",
   ],
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://ivendorz.com"),
+  icons: {
+    icon: "/brand/ivendorz-logo-s.svg",
+    shortcut: "/brand/ivendorz-logo-s.svg",
+    apple: "/brand/ivendorz-logo-s.svg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",

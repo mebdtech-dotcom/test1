@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback } from "@/frontend/primitives/avatar";
 import { Badge } from "@/frontend/primitives/badge";
 import { Button } from "@/frontend/primitives/button";
 import { Separator } from "@/frontend/primitives/separator";
+import { BrandMark } from "@/frontend/brand";
 import { ShellSlotPlaceholder } from "./vendor-shell-slot";
 
 /** Platform Participation dimension (Invariant 2 / DP8). Display label only — no logic. */
@@ -91,12 +92,9 @@ export function VendorTopbar({
 
         <Link
           href={`${basePath}/dashboard`}
-          className="flex items-center gap-2 rounded-md font-semibold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary text-sm text-primary-foreground">
-            iV
-          </span>
-          <span className="hidden sm:inline">iVendorz</span>
+          <BrandMark height={28} />
         </Link>
 
         <Separator orientation="vertical" className="mx-1 hidden h-6 sm:block" />
