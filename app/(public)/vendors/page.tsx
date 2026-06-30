@@ -3,7 +3,7 @@ import { FilterSidebar } from "../_components/discovery";
 import { VendorCard } from "@/frontend/components/vendor-card";
 import { ResultsGrid } from "@/frontend/components/results-grid";
 import { PaginationControl } from "@/frontend/components/pagination-control";
-import { VENDORS } from "../_components/discovery/seed";
+import { VENDORS, VENDOR_FACETS } from "../_components/discovery/seed";
 
 // P-PUB-12 Vendor Directory (Doc-7D Public surface · landing_page_spec §5). PRESENTATION & COMPOSITION
 // ONLY: anonymous, read-only, binds NO Doc-5 contract. Composes the M2.1 VendorCard (no new card type)
@@ -31,7 +31,7 @@ export default function VendorsPage() {
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <aside className="lg:w-64 lg:shrink-0">
           <div className="rounded-lg border border-border bg-card p-4 lg:sticky lg:top-20">
-            <FilterSidebar />
+            <FilterSidebar facets={VENDOR_FACETS} label="Filter vendors" />
           </div>
         </aside>
 

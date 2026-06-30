@@ -5,5 +5,10 @@
 // the public facet seed, and the search bar is a presentational placeholder the M2.3 Search Experience
 // will define. The promoted, canonical cards / grid / section live in the shared kit
 // (@/frontend/components/{vendor-card,product-card,category-tile,results-grid,landing-section}).
-export { FilterSidebar, type FilterSidebarProps } from "./filter-sidebar";
+export {
+  FilterSidebar,
+  type FilterSidebarProps,
+  type FilterFacet,
+  type FilterFacetGroup,
+} from "./filter-sidebar";
 export { SearchBar, type SearchBarProps } from "./search-bar";

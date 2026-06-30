@@ -25,6 +25,7 @@ import {
 import type { VendorCardVM } from "@/frontend/components/vendor-card";
 import type { ProductCardVM } from "@/frontend/components/product-card";
 import type { CategoryVM } from "@/frontend/components/category-tile";
+import type { FilterFacetGroup } from "./filter-sidebar";
 
 // ── Vendors (vendor directory seed). One is intentionally unverified → demonstrates that an absent
 //    "Verified" badge is ABSENCE, never a fabricated "pending" state. ────────────────────────────────
@@ -244,3 +245,10 @@ export const CAPABILITY_FACETS = [
   { key: "can_fabricate", label: "Fabricate" },
   { key: "can_consult", label: "Consult" },
 ] as const;
+
+/** Facet groups for the data-driven FilterSidebar (presentation — interim curated; no facet read yet). */
+export const VENDOR_FACETS: FilterFacetGroup[] = [
+  { heading: "Category", options: FEATURED_CATEGORIES.map((c) => ({ label: c.name })) },
+  { heading: "Capability", options: CAPABILITY_FACETS.map((f) => ({ label: f.label })) },
+  { heading: "Verification", options: [{ label: "Verified only" }] },
+];

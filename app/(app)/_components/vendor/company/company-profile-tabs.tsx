@@ -1,10 +1,9 @@
-"use client";
-
-// Tabbed Company Profile surface (companion §4: S1–S4 all map to (app)/company). Thin client wrapper
-// around the kit Tabs; the four section contents are server-rendered and passed in as props (no data,
-// no logic here). Reuses the kit Tabs primitive (no duplication).
+// CompanyProfileTabs (companion §4: S1–S4 map to (app)/company). Thin feature adapter over the shared
+// WorkspaceTabs infrastructure (Milestone 8): it only maps the four named section slots to tabs and
+// owns no tab logic. The section contents are server-rendered and passed in as props. Render is
+// byte-identical to the pre-extraction wrapper. RSC-friendly.
 import type { ReactNode } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/primitives/tabs";
+import { WorkspaceTabs } from "../shared";
 
 export interface CompanyProfileTabsProps {
   overview: ReactNode;
@@ -20,25 +19,13 @@ export function CompanyProfileTabs({
   financialTier,
 }: CompanyProfileTabsProps) {
   return (
-    <Tabs defaultValue="overview" className="w-full">
-      <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
-        <TabsTrigger value="overview">Overview</TabsTrigger>
-        <TabsTrigger value="identity">Identity &amp; geography</TabsTrigger>
-        <TabsTrigger value="capabilities">Capabilities &amp; capacity</TabsTrigger>
-        <TabsTrigger value="financial-tier">Financial tier</TabsTrigger>
-      </TabsList>
-      <TabsContent value="overview" className="mt-4">
-        {overview}
-      </TabsContent>
-      <TabsContent value="identity" className="mt-4">
-        {identity}
-      </TabsContent>
-      <TabsContent value="capabilities" className="mt-4">
-        {capabilities}
-      </TabsContent>
-      <TabsContent value="financial-tier" className="mt-4">
-        {financialTier}
-      </TabsContent>
-    </Tabs>
+    <WorkspaceTabs
+      tabs={[
+        { value: "overview", label: "Overview", content: overview },
+        { value: "identity", label: "Identity & geography", content: identity },
+        { value: "capabilities", label: "Capabilities & capacity", content: capabilities },
+        { value: "financial-tier", label: "Financial tier", content: financialTier },
+      ]}
+    />
   );
 }
