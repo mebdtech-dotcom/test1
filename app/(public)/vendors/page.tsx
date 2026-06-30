@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { VendorCard, FilterSidebar, ResultsGrid } from "../_components/discovery";
+import { FilterSidebar } from "../_components/discovery";
+import { VendorCard } from "@/frontend/components/vendor-card";
+import { ResultsGrid } from "@/frontend/components/results-grid";
 import { PaginationControl } from "@/frontend/components/pagination-control";
 import { VENDORS } from "../_components/discovery/seed";
 
@@ -42,7 +44,7 @@ export default function VendorsPage() {
             footer={<PaginationControl hasMore hasPrevious={false} />}
           >
             {VENDORS.map((vendor) => (
-              <VendorCard key={vendor.slug} vendor={vendor} />
+              <VendorCard key={vendor.slug} vendor={vendor} href={`/vendors/${vendor.slug}`} />
             ))}
           </ResultsGrid>
         </div>

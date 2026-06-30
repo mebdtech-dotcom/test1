@@ -1,22 +1,22 @@
-// ResultsGrid — a responsive results container (NOT a card type): grid of result cards + a contract
-// empty state + an optional footer slot (e.g. cursor pagination). Pure Server Component; composes the
-// kit EmptyState. Reused across /vendors · /marketplace · /categories.
+// ResultsGrid (Doc-7B kit, App tier; promoted from the Public surface after M2.2). PRESENTATION-ONLY
+// responsive results container: a grid of result cards + a contract empty state + an optional footer
+// slot (e.g. cursor pagination). ONE canonical implementation for every listing surface (Search will
+// build on this, not a public-local copy).
 //
 // GOVERNANCE: `count` drives the empty branch — it is the number of items the surface passed, NEVER a
-// fabricated/ client-computed total (GI-03). An empty result renders the contract empty state, which is
-// byte-identical to genuine absence (Invariant #11; GI-05/GI-12) — it never says "0 excluded" or hints
-// at a filtered-out/blacklisted vendor.
+// fabricated/client-computed total (GI-03). An empty result renders the contract empty state, byte-
+// identical to genuine absence (Invariant #11; GI-05/GI-12) — it never hints at a filtered-out vendor.
 import type { ReactNode } from "react";
 import { SearchX } from "lucide-react";
-import { EmptyState } from "@/frontend/components/empty-state";
-import { cn } from "@/frontend/lib/cn";
+import { EmptyState } from "./empty-state";
+import { cn } from "../lib/cn";
 
 export interface ResultsGridProps {
   /** The result cards. */
   children: ReactNode;
   /** Number of items rendered (drives the empty branch). NOT a total — no count is displayed. */
   count: number;
-  /** Grid column classes; defaults to a vendor/product-card-friendly responsive grid. */
+  /** Grid column classes; defaults to a card-friendly responsive grid. */
   columnsClassName?: string;
   /** Empty-state node the surface supplies; defaults to a neutral "no results" state. */
   empty?: ReactNode;

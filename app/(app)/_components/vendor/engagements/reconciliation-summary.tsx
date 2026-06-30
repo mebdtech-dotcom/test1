@@ -26,24 +26,33 @@ export function ReconciliationSummary({ reconciliation }: ReconciliationSummaryP
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         Reconciliation
       </p>
-      <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 tabular-nums">
-        <span>
-          <span className="text-muted-foreground">Invoiced </span>
-          <Amount value={reconciliation?.invoiced} currency={currency} />
-        </span>
-        <span>
-          <span className="text-muted-foreground">Recorded </span>
-          <Amount value={reconciliation?.recorded} currency={currency} />
-        </span>
-        <span>
-          <span className="text-muted-foreground">Confirmed </span>
-          <Amount value={reconciliation?.confirmed} currency={currency} />
-        </span>
-        <span>
-          <span className="text-muted-foreground">Outstanding </span>
-          <Amount value={reconciliation?.outstanding} currency={currency} />
-        </span>
-      </p>
+      {/* Semantic label/value pairs — derived text, deliberately NOT a stat-tile (M-1 / Inv 11). */}
+      <dl className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 tabular-nums">
+        <div className="flex items-center gap-1">
+          <dt className="text-muted-foreground">Invoiced</dt>
+          <dd>
+            <Amount value={reconciliation?.invoiced} currency={currency} />
+          </dd>
+        </div>
+        <div className="flex items-center gap-1">
+          <dt className="text-muted-foreground">Recorded</dt>
+          <dd>
+            <Amount value={reconciliation?.recorded} currency={currency} />
+          </dd>
+        </div>
+        <div className="flex items-center gap-1">
+          <dt className="text-muted-foreground">Confirmed</dt>
+          <dd>
+            <Amount value={reconciliation?.confirmed} currency={currency} />
+          </dd>
+        </div>
+        <div className="flex items-center gap-1">
+          <dt className="text-muted-foreground">Outstanding</dt>
+          <dd>
+            <Amount value={reconciliation?.outstanding} currency={currency} />
+          </dd>
+        </div>
+      </dl>
       <p className="mt-1 text-xs text-muted-foreground">
         Derived from your own records — off-platform payments, not settlement.
       </p>

@@ -49,7 +49,10 @@ export function EngagementDocuments({ reconciliation }: EngagementDocumentsProps
       <ReconciliationSummary reconciliation={reconciliation} />
 
       <Tabs defaultValue="loi" className="w-full">
-        <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1">
+        <TabsList
+          aria-label="Document types and records"
+          className="flex h-auto w-full flex-wrap justify-start gap-1"
+        >
           {DOC_KINDS.map((kind) => (
             <TabsTrigger key={kind} value={kind}>
               {DOC_KIND_LABEL[kind]}

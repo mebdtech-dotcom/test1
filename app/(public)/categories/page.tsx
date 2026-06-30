@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CategoryTile } from "../_components/discovery";
+import { CategoryTile } from "@/frontend/components/category-tile";
 import { CATEGORY_GROUPS } from "../_components/discovery/seed";
 import { SupplierShowcase } from "../_components/landing/supplier-showcase";
 
@@ -46,7 +46,11 @@ export default function CategoriesPage() {
                 </h3>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                   {group.categories.map((category) => (
-                    <CategoryTile key={category.slug} category={category} />
+                    <CategoryTile
+                      key={category.slug}
+                      category={category}
+                      href={`/marketplace?category=${encodeURIComponent(category.slug)}`}
+                    />
                   ))}
                 </div>
               </div>

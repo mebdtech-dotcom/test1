@@ -7,8 +7,8 @@ import Link from "next/link";
 import { LayoutGrid, ArrowRight } from "lucide-react";
 import { Card } from "@/frontend/primitives/card";
 import { Button } from "@/frontend/primitives/button";
-import { LandingSection } from "./landing-section";
-import { CategoryTile } from "../discovery";
+import { LandingSection } from "@/frontend/components/landing-section";
+import { CategoryTile } from "@/frontend/components/category-tile";
 import { FEATURED_CATEGORIES } from "../discovery/seed";
 
 export function FeaturedCategories() {
@@ -24,7 +24,11 @@ export function FeaturedCategories() {
           six here is the curated seed, not a layout assumption (the grid wraps any N). */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {FEATURED_CATEGORIES.map((category) => (
-          <CategoryTile key={category.slug} category={category} />
+          <CategoryTile
+            key={category.slug}
+            category={category}
+            href={`/marketplace?category=${encodeURIComponent(category.slug)}`}
+          />
         ))}
       </div>
 

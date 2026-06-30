@@ -22,7 +22,9 @@ import {
   Forklift,
   Wrench,
 } from "lucide-react";
-import type { VendorCardVM, ProductCardVM, CategoryVM } from "./view-models";
+import type { VendorCardVM } from "@/frontend/components/vendor-card";
+import type { ProductCardVM } from "@/frontend/components/product-card";
+import type { CategoryVM } from "@/frontend/components/category-tile";
 
 // ── Vendors (vendor directory seed). One is intentionally unverified → demonstrates that an absent
 //    "Verified" badge is ABSENCE, never a fabricated "pending" state. ────────────────────────────────

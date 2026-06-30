@@ -8,8 +8,8 @@
 // "featured" selection is editorial, not a computed score sort. Published-only: a vendor blacklisted by
 // some buyer still appears, byte-identical (Invariant #11; GI-12). One card is intentionally unverified
 // to demonstrate that absence renders as absence — never a fabricated state.
-import { LandingSection } from "./landing-section";
-import { VendorCard } from "../discovery";
+import { LandingSection } from "@/frontend/components/landing-section";
+import { VendorCard } from "@/frontend/components/vendor-card";
 import { FEATURED_VENDORS } from "../discovery/seed";
 
 export function SupplierShowcase() {
@@ -23,7 +23,7 @@ export function SupplierShowcase() {
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {FEATURED_VENDORS.map((vendor) => (
-          <VendorCard key={vendor.slug} vendor={vendor} />
+          <VendorCard key={vendor.slug} vendor={vendor} href={`/vendors/${vendor.slug}`} />
         ))}
       </div>
     </LandingSection>

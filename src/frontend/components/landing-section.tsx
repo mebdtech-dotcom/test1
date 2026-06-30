@@ -1,20 +1,15 @@
-// Landing section shell — consistent header (title + optional description + a generic header action
-// slot) and a content slot, for the M2 landing sections (SEC-CATEGORY/SUPPLIERS/PRODUCTS). Pure Server
-// Component; composes the kit Button only. A11y: each section is an `aria-labelledby` region keyed to
-// its <h2> (SC §1 GI-06). Width caps at --iv-content-max to match the Hero measure.
+// LandingSection (Doc-7B kit, App tier; promoted from the Public surface after M2.2). PRESENTATION-ONLY
+// section shell: a consistent header (title + optional description + a generic `action` slot) and a
+// content slot. ONE canonical implementation. A11y: each section is an `aria-labelledby` region keyed to
+// its <h2>. Width caps at --iv-content-max.
 //
-// EXTENSION CONTRACT (MINOR-2 — extension points without over-reach):
-//  • `action`  — a generic header-right slot (ReactNode). Inject any control: a "view all" link, a
-//                filter, a featured ribbon, etc. `viewAllHref` is a convenience for the common case.
-//  • children  — the content slot. Content STATES (loading skeleton · empty · cursor pagination) are
-//                owned by the content / the M2.2 ResultsGrid, NOT by this chrome (clean separation).
-//  • DEFERRED (deliberately NOT slots here): a "sponsored" ribbon → there is no public ads surface
-//    ([ESC-7-API-ADS]); and analytics hooks → wiring, GI-12-governed, not presentation. Adding either
-//    now would couple this presentation shell to a capability we do not (yet) have.
+// EXTENSION CONTRACT: `action` = a generic header-right slot (a "view all" link, a filter, a ribbon…);
+// `viewAllHref` is a convenience for the common case. Content STATES (loading/empty/pagination) are owned
+// by the content / the ResultsGrid, NOT by this chrome.
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/frontend/primitives/button";
+import { Button } from "../primitives/button";
 
 export interface LandingSectionProps {
   /** Section element id (also seeds the heading id) — e.g. "sec-suppliers". */
