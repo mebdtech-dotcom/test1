@@ -30,3 +30,17 @@
 2026-07-01 · P-ADM-03 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
 2026-07-01 · P-ADM-03 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
 2026-07-01 · P-AUTH-03 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-01 · P-AUTH-03 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0007)
+2026-07-01 · P-ADM-03 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0008)
+2026-07-01 · P-BUY-18 · ⬜ Pending → 🟡 In Progress · Owner: Team-2
+2026-07-01 · P-BUY-18 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-2
+2026-07-01 · P-BUY-18 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0009)
+2026-07-01 · P-AUTH-04 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-01 · P-ADM-04 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-01 · P-ADM-04 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-01 · P-AUTH-04 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-01 · P-BUY-19 · ⬜ Pending → 🟡 In Progress · Owner: Team-2
+2026-07-01 · P-BUY-19 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-2
+2026-07-01 · P-AUTH-04 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0010)
+2026-07-01 · P-BUY-19 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0011)
+2026-07-01 · P-ADM-04 · 🔵 Ready for Review → 🟥 Patch Required · Owner: Team-3 (RV-0012)

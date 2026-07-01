@@ -5,29 +5,29 @@
 > (`team-1.md` / `team-2.md` / `team-3.md`) remain the **source record**; this file is the
 > **pointer**. Keep it tiny. On any change, also update the owning team file + `changelog.md`.
 
-**Updated:** 2026-07-01 · **Sprint:** Review cycle 2 — P-AUTH-02, P-BUY-17, P-ADM-02 all ✅ Approved; teams advanced
+**Updated:** 2026-07-01 · **Sprint:** Review cycle 5 — P-AUTH-04 & P-BUY-19 ✅ Approved; P-ADM-04 🟥 Patch Required (shared table)
 
 ---
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-AUTH-03` Org setup (post-signup) (P0)
-- **Status:** 🔵 Ready for Review
-- **Next Page:** `P-AUTH-04` Password reset — request (P1, Ready)
+- **Current Page:** `P-AUTH-05` Password reset — confirm (P1) — ⬜ Pending (P-AUTH-04 ✅ Approved, RV-0010)
+- **Status:** ⬜ queued to build
+- **Next Page:** `P-AUTH-06` 2FA challenge (P2, Ready)
 - **Updated:** 2026-07-01
 
 ## Team-2 — Buyer
 
-- **Current Page:** `P-BUY-18` Close lost (P2) — ⬜ Pending (P-BUY-17 ✅ Approved, RV-0005)
+- **Current Page:** `P-BUY-20` Engagement detail (P1) — ⬜ Pending (P-BUY-19 ✅ Approved, RV-0011)
 - **Status:** ⬜ queued to build
-- **Next Page:** `P-BUY-19` Engagements (P1, Ready)
+- **Next Page:** `P-BUY-21` Purchase order (P1, Ready)
 - **Updated:** 2026-07-01
 
 ## Team-3 — Vendor / Verification / Admin
 
-- **Current Page:** `P-ADM-03` Moderation case detail (P1)
-- **Status:** 🔵 Ready for Review
-- **Next Page:** `P-ADM-04` RFQ moderation (P1, Ready)
+- **Current Page:** `P-ADM-04` RFQ moderation (P1) — 🟥 Patch Required (RV-0012 — `AdminQueueTable` th/td className: td-only + `headerClassName`)
+- **Status:** 🟥 fixing (queue NOT advanced)
+- **Next Page:** `P-ADM-05` Bans (P2, Ready) — after P-ADM-04 is re-approved
 - **Updated:** 2026-07-01
 
 ---
