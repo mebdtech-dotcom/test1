@@ -43,8 +43,8 @@ Verification = `P-VND-28` + `P-PUB-18` (Team-1) + `P-ADM-12/13`.
 
 | ID | Title | Priority | Dependency | Status | Notes |
 |---|---|---|---|---|---|
-| P-ADM-01 | Admin dashboard | P1 | Ready | 🔵 Ready for Review | Read-only ops landing; AppShell + ADMIN_SHELL_VM; links into queues (R5); no scores/counts |
-| P-ADM-02 | Moderation queue | P1 | Ready | ⬜ | |
+| P-ADM-01 | Admin dashboard | P1 | Ready | ✅ Approved | RV-0003 PASS (Team-4). Deferred MINOR: relocate DashboardSection/PipelineLinks to a shared dashboard folder (2nd consumer) |
+| P-ADM-02 | Moderation queue | P1 | Ready | ✅ Approved | RV-0006 PASS (Team-4). NIT: add route-level `loading.tsx` before `J-ADM-01` wiring. OBS: extract shared `AdminQueueTable` at 2nd admin queue |
 | P-ADM-03 | Moderation case detail | P1 | Ready | ⬜ | |
 | P-ADM-04 | RFQ moderation | P1 | Ready | ⬜ | pass→matching / reject→draft |
 | P-ADM-05 | Bans | P2 | Ready | ⬜ | |

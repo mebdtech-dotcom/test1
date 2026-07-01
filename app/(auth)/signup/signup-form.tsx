@@ -4,7 +4,8 @@
 // (Doc-7C §2.3). PRESENTATION-ONLY: client-side validation is UX only (never an authorization
 // decision — the server is the final authority, Doc-7A). It performs NO mutation and calls NO
 // contract: account creation is deferred (`[ESC-7-API-SIGNUP]`), so a valid submit shows an honest
-// interim notice and fabricates no account. Composes the shared kit (FormField / Input / Button).
+// interim notice and fabricates no account. Composes the shared kit (FormField / Input / Button); the
+// consent control is a native checkbox (no kit checkbox primitive exists yet) wired for a11y by hand.
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Info } from "lucide-react";
@@ -59,7 +60,7 @@ export function SignupForm() {
       {submitted ? (
         <div
           role="status"
-          className="flex items-start gap-2 rounded-md border border-border bg-iv-info-subtle px-3 py-2 text-sm text-iv-info-base"
+          className="flex items-start gap-2 rounded-md border border-border bg-iv-info-subtle px-3 py-2 text-sm text-iv-info-muted"
         >
           <Info aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
           <p>

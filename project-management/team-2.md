@@ -22,7 +22,7 @@
 | P-BUY-14 | Quotation detail | P1 | Ready | 🟩 Built | |
 | P-BUY-15 | Comparison statement | P1 | Ready | 🟩 Built | read-only, System-gen, **never recommends** (R6) |
 | P-BUY-16 | Clarifications / thread | P1 | Ready | 🟩 Built | |
-| P-BUY-17 | Award | P1 | Ready | 🔵 | Ready for Review — `T-WIZARD` select→confirm; explicit, unranked, 1:1, irreversible; org-threshold notice; presentation-only. Grounded `award_rfq` (Doc-4E §E8.4) |
+| P-BUY-17 | Award | P1 | Ready | ✅ Approved | RV-0005 PASS (re-review) — mock shortlist + working GET-form wizard nav (no default winner, R6); `<fieldset>/<legend>`. Both RV-0002 findings resolved |
 | P-BUY-18 | Close lost | P2 | Ready | ⬜ | non-penalizing |
 | P-BUY-19 | Engagements | P1 | Ready | ⬜ | |
 | P-BUY-20 | Engagement detail | P1 | Ready | ⬜ | |

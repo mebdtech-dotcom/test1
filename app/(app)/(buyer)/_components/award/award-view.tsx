@@ -94,7 +94,7 @@ function CandidateCard({ c, checked }: { c: AwardCandidate; checked: boolean }) 
       <input
         type="radio"
         id={`award-${c.quotationId}`}
-        name="award-select"
+        name="sel"
         value={c.quotationId}
         defaultChecked={checked}
         className="mt-1 size-4 shrink-0 border-input text-iv-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -186,7 +186,7 @@ export function AwardView({ data }: { data: AwardData | null }) {
               Awarding connects in the integration phase.
             </p>
             <Button asChild variant="secondary">
-              <Link href={`/rfqs/${data.rfqId}/award`}>Back</Link>
+              <Link href={`/rfqs/${data.rfqId}/award?sel=${data.selectedQuotationId}`}>Back</Link>
             </Button>
             <Button type="button">Confirm award</Button>
           </div>
@@ -196,29 +196,34 @@ export function AwardView({ data }: { data: AwardData | null }) {
   }
 
   // ── Step 0 — select exactly one shortlisted vendor ──────────────────────────────────────────────────
+  // Native GET form: "Continue" submits the chosen radio to `?step=confirm&sel=<id>` — server navigation, no
+  // client state. NO vendor is pre-selected (R6 — no default winner). The radios are a labelled group.
   return (
     <Shell humanRef={data.humanRef} rfqId={data.rfqId} step={0}>
-      <div className="flex flex-col gap-3">
-        <p className="text-sm text-muted-foreground">
-          Select <span className="font-medium text-foreground">one</span> shortlisted vendor to
-          award. Shown in the order provided — not ranked; there is no recommended winner.
-        </p>
-        {data.candidates.map((c) => (
-          <CandidateCard
-            key={c.quotationId}
-            c={c}
-            checked={c.quotationId === data.selectedQuotationId}
-          />
-        ))}
+      <form method="get" action={`/rfqs/${data.rfqId}/award`} className="flex flex-col gap-3">
+        <input type="hidden" name="step" value="confirm" />
+        <fieldset className="flex flex-col gap-3">
+          <legend className="text-sm font-medium text-foreground">
+            Choose one vendor to award
+          </legend>
+          <p className="text-sm text-muted-foreground">
+            Shown in the order provided — not ranked; there is no recommended winner.
+          </p>
+          {data.candidates.map((c) => (
+            <CandidateCard
+              key={c.quotationId}
+              c={c}
+              checked={c.quotationId === data.selectedQuotationId}
+            />
+          ))}
+        </fieldset>
         <div className="sticky bottom-0 z-10 mt-1 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-background/95 py-3 backdrop-blur">
           <p className="mr-auto text-xs text-muted-foreground">
             One vendor is awarded (1:1). This can&rsquo;t be undone.
           </p>
-          <Button type="button" disabled={!selected}>
-            Continue
-          </Button>
+          <Button type="submit">Continue</Button>
         </div>
-      </div>
+      </form>
     </Shell>
   );
 }
