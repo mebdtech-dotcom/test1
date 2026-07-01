@@ -53,7 +53,7 @@ the status layer only. Work highest-priority `Ready` first; skip `Dependency ≠
 | P-AUTH-03 | Org setup (post-signup) | P0 | Ready | ✅ Approved | RV-0007 PASS (Team-4). Exemplary field discipline (frozen `name` only; usage = intent, not sent). NIT: generic `[ESC-7-API]` marker; hand-rolled radio group |
 | P-AUTH-04 | Password reset — request | P1 | Ready | ✅ Approved | RV-0010 PASS (Team-4). Non-disclosure exemplary — uniform "if an account exists" confirmation, no existence leak; info-muted, role=status |
 | P-AUTH-05 | Password reset — confirm | P1 | Ready | ✅ Approved | RV-0014 PASS (Team-4). Non-disclosure exemplary (uniform invalid/expired); `?state=` harness PROD-GATED (NODE_ENV) — the right dev-preview pattern; server-authoritative token |
-| P-AUTH-06 | 2FA challenge | P2 | Ready | ⬜ | |
+| P-AUTH-06 | 2FA challenge | P2 | Ready | ✅ Approved | RV-0017 PASS (Team-4). Server-authoritative; `?state=` PROD-GATED; TOTP+backup toggle; uniform role=alert error (danger-muted); P-4 inks. NIT: h1 in done state |
 | P-AUTH-07 | Accept invitation / join org | P1 | Ready | ⬜ | |
 | P-AUTH-08 | Email verification | P1 | Ready | ⬜ | |
 
