@@ -534,10 +534,16 @@ contract — Invariant #10). Values are drawn **only** from `SC §8`. Reading no
 | P-ACC-16 Plans / catalog | Shared | D/T/M | Occasional | Secondary | Medium | P1 | Read-only | Secondary |
 | P-ACC-17 Subscription | Shared | D/T | Occasional | Secondary | Complex | P1 | Transactional | Primary |
 | P-ACC-18 Usage & quota | Shared | D/T/M | Occasional | Secondary | Medium | P1 | Read-only | Secondary |
-| P-ACC-19 Lead credits | Buyer | D/T | Occasional | Secondary | Medium | P2 | Transactional | Secondary |
+| P-ACC-19 Lead credits | Shared | D/T | Occasional | Secondary | Medium | P2 | Transactional | Secondary |
 | P-ACC-20 Platform invoices | Shared | D/T | Occasional | Secondary | Medium | P1 | Read-only | Secondary |
 | P-ACC-21 Platform invoice detail | Shared | D/T | Rare | Contextual | Simple | P1 | Read-only | Secondary |
 | P-ACC-22 Rewards / referrals | Shared | D/T/M | Rare | Secondary | Medium | P2 | Read-only | Secondary |
+
+**Correction (2026-07-03, owner ruling on `FE-VEN-14`'s composition report):** P-ACC-19 Lead
+Credits corrected from `Buyer` to `Shared` — labeling gap, not a real restriction; lead credits are
+consumed by vendors responding to invitations (already vendor-facing on the vendor dashboard) and
+every sibling billing page (P-ACC-16/17/18/20/21) is `Shared`. Full record:
+`governanceReviews/FE-VEN-14-VENDOR-ACCOUNT-COMPOSITION-REPORT_v1.0.md` §6.2/§9.
 
 ### 13.5 Buyer Workspace
 

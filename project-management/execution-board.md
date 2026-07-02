@@ -23,8 +23,15 @@ a genuine MAJOR finding [landing "Popular search" dead ends] surfaced by the adv
 correctly attributed to the separate, not-yet-started `FE-PUB-01`, carried forward not fixed here)
 · ~~FE-PUB-01 Landing~~ ✅ **Closed** (RV-0121, A:PASS ∧ B:PASS, 0 B/M/M both lanes, no
 fix-and-reverify cycle, Dev-team self-close 2026-07-03 @ `17f93a8` — fixed the FE-PUB-07-carried
-`command-center.tsx` popular-search mismatch, single-file content-only delta). **Team-1's FE-PUB
-queue exhausted this session** — only `FE-PUB-05`/`FE-PUB-09` ⛔ remain, both gated.
+`command-center.tsx` popular-search mismatch, single-file content-only delta). `FE-PUB-09 Mega
+Menu & Taxonomy Nav` — **🔍 ACTIVE 2026-07-03**: double gate CLEARED by owner Board session
+2026-07-03 (Taxonomy Content v1.0 P1 approval + `MEGA_MENU_*` package approval, with 3 rounds of
+owner findings adjudicated into the build plan — Category Landing Contract, `MegaMenuVendors`
+[capability-matrix-bound per Invariant #1; trade-role labels rejected], expanded Featured column,
+Popular Searches strip, Post RFQ header CTA, reserved authed slots, empty-state contract,
+breakpoint/z-index/analytics/perf-budget contracts; full phases 0–5 authorized; WP card
+`governanceReviews/milestones/fe-pub-09-mega-menu/WORK-PACKAGE.md`). Only `FE-PUB-05` ⛔ remains
+gated.
 
 **Team-2 (Buyer):**
 ~~FE-BUY-04..09~~ ✅ **All Closed** this session (RV-0102/0108/0109/0112/0113/0114 @ `5a4550c`/
@@ -48,8 +55,10 @@ board-approved 2026-07-02 @ `34395b2`, after one fix-and-reverify cycle) · ~~FE
 cycle) · ~~FE-VEN-09 Trust Center~~ ✅ **Closed** (RV-0120, Dev-team self-close 2026-07-03 @
 `32fe6fb`, no fix-and-reverify cycle — both lanes clean on first submission) · ~~FE-VEN-14
 Vendor↔Account Composition~~ ✅ **Closed — report-deliverable only** (RV-0122, Lane-L PASS 0
-findings, Dev-team self-close 2026-07-03 @ `71dce2f`) · Team-3 **idle** — FE-VEN-10/11/12 gated on
-the owner's ruling on the report (route topology + 2 routed findings, Board agenda #7).
+findings, Dev-team self-close 2026-07-03 @ `71dce2f`) · **Board RULED 2026-07-03** (report §9):
+Option B composed vendor-mounted page; P-ACC-13 Workflow Settings scoped OUT of `FE-VEN-12`
+(buyer-only content, carried forward); P-ACC-19 reclassified `Shared` in `page_inventory.md`.
+`FE-VEN-10 Billing` ← next (WP card pending kickoff) → FE-VEN-11 → FE-VEN-12.
 
 **Review Team 5 standing backlog (B lane):** Step-3 Public baseline sweep (QCT 5-step Step 3) at a
 stable post-cutover SHA — **owner-authorized 2026-07-02 (agenda #10)**; runs **before FE-PUB-02
@@ -60,7 +69,7 @@ starts**; findings feed the FE-PUB packages.
 | Item | Gate | Interim |
 |---|---|---|
 | FE-PUB-05 (P-PUB-11) | `ESC-7-API-PRODDETAIL` | product modal from `search_catalog` |
-| FE-PUB-09 mega menu | taxonomy P1 approval + `MEGA_MENU_*` package approval (S: `ESC-7-API-CATNAV`) | simple nav (FE-PF-05) |
+| ~~FE-PUB-09 mega menu~~ | ~~taxonomy P1 + `MEGA_MENU_*` package approval~~ **CLEARED 2026-07-03** (owner Board; S: `ESC-7-API-CATNAV` stays open — build-time seed interim) | — |
 | FE-PF-02 brand | official SVGs under `public/brand/` | placeholder-complete kit `BrandLogo` |
 | Page-gates inside milestones | P-PUB-09 `ESC-7-API-CATNAV` · P-VND-10 `ESC-7-API/upload` · P-ACC-12 `ESC-IDN-DELEG-EXPIRY` | carve-out rule (WBS) |
 
@@ -68,7 +77,6 @@ starts**; findings feed the FE-PUB packages.
 
 | Item | Decision needed |
 |---|---|
-| FE-VEN-10/11/12 | Board ruling on `FE-VEN-14`'s reuse/composition report (route topology: pure link-out vs. composed vendor-mounted page; + 2 routed findings, P-ACC-13/19) |
 | M2.5 vendor public microsite | continuation past the delivered foundation |
 
 ## Board standing agenda
@@ -90,11 +98,12 @@ starts**; findings feed the FE-PUB packages.
    the projection gap). Milestone checkpointed, awaiting Review-A.
 4. **P-ACC-12** — `ESC-IDN-DELEG-EXPIRY` (delegation reinstate path).
 5. **M2.5 microsite continuation.**
-6. **Taxonomy P1 + mega-menu package approval** — unblocks FE-PUB-09.
-7. **FE-VEN-10/11/12 kickoff scoping** — `FE-VEN-14`'s reuse/composition report is ready
-   (`governanceReviews/FE-VEN-14-VENDOR-ACCOUNT-COMPOSITION-REPORT_v1.0.md`): rule on route
-   topology (§7 of the report) + the 2 routed findings (P-ACC-13 Workflow Settings buyer-only
-   language; P-ACC-19 Lead Credits "Buyer" classification).
+6. ~~**Taxonomy P1 + mega-menu package approval**~~ — **APPROVED by owner 2026-07-03** (planning
+   session, both gates; 3 rounds of owner findings adjudicated; Invariant-#1 binding: vendor
+   trade-role labels rejected, capability matrix only). FE-PUB-09 unblocked and started.
+7. ~~**FE-VEN-10/11/12 kickoff scoping**~~ — **RULED by owner 2026-07-03** (`FE-VEN-14` report §9):
+   Option B composed vendor-mounted page; P-ACC-13 Workflow Settings scoped out of `FE-VEN-12`
+   (carried forward); P-ACC-19 reclassified `Shared`. Team-3 building FE-VEN-10 → 11 → 12.
 8. **Shell-mount ratification** — global search `/account/search` + notification center
    `/notifications` (raised at loop terminus, non-blocking; pages ✅).
 9. **SiteHeader "Pricing" nav → `/pricing`** chrome wiring (RV-0087 follow-up).

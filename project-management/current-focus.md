@@ -5,7 +5,7 @@
 > [`execution-board.md`](execution-board.md), process is [`review-process.md`](review-process.md).
 > Team files remain the **page-level source record**. On any change, append to `changelog.md`.
 
-**Updated:** 2026-07-02 · **Model:** FE Program Management v1.0 (cutover complete — Phases 0/A/B/C
+**Updated:** 2026-07-03 · **Model:** FE Program Management v1.0 (cutover complete — Phases 0/A/B/C
 done; page-loop terminus RV-0100). Teams pull milestones from the execution board, never from chat.
 
 ---
@@ -23,9 +23,15 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   spread. Content-only, single-file delta — no kit/route/filter-logic touched. A confirming sweep
   found no other landing section carries the same bug class [all source from seed-derived
   constants, not independent string literals])_
-- **Pipeline stage:** idle — **Team-1's FE-PUB queue exhausted this session** except gated items
-- **Next Milestone:** none pullable. FE-PUB-05 ⛔ `ESC-7-API-PRODDETAIL` · FE-PUB-09 ⛔
-  double-gated (taxonomy P1 + mega-menu package approval)
+- **Pipeline stage:** 🔍 building — `FE-PUB-09` Mega Menu & Taxonomy Nav **ACTIVE 2026-07-03**:
+  owner Board session cleared BOTH gates (Taxonomy Content v1.0 P1 + `MEGA_MENU_*` package
+  approval) and adjudicated 3 rounds of findings into the build plan (Category Landing Contract →
+  `/marketplace/category/[slug]`; `MegaMenuVendors` capability-matrix-bound per Invariant #1 —
+  trade-role labels REJECTED; expanded Featured column; Popular Searches strip; Post RFQ header
+  CTA; reserved authed slots; empty-state/breakpoint/z-index/analytics/perf-budget contracts).
+  Phases 0–5 authorized. WP card:
+  `governanceReviews/milestones/fe-pub-09-mega-menu/WORK-PACKAGE.md`
+- **Next Milestone:** FE-PUB-05 ⛔ `ESC-7-API-PRODDETAIL` (still gated)
 
 ## Team-2 — Buyer (FE-BUY / FE-CLN)
 
@@ -56,17 +62,16 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 ## Team-3 — Vendor (FE-VEN)
 
 - **Current Milestone:** _(none — `FE-VEN-14` Vendor↔Account Composition ✅ **Closed**, RV-0122,
-  Lane-L PASS 0 findings, Dev-team self-close 2026-07-03 @ `71dce2f`. **Report-deliverable close
-  only** — the milestone "produce a report" is done and reviewed clean, but this does NOT itself
-  unblock FE-VEN-10/11/12. FE-VEN-09 Trust Center also ✅ Closed prior, RV-0120)_
-- **Current Page:** _(none — no page owned; documentation deliverable only. Report:
-  `governanceReviews/FE-VEN-14-VENDOR-ACCOUNT-COMPOSITION-REPORT_v1.0.md`. Recommends a
-  route-topology decision [pure link-out vs. composed vendor-mounted page] and routes 2 real
-  findings to the Board [P-ACC-13 Workflow Settings is buyer-only RFQ-approval language; P-ACC-19
-  Lead Credits classified "Buyer" despite being vendor-facing] rather than resolving either
-  locally — none of that is decided yet)_
-- **Pipeline stage:** idle — awaiting the owner's ruling on the report (Board agenda #7)
-- **Next Milestone:** FE-VEN-10/11/12 (P-ACC composition builds), gated on that ruling
+  Lane-L PASS 0 findings, Dev-team self-close 2026-07-03 @ `71dce2f`. **Board RULED on the report
+  same-session**: Option B [composed vendor-mounted page]; P-ACC-13 Workflow Settings scoped OUT of
+  `FE-VEN-12` [buyer-only RFQ-approval content, carried forward]; P-ACC-19 Lead Credits reclassified
+  `Shared` in `page_inventory.md` [labeling gap, corrected]. FE-VEN-09 Trust Center also ✅ Closed
+  prior, RV-0120)_
+- **Current Page:** _(none — pulling `FE-VEN-10` Billing next per the ruled execution order
+  [10 → 11 → 12])_
+- **Pipeline stage:** idle — kicking off `FE-VEN-10` next
+- **Next Milestone:** FE-VEN-10 Billing (P-ACC-16..21 composed reuse) → FE-VEN-11 Organization →
+  FE-VEN-12 Settings
 
 ---
 

@@ -266,13 +266,20 @@ clean gate per Amendment v1.3 §13 — this report does not shortcut that.
 
 ---
 
-## 9. Decision record (Board to complete)
+## 9. Decision record (Board — completed 2026-07-03)
 
-- **Route topology ruling:** ☐ Option A (link-out) ☐ Option B (composed page) ☐ other (specify)
-- **P-ACC-13 (§6.1) ruling:** ☐ reuse as-is ☐ scope out of FE-VEN-12, carry forward ☐ generalize the
-  contract (additive patch — names the owning authority)
-- **P-ACC-19 (§6.2) ruling:** ☐ "Buyer" classification stands, FE-VEN-10 drops it from scope
-  ☐ classification is corrected to "Shared" in `page_inventory.md` ☐ other
-- **Decided by / date:** ____________________
-- **On approval:** Team-3 executes §8's plan in order (FE-VEN-10 → 11 → 12), each as its own
-  Lane-G, fully reviewed milestone.
+- **Route topology ruling:** ☑ **Option B — composed vendor-mounted page.** New
+  `workspace/billing|organization|settings` pages import and render the existing Account components
+  unchanged, inside vendor-shell chrome/breadcrumbs. §8's Option-B implementation plan is
+  authoritative for FE-VEN-10/11/12.
+- **P-ACC-13 (§6.1) ruling:** ☑ **Scope it out of `FE-VEN-12`, carry forward.** Settings ships User
+  Profile, Security, and Notification Preferences only. Workflow Settings stays out of the vendor
+  Settings page until a vendor-appropriate concept (e.g. quotation-approval workflow) is defined —
+  carried forward as an explicit, tracked gap, never silently dropped.
+- **P-ACC-19 (§6.2) ruling:** ☑ **Classification corrected to "Shared" in `page_inventory.md`**
+  (applied 2026-07-03, §13.4 — labeling gap, not a real restriction). `FE-VEN-10` includes P-ACC-19
+  in its reuse range as originally scoped.
+- **Decided by / date:** Owner, 2026-07-03 (delivered directly, same session as the report).
+- **On approval:** Team-3 executes §8's Option-B plan in order (FE-VEN-10 → 11 → 12), each as its
+  own Lane-G, fully reviewed milestone. `FE-VEN-12` ships 3 of its 4 target pages (Workflow Settings
+  carried forward per the ruling above).

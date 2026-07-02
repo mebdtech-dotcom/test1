@@ -64,7 +64,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-PUB-06 Vendor Directory | Vendor Growth | P1 | S | Low | S: Step-3 baseline | P-PUB-12 | ✅ Complete (RV-0118, A:PASS B:PASS, Dev-team self-close 2026-07-03 @ `4812157`) — spec's Toolbar delta named search as a gap the page never had; added the missing `SearchBar` entry point (existing kit component, no new primitive); 2 OBS total, 0 B/M/M |
 | FE-PUB-07 Search Result | Core Marketplace | P1 | M | Low | S: Step-3 baseline | P-PUB-10, P-PUB-19, P-PUB-20 | ✅ Complete (RV-0119, A:PASS B:ISSUES-non-gating, Dev-team self-close 2026-07-03, audit-only zero code delta) — P-PUB-10/19/20 thoroughly audited, no genuine gap found; a real MAJOR finding [landing "Popular search" dead ends] correctly attributed to the separate, not-yet-started FE-PUB-01, carried forward not fixed here |
 | FE-PUB-08 Content, Legal & Segments | Platform | P2 | — | Low | — | P-PUB-02..06, P-PUB-18, P-PUB-21..24 | ✅ Complete — all 10 ✅ (RV-0086..0100 era) |
-| FE-PUB-09 Mega Menu & Taxonomy Nav | Core Marketplace | P2 | L | Med | H: taxonomy P1 approval · H: MEGA_MENU package approval · S: `ESC-7-API-CATNAV` (live data) | — (touches nav + P-PUB-07/08/09) | ⛔ Double-gated — `MEGA_MENU_*.md` stay design-only until approved |
+| FE-PUB-09 Mega Menu & Taxonomy Nav | Core Marketplace | P2 | L | Med | ~~H: taxonomy P1 · H: MEGA_MENU package~~ **both CLEARED 2026-07-03 (owner Board)** · S: `ESC-7-API-CATNAV` (live data) stays open — build-time seed interim | — (touches nav + P-PUB-07/08/09 + P-PUB-08 landing enrich) | 🔍 ACTIVE 2026-07-03 — phases 0–5 authorized; 3 rounds of owner findings adjudicated (Category Landing Contract, MegaMenuVendors [Inv#1 capability-matrix-bound], Featured column, Popular Searches, Post RFQ CTA, reserved slots, empty-state/breakpoint/z-index/analytics/perf contracts); WP `governanceReviews/milestones/fe-pub-09-mega-menu/` |
 
 ## Track 2 — FE-BUY Buyer (Builder/Maintainer: Team-2)
 
@@ -94,9 +94,9 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-VEN-07 Leads | Vendor Growth | P1 | M | Med | — | P-VND-21, P-VND-22 | ✅ Complete (RV-0104, A:PASS B:PASS, board-approved 2026-07-02 @ `b1810fe`) — next-action pill on Board cards, lead created_at provenance; client-side "due first" reorder explicitly declined (existing disabled sort control owns it) |
 | FE-VEN-08 Engagements | Vendor Growth | P1 | L | Med | — | P-VND-23..26 | ✅ Complete (RV-0105, A:PASS B:PASS, board-approved 2026-07-02 @ `ec8306b`) — P-VND-24 frozen-conformant lifecycle single-next-legal-edge fix; P-VND-23 reviewed/conformant untouched; P-VND-25/26 correctly `ESC-7G-ENG-03`-gated untouched; P-VND-25 upload path still notes `ESC-7-API/upload` |
 | FE-VEN-09 Trust Center | Trust | P1 | M | High | — | P-VND-28 | ✅ Complete (RV-0120, A:PASS B:PASS, no fix-and-reverify cycle, Dev-team self-close 2026-07-03 @ `32fe6fb`) — Trust Score card (band+numeric ring, per the Board ruling), Performance card (band/`level` only — numeric never public, frozen contract restriction), Verified Tier card (reuses `TierChip`); 2 OBS total, 0 B/M/M |
-| FE-VEN-10 Billing | Platform | P2 | S | Med | H: FE-VEN-14 report + Board route-topology ruling | P-VND-27 | READY(build, kickoff-scoped) — vendor-context view **reusing P-ACC-16..21**; Builder = T3 for the adaptation, reused surfaces stay T1-maintained; **composition only — forking an account page = Flag-and-Halt** |
-| FE-VEN-11 Organization | Platform | P3 | S | Med | H: FE-VEN-14 report + Board route-topology ruling | — (reuses P-ACC-04..11) | READY(kickoff-scoped) — same rule as FE-VEN-10 |
-| FE-VEN-12 Settings | Platform | P3 | S | Med | H: FE-VEN-14 report + Board route-topology ruling | — (reuses P-ACC-02/03/13/15) | READY(kickoff-scoped) — same rule as FE-VEN-10; P-ACC-13 leg contingent on FE-VEN-14 §6.1 |
+| FE-VEN-10 Billing | Platform | P2 | S | Med | — | P-VND-27 | READY(build) — **RULED 2026-07-03**: Option B composed vendor-mounted page, reusing P-ACC-16..21 (P-ACC-19 reclassified Shared); Builder = T3, reused components stay T1-maintained; composition only — forking = Flag-and-Halt |
+| FE-VEN-11 Organization | Platform | P3 | S | Med | — | — (reuses P-ACC-04..11) | READY(build) — same ruling as FE-VEN-10 |
+| FE-VEN-12 Settings | Platform | P3 | S | Med | — | — (reuses P-ACC-02/03/15; P-ACC-13 carried forward) | READY(build) — same ruling as FE-VEN-10; **P-ACC-13 Workflow Settings scoped OUT** (buyer-only RFQ-approval content, ruled 2026-07-03) — ships 3 of 4 target pages |
 | FE-VEN-13 Ads | Vendor Growth | P2 | M | Low | — | P-VND-12..14 | ✅ Complete (RV-0106, A:PASS B:PASS-after-fix, board-approved 2026-07-02 @ `34395b2`) — fresh 3-page build; P-VND-13 create-only (no `update_advertisement` contract exists); admin reviews via P-ADM-10/11 (M8 owns the effect, R5) |
 | FE-VEN-14 Vendor↔Account Composition | Platform | P2 | S | Low | — | — (documentation only, owns no page) | ✅ Complete (RV-0122, Lane-L PASS 0 findings, Dev-team self-close 2026-07-03 @ `71dce2f`) — reuse/composition report delivered, `governanceReviews/FE-VEN-14-VENDOR-ACCOUNT-COMPOSITION-REPORT_v1.0.md`; **report-deliverable close only** — does NOT itself unblock FE-VEN-10/11/12, which stay gated on the Board's ruling on the report's route-topology recommendation + 2 routed findings (P-ACC-13, P-ACC-19) |
 
@@ -144,7 +144,6 @@ flowchart LR
     SVG["official brand SVGs"] -.H.-> PF02["FE-PF-02"]
     PD["ESC-7-API-PRODDETAIL"] -.H.-> PUB05["FE-PUB-05"]
     TAX["taxonomy P1 + package approval"] -.H.-> PUB09["FE-PUB-09"]
-    KS["FE-VEN-14 report + Board route-topology ruling"] -.H.-> VEN10["FE-VEN-10/11/12"]
   end
   BUY["FE-BUY-04..09"] ==H==> CLN01["FE-CLN-01 F2-Z"]
   SH["FE-SH approvals"] -.S.-> CLN03["FE-CLN-03"]
