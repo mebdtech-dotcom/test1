@@ -52,7 +52,14 @@ function Shell({
       <header className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Award RFQ</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Choose one vendor to award. Awarding is a deliberate, final act — not a ranking.
+          Choose one vendor to award. Awarding is a deliberate, final act — not a ranking.{" "}
+          <Link
+            href={`/rfqs/${rfqId}/compare`}
+            className="rounded-sm text-iv-brand-600 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            Review the comparison
+          </Link>
+          .
         </p>
       </header>
       <div className="mb-6 rounded-lg border border-border bg-card p-4 shadow-iv-xs">
