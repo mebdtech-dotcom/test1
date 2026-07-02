@@ -3,6 +3,28 @@
 **Owner:** Team-4 (Quality & Conformance). **Reviews only** `🔵 Ready for Review` pages; **never
 edits implementation** (Raise ≠ Accept — CLAUDE.md §13). Each review gets a sequential **`RV-####`**.
 
+> **Amendment (FE Program Management v1.0 cutover, 2026-07-02 — additive; entries RV-0001..0100
+> and the v1 template below are untouched):** from **RV-0101** the program is milestone-driven;
+> Team-4 continues as **Review Team B** (`governanceReviews/TEAM-4-QCT-CHARTER_AMENDMENT_v1.1.md`)
+> after the new **Review Team A** (`governanceReviews/REVIEW-TEAM-A-CHARTER_v1.0.md`). Both teams
+> log here under ONE RV-#### per review cycle using the **milestone entry template v2**:
+>
+> ```
+> ### RV-#### · FE-XXX-NN · <Milestone title> · Team-<n>
+> - Date · Pages in scope: P-… · Reviewed SHA: <checkpoint sha> (stable-target)
+> - Review-A (Architecture & Governance): PASS | REVISION | BLOCKER
+>   Findings: numbered, severity ladder BLOCKER/MAJOR/MINOR/NIT/OBS
+> - Review-B (Quality & Adversarial): PASS | ISSUES | REGRESSION
+>   Findings: numbered, same ladder (B opens only after A pass-class)
+> - Disposition (author/authority): per the Validate-Findings gate
+> - Board: APPROVED | RETURNED | ESCALATED (+ decision ref)
+> - Result: milestone → ✅ Closed | 🟠 Revising | 🟥 Blocked
+> ```
+>
+> Gate to Board = **A:PASS ∧ B: BLOCKER = MAJOR = MINOR = 0** (§13 unchanged). Page-scoped
+> checkpoint reviews use the same template with `Pages: <single page>`. Full process:
+> [`review-process.md`](review-process.md).
+
 ## Governance (per CLAUDE.md §13)
 
 - **Severity ladder:** `BLOCKER` · `MAJOR` · `MINOR` · `NIT` · `OBS`.

@@ -1,77 +1,23 @@
-# Frontend WBS — live board
+# Frontend WBS — DEPRECATED (superseded stub)
 
-**Status:** Active v1.0 · **Date:** 2026-07-01 · Non-authoritative. See [`README.md`](README.md) for
-the loop and ownership rules; [`page_inventory.md`](../page_inventory.md) for the page list.
+> **⚠ SUPERSEDED 2026-07-02 by [`fe-program-wbs.md`](fe-program-wbs.md)** (FE Program Management
+> v1.0 cutover, Board-ratified plan v6). **Do not update this file.** Queues/gates:
+> [`execution-board.md`](execution-board.md) · process: [`review-process.md`](review-process.md).
+> Retained as a stub because committed changelog lines, `product-status.md`, and review history
+> reference it (append-only culture — never deleted).
 
-## Summary metrics (refreshed 2026-07-02 — verified against team files)
+## Final metrics snapshot — page-loop terminus (re-verified at cutover, post-RV-0100)
 
 | Metric | Count |
 |---|---:|
 | **Total pages** (page_inventory) | 144 |
-| **🟩 Built** (pre-existing, under Team-4 QCT) | 44 |
-| **✅ Approved** | 75 |
-| **🔵 Ready for Review** | 1 (P-PUB-05) |
-| **⬜ Pending** | 24 |
-| — of which **Ready** | 16 |
-| — of which **Blocked** (Waiting API/Decision) | 5 |
-| — of which **owner-gated** (P-BUY-03/04/05) | 3 |
+| **🟩 Built** (pre-loop, under QCT milestone track) | 44 |
+| **✅ Approved** (per-page RV, committed) | 87 |
+| **🔵 In review** | 0 |
+| **⬜ Ready to build** (P-VND-09/12/13/14/27) | 5 |
+| **⬜ Gated / parked** (P-PUB-09/11 · P-ACC-12 · P-BUY-03/04/05 · P-VND-10 · P-VND-28) | 8 |
 
-Per-surface breakdown + cluster milestones: [`product-status.md`](product-status.md) §2.
-Complete clusters: **Auth** (02–08) · **Account** (01–22, −12 gated) · **Buyer** (01–27, −3 gated) ·
-**Admin** (01–29).
-
-## Rules
-
-- Only **ONE** page `🟡 In Progress` per team at a time.
-- Only the **owning team** may set `🟡 In Progress` (see README team table).
-- Work **highest-priority Ready** first — never alphabetical. Skip `Dependency ≠ Ready`.
-- Reuse existing components; no new primitives; no routing/design-system changes.
-- Stop after each page reaches `🔵 Ready for Review`. **Team-4 reviews; never edits.**
-
-## Status legend (mapped to the WP state model — `Wave_Template_v1.0.md`)
-
-| Marker | State | WP model |
-|---|---|---|
-| `⬜` | Pending | PLANNED |
-| `🟡` | In Progress | IN_PROGRESS |
-| `🔵` | Ready for Review | UNDER_REVIEW |
-| `🟥` | Patch Required | (review verdict) |
-| `🟠` | Fixing | FIXING |
-| `✅` | Approved | GREEN |
-| `🟩` | Built (pre-existing) | — (under Team-4 QCT milestone track) |
-
-**Cycle:** ⬜ → 🟡 → 🔵 → { ✅ | 🟥 → 🟠 → 🔵 … }
-
-## Priority vocabulary
-
-Seeded from `page_inventory.md` §13 / `SC §8` (`P0` walking-skeleton · `P1` core · `P2` later). This
-board splits "later" into **P2 Important** and **P3 Nice-to-have** as an execution sub-tier — both
-fold to `SC §8` P2 and coin no new corpus priority.
-
-| Tier | Meaning |
-|---|---|
-| **P0** | Critical / walking skeleton |
-| **P1** | MVP core |
-| **P2** | Important (SC §8 "later") |
-| **P3** | Nice-to-have (SC §8 "later") |
-
-## Dependency vocabulary
-
-`Ready` · `Blocked` · `Waiting API` · `Waiting Design` · `Waiting Decision`. Any non-`Ready` value
-**cites its `esc_registry.md` handle** — the tracker records absence, never invents a contract.
-
-## Team files
-
-- [`team-1.md`](team-1.md) — Public / Shared / Identity (`P-PUB-*`, `P-SH-*`, `P-AUTH-*`, `P-ACC-*`)
-- [`team-2.md`](team-2.md) — Buyer (`P-BUY-*`)
-- [`team-3.md`](team-3.md) — Vendor / Verification / Admin (`P-VND-*`, `P-ADM-*`)
-
-## Open dependency blocks (from `esc_registry.md`)
-
-| Page | Dependency | Handle |
-|---|---|---|
-| `P-PUB-09` Industry page | Waiting API | `ESC-7-API-CATNAV` |
-| `P-PUB-11` Product detail (public) | Waiting API | `ESC-7-API-PRODDETAIL` |
-| `P-ACC-12` Delegation grant editor | Waiting Decision | `ESC-IDN-DELEG-EXPIRY` |
-| `P-VND-10` Spec documents (upload) | Waiting API | `ESC-7-API/upload` |
-| `P-VND-28` Trust & performance | Waiting Decision | `ESC-7G-SCORE-DISPLAY` (band-only interim) |
+Loop terminus: Team-1 buildable set complete (RV-0100, `204dbf0`); auto-loop stopped by owner
+(`a175226`); residue snapshot `9161143`. The page-state legend and per-page statuses live on in
+the team files (`team-1.md` / `team-2.md` / `team-3.md`) — still the page-level source record
+under the new model.
