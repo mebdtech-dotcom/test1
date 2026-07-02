@@ -58,3 +58,8 @@ export const ROUTING_RULES: RoutingRuleVM[] = [
     enabled: false,
   },
 ];
+
+/** Lookup one routing rule (P-ADM-20 editor). Returns undefined for an unknown id (Invariant #11). */
+export function getRoutingRule(id: string): RoutingRuleVM | undefined {
+  return ROUTING_RULES.find((r) => r.id === id);
+}
