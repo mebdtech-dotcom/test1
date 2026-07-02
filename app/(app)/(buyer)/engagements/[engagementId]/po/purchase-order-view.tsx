@@ -4,8 +4,8 @@
 // here; an unknown/absent/non-party document collapses to `notFound()` BY THE PAGE (byte-identical;
 // Inv #11 / GI-12), so this view always receives non-null data.
 //
-// REUSE: shell `Breadcrumbs` + `PageHeader`; shared `DescriptionList` + `Ref`; kit `Card`/`StatusChip`/
-// `Button`/`EmptyState`. No new primitive.
+// REUSE: shell `Breadcrumbs` + `PageHeader`; shared `DescriptionList` + `Ref` + `EngagementDocumentFileCard`
+// (shared across PO / Challan / WCC); kit `Card`/`StatusChip`/`Button`. No new primitive.
 //
 // GOVERNANCE:
 //  • Renders ONLY frozen-projected fields of `get_engagement_document.v1` (Doc-4F §F5.8): `human_ref`,
@@ -21,13 +21,13 @@
 //  • The engagement→PO relationship has no enumeration read (`ESC-7G-ENG-03`); a PO is reached by its own
 //    `document_id` only. The rendered-artifact file is a file-link off `storage_ref`, never inlined data.
 
-import { Banknote, FileText, Info, ShieldCheck } from "lucide-react";
+import { Banknote, Info, ShieldCheck } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
-import { EmptyState } from "@/frontend/components/empty-state";
 import { StatusChip } from "@/frontend/components/status-chip";
 import { PageHeader, Breadcrumbs } from "../../../../_components/shell";
 import { DescriptionList, type DescriptionItem } from "../../../_components/description-list";
+import { EngagementDocumentFileCard } from "../../../_components/engagement-document-file-card";
 import { Ref } from "../../../_components/format";
 import type { PurchaseOrderData } from "../../../_components/purchase-order-view-models";
 
@@ -76,39 +76,8 @@ export function PurchaseOrderView({ data }: { data: PurchaseOrderData }) {
         </Card>
 
         {/* Rendered artifact: a file-link off `storage_ref` (BC-OPS-4-generated); the PO body itself
-            (`content_jsonb`) is not a projected read field → never inlined/fabricated as data. */}
-        <Card>
-          <CardHeader className="p-4">
-            <CardTitle className="text-sm font-semibold">Document file</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            {data.storageRef ? (
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <FileText aria-hidden className="size-4 shrink-0" />
-                  The generated purchase order document.
-                </p>
-                {/* Disabled: the storage-ref → file-URL resolution wires at the integration milestone.
-                    An adjacent hint explains WHY it is disabled (not just "not now"). */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">
-                    Opens in the integration phase.
-                  </span>
-                  <Button type="button" variant="secondary" size="sm" disabled>
-                    Open document
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <EmptyState
-                icon={<FileText aria-hidden />}
-                title="No document file yet"
-                description="The rendered purchase order will appear here once it is generated."
-                className="py-8"
-              />
-            )}
-          </CardContent>
-        </Card>
+            (`content_jsonb`) is not a projected read field → never inlined. Shared across versioned docs. */}
+        <EngagementDocumentFileCard storageRef={data.storageRef} documentNoun="purchase order" />
 
         {/* PO financial approval — gated on the DISTINCT `can_approve_po` slug (Doc-4F §F5.4 / Doc-2 §7),
             NEVER collapsed into `can_create_documents`. Presentation-only affordance; server enforces. */}
