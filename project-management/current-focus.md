@@ -11,16 +11,16 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-18` Usage & quota (P2) — 🟡 In Progress (P-ACC-17 ✅ committed)
-- **Status:** 🟡 building (presentation-only; usage/quota dashboard `get_usage`; Inv #10; quota≠routing)
-- **Next Page:** _(confirm from team-1.md after P-ACC-18)_
+- **Current Page:** `P-ACC-19` Lead credits (P2) — 🟡 In Progress (P-ACC-18 ✅ committed)
+- **Status:** 🟡 building (presentation-only; lead balance + transactions, BC-BILL-4; Inv #10 numeric; platform-revenue only)
+- **Next Page:** _(confirm from team-1.md after P-ACC-19)_
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
 
-- **Current Page:** `F2-0` Final Buyer UX Refinement — ⏸ **AWAITING OWNER SPEC** (additional business info / cards / workflow improvements). F1 audits DONE; **F1-6 Freeze Report v1.0 DELIVERED** (`BUYER_FRONTEND_FREEZE_REPORT_v1.0.md`; MAJOR 6 · MINOR 5).
-- **Status:** ⏸ HOLD all freeze remediation (owner sequencing) — build owner's UX refinements FIRST, THEN one batch of all FZ-01..FZ-11 + full verify + 2-review → request freeze. Idle until owner provides the refinement content.
-- **Next Page:** F2-0 (owner content) → F2-Z single freeze batch. **Still owner-gated:** P-BUY-03/04 route topology + P-BUY-05 favorites scope/projection
+- **Current Page:** `BX-01` Dashboard enhancement — ✅ Approved (RV-0070) + **committed 08dcb7a**. Sourcing Pipeline widget + populated dashboard; no kit/token change; axe 0 own-content.
+- **Status:** ✅ BX-01 done. Ready for **BX-02** (next Buyer Experience enhancement) — awaiting owner target (RFQ/quotation presentation vs another widget). Freeze remediation still HELD (batches after sprint). Presentation-only; no backend.
+- **Next Page:** BX-02 — proposed: improve RFQ detail / quotation presentation (contract-grounded). **Still owner-gated:** P-BUY-03/04 route topology + P-BUY-05 favorites scope/projection
 - **Updated:** 2026-07-02
 
 ## Team-3 — Vendor / Verification / Admin

@@ -257,3 +257,10 @@
 2026-07-02 · P-ACC-17 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0069 — cancel=auto_renew-off-to-period-end exemplary; Inv#10 + money-boundary)
 2026-07-02 · P-ACC-17 · ✅ Approved → ✅ committed · Owner: Team-1
 2026-07-02 · P-ACC-18 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-02 · BX-01 · ⬜ → 🟡 → 🔵 Ready for Review · Owner: Team-2 (Buyer Experience Sprint: Dashboard — Sourcing Pipeline widget [RFQ funnel by frozen Doc-4M state, wired-read counts never client-computed R7, observe-only R6, non-disclosure-safe]; populated dashboard fixture; no kit/token change; axe 0 own-content; 2-reviewer PASS/PASS, 2 MINOR fixed pre-review)
+2026-07-02 · P-ACC-18 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-02 · BX-01 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0070 — no kit change; additive; R6/R7/GI-04/Inv#11; aggregate-KPI wiring OBS)
+2026-07-02 · P-ACC-18 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0071 — Inv#10 + quota-moat note; text-value progressbars)
+2026-07-02 · P-ACC-18 · ✅ Approved → ✅ committed · Owner: Team-1
+2026-07-02 · P-ACC-19 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-02 · BX-01 · ✅ Approved → ✅ committed (08dcb7a) · Owner: Team-2
