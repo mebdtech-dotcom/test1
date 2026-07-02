@@ -27,30 +27,33 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-3 — Vendor (FE-VEN)
 
-- **Current Milestone:** `FE-VEN-05` RFQ Workspace — **🔵A Review-A** (**owner kickoff APPROVED
-  2026-07-02**, WP card Started; scope complete at checkpoint `e2f8642`)
-- **Current Page:** _(both in-scope pages built — P-VND-15 `c509934` needs-response-first +
-  urgency-aware inbox ordering; P-VND-16 `e2f8642` clearer decline affordance — submitted to
-  Review-A; Team-3 STOPS, does not pull FE-VEN-06)_
-- **Pipeline stage:** submitted to Review-A (Lane G)
-- **Next Milestone:** FE-VEN-06 → 07 → 08 → FE-VEN-13 → FE-VEN-04 remainder (P-VND-09).
-  FE-VEN-09 ⛔ · FE-VEN-10/11/12 at Board kickoff scoping
+- **Current Milestone:** _(none — `FE-VEN-05` RFQ Workspace ✅ **Closed**, board-approved
+  2026-07-02, RV-0101, A:PASS ∧ B:PASS, 0 BLOCKER/MAJOR/MINOR both lanes, checkpoint `e2f8642`)_
+- **Current Page:** _(none)_
+- **Pipeline stage:** **idle — by explicit owner instruction.** FE-VEN-05 closed but FE-VEN-06
+  kickoff was NOT authorized this cycle ("approve close, don't start next"); Team-3 holds and does
+  not pull FE-VEN-06 or author its WP card until the owner says so.
+- **Next Milestone:** FE-VEN-06 (WP card not yet authored — owner kickoff required) → 07 → 08 →
+  FE-VEN-13 → FE-VEN-04 remainder (P-VND-09). FE-VEN-09 ⛔ · FE-VEN-10/11/12 at Board kickoff
+  scoping
 
 ---
 
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
-- **`FE-VEN-05` RFQ Workspace** (Team-3) — at checkpoint `e2f8642`; P-VND-15/16 delta, Lane G.
-  First milestone to reach 🔵A under the new model.
+_(empty — FE-VEN-05 cleared A with a PASS, RV-0101; first milestone to clear Review-A under the
+new model)_
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
+
+_(empty — FE-VEN-05 cleared B with a PASS, RV-0101, 12 OBS; first milestone to clear the full A→B
+gate under the new model)_
 
 - **Standing backlog:** Step-3 Public baseline sweep (QCT 5-step Step 3) at a stable SHA —
   awaiting Board authorization (agenda #10); runs before FE-PUB-02 starts
 
 ## Architecture Board — queue
 
-- **Kickoff approvals pending (owner):** WP card for FE-PUB-02 (FE-BUY-04/FE-VEN-05 already
-  approved)
-- **Review approval pending (owner-adjacent, once Review A/B PASS):** FE-VEN-05 milestone close
+- **Kickoff approvals pending (owner):** WP card for FE-PUB-02 · WP card for FE-VEN-06 (Team-3
+  idle, owner has not authorized this cycle)
 - **Standing agenda:** [`execution-board.md`](execution-board.md) §Board standing agenda (10 items)

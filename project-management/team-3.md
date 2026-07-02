@@ -29,8 +29,8 @@ Verification = `P-VND-28` + `P-PUB-18` (Team-1) + `P-ADM-12/13`.
 | P-VND-12 | Ads | P2 | Ready | ⬜ | placeholder page exists |
 | P-VND-13 | Ad create/edit | P2 | Ready | ⬜ | |
 | P-VND-14 | Ad submission / status | P2 | Ready | ⬜ | admin reviews |
-| P-VND-15 | Invitations inbox | P1 | Ready | 🟩 Built | received-only |
-| P-VND-16 | Invitation detail | P1 | Ready | 🟩 Built | decline = no penalty |
+| P-VND-15 | Invitations inbox | P1 | Ready | 🟩 Built | received-only. **FE-VEN-05 enhancement CLOSED** (RV-0101, `c509934`): needs-response-first + urgency-aware ordering |
+| P-VND-16 | Invitation detail | P1 | Ready | 🟩 Built | decline = no penalty. **FE-VEN-05 enhancement CLOSED** (RV-0101, `e2f8642`): clearer decline affordance, `aria-describedby` |
 | P-VND-17 | Quotations | P1 | Ready | 🟩 Built | visibility-gated |
 | P-VND-18 | Quotation create/edit | P1 | Ready | 🟩 Built | versioned |
 | P-VND-19 | Quotation version history | P2 | Ready | 🟩 Built | |

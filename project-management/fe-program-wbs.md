@@ -89,7 +89,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-VEN-02 Company | Vendor Growth | — | — | — | — | P-VND-02..04 | ✅ Complete (legacy) |
 | FE-VEN-03 Microsite | Vendor Growth | — | — | — | — | P-VND-05, P-VND-06 | ✅ Complete (legacy). M2.5 public-microsite continuation stays owner-gated (Board agenda #5) |
 | FE-VEN-04 Catalog | Vendor Growth | P1 | M | Med | — | P-VND-07..11 | 🟡 Partial — 07/08/11 ✅(legacy) · **P-VND-09 READY(build)** (spec library, wired write) · P-VND-10 ⛔ `ESC-7-API/upload` (carve-out) |
-| FE-VEN-05 RFQ Workspace | Procurement Moat | P1 | M | Med | — | P-VND-15, P-VND-16 | 🔵A In Review-A @ `e2f8642` (kickoff + scope complete 2026-07-02) — received-only inbox; decline = no penalty |
+| FE-VEN-05 RFQ Workspace | Procurement Moat | P1 | M | Med | — | P-VND-15, P-VND-16 | ✅ Complete (RV-0101, A:PASS B:PASS, board-approved 2026-07-02 @ `e2f8642`) — received-only inbox needs-response-first ordering; decline = no penalty, clearer affordance |
 | FE-VEN-06 Quotation Builder | Procurement Moat | P1 | L | Med | — | P-VND-17..20 | READY(enh) — versioned; withdraw = zero penalty |
 | FE-VEN-07 Leads | Vendor Growth | P1 | M | Med | — | P-VND-21, P-VND-22 | READY(enh) — system-created leads; private CRM firewalls |
 | FE-VEN-08 Engagements | Vendor Growth | P1 | L | Med | — | P-VND-23..26 | READY(enh) — E1-E5 doc chain; money boundary; P-VND-25 upload path notes `ESC-7-API/upload` |

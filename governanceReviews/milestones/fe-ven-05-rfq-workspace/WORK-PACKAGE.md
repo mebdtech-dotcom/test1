@@ -34,10 +34,17 @@ Builder = **Team-3** · Maintainer = **Team-3** · Review A → Review B (fresh 
 ## Key dates
 
 Created 2026-07-02 · Started 2026-07-02 (owner kickoff approved) · Paused — · Resumed — ·
-Closed —
+**Closed 2026-07-02** (owner-approved, RV-0101)
 
 ## DoD confirmation (checked at Board close — carry-forward: delta-only over 🟩 legacy pages)
 
-☐ page DoD (both pages) ☐ responsive D/T/M ☐ WCAG-AA ☐ tsc/eslint/prettier ☐ realistic mock data
-☐ Review A PASS ☐ Review B PASS (B/M/M=0) ☐ Board approved ☐ no TODO/dead code ☐ no duplicate
-components ☐ promotion candidates registered ☐ tracker updated ☐ card closed
+☑ page DoD (both pages) ☑ responsive D/T/M (B live-rendered 3 breakpoints) ☑ WCAG-AA
+(`aria-describedby` verified non-orphaned, no colour-only status) ☑ tsc/eslint/prettier (verified
+independently by both A and B) ☑ realistic mock data — N/A by design: this surface renders
+genuine-empty (received-only/byte-equivalence pattern, already reviewed pre-cutover; delta is pure
+reordering/styling of the existing empty-safe render, no new data path) ☑ Review A PASS (RV-0101,
+12 OBS) ☑ Review B PASS (RV-0101, 12 OBS, B/M/M=0) ☑ Board approved (owner, 2026-07-02) ☑ no
+TODO/dead code (B confirmed) ☑ no duplicate components (B confirmed, extract-only refactor) ☑
+promotion candidates registered — none flagged by either reviewer; no `promotion-watchlist.md`
+change needed ☑ tracker updated (current-focus/execution-board/team-3/changelog/fe-program-wbs) ☑
+card closed

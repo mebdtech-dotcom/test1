@@ -16,9 +16,10 @@ Roadmap: [`fe-program-wbs.md`](fe-program-wbs.md) · pointer: [`current-focus.md
 FE-BUY-08 → FE-BUY-09 → FE-CLN-01 (F2-Z batch). FE-BUY-10 🅿 parked.
 
 **Team-3 (Vendor):**
-`FE-VEN-05 RFQ Workspace` ← current (🔵A Review-A @ `e2f8642` — scope complete, P-VND-15/16
-delta; awaiting Review-A, Team-3 holds) · FE-VEN-06 → FE-VEN-07 → FE-VEN-08 → FE-VEN-13 (Ads) →
-FE-VEN-04 remainder (P-VND-09) · FE-VEN-10/11/12 at Board kickoff scoping. FE-VEN-09 ⛔.
+~~FE-VEN-05 RFQ Workspace~~ ✅ **Closed** (RV-0101, board-approved 2026-07-02 @ `e2f8642`) ·
+Team-3 **idle by owner instruction** — FE-VEN-06 kickoff explicitly NOT authorized this cycle
+(hold, don't pull) → FE-VEN-06 → FE-VEN-07 → FE-VEN-08 → FE-VEN-13 (Ads) → FE-VEN-04 remainder
+(P-VND-09) · FE-VEN-10/11/12 at Board kickoff scoping. FE-VEN-09 ⛔.
 
 **Review Team 5 standing backlog (B lane):** Step-3 Public baseline sweep (QCT 5-step Step 3) at a
 stable post-cutover SHA — runs **before FE-PUB-02 starts**; findings feed the FE-PUB packages.
