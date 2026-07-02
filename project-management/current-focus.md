@@ -11,9 +11,9 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-21` Platform invoice detail (P2) — 🟡 In Progress (P-ACC-20 ✅ committed). `get_platform_invoice`
-- **Status:** 🟡 building (presentation-only; get_platform_invoice §HB-5.4; human_ref/purpose/payments; NO line_items/file_ref coined; notFound)
-- **Next Page:** _(confirm from team-1.md after P-ACC-21)_
+- **Current Page:** `P-ACC-22` Rewards / referrals (P3) — 🟡 In Progress (P-ACC-21 ✅ committed). LAST P-ACC page
+- **Status:** 🟡 building (presentation-only; get_reward_balance + list_referrals §HB-6.3; opaque referred-org ref + state; numeric points Inv#10)
+- **Next Page:** _(P-ACC section complete after P-ACC-22 — confirm remaining Public/Shell pages)_
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
@@ -25,9 +25,9 @@
 
 ## Team-3 — Vendor / Verification / Admin
 
-- **Current Page:** `P-ADM-26` Identity ops — users (P2) — ⬜ Pending (P-ADM-25 ✅ Approved, RV-0077). no active-org
-- **Status:** ⬜ queued to build — admin user-ops (M8→M1 boundary, R5); `set_user_account_status`; watch same admin-list read-binding gap (RV-0077) + firewall
-- **Next Page:** `P-ADM-27` Suggestion triage (P3, Ready) — non-disclosure
+- **Current Page:** `P-ADM-28` Link triage (P3) — ⬜ Pending (P-ADM-27 ✅ Approved, RV-0082). **NON-DISCLOSURE CRITICAL: link-suggestion content NEVER vendor-visible (Doc-4J:132/186/194), staff-only**
+- **Status:** ⬜ queued to build — BC-ADM-3 link_suggestions root (suggested→confirmed/dismissed); `confirm/dismiss_link_suggestion` [ESC-ADM-SLUG]; confirm→Operations service (A-03, DR-ADM-OPS); LinkMatchBasis never vendor-visible; R5 disabled
+- **Next Page:** _(confirm from team-3.md after P-ADM-28)_
 - **Updated:** 2026-07-02
 
 ---

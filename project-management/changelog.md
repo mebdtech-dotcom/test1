@@ -290,3 +290,18 @@
 2026-07-02 · BX-02 · ✅ Approved → ✅ committed (9625340) · Owner: Team-2
 2026-07-02 · P-ACC-20 · ✅ Approved → ✅ committed · Owner: Team-1
 2026-07-02 · P-ACC-21 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-02 · P-ADM-25 · ✅ Approved → ✅ committed (90a3c3f) · Owner: Team-3
+2026-07-02 · P-ADM-26 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-02 · P-ADM-26 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-02 · P-ACC-21 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-02 · P-ADM-26 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0079 — R5 boundary + PII discipline; OBS admin user-list read binding, recurs RV-0077)
+2026-07-02 · P-ACC-21 · 🔵 Ready for Review → 🟥 Patch Required · Owner: Team-1 (RV-0080 — MINOR payment status enum: "pending" coined, initiated/refunded missing vs frozen platform_payments Doc-2:832)
+2026-07-02 · P-ACC-21 · 🟥 Patch Required → 🟠 Fixing · Owner: Team-1 (RV-0080)
+2026-07-02 · P-ACC-21 · 🟠 Fixing → 🔵 Ready for Review · Owner: Team-1 (RV-0080 patched)
+2026-07-02 · P-ADM-26 · ✅ Approved → ✅ committed (f1fb6d0) · Owner: Team-3
+2026-07-02 · P-ADM-27 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-02 · P-ADM-27 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-02 · P-ACC-21 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0081 — re-review; RV-0080 MINOR resolved, payment enum = frozen initiated/succeeded/failed/refunded)
+2026-07-02 · P-ADM-27 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0082 — BC-ADM-3 states/contracts verbatim; list read exists; non-disclosure staff-only; link deferred)
+2026-07-02 · P-ACC-21 · ✅ Approved → ✅ committed · Owner: Team-1
+2026-07-02 · P-ACC-22 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
