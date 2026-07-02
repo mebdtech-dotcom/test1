@@ -39,7 +39,7 @@ export function MegaMenuCategory({
   const hasChildren = node.children.length > 0;
 
   const rowClass = cn(
-    "flex min-h-[44px] w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm outline-none transition-colors",
+    "flex min-h-[44px] w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-start text-sm outline-none transition-colors",
     active
       ? "bg-accent text-accent-foreground"
       : "text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent",
@@ -78,6 +78,7 @@ export function MegaMenuCategory({
 
   return (
     <Link
+      prefetch={false}
       href={hrefFor(node)}
       data-menu-row
       aria-haspopup={hasChildren || undefined}

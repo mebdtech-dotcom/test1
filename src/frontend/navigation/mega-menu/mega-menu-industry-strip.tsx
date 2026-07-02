@@ -38,6 +38,7 @@ export function MegaMenuIndustryStrip({
       </span>
       {chips.map((chip) => (
         <Link
+          prefetch={false}
           key={chip.label}
           href={chip.href}
           className="inline-flex min-h-[28px] items-center rounded-full border border-iv-navy-100 bg-iv-navy-50 px-2.5 py-0.5 text-xs font-medium text-iv-navy-700 transition-colors hover:bg-iv-navy-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

@@ -67,6 +67,23 @@ export const OVERLAY_V1: PresentationOverlay = {
     description: "EPC, maintenance, calibration and professional services",
   },
 
+  /* ── Featured L2 curation — ONE editorial tile per root for the MegaMenuFeatured rail
+        (MAJOR-03; editorial flags pending real analytics — governance §9 quarterly review is
+        the future home). Keys verified against active slugs by the overlay lint. ──────────── */
+  "industrial-chemicals": { featured: true },
+  "packaging-machinery": { featured: true },
+  "welding-equipment": { featured: true },
+  "power-generation": { featured: true },
+  "steam-boilers": { featured: true },
+  ppe: { featured: true },
+  "process-instrumentation": { featured: true },
+  "lifting-equipment": { featured: true },
+  "peb-structures": { featured: true },
+  "lab-analytical": { featured: true },
+  "industrial-software": { featured: true },
+  "bearings-power-transmission": { featured: true },
+  "maintenance-services": { featured: true },
+
   /* ── Synonym starter set v0.1 (taxonomy package Appendix C design notes) ───────────────── */
   "diesel-generators": { synonyms: ["genset", "dg set", "generator set"] },
   "ms-gi-pipes": { synonyms: ["gi pipe", "ms pipe", "galvanized pipe"] },

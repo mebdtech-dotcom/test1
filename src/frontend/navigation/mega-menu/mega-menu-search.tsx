@@ -86,7 +86,7 @@ export function MegaMenuSearch({
       <div className="relative">
         <Search
           aria-hidden
-          className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
           ref={inputRef}
@@ -97,7 +97,7 @@ export function MegaMenuSearch({
           aria-label="Find a category"
           placeholder={placeholder}
           value={query}
-          className="pl-8"
+          className="ps-8"
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
             // First ESC clears the query (UX §4); an empty query lets ESC bubble to close.
@@ -125,6 +125,7 @@ export function MegaMenuSearch({
               return (
                 <li key={node.id}>
                   <Link
+                    prefetch={false}
                     href={hrefFor(node)}
                     className="flex min-h-[44px] flex-col justify-center gap-0.5 rounded-md px-2.5 py-1.5 text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
                     onClick={() => {
@@ -161,6 +162,7 @@ export function MegaMenuSearch({
           <div className="px-2.5 py-3 text-sm text-muted-foreground">
             No matching category.{" "}
             <Link
+              prefetch={false}
               href={`${searchHref}?q=${encodeURIComponent(debounced.trim())}`}
               className="font-medium text-iv-ink-heading hover:underline"
               onClick={() =>

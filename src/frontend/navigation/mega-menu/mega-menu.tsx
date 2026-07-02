@@ -33,7 +33,13 @@ import { MegaMenuIndustryStrip } from "./mega-menu-industry-strip";
 import { MegaMenuQuickActions } from "./mega-menu-quick-actions";
 import { MegaMenuFooter } from "./mega-menu-footer";
 import { MegaMenuSearch } from "./mega-menu-search";
-import type { IndustryShortcut, MenuVendorVM, PopularSearchTerm } from "../model/types";
+import { MegaMenuRecent } from "./mega-menu-recent";
+import type {
+  CategoryNodeVM,
+  IndustryShortcut,
+  MenuVendorVM,
+  PopularSearchTerm,
+} from "../model/types";
 
 export interface MegaMenuProps extends Pick<
   MenuInstanceProviderProps,
@@ -48,8 +54,13 @@ export interface MegaMenuProps extends Pick<
   vendors?: MenuVendorVM[];
   vendorsViewAllHref?: string;
   viewAllHref?: string;
+  /** Reserved authed slots (MINOR-01/02 · R2-MINOR-01) — render nothing until supplied. */
+  recent?: CategoryNodeVM[];
+  frequent?: CategoryNodeVM[];
+  pinned?: CategoryNodeVM[];
+  onPinToggle?(node: CategoryNodeVM): void;
   className?: string;
-  /** Extra panel content (e.g. MegaMenuSearch in Phase 3). */
+  /** Extra panel content (composed slots). */
   children?: React.ReactNode;
 }
 
@@ -59,6 +70,10 @@ function MegaMenuPanel({
   vendors,
   vendorsViewAllHref = "/vendors",
   viewAllHref = "/categories",
+  recent,
+  frequent,
+  pinned,
+  onPinToggle,
   children,
 }: Pick<
   MegaMenuProps,
@@ -67,6 +82,10 @@ function MegaMenuPanel({
   | "vendors"
   | "vendorsViewAllHref"
   | "viewAllHref"
+  | "recent"
+  | "frequent"
+  | "pinned"
+  | "onPinToggle"
   | "children"
 >) {
   const taxonomy = useTaxonomyOrNull();
@@ -91,11 +110,17 @@ function MegaMenuPanel({
       <div className="flex min-w-0">
         <MegaMenuColumns className="min-w-0 flex-1" />
         {/* Right rail — the 5th column tier (≥1280 per ARCH §9.3). */}
-        <aside className="hidden w-72 shrink-0 border-l border-border xl:block">
+        <aside className="hidden w-72 shrink-0 border-s border-border xl:block">
           <MegaMenuFeatured />
           <MegaMenuVendors vendors={vendors} viewAllHref={vendorsViewAllHref} />
         </aside>
       </div>
+      <MegaMenuRecent
+        recent={recent}
+        frequent={frequent}
+        pinned={pinned}
+        onPinToggle={onPinToggle}
+      />
       <MegaMenuTrail className="border-t border-border" />
       <MegaMenuPopular terms={popularSearches} />
       <MegaMenuIndustryStrip shortcuts={industryShortcuts} />

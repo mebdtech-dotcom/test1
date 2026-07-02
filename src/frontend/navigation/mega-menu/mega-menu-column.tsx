@@ -9,6 +9,7 @@
 // Home/End, a–z typeahead); hover paths are gated to fine pointers (R2-NITPICK-02).
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "../../lib/cn";
 import { useTaxonomy } from "../providers/taxonomy-provider";
 import { useMenuState } from "../providers/menu-state-provider";
@@ -24,9 +25,10 @@ export interface MegaMenuColumnProps {
 }
 
 export function MegaMenuColumn({ level, parentId, emptyHint, className }: MegaMenuColumnProps) {
+  const router = useRouter();
   const { roots, byId, pathTo } = useTaxonomy();
   const { activePath, setActiveAt, hoverIntentDelay } = useMenuState();
-  const { emit } = useMenuInstance();
+  const { emit, hrefFor } = useMenuInstance();
   const pending = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const parent = parentId ? byId.get(parentId) : undefined;
@@ -46,6 +48,9 @@ export function MegaMenuColumn({ level, parentId, emptyHint, className }: MegaMe
     pending.current = setTimeout(() => {
       setActiveAt(level, node.id);
       if (node.children.length > 0) emit({ type: "node_drill" }, node);
+      // Route prefetch ONLY after sustained hover intent — never pointer fly-by
+      // (R2-NITPICK-04; row links themselves ship prefetch={false}).
+      router.prefetch(hrefFor(node));
     }, hoverIntentDelay.in);
   };
 
@@ -73,7 +78,9 @@ export function MegaMenuColumn({ level, parentId, emptyHint, className }: MegaMe
       data-menu-column={level}
       // Column-local scroll past ~14 rows with a fade cue; the panel itself never scrolls.
       className={cn(
-        "max-h-[min(60vh,672px)] w-64 shrink-0 overflow-y-auto border-r border-border p-1.5 last:border-r-0 [mask-image:linear-gradient(to_bottom,black_calc(100%-16px),transparent)]",
+        // Token-driven column cascade (Phase 4): fade/slide on mount, instant under
+        // prefers-reduced-motion.
+        "max-h-[min(60vh,672px)] w-64 shrink-0 animate-iv-fade-in overflow-y-auto border-e border-border p-1.5 last:border-e-0 motion-reduce:animate-none [mask-image:linear-gradient(to_bottom,black_calc(100%-16px),transparent)]",
         className,
       )}
       onPointerLeave={() => {

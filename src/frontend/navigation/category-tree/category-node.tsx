@@ -50,7 +50,7 @@ export function CategoryNodeItem({
   const label = (
     <>
       {showIcon ? <CategoryIcon node={node} rootSlug={rootSlug} size={18} /> : null}
-      <span className="min-w-0 flex-1 truncate text-left">{node.name}</span>
+      <span className="min-w-0 flex-1 truncate text-start">{node.name}</span>
       <CategoryBadge node={node} />
     </>
   );
@@ -58,7 +58,7 @@ export function CategoryNodeItem({
   return (
     <div
       className={cn(
-        "flex min-h-[48px] items-center gap-1 rounded-md pr-1 text-sm",
+        "flex min-h-[48px] items-center gap-1 rounded-md pe-1 text-sm",
         current && "bg-accent",
         disabled && "opacity-50",
         className,
@@ -90,7 +90,7 @@ export function CategoryNodeItem({
           aria-checked={Boolean(selected)}
           disabled={disabled}
           className={cn(
-            "flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-left hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 text-start hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             selected && "bg-accent font-medium",
           )}
           onClick={() => onSelect?.(node)}
@@ -113,6 +113,7 @@ export function CategoryNodeItem({
         </span>
       ) : (
         <Link
+          prefetch={false}
           href={href}
           aria-current={current ? "page" : undefined}
           className="flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

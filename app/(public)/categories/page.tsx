@@ -182,7 +182,9 @@ export default function CategoriesPage() {
               <ul className="grid grid-cols-1 gap-x-4 px-4 pb-3 sm:grid-cols-2 lg:grid-cols-3">
                 {nodes.map((node) => (
                   <li key={node.id}>
+                    {/* prefetch={false}: 794 A–Z links must never viewport-prefetch (R2-NITPICK-04). */}
                     <Link
+                      prefetch={false}
                       href={categoryHref(node)}
                       className="block truncate rounded-sm py-1 text-sm text-iv-ink-secondary hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >

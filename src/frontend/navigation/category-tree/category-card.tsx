@@ -29,6 +29,7 @@ export function CategoryCard({
 }: CategoryCardProps) {
   return (
     <Link
+      prefetch={false}
       href={href}
       className={cn(
         "group flex items-start gap-3 rounded-lg border border-border bg-card p-3 transition-colors hover:border-iv-navy-200 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",

@@ -42,6 +42,7 @@ export function MegaMenuPopular({
       </span>
       {chips.map((term) => (
         <Link
+          prefetch={false}
           key={term}
           href={`/search?q=${encodeURIComponent(term)}`}
           className="inline-flex min-h-[28px] items-center gap-1 rounded-full border border-border bg-secondary px-2.5 py-0.5 text-xs text-secondary-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

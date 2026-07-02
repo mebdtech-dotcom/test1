@@ -25,6 +25,7 @@ export { CategoryNodeItem } from "./category-tree/category-node";
 export { MegaMenuMobile } from "./mega-menu/mega-menu-mobile";
 export { MegaMenuBreadcrumb } from "./mega-menu/mega-menu-breadcrumb";
 export { MegaMenuSearch } from "./mega-menu/mega-menu-search";
+export { MegaMenuRecent } from "./mega-menu/mega-menu-recent";
 export { MegaMenu } from "./mega-menu/mega-menu";
 export { MegaMenuColumns, MegaMenuColumn } from "./mega-menu/mega-menu-column";
 export { MegaMenuCategory } from "./mega-menu/mega-menu-category";

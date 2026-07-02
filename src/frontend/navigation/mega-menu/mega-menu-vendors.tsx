@@ -52,6 +52,7 @@ export function MegaMenuVendors({
         {rows.map((vendor) => (
           <li key={vendor.slug}>
             <Link
+              prefetch={false}
               href={`/vendors/${vendor.slug}`}
               className="flex min-h-[44px] items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => onVendorNavigate?.(vendor)}
@@ -82,6 +83,7 @@ export function MegaMenuVendors({
         ))}
       </ul>
       <Link
+        prefetch={false}
         href={viewAllHref}
         className="block rounded-md px-2 py-1.5 text-sm font-medium text-iv-ink-heading hover:bg-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         onClick={() => emit({ type: "quick_action_clicked", action: "view_all_suppliers" })}

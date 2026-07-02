@@ -57,7 +57,7 @@ function MobileRow({
     return (
       <div className={cn(rowClass, "cursor-default text-muted-foreground hover:bg-transparent")}>
         {showIcon ? <CategoryIcon node={node} rootSlug={rootSlug} size={18} /> : null}
-        <span className="min-w-0 flex-1 truncate text-left">{node.name}</span>
+        <span className="min-w-0 flex-1 truncate text-start">{node.name}</span>
         <CategoryBadge node={node} />
       </div>
     );
@@ -75,7 +75,7 @@ function MobileRow({
         }}
       >
         {showIcon ? <CategoryIcon node={node} rootSlug={rootSlug} size={18} /> : null}
-        <span className="min-w-0 flex-1 truncate text-left font-medium">{node.name}</span>
+        <span className="min-w-0 flex-1 truncate text-start font-medium">{node.name}</span>
         <CategoryBadge node={node} />
         <ChevronRight aria-hidden className="size-4 shrink-0 text-muted-foreground" />
       </button>
@@ -84,6 +84,7 @@ function MobileRow({
 
   return (
     <Link
+      prefetch={false}
       href={hrefFor(node)}
       className={rowClass}
       onClick={() => {
@@ -92,7 +93,7 @@ function MobileRow({
       }}
     >
       {showIcon ? <CategoryIcon node={node} rootSlug={rootSlug} size={18} /> : null}
-      <span className="min-w-0 flex-1 truncate text-left">{node.name}</span>
+      <span className="min-w-0 flex-1 truncate text-start">{node.name}</span>
       <CategoryBadge node={node} />
     </Link>
   );
@@ -119,9 +120,16 @@ export function MegaMenuMobile({ className, extraSections, onNavigate }: MegaMen
       <MegaMenuBreadcrumb />
 
       {current ? (
-        /* Drilled pane — full-width children list, "View all {name}" first (UX §3.3). */
-        <nav aria-label={current.name} className="flex-1 overflow-y-auto py-1">
+        /* Drilled pane — full-width children list, "View all {name}" first (UX §3.3).
+           Key change re-mounts per node → token-driven pane slide (Phase 4); instant under
+           prefers-reduced-motion. */
+        <nav
+          key={current.id}
+          aria-label={current.name}
+          className="flex-1 animate-iv-slide-up overflow-y-auto py-1 motion-reduce:animate-none"
+        >
           <Link
+            prefetch={false}
             href={hrefFor(current)}
             className="flex h-12 items-center rounded-md px-2.5 text-sm font-semibold text-iv-ink-heading hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={() => {
@@ -154,8 +162,9 @@ export function MegaMenuMobile({ className, extraSections, onNavigate }: MegaMen
                     <CategoryBadge node={root} />
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-1 pl-4">
+                <AccordionContent className="pb-1 ps-4">
                   <Link
+                    prefetch={false}
                     href={hrefFor(root)}
                     className="flex h-12 items-center rounded-md px-2.5 text-sm font-medium text-iv-ink-heading hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     onClick={() => {
