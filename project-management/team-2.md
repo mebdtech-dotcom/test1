@@ -27,7 +27,7 @@
 | P-BUY-19 | Engagements | P1 | Ready | ✅ Approved | RV-0011 PASS (Team-4). Projection discipline exemplary — only the 3 frozen `list_engagements` fields; no free-text search; cursor pagination; genuine-empty (Inv #11) |
 | P-BUY-20 | Engagement detail | P1 | Ready | ✅ Approved | RV-0015 PASS (Team-4). EXEMPLARY — only projected `get_engagement` fields; currency-driven Money (BDT not assumed); counterparty opaque ref (no coined name); ENG-01/02/03 registered, in-code only; money-boundary; notFound byte-identical. Model detail page |
 | P-BUY-21 | Purchase order | P1 | Ready | ✅ Approved | RV-0022 PASS (Team-4). Projection verified verbatim vs Doc-4F §F5.8 (6 fields); PO body/total/list deliberately omitted (nothing coined); `can_approve_po` = real Doc-2 §7 slug, DISTINCT (never collapsed); money-boundary DF-6; notFound byte-identical, no leaf-ref leak; versioned Inv #8; loading.tsx; model detail page (on par with P-BUY-20) |
-| P-BUY-22 | Payments | P1 | Ready | ⬜ | **records only, no funds** (DF-6) |
+| P-BUY-22 | Payments | P1 | Ready | ✅ Approved | RV-0024 PASS (Team-4). `payment_records` projection verified verbatim vs Doc-2:783/Doc-4F §F5.6 {amount,currency,paid_at,method_note,status}; distinct slugs `can_record_payments`/`can_approve_payment` confirmed (Doc-4F §F5.6, "distinct"), Confirm only on `recorded`; money-boundary DF-6; notFound byte-identical; loading.tsx. Shared touches git-verified: `PaymentStatus`/`paymentStatusDisplay` additive, `stickyFirstColumn` pre-existing. Model detail page |
 | P-BUY-23 | Trade invoice review | P2 | Ready | ⬜ | ≠ platform invoice |
 | P-BUY-24 | Challan | P2 | Ready | ⬜ | |
 | P-BUY-25 | WCC | P2 | Ready | ⬜ | |

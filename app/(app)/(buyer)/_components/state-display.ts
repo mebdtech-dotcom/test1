@@ -9,7 +9,7 @@
 // values from `view-models.ts`. Adding a state here without it existing in the frozen union is forbidden.
 
 import type { StatusTone } from "@/frontend/components/status-chip";
-import type { RfqState, QuotationState, EngagementState } from "./view-models";
+import type { RfqState, QuotationState, EngagementState, PaymentStatus } from "./view-models";
 
 export interface StateDisplay {
   label: string;
@@ -69,4 +69,18 @@ export function quotationStateDisplay(state: QuotationState): StateDisplay {
 
 export function engagementStateDisplay(state: EngagementState): StateDisplay {
   return ENGAGEMENT_STATE_DISPLAY[state];
+}
+
+/**
+ * Payment-record status → label + tone (Doc-4F §F5.6 / Doc-2 §10.5 `recorded → confirmed`). Neutral cues:
+ * `recorded` is an entered-but-unconfirmed record, `confirmed` is the counterparty-acknowledged record —
+ * never a funds-movement signal (records only, DF-6).
+ */
+const PAYMENT_STATUS_DISPLAY: Record<PaymentStatus, StateDisplay> = {
+  recorded: { label: "Recorded", tone: "info" },
+  confirmed: { label: "Confirmed", tone: "success" },
+};
+
+export function paymentStatusDisplay(status: PaymentStatus): StateDisplay {
+  return PAYMENT_STATUS_DISPLAY[status];
 }

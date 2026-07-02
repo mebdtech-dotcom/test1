@@ -47,6 +47,12 @@ export type QuotationState =
  */
 export type EngagementState = "open" | "in_delivery" | "completed" | "closed";
 
+/**
+ * Payment-record status — the frozen `payment_records` machine (Doc-4F §F5.6 / Doc-2 §10.5): `recorded →
+ * confirmed` and nothing else. A payment record is a RECORD ONLY — the platform never moves funds (DF-6).
+ */
+export type PaymentStatus = "recorded" | "confirmed";
+
 /** A monetary value pair — `{ amount, currency }`, BDT default at the render site only (GI-08; Doc-2 §0.4). */
 export interface MoneyValue {
   amount: number;

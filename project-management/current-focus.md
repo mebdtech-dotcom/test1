@@ -5,28 +5,28 @@
 > (`team-1.md` / `team-2.md` / `team-3.md`) remain the **source record**; this file is the
 > **pointer**. Keep it tiny. On any change, also update the owning team file + `changelog.md`.
 
-**Updated:** 2026-07-02 · **Sprint:** Review cycle 11 — P-AUTH-08 (RV-0021) & P-BUY-21 (RV-0022) ✅ Approved; Team-1 & Team-2 advanced
+**Updated:** 2026-07-02 · **Sprint:** Review cycle 12 — P-BUY-22 (RV-0024) & P-ACC-01 (RV-0025) ✅ Approved; P-ADM-08 re-review 🟥 (RV-0026, action-map MAJOR)
 
 ---
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-01` Account overview (P1) — ⬜ Pending (P-AUTH-08 ✅ Approved, RV-0021; Auth cluster complete)
+- **Current Page:** `P-ACC-02` User profile (P1) — ⬜ Pending (P-ACC-01 ✅ Approved, RV-0025)
 - **Status:** ⬜ queued to build
-- **Next Page:** `P-ACC-02` User profile (P1, Ready)
+- **Next Page:** `P-ACC-03` Security & 2FA (P2, Ready)
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
 
-- **Current Page:** `P-BUY-22` Payments (P1) — ⬜ Pending (P-BUY-21 ✅ Approved, RV-0022). **Records only, no funds** (DF-6)
+- **Current Page:** `P-BUY-23` Trade invoice review (P2) — ⬜ Pending (P-BUY-22 ✅ Approved, RV-0024). ≠ platform invoice
 - **Status:** ⬜ queued to build
-- **Next Page:** `P-BUY-23` Trade invoice review (P2, Ready)
+- **Next Page:** `P-BUY-24` Challan (P2, Ready)
 - **Updated:** 2026-07-02
 
 ## Team-3 — Vendor / Verification / Admin
 
-- **Current Page:** `P-ADM-08` Category management (P1) — ⬜ Pending (P-ADM-07 ✅ Approved, RV-0020)
-- **Status:** ⬜ queued to build
+- **Current Page:** `P-ADM-08` Category management (P1) — 🟥 Patch Required (RV-0026): action-map MAJOR — set `{draft:[Approve], active:[Retire], retired:[]}` (retired terminal), then re-review
+- **Status:** 🟥 Patch Required — stays with Team-3 (RV-0023's 3 findings resolved; one-map fix remains; P-ADM-09 blocked)
 - **Next Page:** `P-ADM-09` Category editor (P1, Ready)
 - **Updated:** 2026-07-02
 

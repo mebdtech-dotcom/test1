@@ -74,3 +74,15 @@
 2026-07-02 · P-BUY-21 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-2
 2026-07-02 · P-AUTH-08 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0021)
 2026-07-02 · P-BUY-21 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0022)
+2026-07-02 · P-ACC-01 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-02 · P-ADM-08 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-02 · P-ADM-08 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-02 · P-ADM-08 · 🔵 Ready for Review → 🟥 Patch Required · Owner: Team-3 (RV-0023)
+2026-07-02 · P-BUY-22 · ⬜ Pending → 🟡 In Progress · Owner: Team-2
+2026-07-02 · P-BUY-22 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-2
+2026-07-02 · P-ACC-01 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-02 · P-ADM-08 · 🟥 Patch Required → 🟠 Fixing · Owner: Team-3 (RV-0023)
+2026-07-02 · P-ADM-08 · 🟠 Fixing → 🔵 Ready for Review · Owner: Team-3 (RV-0023 patched)
+2026-07-02 · P-BUY-22 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0024)
+2026-07-02 · P-ACC-01 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0025)
+2026-07-02 · P-ADM-08 · 🔵 Ready for Review → 🟥 Patch Required · Owner: Team-3 (RV-0026)
