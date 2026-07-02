@@ -11,9 +11,9 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-PUB-22` Legal — Privacy (P2) — ⬜ next (P-PUB-21 ✅ RV-0092). MUST reuse the shared `legal-document.tsx` scaffold BYTE-IDENTICAL (Team-4 will git-verify) — no fork; same placeholder/not-binding discipline (no fabricated data-handling clauses/dates/entity)
-- **Status:** P-PUB-21 Legal—Terms ✅ Approved (RV-0092 — honest placeholder scaffold, no fabricated binding content). Awaiting P-PUB-21 commit + Team-1 to start P-PUB-22. Chrome follow-up open: SiteHeader "Pricing" nav → /pricing (RV-0087)
-- **Next Page:** P-PUB-22/24 + P-SH-01/02/06 (P2), then P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
+- **Current Page:** `P-PUB-24` Contact / Support (P2) — ⬜ next (P-PUB-22 ✅ RV-0093). Static contact page — NO fabricated phone/email/address (placeholder tokens only); may state TRUE product facts; no unauthenticated write wiring
+- **Status:** Legal pair P-PUB-21/22 ✅ Approved (RV-0092/0093 — honest placeholder scaffolds, byte-identical reuse confirmed). Awaiting P-PUB-22 commit + Team-1 to start P-PUB-24. Chrome follow-up open: SiteHeader "Pricing" nav → /pricing (RV-0087)
+- **Next Page:** P-PUB-24 + P-SH-01/02/06 (P2), then P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
