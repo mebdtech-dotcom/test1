@@ -9,6 +9,12 @@ edits implementation** (Raise ≠ Accept — CLAUDE.md §13). Each review gets a
 > after the new **Review Team A** (`governanceReviews/REVIEW-TEAM-A-CHARTER_v1.0.md`). Both teams
 > log here under ONE RV-#### per review cycle using the **milestone entry template v2**:
 >
+> **Numbering correction (owner diagram, same day — `TEAM-4-QCT-CHARTER_AMENDMENT_v1.2.md`):**
+> the sentence above is superseded. **Team-4 = Review Team 4 (Architecture & Governance, the
+> Review-A lane, reviews FIRST)**; the quality lane (Review-B fields below) is the new
+> **Review Team 5** (`governanceReviews/REVIEW-TEAM-5-CHARTER_v1.0.md`). "Review-A/Review-B" in
+> the template are lane names and stay as-is.
+>
 > ```
 > ### RV-#### · FE-XXX-NN · <Milestone title> · Team-<n>
 > - Date · Pages in scope: P-… · Reviewed SHA: <checkpoint sha> (stable-target)

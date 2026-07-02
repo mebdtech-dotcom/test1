@@ -73,7 +73,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-BUY-01 Dashboard | Buyer Productivity | — | — | — | — | P-BUY-01 | ✅ Complete (BX-01, RV-0070) |
 | FE-BUY-02 RFQ Workspace | Procurement Moat | — | — | — | — | P-BUY-06/07/08, P-BUY-10..13 | ✅ Complete (BX-02, RV-0075; F1 freeze audit covers 🟩 stock) |
 | FE-BUY-03 Quotations | Procurement Moat | — | — | — | — | P-BUY-09 | ✅ Complete |
-| FE-BUY-04 Quotation Detail | Procurement Moat | P1 | M | Med | — | P-BUY-14, P-BUY-16 | READY(enh) — **the awaited BX-03**: quotation presentation + clarification thread |
+| FE-BUY-04 Quotation Detail | Procurement Moat | P1 | M | Med | — | P-BUY-14, P-BUY-16 | 🟡 In Progress (owner kickoff 2026-07-02) — **the awaited BX-03**: quotation presentation + clarification thread |
 | FE-BUY-05 Supplier Comparison | Procurement Moat | P1 | M | High | — | P-BUY-15 | READY(enh) — R6: read-only, System-generated, **never recommends** |
 | FE-BUY-06 Award | Procurement Moat | P1 | S | High | — | P-BUY-17, P-BUY-18 | READY(enh) — R6: no default winner, unranked |
 | FE-BUY-07 Engagement | Buyer Productivity | P1 | L | Med | — | P-BUY-19..25 | READY(enh) — post-award docs; money boundary DF-6 |
@@ -124,8 +124,8 @@ The kit is the frozen foundation — every FE-DS change is Board-gated.
 | FE-CLN-03 Dedupe & shared extraction | Platform | Board-assign | P2 | M | Med | S: FE-SH approvals | ⬜ — executes approved promotions |
 | FE-CLN-04 Dead code & naming | Platform | Board-assign | P3 | S | Low | — | ⬜ |
 | FE-CLN-05 Documentation | Platform | Board-assign | P3 | S | Low | — | ⬜ |
-| FE-CLN-06 Full-tree Integration Gate | Platform | Review B | P1 | M | Med | H: feature tracks + FE-CLN-01..03 | ⬜ — QCT 5-step Step 4 |
-| FE-CLN-07 Release Candidate Gate | Platform | Review B | P1 | M | Med | H: FE-CLN-06 | ⬜ — QCT 5-step Step 5 |
+| FE-CLN-06 Full-tree Integration Gate | Platform | Review Team 5 | P1 | M | Med | H: feature tracks + FE-CLN-01..03 | ⬜ — QCT 5-step Step 4 |
+| FE-CLN-07 Release Candidate Gate | Platform | Review Team 5 | P1 | M | Med | H: FE-CLN-06 | ⬜ — QCT 5-step Step 5 |
 
 ## Record tracks (completed — closed, never reopen; future work coins new IDs)
 

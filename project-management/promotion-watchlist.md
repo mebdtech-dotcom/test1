@@ -17,7 +17,7 @@ Candidate → Approved (Board) → Extracted → Migrated → Old-removed → Cl
 | **Extracted** | component lands at its new home; consumers untouched |
 | **Migrated** | all consumers repointed; **byte-equivalence proof per consumer** (RV-0038 precedent) |
 | **Old-removed** | duplicate copies deleted; **grep-verified zero references** |
-| **Closed** | Review-B regression pass + row finalized |
+| **Closed** | Review Team 5 (B-lane) regression pass + row finalized |
 
 ## Watchlist
 

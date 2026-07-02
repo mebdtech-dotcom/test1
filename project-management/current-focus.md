@@ -19,10 +19,10 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-2 — Buyer (FE-BUY)
 
-- **Current Milestone:** `FE-BUY-04` Quotation Detail (= the awaited BX-03) — ⬜ Planned (WP card
-  drafted, awaiting owner kickoff approval)
-- **Current Page:** _(none — starts at kickoff)_
-- **Pipeline stage:** pre-kickoff
+- **Current Milestone:** `FE-BUY-04` Quotation Detail (= the awaited BX-03) — 🟡 In Progress
+  (**owner kickoff APPROVED 2026-07-02**, WP card Started)
+- **Current Page:** P-BUY-14 (first of the two-page delta; then P-BUY-16)
+- **Pipeline stage:** building (Lane G; checkpoint commits per page)
 - **Next Milestone:** FE-BUY-05 → 06 → 07 → 08 → 09 → FE-CLN-01 (F2-Z). FE-BUY-10 🅿 parked
 
 ## Team-3 — Vendor (FE-VEN)
@@ -36,11 +36,11 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ---
 
-## Review Team A — queue
+## Review Team 4 — Architecture & Governance (A lane) — queue
 
-_(empty — first submission will be the first milestone to reach 🔵A)_
+_(empty — first submission will be the first milestone to reach 🔵A; expected: FE-BUY-04)_
 
-## Review Team B — queue (ex-Team-4 QCT)
+## Review Team 5 — Quality & Adversarial (B lane) — queue
 
 - **Standing backlog:** Step-3 Public baseline sweep (QCT 5-step Step 3) at a stable SHA —
   awaiting Board authorization (agenda #10); runs before FE-PUB-02 starts

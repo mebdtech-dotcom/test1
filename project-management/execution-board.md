@@ -19,8 +19,8 @@ FE-BUY-08 → FE-BUY-09 → FE-CLN-01 (F2-Z batch). FE-BUY-10 🅿 parked.
 `FE-VEN-05 RFQ Workspace` ← current · FE-VEN-06 → FE-VEN-07 → FE-VEN-08 → FE-VEN-13 (Ads) →
 FE-VEN-04 remainder (P-VND-09) · FE-VEN-10/11/12 at Board kickoff scoping. FE-VEN-09 ⛔.
 
-**Review Team B standing backlog:** Step-3 Public baseline sweep (QCT 5-step Step 3) at a stable
-post-cutover SHA — runs **before FE-PUB-02 starts**; findings feed the FE-PUB packages.
+**Review Team 5 standing backlog (B lane):** Step-3 Public baseline sweep (QCT 5-step Step 3) at a
+stable post-cutover SHA — runs **before FE-PUB-02 starts**; findings feed the FE-PUB packages.
 
 ## Gated register (⛔ — waiting on an `esc_registry.md` handle or asset)
 

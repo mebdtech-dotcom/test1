@@ -1,9 +1,10 @@
 # Review Process — Frontend Program Management
 
-**Frontend Program Management · v1.0 · Status: FROZEN at cutover (Board-ratified, plan v6,
-2026-07-02).** Changes require an **additive amendment + version bump** (the CLAUDE.md
-constitution pattern). Non-authoritative under the frozen corpus — on any conflict the corpus
-wins (§7) and this file is patched to match. **Owner (maintains): Architecture Board.**
+**Frontend Program Management · v1.1 · Status: FROZEN (Board-ratified v1.0 at cutover, plan v6,
+2026-07-02 · amendment v1.1 same day — §11).** Changes require an **additive amendment + version
+bump** (the CLAUDE.md constitution pattern). Non-authoritative under the frozen corpus — on any
+conflict the corpus wins (§7) and this file is patched to match. **Owner (maintains):
+Architecture Board.**
 
 Companions: [`fe-program-wbs.md`](fe-program-wbs.md) (roadmap) ·
 [`execution-board.md`](execution-board.md) (queues/gates) ·
@@ -155,3 +156,13 @@ Lower layers are patched to match higher ones, never the reverse.
   (`promotion-watchlist.md`).
 - **🟩 Built** — legacy page marker: built pre-loop, covered by QCT milestone-track reviews rather
   than a per-page RV.
+
+## 11. Amendment v1.1 — review-team numbering (owner diagram, 2026-07-02; additive)
+
+The owner fixed the pipeline numbering: **Review Team 4 = Architecture & Governance**, staffing
+the **Review-A lane** (ex-Team-4 QCT — number, RV ledger, and stable-target discipline continue;
+`TEAM-4-QCT-CHARTER_AMENDMENT_v1.2.md`); **Review Team 5 = Quality & Adversarial**, staffing the
+**Review-B lane** (`REVIEW-TEAM-5-CHARTER_v1.0.md`). Throughout this document, "Review A/Review-A"
+and "Review B/Review-B" are **lane names** — read them as staffed by Team 4 and Team 5
+respectively. States 🔵A/🔵B, the RV template's lane fields, and every rule in §§1–10 are
+unchanged. (This supersedes the cutover-day mapping that had assigned Team-4 to the quality lane.)

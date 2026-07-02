@@ -49,9 +49,9 @@ FE Program Manager (this tracker — maintenance role, no approval power)
         │
         └────── submit milestone at a stable SHA ──────┐
                                                        ▼
-                            Review Team A (Architecture & Governance) — fresh context
+                            Review Team 4 (Architecture & Governance) — fresh context
                                                        ▼
-                            Review Team B (Quality & Adversarial, ex-Team-4 QCT) — fresh context
+                            Review Team 5 (Quality & Adversarial) — fresh context
                                                        ▼
                                         Board approval (human owner)
                                                        ▼
@@ -64,7 +64,7 @@ FE Program Manager (this tracker — maintenance role, no approval power)
 | **Team-2** | Builder/Maintainer: FE-BUY track · FE-CLN-01 |
 | **Team-3** | Builder/Maintainer: FE-VEN track · FE-ADM record track |
 | **Kit owner (Board-assigned)** | FE-PF-01..05 · FE-DS track (full design system) · Maintainer of FE-SH extractions |
-| **Review Team A / B** | Review only — raise, never rule (fresh context each, never the builder's) |
+| **Review Team 4 (A lane) / Review Team 5 (B lane)** | Review only — raise, never rule (fresh context each, never the builder's). Team 4 = Architecture & Governance (ex-QCT, `REVIEW-TEAM-A-CHARTER` + amendment v1.2) · Team 5 = Quality & Adversarial (`REVIEW-TEAM-5-CHARTER`) |
 | **Architecture Board** | Approval · WP cards at kickoff · scope/status changes · FE-SH/FE-DS gates · decision records · **FE-* ID minting (Board-only)** |
 
 **Binding rules (carried forward from the loop, unchanged):**
@@ -117,10 +117,11 @@ When the WP scope is complete: set 🔵A at the checkpoint SHA in execution-boar
 STOP. Never pull the next milestone before Board close.
 ```
 
-### Prompt B1 — Review Team A (fresh context)
+### Prompt B1 — Review Team 4, A lane (fresh context)
 
 ```
-You are Review Team A (governanceReviews/REVIEW-TEAM-A-CHARTER_v1.0.md). Fresh context — do not
+You are Review Team 4 — Architecture & Governance (governanceReviews/REVIEW-TEAM-A-CHARTER_v1.0.md
++ TEAM-4-QCT-CHARTER_AMENDMENT_v1.2.md). Fresh context — do not
 reuse the builder's session. Review milestone FE-XXX-NN at its recorded SHA (stable-target)
 against: frozen corpus/Doc-7 · no-invention · boundaries · scope-vs-WP-card (enforce Out-of-scope)
 · reuse · governance (Inv#, firewall, byte-equivalence, R5/R6/R7, DF-6) · a11y patterns ·
@@ -130,10 +131,11 @@ Return PASS | REVISION | BLOCKER + numbered findings (BLOCKER/MAJOR/MINOR/NIT/OB
 Log under a new RV-#### (milestone template v2, review-process.md §8). Never edit implementation.
 ```
 
-### Prompt B2 — Review Team B (fresh context, only after A pass-class)
+### Prompt B2 — Review Team 5, B lane (fresh context, only after A pass-class)
 
 ```
-You are Review Team B (TEAM-4-QCT-CHARTER_v1.0.md + AMENDMENT_v1.1.md). Fresh context. Review
+You are Review Team 5 — Quality & Adversarial (governanceReviews/REVIEW-TEAM-5-CHARTER_v1.0.md).
+Fresh context. Review
 milestone FE-XXX-NN at the SAME SHA: UI consistency · responsive D/T/M · duplication (quality
 lens) · dead code · imports · type safety · lint · prettier · render verification · screenshots
 into governanceReviews/milestones/<fe-id-slug>/ · visual regression vs the folder baseline ·

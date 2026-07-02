@@ -5,6 +5,12 @@ Directive: Architecture Board, 2026-07-02 — FE Program Management v1.0 cutover
 
 # Review Team A — Architecture & Governance Review Charter v1.0
 
+> **Numbering note (owner diagram, 2026-07-02 — `TEAM-4-QCT-CHARTER_AMENDMENT_v1.2.md`):** this
+> lane charter is **held by Review Team 4** (ex-Team-4 QCT, continuing its number and RV ledger in
+> the Architecture & Governance lane). Wherever this document says "Review Team A", read
+> **Review Team 4**; the downstream quality reviewer is **Review Team 5**
+> (`REVIEW-TEAM-5-CHARTER_v1.0.md`), superseding the v1.1 companion reference below.
+
 **Directive (Architecture Board, 2026-07-02):** the FE program moves to milestone-driven Frontend
 Program Management (see `project-management/review-process.md`). Every milestone submission passes
 **two sequential, independent reviews**: **Review Team A (this charter — reviews FIRST)**, then

@@ -1,4 +1,4 @@
-# WORK PACKAGE — FE-BUY-04 Quotation Detail (DRAFT — awaiting owner kickoff approval)
+# WORK PACKAGE — FE-BUY-04 Quotation Detail
 
 - **Lane:** G (Procurement Moat; contract-bound renders; R6 adjacency)
 - **Reviewed-SHA record:** _(filled at 🔵A)_
@@ -35,7 +35,7 @@ Builder = **Team-2** · Maintainer = **Team-2** · Review A → Review B (fresh 
 
 ## Key dates
 
-Created 2026-07-02 · Started — · Paused — · Resumed — · Closed —
+Created 2026-07-02 · Started 2026-07-02 (owner kickoff approved) · Paused — · Resumed — · Closed —
 
 ## DoD confirmation (checked at Board close — review-process.md §6, carry-forward rule applies:
 delta-only; P-BUY-14/16 are 🟩 legacy so the enhancement delta is the review surface)

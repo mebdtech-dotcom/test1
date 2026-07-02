@@ -371,3 +371,5 @@
 2026-07-02 · FE-BUY-04 · Created (⬜ Planned; WP card drafted, awaiting owner kickoff) · Owner: Board
 2026-07-02 · FE-VEN-05 · Created (⬜ Planned; WP card drafted, awaiting owner kickoff) · Owner: Board
 2026-07-02 · FE-PUB-02 · Created (⬜ Planned; WP card drafted; S: Review-B Step-3 baseline first) · Owner: Board
+2026-07-02 · — · **Review-team numbering per owner diagram**: Team-4 = **Review Team 4 (Architecture & Governance, Review-A lane)** — supersedes the cutover-day Team-4→quality-lane mapping (amendment v1.2); NEW **Review Team 5 (Quality & Adversarial, Review-B lane)** chartered; review-process.md → v1.1; README/current-focus/execution-board/WBS labels patched · Owner: Board
+2026-07-02 · FE-BUY-04 · Created → **Started** (🟡 In Progress — owner kickoff APPROVED; WP card Started; Lane G; first page P-BUY-14) · Owner: Board → Team-2
