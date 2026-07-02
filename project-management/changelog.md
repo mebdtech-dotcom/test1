@@ -141,3 +141,14 @@
 2026-07-02 · P-ACC-05 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0041)
 2026-07-02 · P-ADM-14 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0042)
 2026-07-02 · P-ACC-05 · ✅ Approved → ✅ committed · Owner: Team-1
+2026-07-02 · P-ACC-06 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-02 · P-ADM-14 · ✅ Approved → ✅ committed (61aca1a) · Owner: Team-3
+2026-07-02 · P-ADM-15 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-02 · P-ADM-15 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-02 · P-BUY-26 · ✅ committed (04feaea) · Owner: Team-2
+2026-07-02 · P-BUY-27 · ⬜ Pending → 🟡 In Progress · Owner: Team-2
+2026-07-02 · P-BUY-27 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-2 (axe GREEN — 0 own-content violations)
+2026-07-02 · P-ACC-06 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-02 · P-BUY-27 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0043)
+2026-07-02 · P-ACC-06 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0044)
+2026-07-02 · P-ADM-15 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0045)

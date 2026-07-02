@@ -11,22 +11,22 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-06` Members (P1) — ⬜ Pending (P-ACC-05 ✅ Approved, RV-0041)
-- **Status:** ⬜ queued to build
+- **Current Page:** `P-ACC-06` Members (P1) — 🔵 Ready for Review (awaiting Team-4 QCT)
+- **Status:** 🔵 Ready for Review — T-LISTING member table; suspend/reinstate/remove (Last Owner Protection), remove-confirm; Doc-4C §C6; not committed
 - **Next Page:** `P-ACC-07` Invite member (P1, Ready)
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
 
-- **Current Page:** `P-BUY-27` CRM — vendor detail (P2) — ⬜ Pending (P-BUY-26 ✅ Approved, RV-0040). **never leaks** (approve/blacklist private, Inv #11)
-- **Status:** ⬜ queued to build
-- **Next Page:** — (CRM cluster tail; P-BUY-27 is the last buyer page in the tracker)
+- **Current Page:** `P-BUY-27` CRM — vendor detail (P2) — 🔵 Ready for Review (axe GREEN; 2-reviewer PASS; own-status buyer-private/undetectable; writes parked)
+- **Status:** 🔵 awaiting Team-4 review
+- **Next Page:** — (CRM cluster tail; remaining ⬜ Team-2 pages: P-BUY-02/03/04/05/10/11/12/13)
 - **Updated:** 2026-07-02
 
 ## Team-3 — Vendor / Verification / Admin
 
-- **Current Page:** `P-ADM-15` Import job — new / detail (P2) — ⬜ Pending (P-ADM-14 ✅ Approved, RV-0042). create-then-poll (async)
-- **Status:** ⬜ queued to build
+- **Current Page:** `P-ADM-15` Import job — new / detail (P2) — 🔵 Ready for Review (submit form + create-then-poll detail, awaiting Team-4)
+- **Status:** 🔵 Ready for Review — `submit_import_job` disabled (R5); detail = stats_jsonb + row errors; notFound Inv #11; my files green
 - **Next Page:** `P-ADM-16` Outreach campaigns (P3, Ready) — acquisition only
 - **Updated:** 2026-07-02
 

@@ -16,6 +16,7 @@ import type {
   PaymentStatus,
   TradeInvoiceStatus,
   PrivateVendorLinkStatus,
+  BuyerVendorStatus,
 } from "./view-models";
 
 export interface StateDisplay {
@@ -122,4 +123,21 @@ const PRIVATE_VENDOR_LINK_STATUS_DISPLAY: Record<PrivateVendorLinkStatus, StateD
 
 export function privateVendorLinkStatusDisplay(status: PrivateVendorLinkStatus): StateDisplay {
   return PRIVATE_VENDOR_LINK_STATUS_DISPLAY[status];
+}
+
+/**
+ * Buyer→vendor CRM status → label + tone (Doc-4F §F4.5 / Doc-2 §10.5 `approved | conditional | blacklisted`,
+ * + `none`). BUYER-PRIVATE (Inv #11): shown ONLY on the owning buyer's own CRM detail — never vendor-facing,
+ * never a platform-score input. `blacklisted` uses the danger tone for the OWNING buyer's clarity only; it
+ * stays undetectable to the vendor (§7.5). `none` = no open status.
+ */
+const BUYER_VENDOR_STATUS_DISPLAY: Record<BuyerVendorStatus, StateDisplay> = {
+  approved: { label: "Approved", tone: "success" },
+  conditional: { label: "Conditional", tone: "warning" },
+  blacklisted: { label: "Blacklisted", tone: "danger" },
+  none: { label: "No status", tone: "neutral" },
+};
+
+export function buyerVendorStatusDisplay(status: BuyerVendorStatus): StateDisplay {
+  return BUYER_VENDOR_STATUS_DISPLAY[status];
 }

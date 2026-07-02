@@ -71,6 +71,18 @@ export type PrivateVendorLinkStatus = "none" | "suggested" | "linked";
 /** Private-vendor record lifecycle — `private_vendor_records.state` (Doc-2 §3.5): `active | archived`. */
 export type PrivateVendorState = "active" | "archived";
 
+/** Private-vendor record source — `private_vendor_records.source` (Doc-2 §10.5): how the record was added. */
+export type PrivateVendorSource = "manual" | "email_list" | "excel";
+
+/**
+ * Buyer→vendor CRM status — the frozen `buyer_vendor_statuses.status` (Doc-4F §F4.5 / Doc-2 §10.5):
+ * `approved | conditional | blacklisted`, plus `none` (no open status; the read returns `none` after clear).
+ * This is BUYER-PRIVATE and firewalled (M4): the owning buyer sees it on their own CRM detail, but it NEVER
+ * leaks to the vendor or another buyer, NEVER mutates platform-wide scores, and a blacklist is undetectable
+ * to the vendor (Inv #11 / §7.5). Its only cross-module egress is the internal RFQ-routing read (§F4.8).
+ */
+export type BuyerVendorStatus = "approved" | "conditional" | "blacklisted" | "none";
+
 /** A monetary value pair — `{ amount, currency }`, BDT default at the render site only (GI-08; Doc-2 §0.4). */
 export interface MoneyValue {
   amount: number;
