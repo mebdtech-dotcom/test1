@@ -11,9 +11,9 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-SH-06` Forbidden (P2) — ⬜ next (P-SH-02 ✅ RV-0096). Doc-7C shell; **Inv#11 non-disclosure** — where the viewer has NO right-to-know a resource exists, Forbidden must collapse to 404 (a hidden resource is byte-identical to non-existence); only a genuine right-known-but-denied case shows a distinct 403
-- **Status:** P-SH-02 Notification center ✅ Approved (RV-0096 — non-disclosure absolute, fields verified vs frozen M6 read, shared-seed single-source). Awaiting P-SH-02 commit + Team-1 to start P-SH-06. Chrome follow-up open: SiteHeader "Pricing" nav → /pricing (RV-0087). **Owner ratify:** global-search + full-page-notifications mount (corpus-silent, ACCOUNT_NAV least-invention)
-- **Next Page:** P-SH-06 (P2), then P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
+- **Current Page:** `P-PUB-20` Compare (public) (P3) — ⬜ next (P-SH-06 ✅ RV-0097). **Team-1 P2 set COMPLETE.** Ungoverned compare — buyer-selected entities only, **NO system ranking/recommendation (R7)**; presentation-only, no matching; only frozen-projected public fields
+- **Status:** P-SH-06 Forbidden ✅ Approved (RV-0097 — EXEMPLARY non-disclosure, Doc-7A §8.2 collapse verified). Team-1 P2 shell/legal/contact/search/notifications/forbidden COMPLETE; only 3 P3s left buildable (P-PUB-20/23, P-SH-05). Awaiting P-SH-06 commit + Team-1 to start P-PUB-20. **Owner ratify:** global-search + full-page-notifications mount (corpus-silent). Chrome follow-up: SiteHeader "Pricing" nav → /pricing (RV-0087)
+- **Next Page:** P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer

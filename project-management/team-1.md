@@ -42,7 +42,7 @@ the status layer only. Work highest-priority `Ready` first; skip `Dependency ≠
 | P-SH-03 | Not-found (404) | P1 | Ready | 🟩 Built | byte-identical to absence |
 | P-SH-04 | Error (500) | P1 | Ready | 🟩 Built | |
 | P-SH-05 | Maintenance / unavailable | P3 | Ready | ⬜ | |
-| P-SH-06 | Forbidden | P2 | Ready | ⬜ | collapses to 404 where no right-to-know |
+| P-SH-06 | Forbidden | P2 | Done | ✅ Approved (RV-0097) | Team-4: EXEMPLARY — Doc-7A §8.2 protected-fact collapse + CHK-7-041 VERIFIED (frozen); default no-right-to-know → notFound() byte-identical 404, 403 only where right-to-know established; generic copy names no resource; no telemetry leak; no kit change; single h1. Built `app/(public)/forbidden/page.tsx` (pure server component) — 403 state in the PUBLIC shell (free path; consistent with the shipped 404 (public)/not-found). **GOVERNANCE (Inv#11 §7.5, Doc-7A §8.2, load-bearing)**: the DEFAULT no-right-to-know case returns the BYTE-IDENTICAL 404 via `notFound()` (kit `NotFound` takes NO discriminating prop → indistinguishable from absence — such cases NEVER reach this page); the distinct 403 is shown ONLY where right-to-know is established. This route = the right-to-know 403 view: eyebrow "403" + h1 "Access denied" + GENERIC copy that names NO resource (reveals nothing beyond "no access") + Back-to-home (kit Button). Styled to match NotFound layout (page-local state view; **frozen kit UNCHANGED, no primitive duplicated** — NotFound is deliberately 404-only). No page-specific analytics (must not leak existence). Rationale documented in-file. Binds no Doc-5 contract. tsc/eslint/prettier green; D/T/M render 200. Doc-7C · T-STATE · TB-NONE |
 
 ## Auth — `P-AUTH-*` (Doc-7E)
 
