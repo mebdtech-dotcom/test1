@@ -11,9 +11,9 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-SH-01` Global search results (P2) — ⬜ next (P-PUB-24 ✅ RV-0094). Doc-7C shell; **MUST NOT re-rank M3** (no matching/scoring/ranking, R6/R7); contract-projected results only, no grand totals (GI-03), non-disclosure-safe (absent ≡ excluded)
-- **Status:** P-PUB-24 Contact ✅ Approved (RV-0094 — honest no-op form, no fabricated details). P-PUB public set + Legal pair complete. Awaiting P-PUB-24 commit + Team-1 to start P-SH-01. Chrome follow-up open: SiteHeader "Pricing" nav → /pricing (RV-0087)
-- **Next Page:** P-SH-01/02/06 (P2), then P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
+- **Current Page:** `P-SH-02` Notification center (full) (P2) — ⬜ next (P-SH-01 ✅ RV-0095). Doc-7C shell; **non-disclosure-bound** — a deferral/blacklist/exclusion must never surface as a notification (Inv#11 §7.5); render ONLY frozen-projected notification fields (no coined notification types/events); presentation-only, no wired mark-read
+- **Status:** P-SH-01 Global search ✅ Approved (RV-0095 — discovery≠matching clean, non-disclosure absolute, honest interim; shell-mount adjudicated OK, corpus silent → /account/search least-invention, **OWNER to ratify mount**). Awaiting P-SH-01 commit + Team-1 to start P-SH-02. Chrome follow-up open: SiteHeader "Pricing" nav → /pricing (RV-0087)
+- **Next Page:** P-SH-02/06 (P2), then P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
