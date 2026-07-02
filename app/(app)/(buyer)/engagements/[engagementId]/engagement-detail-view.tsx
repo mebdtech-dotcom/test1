@@ -132,10 +132,6 @@ export function EngagementDetailView({ data }: { data: EngagementDetailData }) {
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Not every document type applies to every engagement — a link opens only what exists
-              for this one.
-            </p>
           </CardContent>
         </Card>
 
