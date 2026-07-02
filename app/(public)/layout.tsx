@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SiteHeader } from "./_components/site-header";
 import { SiteFooter } from "./_components/site-footer";
+import { ExplorerSeoNav } from "./_components/explorer/explorer-seo-nav";
 
 /**
  * Doc-7C `(public)` route-group shell (SR2 / Doc-7D PR1, PR7). The anonymous, SSR/SSG-friendly,
@@ -13,6 +14,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
+      {/* FE-PUB-09: crawlable L1/L2 category links in server HTML (ARCH §7 SEO) — sr-only;
+          the header's interactive Explorer is the visible, progressively-enhanced surface. */}
+      <ExplorerSeoNav />
       <main className="flex-1">{children}</main>
       <SiteFooter />
     </div>

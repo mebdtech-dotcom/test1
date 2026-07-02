@@ -4,9 +4,12 @@
 // org-switcher and NO notification center here (those are authenticated shell slots — Doc-7C §4/§6).
 // Conversion CTAs route to the auth-entry area (Doc-7E owns the auth action — Doc-7D PR5).
 // Nav items marked (*) target Wave-3 public views (P-PUB-*) not yet built — placeholdered to "/".
+// FE-PUB-09: hosts the Industrial Category Explorer (IA §5.3 — MEGA_MENU package instance) and
+// the owner-directed prominent "Post RFQ" CTA (routes to /login — presentation-only; the RFQ
+// system is THE core buyer value proposition, so it outranks Sign in/Get started visually).
 import * as React from "react";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { FilePlus2, Menu } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
 import { BrandLogo } from "@/frontend/brand";
 import {
@@ -18,6 +21,7 @@ import {
   SheetClose,
 } from "@/frontend/primitives/sheet";
 import { Separator } from "@/frontend/primitives/separator";
+import { Explorer } from "./explorer/explorer";
 
 const NAV_LINKS = [
   { href: "/marketplace", label: "Marketplace" }, // P-PUB-10 (M2.2)
@@ -39,7 +43,11 @@ export function SiteHeader() {
           <BrandLogo height={32} />
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-1 md:flex" aria-label="Primary">
+        <div className="ml-2 hidden lg:block">
+          <Explorer />
+        </div>
+
+        <nav className="ml-2 hidden items-center gap-1 md:flex" aria-label="Primary">
           {NAV_LINKS.map((l) => (
             <Button
               key={l.label}
@@ -54,10 +62,17 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto hidden items-center gap-2 md:flex">
+          {/* Post RFQ = the visually dominant header action (owner delta; Smart RFQ is the moat). */}
+          <Button asChild size="sm">
+            <Link href="/login">
+              <FilePlus2 aria-hidden />
+              Post RFQ
+            </Link>
+          </Button>
           <Button asChild variant="ghost" size="sm">
             <Link href="/login">Sign in</Link>
           </Button>
-          <Button asChild size="sm">
+          <Button asChild variant="outline" size="sm">
             <Link href="/login">Get started</Link>
           </Button>
         </div>
@@ -85,12 +100,20 @@ export function SiteHeader() {
               <Separator className="my-4" />
               <div className="flex flex-col gap-2">
                 <SheetClose asChild>
+                  <Button asChild>
+                    <Link href="/login">
+                      <FilePlus2 aria-hidden />
+                      Post RFQ
+                    </Link>
+                  </Button>
+                </SheetClose>
+                <SheetClose asChild>
                   <Button asChild variant="outline">
                     <Link href="/login">Sign in</Link>
                   </Button>
                 </SheetClose>
                 <SheetClose asChild>
-                  <Button asChild>
+                  <Button asChild variant="outline">
                     <Link href="/login">Get started</Link>
                   </Button>
                 </SheetClose>

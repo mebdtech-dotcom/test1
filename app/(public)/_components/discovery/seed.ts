@@ -177,6 +177,21 @@ export const PRODUCTS: ProductCardVM[] = [
 /** Featured products subset for the homepage / marketplace showcase. */
 export const FEATURED_PRODUCTS: ProductCardVM[] = PRODUCTS.slice(0, 6);
 
+/**
+ * Curated "Popular searches" terms — the ONE shared source (FE-PUB-09 promoted this from the
+ * Command Center so the landing page and the mega menu can never diverge). Editorial
+ * presentation choice, NOT a computed/"trending" signal (landing_page_spec §2.3(f)); every term
+ * is independently verified to substring-match a real PRODUCTS entry (RV-0121 — no dead-end
+ * chips), preserving the cross-category spread (valves / steel / electrical / pumps / safety).
+ */
+export const POPULAR_SEARCHES = [
+  "gate valve",
+  "MS plate",
+  "VFD drive",
+  "centrifugal pump",
+  "safety helmet",
+] as const;
+
 // ── Categories (featured tiles + an industry-grouped navigation tree). [ESC-7-API-CATNAV] interim:
 //    curated/static; counts omitted (no facet-aggregate read; never client-computed). ────────────────
 export const FEATURED_CATEGORIES: CategoryVM[] = [

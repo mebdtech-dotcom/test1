@@ -68,14 +68,19 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 - **Current Milestone:** _(none — `FE-VEN-10` Billing ✅ **Closed**, RV-0123, A:PASS ∧ B:PASS, 0
   BLOCKER/MAJOR/MINOR both lanes, Review Team 5-approved 2026-07-03 @ `4e57bfc`. Composes 5
   unmodified Account components — composition-not-fork independently verified by both lanes. FE-VEN-09/14 also ✅ Closed prior)_
-- **Current Page:** _(none — `workspace/billing` shipped: `PlansCatalog`/`SubscriptionView`/
-  `UsageDashboard`/`LeadCreditsView`/`PlatformInvoicesView` [P-ACC-16..20] composed via `BillingTabs`.
-  **Coverage correction discovered at close**: the WBS's "FE-VEN-10 owns P-VND-27" mapping was stale
-  [pre-dated the P-ACC reuse strategy] — `P-VND-27` Finance/payments was never touched by this
-  milestone and is reassigned to `FE-VEN-08`'s range [J-SUP-07, same journey as its P-VND-25/26],
-  genuinely unbuilt, own future remainder)_
-- **Pipeline stage:** idle
-- **Next Milestone:** FE-VEN-11 Organization → FE-VEN-12 Settings
+- **Current Milestone (new):** `FE-VEN-11` Organization — **🔵A Review-A** (checkpoint `1a5d009`;
+  scope complete — sole in-scope page `workspace/organization` composed, second of the ruled
+  FE-VEN-10 → 11 → 12 sequence)
+- **Current Page:** _(sole in-scope page — 6 tabs, each a direct unmodified import of the real
+  Account component: `OrganizationProfile`, `OrganizationLifecycle`, `MembersView`, `RolesView`,
+  `PermissionsView`, `DelegationView` [P-ACC-04..11]. Disclosed trade-offs: "Invite member"/"New
+  role" links leave vendor chrome for the existing `/account/members/invite`/`/account/roles/new`
+  routes [same class as `FE-VEN-10`'s]; "New grant" is **disabled, not linked** — a genuinely
+  pre-existing gap discovered on the Account track itself [`/account/delegation/new` doesn't exist
+  anywhere, distinct from the already-registered `ESC-IDN-DELEG-EXPIRY`] — submitted to Review-A;
+  Team-3 STOPS, does not pull FE-VEN-12 before gate)_
+- **Pipeline stage:** submitted to Review-A (Lane G)
+- **Next Milestone:** FE-VEN-12 Settings
 
 ---
 

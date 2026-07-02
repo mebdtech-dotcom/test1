@@ -1,8 +1,9 @@
-# WORK PACKAGE — FE-PUB-03 Vendor Profile (Started)
+# WORK PACKAGE — FE-PUB-03 Vendor Profile (✅ Closed — RV-0111, A:PASS ∧ B:PASS, Dev-team
+self-close per Amendment v1.3 §13)
 
 - **Lane:** G (anonymous contract surface; Doc-7D §10 microsite governance; capability/verification
   firewall adjacency)
-- **Reviewed-SHA record:** _(filled at 🔵A)_
+- **Reviewed-SHA record:** `1275f70` (scope complete — footer nav fix + sticky mobile CTA)
 - **Value:** Vendor Growth · **Priority:** P1 · **Size:** M · **Risk:** Med
 
 ## In scope (the delta — enhancement over the 🟩 M2.7/ADR-022 multi-page microsite)
@@ -63,11 +64,17 @@ A:PASS ∧ B:PASS gate the owning Dev team self-closes per `review-process.md` A
 
 ## Key dates
 
-Created 2026-07-02 · Started 2026-07-02 · Paused — · Resumed — · Closed —
+Created 2026-07-02 · Started 2026-07-02 · Paused — · Resumed — · Closed 2026-07-02 (RV-0111,
+Dev-team self-close per Amendment v1.3 §13)
 
 ## DoD confirmation (checked at close — carry-forward: delta-only; untouched microsite
 sub-pages/components verified by byte-equivalence)
 
-☐ page DoD ☐ responsive D/T/M ☐ WCAG-AA ☐ tsc/eslint/prettier ☐ realistic mock data
-☐ Review A PASS ☐ Review B PASS (B/M/M=0) ☐ gate approval ☐ no TODO/dead code ☐ no duplicate
-components ☐ promotion candidates registered ☐ tracker updated ☐ card closed
+☑ page DoD ☑ responsive D/T/M (Playwright screenshots both lanes; Review-B corroborated live D/T/M
++ axe 0 violations mobile+desktop) ☑ WCAG-AA (axe-core WCAG 2.0/2.1 A+AA = 0 violations, both
+lanes) ☑ tsc/eslint/prettier ☑ realistic mock data (existing seed, untouched) ☑ Review A PASS
+(RV-0111, 7 OBS, B/M/M=0) ☑ Review B PASS (RV-0111, 8 OBS, B/M/M/NIT=0) ☑ gate approval (A:PASS ∧
+B:PASS on `1275f70` — the clean gate is the approval signal per Amendment v1.3 §13) ☑ no TODO/dead
+code ☑ no duplicate components (reuses kit `Button`/`Link`; no new component defined) ☑ promotion
+candidates registered (none raised — pure fix, no duplication pattern surfaced) ☑ tracker updated
+☑ card closed

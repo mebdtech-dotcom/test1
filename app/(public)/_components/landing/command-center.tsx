@@ -41,17 +41,11 @@ import { cn } from "@/frontend/lib/cn";
 // FE-PUB-01 delta: the previous 5 terms ("ball valves"/"VFD drives"/"gear pumps"/"industrial PPE" —
 // only "MS plate" excepted) didn't substring-match any product in `discovery/seed.ts`, so clicking
 // a chip and submitting landed on a dead-end "No results" — found during FE-PUB-07's audit (RV-0119),
-// carried forward here since the seed is this page's own domain. Each term below is independently
-// verified against the seed's actual product names, preserving the original cross-category spread
-// (valves / steel / electrical / pumps / safety).
-/** Curated static seed of industrial search terms (spec §2.3(f)). NOT a computed/"trending" signal. */
-const DEFAULT_POPULAR_SEARCHES = [
-  "gate valve",
-  "MS plate",
-  "VFD drive",
-  "centrifugal pump",
-  "safety helmet",
-] as const;
+// carried forward here since the seed is this page's own domain.
+// FE-PUB-09 delta: the RV-0121-verified term list moved to `discovery/seed.ts` `POPULAR_SEARCHES`
+// as the single shared source — the mega menu's Popular Searches strip consumes the same terms,
+// so the two surfaces can never diverge. Terms unchanged, content byte-identical.
+import { POPULAR_SEARCHES as DEFAULT_POPULAR_SEARCHES } from "../discovery/seed";
 
 const AUTH_HREF = "/login"; // `(auth)` entry — Doc-7E owns the auth action (Doc-7D PR5).
 const PUBLIC_BROWSE_HREF = "/categories"; // Explore Categories → P-PUB-11 category browse (M2.2).
