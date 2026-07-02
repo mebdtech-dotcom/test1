@@ -2,8 +2,10 @@
 
 - **Lane:** G (composes cross-team-owned Account surfaces; Golden Rule 7 sensitivity, same class as
   `FE-VEN-10`)
-- **Reviewed-SHA record:** `1a5d009` (Review-A pass) → `b847e7e` (post-patch, submitted to
-  Review-B) — RV-0124 Review-A: PASS WITH PATCH (1 MINOR patched in place, 1 OBS)
+- **Reviewed-SHA record:** `1a5d009` (Review-A pass) → `b847e7e` (post-patch, closed) — RV-0124
+  Review-A: PASS WITH PATCH (1 MINOR patched in place, 1 OBS) · Review-B: PASS (Team-5 mode-A
+  pre-close, B/M/M=0; independently corroborated by a second concurrently-spawned Review-B agent,
+  same verdict, stood down per the FE-VEN-10 precedent)
 - **Value:** Platform · **Priority:** P3 · **Size:** S · **Risk:** Med
 
 ## In scope
@@ -80,10 +82,12 @@ start the work"; second of the ruled FE-VEN-10 → 11 → 12 sequence) · Scope 
 
 ## DoD confirmation (checked at close)
 
-☐ page DoD (1 page, 6 composed tabs) ☐ responsive D/T/M ☐ WCAG-AA ☐ tsc/eslint/prettier ☐ realistic
-mock data — N/A by design (each reused component ships its own existing presentation seed) ☐ Review
-A PASS ☐ Review B PASS (B/M/M = 0) ☐ self-closed on clean gate (or Board, if BLOCKER/REGRESSION) ☐
-no TODO/dead code ☐ no duplicate components (zero components duplicated — every tab is a direct,
-unmodified import) ☐ no fork of any Account page (Flag-and-Halt condition) ☐ pre-existing
-Account-track dead link (`/account/delegation/new`) disclosed, not propagated ☐ promotion candidates
-reviewed ☐ tracker updated ☐ card closed
+☑ page DoD (1 page, 6 composed tabs) ☑ responsive D/T/M (axe 0 violations, live-rendered) ☑ WCAG-AA
+☑ tsc/eslint/prettier green ☑ realistic mock data — N/A by design (each reused component ships its
+own existing presentation seed) ☑ Review A PASS WITH PATCH (RV-0124, 1 MINOR patched in place at
+`b847e7e`, 1 OBS) ☑ Review B PASS (B/M/M = 0, Team-5 mode-A pre-close, corroborated by a second
+independent Review-B agent) ☑ self-closed on clean gate (Amendment v1.3 §13) ☑ no TODO/dead code ☑
+no duplicate components (zero components duplicated — every tab is a direct, unmodified import) ☑ no
+fork of any Account page (fork check independently re-run twice, zero forks) ☑ pre-existing
+Account-track dead link (`/account/delegation/new`, confirmed live 404) disclosed, not propagated ☑
+promotion candidates reviewed — none (composition-only milestone) ☑ tracker updated ☑ card closed

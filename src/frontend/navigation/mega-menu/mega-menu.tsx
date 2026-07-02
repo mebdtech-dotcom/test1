@@ -32,6 +32,7 @@ import { MegaMenuPopular } from "./mega-menu-popular";
 import { MegaMenuIndustryStrip } from "./mega-menu-industry-strip";
 import { MegaMenuQuickActions } from "./mega-menu-quick-actions";
 import { MegaMenuFooter } from "./mega-menu-footer";
+import { MegaMenuSearch } from "./mega-menu-search";
 import type { IndustryShortcut, MenuVendorVM, PopularSearchTerm } from "../model/types";
 
 export interface MegaMenuProps extends Pick<
@@ -72,7 +73,20 @@ function MegaMenuPanel({
   if (!taxonomy || taxonomy.roots.length === 0) return <MegaMenuEmptyState />;
 
   return (
-    <div className="flex flex-col">
+    // `/` anywhere in the panel focuses the search (SPEC addendum keyboard table).
+
+    <div
+      className="flex flex-col"
+      onKeyDown={(e) => {
+        if (e.key !== "/" || (e.target as HTMLElement).closest("[data-mega-menu-search]")) return;
+        const search = document.querySelector<HTMLInputElement>("[data-mega-menu-search]");
+        if (search) {
+          e.preventDefault();
+          search.focus();
+        }
+      }}
+    >
+      <MegaMenuSearch />
       {children}
       <div className="flex min-w-0">
         <MegaMenuColumns className="min-w-0 flex-1" />

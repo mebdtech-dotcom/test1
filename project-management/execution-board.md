@@ -73,8 +73,14 @@ with no resubmission to A per Review-A's own call [pure comment fix, zero scope/
 1 OBS; fork check clean on all 6 reused components, both disclosed trade-offs [Invite-member/New-role
 leave vendor chrome; "New grant" disabled — a genuinely pre-existing dead link on the Account track
 itself, `/account/delegation/new` doesn't exist, distinct from `ESC-IDN-DELEG-EXPIRY`] independently
-re-verified true). **🔵B Review-B submitted** at checkpoint `b847e7e`. Team-3 STOPS, holds for the
-gate → then FE-VEN-12 (also unblocked). _(Out-of-scope note: FE-PUB-09 vendored
+re-verified true). **✅ APPROVED** (RV-0124 @ `b847e7e`, A:PASS WITH PATCH ∧ B:PASS, 0
+BLOCKER/MAJOR/MINOR both lanes; **Review Team 5 marked approved 2026-07-03** per Amendment v1.3 §13 —
+owning Team-3 to commit [checkpoints/trackers; close uncommitted] + start next; composition-not-fork
+verified [6 Account components imported unmodified, thin `OrganizationTabs` over shared
+`WorkspaceTabs`, zero fork; no duplicate copies], route grounding honest [both action links to real
+`/account/*` routes; New grant `disabled` — `/account/delegation/new` genuinely absent], static gates
+green, render D/T/M all 200 + axe 0, tab click-through confirmed Invite/New-role hrefs + New-grant
+`BUTTON[disabled,no-href]` inert). Team-3 → FE-VEN-12 (also unblocked). _(Out-of-scope note: FE-PUB-09 vendored
 `popover`/`accordion`/`navigation-menu` into `src/frontend/primitives` — verify as a legit
 demand-driven kit extension under the mega-menu package at FE-PUB-09's review.)_
 

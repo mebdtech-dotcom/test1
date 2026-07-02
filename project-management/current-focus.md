@@ -65,23 +65,26 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-3 — Vendor (FE-VEN)
 
-- **Current Milestone:** _(none — `FE-VEN-10` Billing ✅ **Closed**, RV-0123, A:PASS ∧ B:PASS, 0
-  BLOCKER/MAJOR/MINOR both lanes, Review Team 5-approved 2026-07-03 @ `4e57bfc`. Composes 5
-  unmodified Account components — composition-not-fork independently verified by both lanes. FE-VEN-09/14 also ✅ Closed prior)_
-- **Current Milestone (new):** `FE-VEN-11` Organization — **🔵B Review-B** (RV-0124 Review-A: PASS
-  WITH PATCH, 1 MINOR comment-drift patched in place at `b847e7e` [no resubmission to A per
-  Review-A's own recommendation — pure comment fix, zero scope/contract change], 1 OBS; submitted
-  to Review-B; second of the ruled FE-VEN-10 → 11 → 12 sequence)
-- **Current Page:** _(sole in-scope page — 6 tabs, each a direct unmodified import of the real
-  Account component: `OrganizationProfile`, `OrganizationLifecycle`, `MembersView`, `RolesView`,
-  `PermissionsView`, `DelegationView` [P-ACC-04..11]. Disclosed trade-offs: "Invite member"/"New
-  role" links leave vendor chrome for the existing `/account/members/invite`/`/account/roles/new`
-  routes [same class as `FE-VEN-10`'s]; "New grant" is **disabled, not linked** — a genuinely
-  pre-existing gap discovered on the Account track itself [`/account/delegation/new` doesn't exist
-  anywhere, distinct from the already-registered `ESC-IDN-DELEG-EXPIRY`] — submitted to Review-A;
-  Team-3 STOPS, does not pull FE-VEN-12 before gate)_
-- **Pipeline stage:** submitted to Review-A (Lane G)
-- **Next Milestone:** FE-VEN-12 Settings
+- **Current Milestone:** _(none — `FE-VEN-11` Organization ✅ **Closed**, RV-0124, A:PASS WITH
+  PATCH (1 MINOR patched at `b847e7e`, no resubmission needed) ∧ B:PASS, 0 BLOCKER/MAJOR/MINOR
+  remaining either lane, Review Team 5-approved 2026-07-03 @ `b847e7e`. Composes 6 unmodified
+  Account components — composition-not-fork independently verified by both lanes, PLUS an
+  independently-spawned second Review-B agent that reached the same PASS verdict concurrently
+  [deferred to the live Team-5 recording per established precedent — substantively consistent,
+  not duplicated]. FE-VEN-09/10/14 also ✅ Closed prior)_
+- **Current Page:** _(none — sole in-scope page shipped: 6 tabs, each a direct unmodified import of
+  the real Account component: `OrganizationProfile`, `OrganizationLifecycle`, `MembersView`,
+  `RolesView`, `PermissionsView`, `DelegationView` [P-ACC-04..11]. Disclosed trade-offs, both
+  independently re-verified live: "Invite member"/"New role" links leave vendor chrome for the
+  existing, real `/account/members/invite`/`/account/roles/new` routes [same class as
+  `FE-VEN-10`'s]; "New grant" is **disabled, not linked** — a genuinely pre-existing gap on the
+  Account track itself [`/account/delegation/new` confirmed live 404, distinct from the
+  already-registered `ESC-IDN-DELEG-EXPIRY`])_
+- **Pipeline stage:** idle
+- **Next Milestone:** `FE-VEN-12` Settings — last of the ruled FE-VEN-10 → 11 → 12 sequence
+  (composes `UserProfileForm`/P-ACC-02, `SecuritySettings`/P-ACC-03, `NotificationPreferences`/
+  P-ACC-15 — explicitly EXCLUDING `WorkflowSettings`/P-ACC-13 per the Board's ruling to scope it
+  out/carry forward)
 
 ---
 
@@ -96,10 +99,11 @@ _(`FE-BUY-10` (Team-2) checkpointed 2026-07-03, awaiting Review-A — WP card
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 
-_(**`FE-VEN-11` (Team-3) submitted, checkpoint `b847e7e`, awaiting Review-B** — WP card
-  `governanceReviews/milestones/fe-ven-11-organization/WORK-PACKAGE.md`. Otherwise clear —
-  `FE-VEN-10` cleared, RV-0123 A:PASS ∧ B:PASS, 7 OBS, closed by Team-3 [Review-B by a live Team-5
-  session — composition-not-fork, money-boundary, render D/T/M+axe all independently confirmed].)_
+_(B-lane clear — `FE-VEN-11` cleared, RV-0124 A:PASS WITH PATCH ∧ B:PASS, closed by Team-3
+  [Review-B by a live Team-5 session — composition-not-fork, route-grounding, render D/T/M+axe all
+  independently confirmed; a second, independently-spawned Review-B agent reached the same PASS
+  concurrently and was stood down in favor of the live recording, same precedent as FE-VEN-10].
+  `FE-VEN-10` cleared prior, RV-0123 A:PASS ∧ B:PASS, 7 OBS.)_
 
 - **`FE-PUB-03` Vendor Profile** (Team-1) — Review-B **PASS** (RV-0111, 0 B/M/M, 8 OBS, `1275f70`;
   render D/T/M + axe 0 mobile/desktop; sticky-bar no-occlusion + dup-control clean) → Team-1 self-close.

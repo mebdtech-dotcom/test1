@@ -25,6 +25,7 @@ import { CategoryIcon } from "../category-tree/category-icon";
 import { CategoryBadge } from "../category-tree/category-badge";
 import { MegaMenuBreadcrumb } from "./mega-menu-breadcrumb";
 import { MegaMenuEmptyState } from "./mega-menu-empty";
+import { MegaMenuSearch } from "./mega-menu-search";
 import type { CategoryNodeVM } from "../model/types";
 
 export interface MegaMenuMobileProps {
@@ -114,6 +115,7 @@ export function MegaMenuMobile({ className, extraSections, onNavigate }: MegaMen
 
   return (
     <div className={cn("flex min-h-0 flex-col", className)}>
+      <MegaMenuSearch className="border-b-0 px-0" />
       <MegaMenuBreadcrumb />
 
       {current ? (

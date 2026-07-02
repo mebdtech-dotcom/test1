@@ -9,6 +9,7 @@ import * as React from "react";
 import taxonomySeed from "@/frontend/navigation/model/taxonomy.v1.json";
 import {
   MegaMenuColumns,
+  MegaMenuSearch,
   MegaMenuTrail,
   MenuInstanceProvider,
   NavigationMenuStateProvider,
@@ -25,6 +26,7 @@ export function CategoriesExplorer() {
       <TaxonomyProvider nodes={NODES} overlay={OVERLAY_V1}>
         <MenuInstanceProvider source="categories-page">
           <NavigationMenuStateProvider>
+            <MegaMenuSearch />
             <MegaMenuColumns />
             <MegaMenuTrail className="border-t border-border" />
           </NavigationMenuStateProvider>
