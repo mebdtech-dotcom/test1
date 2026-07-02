@@ -1,10 +1,10 @@
 # Review Process — Frontend Program Management
 
-**Frontend Program Management · v1.2 · Status: FROZEN (Board-ratified v1.0 at cutover, plan v6,
-2026-07-02 · amendments v1.1 §11 + v1.2 §12, same day).** Changes require an **additive amendment
-+ version bump** (the CLAUDE.md constitution pattern). Non-authoritative under the frozen corpus —
-on any conflict the corpus wins (§7) and this file is patched to match. **Owner (maintains):
-Architecture Board.**
+**Frontend Program Management · v1.3 · Status: FROZEN (Board-ratified v1.0 at cutover, plan v6,
+2026-07-02 · amendments v1.1 §11 + v1.2 §12 + v1.3 §13, same day).** Changes require an **additive
+amendment + version bump** (the CLAUDE.md constitution pattern). Non-authoritative under the frozen
+corpus — on any conflict the corpus wins (§7) and this file is patched to match. **Owner
+(maintains): Architecture Board.**
 
 Companions: [`fe-program-wbs.md`](fe-program-wbs.md) (roadmap) ·
 [`execution-board.md`](execution-board.md) (queues/gates) ·
@@ -174,3 +174,29 @@ boundary. Sequence per page: build → page DoD self-check → changelog line �
 `feat(FE-XXX-NN): P-YYYY <summary> [checkpoint]` → only then the next page. Never carry
 uncommitted work across a page boundary; never bundle two pages in one checkpoint. Full decision:
 `governanceReviews/BOARD-DECISION-FE-COMMIT-POLICY_v1.0.md` amendment v1.1 (owner-signed).
+
+## 13. Amendment v1.3 — unified A→B re-review + Dev-team milestone close (owner directive,
+2026-07-02; additive)
+
+Owner-stated pipeline: `Dev (Team 1/2/3) → Review-A (Team 4) → Review-B (Team 5) → [findings? →
+back to the owning Dev → fix → Review-A → Review-B, repeat] → ALL PASS → the owning Dev team
+commits (milestone-close) and moves to next work.` Two changes to §5 sequencing:
+
+- **Unified re-review on any fix — supersedes §5's B-verdict re-entry nuance.** The previous rule
+  ("re-enter at B if fixes are pure presentation, at A if any fix alters scope/contract-grounding/
+  architecture") is retired. Effective now: **any** Review-A REVISION or Review-B ISSUES routes the
+  milestone to 🟠 Revising → the owning Dev team fixes in scope → **always re-enters at Review-A**,
+  then proceeds to Review-B again → repeat the A→B cycle until **both** land PASS on the same
+  checkpoint SHA. No more B-only re-entry shortcut; §8's `A pass-class` note for B still applies
+  (B opens only after an A pass-class verdict, every cycle).
+- **Dev-team milestone close — narrows the §5 "Board pen split" line for this one step.** Once
+  A:PASS ∧ B:PASS (B/M/M = 0) land on the same SHA, the **owning Dev team** — not a separate Board
+  wait-turn — makes the milestone-close commit (`milestone(FE-XXX-NN): close — RV-00NN A:PASS
+  B:PASS`), confirms the WP-card DoD (§6), updates its own tracker lines, and moves directly to its
+  next queued milestone. The gate condition (A:PASS ∧ B:PASS, B/M/M=0) **is** the approval signal —
+  no further owner turn is needed for a clean pass. The "Board pen split (binding)" line in §5 is
+  otherwise **unchanged**: Validate-Findings disposition on any raised finding, FE-* ID minting,
+  promotion → Approved, Flag-and-Halt disposition, REGRESSION routing, and lane override remain
+  **owner/Board-only**. 🟣 Board is retained in the §1 state diagram for those cases (BLOCKER,
+  REGRESSION, Flag-and-Halt, override) — it is no longer a mandatory wait-state on the clean
+  A:PASS∧B:PASS path.
