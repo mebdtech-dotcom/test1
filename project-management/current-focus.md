@@ -12,42 +12,46 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-1 — Public / Platform (FE-PUB · FE-PF)
 
-- **Current Milestone:** _(none — `FE-PUB-02` Discovery ✅ **Closed**, RV-0107, A:PASS ∧ B:PASS, 0
-  BLOCKER/MAJOR/MINOR either lane, 22 OBS total, checkpoint `5d9d94a`; Dev-team self-close per
-  Amendment v1.3 §13. First public-track milestone through the full Dev→A→B pipeline)_
-- **Current Page:** _(none — P-PUB-07 `5d9d94a` Categories index discovery enhancement shipped:
-  featured categories, capability cards, search entry-point polish, featured products)_
-- **Pipeline stage:** idle — pulling `FE-PUB-03` next (WP card pending kickoff)
-- **Next Milestone:** FE-PUB-03 → FE-PUB-04 → FE-PUB-06 → FE-PUB-07 → FE-PUB-01 (skip FE-PUB-05 ⛔)
+- **Current Milestone:** `FE-PUB-03` Vendor Profile — **🔵A Review-A** (scope complete at checkpoint
+  `1275f70`; FE-PUB-02 ✅ Closed RV-0107 prior)
+- **Current Page:** _(shared microsite chrome delta — `vendor-microsite-footer.tsx` +
+  `vendor-microsite-layout.tsx` `1275f70`: fixed stale pre-ADR-022 footer nav anchors → real routes;
+  added fixed-bottom mobile-only enquire CTA (spec-required, was missing) — submitted to Review-A;
+  Team-1 STOPS, does not pull FE-PUB-04)_
+- **Pipeline stage:** submitted to Review-A (Lane G)
+- **Next Milestone:** FE-PUB-04 → FE-PUB-06 → FE-PUB-07 → FE-PUB-01 (skip FE-PUB-05 ⛔)
 
 ## Team-2 — Buyer (FE-BUY)
 
-- **Current Milestone:** _(none — `FE-BUY-05` Supplier Comparison ✅ **Closed**, RV-0108, A:PASS ∧
-  B:PASS, 0 BLOCKER/MAJOR/MINOR, 6 OBS, checkpoint `79b738a`; Dev-team self-close per Amendment
-  v1.3 §13. FE-BUY-04 also ✅ Closed, RV-0102 — both this session)_
-- **Current Page:** _(none — P-BUY-15 `79b738a` comparison presentation fixture shipped: the
-  route previously always passed `suppliers: []`; now seeds the same two-vendor fixture used on
-  the RFQ/quotation pages, R6-clean per both review lanes)_
-- **Pipeline stage:** idle — pulling `FE-BUY-06` Award next (WP card pending kickoff)
-- **Next Milestone:** FE-BUY-06 → 07 → 08 → 09 → FE-CLN-01 (F2-Z). FE-BUY-10 🅿 parked
+- **Current Milestone:** _(none — `FE-BUY-06` Award ✅ **Closed**, RV-0109, A:PASS ∧ B:PASS, 0
+  BLOCKER/MAJOR/MINOR, 10 OBS, checkpoint `5654956`; Dev-team self-close per Amendment v1.3 §13.
+  FE-BUY-04/05 also ✅ Closed — three milestones this session, no kickoff-approval pause per
+  owner directive)_
+- **Current Page:** _(none — P-BUY-17 `5654956` award fixture-consistency fix shipped: aligned
+  the mock shortlist to the same two-vendor RFQ-2026-000123 fixture used everywhere else + added
+  a "Review the comparison" cross-link to FE-BUY-05; P-BUY-18 reviewed, carried forward untouched)_
+- **Pipeline stage:** idle — pulling `FE-BUY-07` Engagement next (WP card pending kickoff)
+- **Next Milestone:** FE-BUY-07 → 08 → 09 → FE-CLN-01 (F2-Z). FE-BUY-10 🅿 parked
 
 ## Team-3 — Vendor (FE-VEN)
 
-- **Current Milestone:** _(none — `FE-VEN-13` Ads ✅ **Closed**, board-approved 2026-07-02,
-  RV-0106, gate met after one fix-and-reverify cycle, checkpoint `34395b2`)_
-- **Current Page:** _(none)_
-- **Pipeline stage:** **idle — by explicit owner instruction.** FE-VEN-13 closed; the next queue
-  item (FE-VEN-04 remainder, P-VND-09) was NOT kicked off this cycle ("approve close, stop
-  there"). Team-3 has now shipped and closed FIVE milestones this session (FE-VEN-05/06/07/08/13).
-- **Next Milestone:** FE-VEN-04 remainder (P-VND-09, WP card not yet authored — owner kickoff
-  required) · FE-VEN-09 ⛔ · FE-VEN-10/11/12 at Board kickoff scoping
+- **Current Milestone:** `FE-VEN-04` remainder (Catalog) — **🔵A Review-A** (owner: "you should
+  not stop, just start the work, no approval required"; scope complete at checkpoint `a52dc1e`)
+- **Current Page:** _(sole in-scope page — P-VND-09 `a52dc1e` Spec library listing + edit dialog:
+  new route `workspace/company/spec-library`, `SpecLibraryList`/`SpecEntryDialog` against the
+  frozen `create_spec_library_entry.v1`/`update_spec_library_entry.v1` pair — submitted to
+  Review-A; Team-3 STOPS, does not pull further work before gate)_
+- **Pipeline stage:** submitted to Review-A (Lane G)
+- **Next Milestone:** FE-VEN-09 ⛔ · FE-VEN-10/11/12 at Board kickoff scoping
 
 ---
 
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
-_(A-lane clear — `FE-PUB-02` cleared Review-A (RV-0107 PASS, 11 OBS, `5d9d94a`) and was handed to
-  Review-B. Nothing currently awaiting Review-A.)_
+- **`FE-PUB-03` Vendor Profile** (Team-1) — at checkpoint `1275f70`; shared microsite-chrome delta
+  (footer nav fix + sticky mobile CTA), Lane G. First submission for this milestone.
+- **`FE-VEN-04` remainder** (Team-3) — at checkpoint `a52dc1e`; P-VND-09 Spec library (sole
+  in-scope page), Lane G. First submission for this milestone.
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 
@@ -66,6 +70,4 @@ _(B-lane clear — nothing at 🔵B awaiting Review-B.)_
 
 ## Architecture Board — queue
 
-- **Kickoff pending (owner, when resumed):** FE-VEN-04 remainder (P-VND-09, spec library) —
-  Team-3's next queue item, not yet authored/kicked off
 - **Standing agenda:** [`execution-board.md`](execution-board.md) §Board standing agenda (10 items)

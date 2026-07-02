@@ -10,22 +10,23 @@ Roadmap: [`fe-program-wbs.md`](fe-program-wbs.md) · pointer: [`current-focus.md
 
 **Team-1 (Public / PF):**
 ~~FE-PUB-02 Discovery~~ ✅ **Closed** (RV-0107, A:PASS ∧ B:PASS, Dev-team self-close 2026-07-02 @
-`5d9d94a`) · `FE-PUB-03` ← next (WP card pending kickoff) → FE-PUB-04 → FE-PUB-06 → FE-PUB-07 →
-FE-PUB-01 · ~~FE-PUB-05~~ ⛔ `ESC-7-API-PRODDETAIL` (skip while gated).
+`5d9d94a`) · `FE-PUB-03 Vendor Profile` ← current (🔵A Review-A @ `1275f70` — scope complete,
+footer nav fix + sticky mobile CTA; awaiting Review-A, Team-1 holds) → FE-PUB-04 → FE-PUB-06 →
+FE-PUB-07 → FE-PUB-01 · ~~FE-PUB-05~~ ⛔ `ESC-7-API-PRODDETAIL` (skip while gated).
 
 **Team-2 (Buyer):**
-~~FE-BUY-04 Quotation Detail~~ ✅ **Closed** (RV-0102, board-approved 2026-07-02 @ `5a4550c`) ·
-~~FE-BUY-05 Supplier Comparison~~ ✅ **Closed** (RV-0108, Dev-team self-close 2026-07-02 @
-`79b738a`) · `FE-BUY-06 Award` ← next (WP card pending kickoff) → FE-BUY-07 → FE-BUY-08 →
-FE-BUY-09 → FE-CLN-01 (F2-Z batch). FE-BUY-10 🅿 parked.
+~~FE-BUY-04~~ ✅ **Closed** (RV-0102 @ `5a4550c`) · ~~FE-BUY-05~~ ✅ **Closed** (RV-0108 @
+`79b738a`) · ~~FE-BUY-06 Award~~ ✅ **Closed** (RV-0109, Dev-team self-close 2026-07-02 @
+`5654956`) · `FE-BUY-07 Engagement` ← next (WP card pending kickoff) → FE-BUY-08 → FE-BUY-09 →
+FE-CLN-01 (F2-Z batch). FE-BUY-10 🅿 parked.
 
 **Team-3 (Vendor):**
 ~~FE-VEN-05~~ ✅ **Closed** (RV-0101 @ `e2f8642`) · ~~FE-VEN-06~~ ✅ **Closed** (RV-0103 @
 `4ae0ec1`) · ~~FE-VEN-07~~ ✅ **Closed** (RV-0104 @ `b1810fe`) · ~~FE-VEN-08~~ ✅ **Closed**
-(RV-0105, board-approved 2026-07-02 @ `ec8306b`) · ~~FE-VEN-13~~ ✅ **Closed** (RV-0106, board-approved 2026-07-02 @ `34395b2`, after one
-fix-and-reverify cycle) · Team-3 **idle by owner instruction** — session stop, next queue item
-(FE-VEN-04 remainder, P-VND-09) not kicked off this cycle → FE-VEN-10/11/12 at Board kickoff
-scoping. FE-VEN-09 ⛔.
+(RV-0105, board-approved 2026-07-02 @ `ec8306b`) · ~~FE-VEN-13~~ ✅ **Closed** (RV-0106,
+board-approved 2026-07-02 @ `34395b2`, after one fix-and-reverify cycle) · `FE-VEN-04 remainder`
+← current (🔵A Review-A @ `a52dc1e` — P-VND-09 Spec library, scope complete; awaiting Review-A,
+Team-3 holds) → FE-VEN-10/11/12 at Board kickoff scoping. FE-VEN-09 ⛔.
 
 **Review Team 5 standing backlog (B lane):** Step-3 Public baseline sweep (QCT 5-step Step 3) at a
 stable post-cutover SHA — **owner-authorized 2026-07-02 (agenda #10)**; runs **before FE-PUB-02

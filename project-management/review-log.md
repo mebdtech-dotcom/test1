@@ -1245,3 +1245,24 @@ edits implementation** (Raise ≠ Accept — CLAUDE.md §13). Each review gets a
 - Disposition (author/authority): all 6 findings (3 A + 3 B) are **[OBS]** — neutral/no-action under §13; none is BLOCKER/MAJOR/MINOR/NIT. Gate **BLOCKER 0 · MAJOR 0 · MINOR 0**.
 - Board: **APPROVED** (Dev-team self-close per Amendment v1.3 §13, 2026-07-02) — gate A:PASS ∧ B:PASS, BLOCKER=MAJOR=MINOR=0 IS the approval signal; no separate owner wait-turn.
 - Result: milestone → **✅ Closed**. Milestone-close commit: `milestone(FE-BUY-05): close — RV-0108 A:PASS B:PASS`. 6 OBS total (3 A + 3 B), 0 BLOCKER/MAJOR/MINOR/NIT either lane. Team-2 pulls FE-BUY-06 next.
+
+### RV-0109 · FE-BUY-06 · Award · Team-2
+- Date: 2026-07-02 · Pages in scope: P-BUY-17 (Award, checkpointed) · P-BUY-18 (Close lost, reviewed/carried forward untouched, no defect) · Reviewed SHA: `5654956` (stable-target)
+- Review-A (Architecture & Governance): **PASS**
+  Findings: numbered, severity ladder BLOCKER/MAJOR/MINOR/NIT/OBS
+  1. [OBS] Fixture-consistency claim verified empirically against BX-02/FE-BUY-04/FE-BUY-05 — Meghna 2,695,000 BDT and Padma 2,810,000 BDT now match across the whole RFQ-2026-000123 fixture universe; the mismatched third vendor and old amounts are gone.
+  2. [OBS] `state: "shortlisted"` confirmed as a genuine frozen Doc-4M transition (`Doc-4M_FROZEN_v1.0.md:230`), not coined.
+  3. [OBS] No default/pre-selected winner — `selectedQuotationId` derives strictly from the URL `sel=` param with no fallback; no radio pre-checked.
+  4. [OBS] Shortlist order untouched array order, never sorted.
+  5. [OBS] "Review the comparison" link is pure navigation to the real, already-shipped FE-BUY-05 `/compare` route — no mutation, no new import.
+  6. [OBS] `AwardCandidate`/`AwardData` view-model confirmed byte-unchanged by this commit.
+  7. [OBS] P-BUY-18 carry-forward claim verified — zero files under close-lost touched by this milestone's commits.
+  8. [OBS] Quotation IDs changed cosmetically (`q1`/`q2`/`q3` → `q-1`/`q-2`) — opaque presentation-mock keys, no governance weight.
+- Review-B (Quality & Adversarial): **PASS**
+  Findings: numbered, severity ladder BLOCKER/MAJOR/MINOR/NIT/OBS
+  1. [OBS] Next.js RSC flight-data payload on step 1 includes the full serialized candidates array even though only the selected one renders visibly — standard framework behavior, not a disclosure defect (already own-shortlist-scoped data).
+  2. [OBS] Working tree had unrelated pre-existing modifications outside this milestone's scope (other teams' files) — confirmed not touching the award surface, noted only so it isn't mistaken for scope creep.
+  Independent gate re-run: `tsc --noEmit`/`eslint`/`prettier --check` all clean · both wizard steps HTTP 200, single `<h1>` each, step-0 confirmed via raw HTML that neither radio carries a `checked` attribute (no default winner), step-1 confirmed Meghna + BDT 2,695,000.00 correctly formatted · cross-link confirmed always-underlined (no `hover:` prefix) on both steps, target route sanity-checked 200 · axe-core 6 scans (3 breakpoints × 2 steps): zero `link-in-text-block` recurrences, only the known mobile shared-shell false positive · 6 screenshots saved to `governanceReviews/milestones/fe-buy-06-award/` · zero new raw input/button/select/textarea; pre-existing radio confirmed untouched by the diff; `shortlisted` re-confirmed as pre-existing frozen state (defense-in-depth, nothing routed back to A).
+- Disposition (author/authority): all 10 findings (8 A + 2 B) are **[OBS]** — neutral/no-action under §13; none is BLOCKER/MAJOR/MINOR/NIT. Gate **BLOCKER 0 · MAJOR 0 · MINOR 0**.
+- Board: **APPROVED** (Dev-team self-close per Amendment v1.3 §13, 2026-07-02) — gate A:PASS ∧ B:PASS, BLOCKER=MAJOR=MINOR=0 IS the approval signal; no separate owner wait-turn.
+- Result: milestone → **✅ Closed**. Milestone-close commit: `milestone(FE-BUY-06): close — RV-0109 A:PASS B:PASS`. 10 OBS total (8 A + 2 B), 0 BLOCKER/MAJOR/MINOR/NIT either lane. Team-2 pulls FE-BUY-07 next.
