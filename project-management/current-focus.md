@@ -11,9 +11,9 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-17` Subscription (P1) — 🟡 In Progress (P-ACC-16 ✅ committed). entitlements not plan-name (Inv #10)
-- **Status:** 🟡 building (presentation-only; subscription detail + events, BC-BILL-2; cancel=auto_renew off A-06)
-- **Next Page:** _(confirm from team-1.md after P-ACC-17)_
+- **Current Page:** `P-ACC-18` Usage & quota (P2) — 🟡 In Progress (P-ACC-17 ✅ committed)
+- **Status:** 🟡 building (presentation-only; usage/quota dashboard `get_usage`; Inv #10; quota≠routing)
+- **Next Page:** _(confirm from team-1.md after P-ACC-18)_
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer

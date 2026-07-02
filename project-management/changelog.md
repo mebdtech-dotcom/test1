@@ -253,3 +253,7 @@
 2026-07-02 · P-ACC-16 · ✅ Approved → ✅ committed · Owner: Team-1
 2026-07-02 · P-ACC-17 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
 2026-07-02 · F2 · owner sequencing: HOLD all freeze remediation (FZ-01..FZ-11); enter Phase F2 final Buyer UX refinement — build owner-provided business info/cards/workflow FIRST, then single freeze batch + verify + 2-review → freeze. F2-0 AWAITING OWNER SPEC · Owner: Team-2
+2026-07-02 · P-ACC-17 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-02 · P-ACC-17 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0069 — cancel=auto_renew-off-to-period-end exemplary; Inv#10 + money-boundary)
+2026-07-02 · P-ACC-17 · ✅ Approved → ✅ committed · Owner: Team-1
+2026-07-02 · P-ACC-18 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
