@@ -11,9 +11,9 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-PUB-20` Compare (public) (P3) — ⬜ next (P-SH-06 ✅ RV-0097). **Team-1 P2 set COMPLETE.** Ungoverned compare — buyer-selected entities only, **NO system ranking/recommendation (R7)**; presentation-only, no matching; only frozen-projected public fields
-- **Status:** P-SH-06 Forbidden ✅ Approved (RV-0097 — EXEMPLARY non-disclosure, Doc-7A §8.2 collapse verified). Team-1 P2 shell/legal/contact/search/notifications/forbidden COMPLETE; only 3 P3s left buildable (P-PUB-20/23, P-SH-05). Awaiting P-SH-06 commit + Team-1 to start P-PUB-20. **Owner ratify:** global-search + full-page-notifications mount (corpus-silent). Chrome follow-up: SiteHeader "Pricing" nav → /pricing (RV-0087)
-- **Next Page:** P-PUB-20/23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
+- **Current Page:** `P-PUB-23` Resources / Blog (P3) — ⬜ next (P-PUB-20 ✅ RV-0098). Optional SEO — **NO fabricated posts/authors/dates/metrics**; honest empty/placeholder if no CMS; static, binds no data
+- **Status:** P-PUB-20 Compare ✅ Approved (RV-0098 — R6/R7 exemplary, binary Verified, no kit change). Only 2 P3s left buildable (P-PUB-23, P-SH-05). Awaiting P-PUB-20 commit + Team-1 to start P-PUB-23. **Owner ratify:** global-search + full-page-notifications mount (corpus-silent). Chrome follow-up: SiteHeader "Pricing" nav → /pricing (RV-0087)
+- **Next Page:** P-PUB-23 + P-SH-05 (P3); SKIP P-PUB-09/11 Waiting-API
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
