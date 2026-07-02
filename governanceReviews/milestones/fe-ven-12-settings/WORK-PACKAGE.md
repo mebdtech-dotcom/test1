@@ -2,7 +2,8 @@
 
 - **Lane:** G (composes cross-team-owned Account surfaces; Golden Rule 7 sensitivity, same class as
   `FE-VEN-10`/`FE-VEN-11`)
-- **Reviewed-SHA record:** `8b208ab` — scope complete, submitted to Review-A 2026-07-03
+- **Reviewed-SHA record:** `8b208ab` — RV-0125 Review-A: PASS (0 BLOCKER/MAJOR/MINOR, 9 OBS all
+  confirmatory); submitted to Review-B 2026-07-03
 - **Value:** Platform · **Priority:** P3 · **Size:** S · **Risk:** Med
 
 ## In scope

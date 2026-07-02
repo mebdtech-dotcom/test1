@@ -80,17 +80,17 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   `FE-VEN-10`'s]; "New grant" is **disabled, not linked** — a genuinely pre-existing gap on the
   Account track itself [`/account/delegation/new` confirmed live 404, distinct from the
   already-registered `ESC-IDN-DELEG-EXPIRY`])_
-- **Current Milestone (new):** `FE-VEN-12` Settings — **🔵A Review-A** (checkpoint `8b208ab`; scope
-  complete — sole in-scope page `workspace/settings` composed, last of the ruled FE-VEN-10 → 11 → 12
-  sequence)
+- **Current Milestone (new):** `FE-VEN-12` Settings — **🔵B Review-B** (RV-0125 Review-A: PASS, 0
+  BLOCKER/MAJOR/MINOR, 9 OBS all confirmatory; submitted to Review-B at `8b208ab`; last of the ruled
+  FE-VEN-10 → 11 → 12 sequence)
 - **Current Page:** _(sole in-scope page — 3 tabs, each a direct unmodified import of the real
   Account component: `UserProfileForm`/P-ACC-02, `SecuritySettings`/P-ACC-03,
   `NotificationPreferences`/P-ACC-15. `WorkflowSettings`/P-ACC-13 explicitly EXCLUDED per the
   Board's §6.1 ruling — buyer-shaped RFQ-approval content, no vendor equivalent yet, carried
-  forward not fabricated. No leave-chrome trade-off this time — none of the 3 reused components
-  carries an internal link to another Account route — submitted to Review-A; Team-3 STOPS, holds
-  for the gate)_
-- **Pipeline stage:** submitted to Review-A (Lane G)
+  forward not fabricated; Review-A independently confirmed this against the actual report text, not
+  just the WP card's paraphrase. No leave-chrome trade-off this time — none of the 3 reused
+  components carries an internal link to another Account route — Team-3 STOPS, holds for the gate)_
+- **Pipeline stage:** submitted to Review-B (Lane G)
 - **Next Milestone:** none queued — this closes the ruled FE-VEN-10 → 11 → 12 sequence
 
 ---
@@ -98,21 +98,21 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
 _(`FE-BUY-10` (Team-2) checkpointed 2026-07-03, awaiting Review-A — WP card
-  `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`. **`FE-VEN-12`
-  (Team-3) checkpointed `8b208ab`, awaiting Review-A** — WP card
-  `governanceReviews/milestones/fe-ven-12-settings/WORK-PACKAGE.md`. Otherwise clear —
+  `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`. Otherwise clear —
   `FE-PUB-03` (RV-0111), `FE-PUB-04` (RV-0116), `FE-PUB-06` (RV-0118), `FE-PUB-07` (RV-0119),
   `FE-PUB-01` (RV-0121), `FE-VEN-04` (RV-0110), `FE-VEN-09` (RV-0120), `FE-VEN-10` (RV-0123),
-  `FE-VEN-11` (RV-0124, PASS WITH PATCH — MINOR patched at `b847e7e`), `FE-BUY-07` (RV-0112) all
-  cleared A and closed/advanced.)_
+  `FE-VEN-11` (RV-0124, PASS WITH PATCH — MINOR patched at `b847e7e`), `FE-VEN-12` (RV-0125, clean
+  PASS, 0 B/M/M, 9 OBS), `FE-BUY-07` (RV-0112) all cleared A and closed/advanced.)_
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 
-_(B-lane clear — `FE-VEN-11` cleared, RV-0124 A:PASS WITH PATCH ∧ B:PASS, closed by Team-3
-  [Review-B by a live Team-5 session — composition-not-fork, route-grounding, render D/T/M+axe all
-  independently confirmed; a second, independently-spawned Review-B agent reached the same PASS
-  concurrently and was stood down in favor of the live recording, same precedent as FE-VEN-10].
-  `FE-VEN-10` cleared prior, RV-0123 A:PASS ∧ B:PASS, 7 OBS.)_
+_(**`FE-VEN-12` (Team-3) submitted, checkpoint `8b208ab`, awaiting Review-B** — WP card
+  `governanceReviews/milestones/fe-ven-12-settings/WORK-PACKAGE.md`. Otherwise clear — `FE-VEN-11`
+  cleared, RV-0124 A:PASS WITH PATCH ∧ B:PASS, closed by Team-3 [Review-B by a live Team-5 session —
+  composition-not-fork, route-grounding, render D/T/M+axe all independently confirmed; a second,
+  independently-spawned Review-B agent reached the same PASS concurrently and was stood down in
+  favor of the live recording, same precedent as FE-VEN-10]. `FE-VEN-10` cleared prior, RV-0123
+  A:PASS ∧ B:PASS, 7 OBS.)_
 
 - **`FE-PUB-03` Vendor Profile** (Team-1) — Review-B **PASS** (RV-0111, 0 B/M/M, 8 OBS, `1275f70`;
   render D/T/M + axe 0 mobile/desktop; sticky-bar no-occlusion + dup-control clean) → Team-1 self-close.

@@ -84,9 +84,12 @@ green, render D/T/M all 200 + axe 0, tab click-through confirmed Invite/New-role
 `SecuritySettings`/P-ACC-03, `NotificationPreferences`/P-ACC-15 via new `SettingsTabs`, same
 composition-not-fork pattern; `WorkflowSettings`/P-ACC-13 explicitly EXCLUDED per the Board's §6.1
 ruling (buyer-shaped RFQ-approval content, carried forward not fabricated); no leave-chrome
-trade-off this time (none of the 3 reused components links out). **🔵A Review-A submitted**
-(checkpoint `8b208ab`) — last of the ruled FE-VEN-10 → 11 → 12 sequence; Team-3 STOPS, holds for the
-gate. _(Out-of-scope note: FE-PUB-09 vendored `popover`/`accordion`/`navigation-menu` into
+trade-off this time (none of the 3 reused components links out). **Review-A: PASS** (RV-0125 — 0
+BLOCKER/MAJOR/MINOR, 9 OBS all confirmatory; fork check clean, P-ACC-13 exclusion independently
+verified against the actual report text, no-leave-chrome claim confirmed, scope/kit/nav clean).
+**🔵B Review-B submitted** at checkpoint `8b208ab` — last of the ruled FE-VEN-10 → 11 → 12 sequence;
+Team-3 STOPS, holds for the gate. _(Out-of-scope note: FE-PUB-09 vendored
+`popover`/`accordion`/`navigation-menu` into
 `src/frontend/primitives` — verify as a legit demand-driven kit extension under the mega-menu
 package at FE-PUB-09's review.)_
 
