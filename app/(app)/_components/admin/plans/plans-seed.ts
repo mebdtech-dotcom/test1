@@ -180,3 +180,30 @@ export function getPlanDetail(id: string): PlanDetailVM | undefined {
   if (!summary || !entitlements) return undefined;
   return { ...summary, entitlements };
 }
+
+/** One entitlement-catalog row (P-ADM-24), with the plans that bundle it. */
+export interface EntitlementCatalogRowVM {
+  slug: string;
+  type: EntitlementType;
+  /** Plan names that bundle this entitlement — derived from the plan reads (get_plan). */
+  plans: string[];
+}
+
+/**
+ * Entitlement catalog (P-ADM-24). READ BINDING: there is NO standalone `list_entitlements` contract — the
+ * frozen read pair `get_plan`/`list_plans` "serves both plan catalog and entitlement definitions" (Doc-4I
+ * reconciliation §Part-1). So the catalog is DERIVED from the plan reads (the sanctioned mechanism): the
+ * distinct `{slug, type}` across every plan's `get_plan.entitlements`, with the bundling plans attached. No
+ * invented list read; no fabricated total (GI-03).
+ */
+export function listEntitlementCatalog(): EntitlementCatalogRowVM[] {
+  const bySlug = new Map<string, { type: EntitlementType; plans: string[] }>();
+  for (const plan of PLANS) {
+    for (const e of PLAN_ENTITLEMENTS[plan.id] ?? []) {
+      const row = bySlug.get(e.slug) ?? { type: e.type, plans: [] };
+      if (!row.plans.includes(plan.name)) row.plans.push(plan.name);
+      bySlug.set(e.slug, row);
+    }
+  }
+  return [...bySlug.entries()].map(([slug, v]) => ({ slug, type: v.type, plans: v.plans }));
+}
