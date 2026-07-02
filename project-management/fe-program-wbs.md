@@ -1,9 +1,11 @@
 # FE Program WBS — Roadmap
 
-**Frontend Program Management · v1.0 · Status: FROZEN at cutover (Board-ratified, plan v6,
+**Frontend Program Management · v1.1 · Status: FROZEN at cutover (Board-ratified, plan v6,
 2026-07-02).** Changes = additive amendment + version bump. Non-authoritative under the frozen
 corpus (§7). **Owner (maintains): FE Program Manager** — status/derivation updates only; scope
 changes and **new FE-* IDs are Board-only** (teams request, the Board mints).
+**v1.1 (additive amendment, 2026-07-03):** Board-minted **FE-PUB-10 Canonical Vendor Subdomain**
+(ADR-024 realization; owns no pages — coverage block untouched).
 
 **ROADMAP ONLY** — what · lifecycle owners · status · dependencies · gates. Queues and registers:
 [`execution-board.md`](execution-board.md) · process: [`review-process.md`](review-process.md) ·
@@ -65,6 +67,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-PUB-07 Search Result | Core Marketplace | P1 | M | Low | S: Step-3 baseline | P-PUB-10, P-PUB-19, P-PUB-20 | ✅ Complete (RV-0119, A:PASS B:ISSUES-non-gating, Dev-team self-close 2026-07-03, audit-only zero code delta) — P-PUB-10/19/20 thoroughly audited, no genuine gap found; a real MAJOR finding [landing "Popular search" dead ends] correctly attributed to the separate, not-yet-started FE-PUB-01, carried forward not fixed here |
 | FE-PUB-08 Content, Legal & Segments | Platform | P2 | — | Low | — | P-PUB-02..06, P-PUB-18, P-PUB-21..24 | ✅ Complete — all 10 ✅ (RV-0086..0100 era) |
 | FE-PUB-09 Mega Menu & Taxonomy Nav | Core Marketplace | P2 | L | Med | ~~H: taxonomy P1 · H: MEGA_MENU package~~ **both CLEARED 2026-07-03 (owner Board)** · S: `ESC-7-API-CATNAV` (live data) stays open — build-time seed interim | — (touches nav + P-PUB-07/08/09 + P-PUB-08 landing enrich) | 🔍 ACTIVE 2026-07-03 — phases 0–5 authorized; 3 rounds of owner findings adjudicated (Category Landing Contract, MegaMenuVendors [Inv#1 capability-matrix-bound], Featured column, Popular Searches, Post RFQ CTA, reserved slots, empty-state/breakpoint/z-index/analytics/perf contracts); WP `governanceReviews/milestones/fe-pub-09-mega-menu/` |
+| FE-PUB-10 Canonical Vendor Subdomain | Vendor Growth | P1 | M | Med | H: ADR-024 + Doc-7D §11 (ratified 2026-07-03 @ `c1187a8`; §11 corpus fold pending as a records action — build proceeds against the ratified section per its banner) | — (touches P-PUB-13..17 chrome + all vendor-link emitters) | ⬜ Registered 2026-07-03 (Board-minted, ADR-024 realization) — middleware host-routing (`{slug}.ivendorz.com` ≡ `/vendors/[slug]/*`), central vendor-URL builder (~15 scattered `/vendors/` emitters repointed; direct concatenation prohibited per ADR-024 Decision 6), CHR-derived canonical/`og:url` metadata on the 7 microsite routes, path→canonical-host 301s, reserved-label FE enforcement (Doc-3 v1.10 POLICY key by pointer), Host-Resolution-Matrix 404s byte-identical on unknown/reserved/unpublished hosts (Inv#11), host-scoped robots.txt + sitemap stubs per Doc-7D §11.5, anonymous-surface constraint (no auth cookies on vendor hosts), dev verification via `{slug}.localhost`. **Acceptance criterion: pixel output of ALL existing pages remains identical — only URL generation, routing, metadata, redirects, and discovery artifacts may change.** CHR read-side only; no S13/entitlement work; cache-purge mechanics stay with future backend wiring; `ESC-MKT-SUBDOMAIN-MIGRATE` stays open |
 
 ## Track 2 — FE-BUY Buyer (Builder/Maintainer: Team-2)
 
@@ -92,9 +95,9 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-VEN-05 RFQ Workspace | Procurement Moat | P1 | M | Med | — | P-VND-15, P-VND-16 | ✅ Complete (RV-0101, A:PASS B:PASS, board-approved 2026-07-02 @ `e2f8642`) — received-only inbox needs-response-first ordering; decline = no penalty, clearer affordance |
 | FE-VEN-06 Quotation Builder | Procurement Moat | P1 | L | Med | — | P-VND-17..20 | ✅ Complete (RV-0103, A:PASS B:PASS, board-approved 2026-07-02 @ `4ae0ec1`) — quotation-state visibility on the inbox, supersedes_version_no disclosure, withdraw = zero penalty; P-VND-18 wizard reviewed/untouched, S7 late-extension recorded as unbuilt gap |
 | FE-VEN-07 Leads | Vendor Growth | P1 | M | Med | — | P-VND-21, P-VND-22 | ✅ Complete (RV-0104, A:PASS B:PASS, board-approved 2026-07-02 @ `b1810fe`) — next-action pill on Board cards, lead created_at provenance; client-side "due first" reorder explicitly declined (existing disabled sort control owns it) |
-| FE-VEN-08 Engagements | Vendor Growth | P1 | L | Med | — | P-VND-23..26 | ✅ Complete (RV-0105, A:PASS B:PASS, board-approved 2026-07-02 @ `ec8306b`) — P-VND-24 frozen-conformant lifecycle single-next-legal-edge fix; P-VND-23 reviewed/conformant untouched; P-VND-25/26 correctly `ESC-7G-ENG-03`-gated untouched; P-VND-25 upload path still notes `ESC-7-API/upload` |
+| FE-VEN-08 Engagements | Vendor Growth | P1 | L | Med | — | P-VND-23..27 | ✅ Complete (RV-0105, A:PASS B:PASS, board-approved 2026-07-02 @ `ec8306b`) — P-VND-24 frozen-conformant lifecycle single-next-legal-edge fix; P-VND-23 reviewed/conformant untouched; P-VND-25/26 correctly `ESC-7G-ENG-03`-gated untouched; P-VND-25 upload path still notes `ESC-7-API/upload`. **`P-VND-27` Finance/payments (J-SUP-07, same journey as P-VND-25/26) reassigned into this range 2026-07-03** — discovered mis-owned by `FE-VEN-10` (a stale pre-reuse-strategy mapping); genuinely unbuilt, own future remainder (mirrors the FE-VEN-04-remainder pattern) |
 | FE-VEN-09 Trust Center | Trust | P1 | M | High | — | P-VND-28 | ✅ Complete (RV-0120, A:PASS B:PASS, no fix-and-reverify cycle, Dev-team self-close 2026-07-03 @ `32fe6fb`) — Trust Score card (band+numeric ring, per the Board ruling), Performance card (band/`level` only — numeric never public, frozen contract restriction), Verified Tier card (reuses `TierChip`); 2 OBS total, 0 B/M/M |
-| FE-VEN-10 Billing | Platform | P2 | S | Med | — | P-VND-27 | READY(build) — **RULED 2026-07-03**: Option B composed vendor-mounted page, reusing P-ACC-16..21 (P-ACC-19 reclassified Shared); Builder = T3, reused components stay T1-maintained; composition only — forking = Flag-and-Halt |
+| FE-VEN-10 Billing | Platform | P2 | S | Med | — | — (reuses P-ACC-16..20; owns no page — see FE-VEN-08 coverage note) | ✅ Complete (RV-0123, A:PASS B:PASS, Review Team 5-approved 2026-07-03 @ `4e57bfc`) — 5-tab `workspace/billing` composing `PlansCatalog`/`SubscriptionView`/`UsageDashboard`/`LeadCreditsView`/`PlatformInvoicesView` unmodified; composition-not-fork independently verified both lanes; disclosed hard-coded-link trade-off (Plans→Subscription, Invoices-list→detail) honest, not a defect |
 | FE-VEN-11 Organization | Platform | P3 | S | Med | — | — (reuses P-ACC-04..11) | READY(build) — same ruling as FE-VEN-10 |
 | FE-VEN-12 Settings | Platform | P3 | S | Med | — | — (reuses P-ACC-02/03/15; P-ACC-13 carried forward) | READY(build) — same ruling as FE-VEN-10; **P-ACC-13 Workflow Settings scoped OUT** (buyer-only RFQ-approval content, ruled 2026-07-03) — ships 3 of 4 target pages |
 | FE-VEN-13 Ads | Vendor Growth | P2 | M | Low | — | P-VND-12..14 | ✅ Complete (RV-0106, A:PASS B:PASS-after-fix, board-approved 2026-07-02 @ `34395b2`) — fresh 3-page build; P-VND-13 create-only (no `update_advertisement` contract exists); admin reviews via P-ADM-10/11 (M8 owns the effect, R5) |
@@ -189,16 +192,25 @@ comma lists, `..` ranges):
 | FE-VEN-05 | P-VND-15, P-VND-16 |
 | FE-VEN-06 | P-VND-17..20 |
 | FE-VEN-07 | P-VND-21, P-VND-22 |
-| FE-VEN-08 | P-VND-23..26 |
+| FE-VEN-08 | P-VND-23..27 |
 | FE-VEN-09 | P-VND-28 |
-| FE-VEN-10 | P-VND-27 |
 | FE-VEN-13 | P-VND-12..14 |
 | FE-ADM-01 | P-ADM-01..29 |
 <!-- coverage:end -->
 
+**Coverage correction (2026-07-03):** `P-VND-27` (Finance/payments, vendor) reassigned from
+`FE-VEN-10` → `FE-VEN-08`. Discovered during `FE-VEN-10`'s close: the WBS had mapped `FE-VEN-10`
+("Billing," reusing `P-ACC-16..21`) to own `P-VND-27` — a stale, pre-reuse-strategy artifact.
+`P-VND-27` is journey `J-SUP-07`, the same journey as `FE-VEN-08`'s own `P-VND-25`/`P-VND-26`
+(delivery/trade-invoice), and is genuinely unbuilt — not touched by `FE-VEN-10`'s actual delivery
+(which is 100% `P-ACC-*` composition, owns no `P-VND-*` page). Reassigned to `FE-VEN-08`'s range as
+a disclosed, tracked remainder (mirrors the `FE-VEN-04`-remainder pattern) rather than left silently
+orphaned. Checksum unaffected (VND still totals 28; `FE-VEN-10` now correctly owns 0).
+
 Checksum: SH 6 + PUB 24 + AUTH 8 + ACC 22 + BUY 27 + VND 28 + ADM 29 = **144**.
-Own-nothing milestones (by design): FE-PF-01..05 · FE-PUB-09 · FE-BUY-08 · FE-VEN-11/12 ·
-FE-VEN-14 (documentation only) · FE-SH-* · FE-DS-* · FE-CLN-*.
+Own-nothing milestones (by design): FE-PF-01..05 · FE-PUB-09 · FE-PUB-10 · FE-BUY-08 ·
+FE-VEN-10/11/12 (composition-only, own no page) · FE-VEN-14 (documentation only) · FE-SH-* ·
+FE-DS-* · FE-CLN-*.
 
 ## Change control
 
