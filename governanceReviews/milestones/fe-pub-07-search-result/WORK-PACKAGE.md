@@ -18,7 +18,10 @@ P-PUB-20 (Compare, public). Thorough audit against each:
   genuine `NODE_ENV`-gated `?state=` dev/QA harness (loading/error/partial — never reachable by a
   real visitor, `page.tsx:128`), cursor-only pagination (GI-03, no fabricated totals), and an
   honest in-page interim-search disclosure note. No dead link, no TODO, no unwired-but-deceptive
-  control found in this file or its 3 known inbound link sources.
+  control found in this file or its inbound link sources — **corrected at Review-A**: 5 sources,
+  not 3 (`categories/page.tsx`, `marketplace/page.tsx`, `vendors/page.tsx` via `SearchBar`;
+  `command-center.tsx`'s landing hero; `product-detail.tsx`'s `productDetailHref`) — all 5
+  independently re-verified to resolve correctly.
 - **P-PUB-19** ("Industrial / advanced search") — has no separate route or component.
   `page_inventory.md:117` and `team-1.md:34` both confirm P-PUB-19 is realized by the SAME
   `/search` surface as P-PUB-10 (both bind `search_catalog` FTS per `page_inventory.md:108,117`).
