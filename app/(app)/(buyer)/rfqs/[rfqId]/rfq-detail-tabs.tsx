@@ -5,9 +5,9 @@
 // already-server-rendered nodes, so only this thin chrome hydrates (RSC-first; minimal JS). Holds no
 // business state and decides nothing.
 //
-// SCOPE NOTE: only the **Overview** content is realized in this milestone (P-BUY-08). The **Quotations**
-// (P-BUY-09) and **Activity** (P-BUY-10) tabs are authorized later — their panels render a labelled
-// "later milestone" placeholder here, never fabricated data.
+// SCOPE NOTE: all three tab panels are now realized — Overview (P-BUY-08), Quotations (P-BUY-09), and
+// Activity (P-BUY-10). This chrome stays presentation-only: the panels are server-rendered nodes passed in;
+// only the active-tab state hydrates. The underlying reads/writes wire at the backend milestone (PARKED).
 
 import * as React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/frontend/primitives/tabs";

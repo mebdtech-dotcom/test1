@@ -14,10 +14,10 @@
 //    `ESC-W2-AUDIT-RLS` + the write-wiring milestone — this milestone renders the affordance only.
 //  • The buyer NEVER dispatches an invitation and there is NO engine-bypass dispatch control (R6 / §0.3).
 //  • Deferral/exclusion is invisible; no excluded/deferred vendor is ever shown (Doc-3 §4.2 / Inv #11).
-//  • Quotations (P-BUY-09) and Activity (P-BUY-10) tabs are later-milestone placeholders, not data.
+//  • Quotations (P-BUY-09) and Activity (P-BUY-10) tabs are now realized (presentation-only; wired later).
 
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { FileText, Info } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
 import { EmptyState } from "@/frontend/components/empty-state";
@@ -82,14 +82,22 @@ function OverviewTab({ data }: { data: RfqDetailData }) {
   );
 }
 
-/** Placeholder for a tab whose screen is authorized in a later milestone (no fabricated data). */
-function TabPlaceholder({ title, screen }: { title: string; screen: string }) {
+/**
+ * Activity tab (P-BUY-10 · `T-DETAILS`, page_inventory "routing / audit reads"). The RFQ's lifecycle +
+ * routing history as a read-only timeline, sourced from the immutable M0 audit (Inv #8). DEFERRAL/EXCLUSION
+ * IS INVISIBLE (Inv #11 / Doc-3 §4.2 / GI-12): a not-invited or deferred vendor is NEVER shown — the tab
+ * renders only the disclosed activity entries the read supplies (ActivityTimeline computes/infers nothing).
+ */
+function ActivityTab({ data }: { data: RfqDetailData }) {
   return (
-    <EmptyState
-      title={title}
-      description={`This view is delivered in a later milestone (${screen}).`}
-      className="py-12"
-    />
+    <div className="flex flex-col gap-4">
+      <ActivityTimeline entries={data.lifecycle} title="Activity" emptyLabel="No activity yet" />
+      <p className="flex items-start gap-2 text-xs text-muted-foreground">
+        <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+        The RFQ&rsquo;s lifecycle and routing history. Vendors who were not invited — or whose
+        invitation was deferred — are never shown here.
+      </p>
+    </div>
   );
 }
 
@@ -141,7 +149,7 @@ export function RfqDetailView({ data }: { data: RfqDetailData | null }) {
       <RfqDetailTabs
         overview={<OverviewTab data={data} />}
         quotations={<QuotationsTab data={data.quotations ?? null} rfqId={data.id} />}
-        activity={<TabPlaceholder title="Activity" screen="P-BUY-10" />}
+        activity={<ActivityTab data={data} />}
       />
     </div>
   );
