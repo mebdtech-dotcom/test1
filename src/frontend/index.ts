@@ -7,4 +7,5 @@ export * from "./primitives";
 export * from "./components";
 export * from "./embedded";
 export * from "./brand";
+export * from "./navigation";
 export { cn } from "./lib/cn";

@@ -318,6 +318,14 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 0 0 rgba(99, 102, 241, 0.4)" },
           "50%": { boxShadow: "0 0 0 6px rgba(99, 102, 241, 0)" },
         },
+        "iv-accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "iv-accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
       },
       animation: {
         "iv-shimmer": "iv-shimmer 1.5s ease-in-out infinite",
@@ -326,6 +334,8 @@ const config: Config = {
         "iv-slide-down": "iv-slide-down 250ms cubic-bezier(0,0,0.2,1) forwards",
         "iv-scale-in": "iv-scale-in 200ms cubic-bezier(0,0,0.2,1) forwards",
         "iv-pulse-brand": "iv-pulse-brand 2s ease-in-out infinite",
+        "iv-accordion-down": "iv-accordion-down 200ms cubic-bezier(0,0,0.2,1)",
+        "iv-accordion-up": "iv-accordion-up 200ms cubic-bezier(0,0,0.2,1)",
       },
 
       /* -----------------------------------------------------------------------

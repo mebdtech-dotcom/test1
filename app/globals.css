@@ -234,6 +234,9 @@
     --iv-z-raised: 10;
     --iv-z-dropdown: 100;
     --iv-z-sticky: 200;
+    /* Mega menu panel (FE-PUB-09, MEGA_MENU_ARCHITECTURE §9.4): above the sticky header it hangs
+       from, below every overlay/modal layer — the panel never covers a dialog, sheet, or toast. */
+    --iv-z-mega-menu: 250;
     --iv-z-overlay: 300;
     --iv-z-modal: 400;
     --iv-z-toast: 500;
@@ -279,6 +282,8 @@
     --iv-container-lg: 1024px;
     --iv-container-xl: 1280px;
     --iv-content-max: 1280px;
+    /* Mega menu panel width cap (MEGA_MENU_ARCHITECTURE §9.3) — dedicated, does not repoint content-max. */
+    --iv-mega-menu-max: 1440px;
     --iv-page-max: 1536px;
     --iv-gutter: 24px;
     --iv-gutter-tight: 16px;

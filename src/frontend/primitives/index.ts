@@ -2,8 +2,9 @@
 // tokens. Presentation-only; no data fetch, no authoritative state.
 //
 // DEFERRED primitives (demand-driven — vendor when a surface first needs one; NOT a silent cap):
-//   select · checkbox · radio · switch · popover · toast · table
-// (`table` arrives with the `data-table` app-component; `toast` with the Doc-7C notification center.)
+//   select · checkbox · radio · switch · toast · table
+// (`table` arrives with the `data-table` app-component; `toast` with the Doc-7C notification center.
+//  `popover` · `accordion` · `navigation-menu` vendored 2026-07-03 by FE-PUB-09 MEGA_MENU Phase 0.)
 
 export * from "./button";
 export * from "./input";
@@ -17,3 +18,6 @@ export * from "./dialog";
 export * from "./sheet";
 export * from "./tabs";
 export * from "./avatar";
+export * from "./popover";
+export * from "./accordion";
+export * from "./navigation-menu";

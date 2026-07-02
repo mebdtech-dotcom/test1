@@ -219,9 +219,13 @@ corpus/taxonomy amendment, never in this package.
 
 ### 9.4 z-index ladder (R2-NITPICK-01)
 
-Named `--iv-z-*` tokens, explicitly ordered: `--iv-z-dropdown` < `--iv-z-mega-menu` <
-`--iv-z-dialog` (dialog/sheet) < `--iv-z-tooltip` < `--iv-z-toast`. The mega menu panel sits
-**below** modal layers — it never overlays an open dialog or sheet.
+The platform ladder already exists as named tokens (`app/globals.css`): `--iv-z-raised: 10` <
+`--iv-z-dropdown: 100` < `--iv-z-sticky: 200` < `--iv-z-overlay: 300` < `--iv-z-modal: 400` <
+`--iv-z-toast: 500` < `--iv-z-tooltip: 600` — this addendum **conforms to it, reorders nothing**.
+One additive token: **`--iv-z-mega-menu: 250`** — above the sticky header it hangs from, below
+every overlay/modal layer, so the panel never overlays an open dialog, sheet, toast, or tooltip.
+Panel max-width is a dedicated additive token **`--iv-mega-menu-max: 1440px`** (the existing
+`--iv-content-max: 1280px` is not repointed).
 
 ### 9.5 Preload & prefetch ladder (R2-MINOR-04 · R2-NITPICK-04)
 
