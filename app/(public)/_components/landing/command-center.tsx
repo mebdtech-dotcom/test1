@@ -38,13 +38,19 @@ import { Badge } from "@/frontend/primitives/badge";
 import { Input } from "@/frontend/primitives/input";
 import { cn } from "@/frontend/lib/cn";
 
+// FE-PUB-01 delta: the previous 5 terms ("ball valves"/"VFD drives"/"gear pumps"/"industrial PPE" —
+// only "MS plate" excepted) didn't substring-match any product in `discovery/seed.ts`, so clicking
+// a chip and submitting landed on a dead-end "No results" — found during FE-PUB-07's audit (RV-0119),
+// carried forward here since the seed is this page's own domain. Each term below is independently
+// verified against the seed's actual product names, preserving the original cross-category spread
+// (valves / steel / electrical / pumps / safety).
 /** Curated static seed of industrial search terms (spec §2.3(f)). NOT a computed/"trending" signal. */
 const DEFAULT_POPULAR_SEARCHES = [
-  "ball valves",
+  "gate valve",
   "MS plate",
-  "VFD drives",
-  "gear pumps",
-  "industrial PPE",
+  "VFD drive",
+  "centrifugal pump",
+  "safety helmet",
 ] as const;
 
 const AUTH_HREF = "/login"; // `(auth)` entry — Doc-7E owns the auth action (Doc-7D PR5).
