@@ -30,8 +30,10 @@ owner findings adjudicated into the build plan — Category Landing Contract, `M
 [capability-matrix-bound per Invariant #1; trade-role labels rejected], expanded Featured column,
 Popular Searches strip, Post RFQ header CTA, reserved authed slots, empty-state contract,
 breakpoint/z-index/analytics/perf-budget contracts; full phases 0–5 authorized; WP card
-`governanceReviews/milestones/fe-pub-09-mega-menu/WORK-PACKAGE.md`). Only `FE-PUB-05` ⛔ remains
-gated.
+`governanceReviews/milestones/fe-pub-09-mega-menu/WORK-PACKAGE.md`). `FE-PUB-10 Canonical Vendor
+Subdomain` — **⬜ Registered 2026-07-03** (Board-minted, ADR-024 realization @ `c1187a8`; owns no
+pages; WP card at kickoff) — **Team-1's next pull after FE-PUB-09 closes**. Only `FE-PUB-05` ⛔
+remains gated.
 
 **Team-2 (Buyer):**
 ~~FE-BUY-04..09~~ ✅ **All Closed** this session (RV-0102/0108/0109/0112/0113/0114 @ `5a4550c`/
@@ -58,8 +60,14 @@ Vendor↔Account Composition~~ ✅ **Closed — report-deliverable only** (RV-01
 findings, Dev-team self-close 2026-07-03 @ `71dce2f`) · **Board RULED 2026-07-03** (report §9):
 Option B composed vendor-mounted page; P-ACC-13 Workflow Settings scoped OUT of `FE-VEN-12`
 (buyer-only content, carried forward); P-ACC-19 reclassified `Shared` in `page_inventory.md`.
-`FE-VEN-10 Billing` ← current (🔵A Review-A @ `4e57bfc` — 5-tab composition of P-ACC-16..20, scope
-complete; awaiting Review-A, Team-3 holds) → FE-VEN-11 → FE-VEN-12.
+`FE-VEN-10 Billing` — **✅ APPROVED** (RV-0123 @ `4e57bfc`, A:PASS ∧ B:PASS, 0 BLOCKER/MAJOR/MINOR
+both lanes; **Review Team 5 marked approved 2026-07-03** per Amendment v1.3 §13 — owning Team-3 to
+commit [checkpoints/trackers; close uncommitted] + start next; composition-not-fork verified [5
+Account components imported unmodified, thin `BillingTabs` over shared `WorkspaceTabs`, zero fork],
+money-boundary clean, render D/T/M + axe 0, disclosed hard-coded-link trade-off honest) →
+FE-VEN-11 → FE-VEN-12 (also unblocked). _(Out-of-scope note: FE-PUB-09 vendored
+`popover`/`accordion`/`navigation-menu` into `src/frontend/primitives` — verify as a legit
+demand-driven kit extension under the mega-menu package at FE-PUB-09's review.)_
 
 **Review Team 5 standing backlog (B lane):** Step-3 Public baseline sweep (QCT 5-step Step 3) at a
 stable post-cutover SHA — **owner-authorized 2026-07-02 (agenda #10)**; runs **before FE-PUB-02
@@ -117,6 +125,17 @@ starts**; findings feed the FE-PUB packages.
     everywhere). Discovered during FE-CLN-01's axe sweep (buyer surface); shell-owned code —
     out of Team-2's unilateral-fix scope (same class as FZ-01). Fix is a one-line `sr-only` span
     or `aria-label` on the trigger `Button`; needs the shell owner, not a Board ruling.
+12. ~~**Canonical Vendor Subdomain URLs**~~ — **RULED by owner 2026-07-03** (4-round CTO review,
+    Final Architecture Board Resolution: APPROVED, review cycle CLOSED; ratified @ `c1187a8`):
+    every APPROVED vendor gets a permanent Platform-issued Vendor Subdomain
+    `https://{vendor-slug}.ivendorz.com/` (universal, never entitlement-gated); Vendor Slug law
+    FIXED + reserved-label POLICY key (Doc-3 v1.10); vendor-immutable, M8-migration-only, never
+    reused; **CHR** canonical-host algorithm (Doc-2 v1.0.5, fail-closed, authoritative on any
+    conflict); an `active` custom domain is canonical while active; ADR-024 + 5-patch linked set +
+    Doc-7D §11 (fold pending); full record
+    `governanceReviews/BOARD-PACKET-CANONICAL-VENDOR-SUBDOMAIN_v1.0.md`. **FE-PUB-10 registered**
+    (Team-1's next pull after FE-PUB-09); `ESC-MKT-SUBDOMAIN-MIGRATE` opened (migration wire
+    contract, API-Gov). Closed milestones not reopened.
 
 ## Review pipeline (pointer)
 

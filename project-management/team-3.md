@@ -41,7 +41,7 @@ Verification = `P-VND-28` + `P-PUB-18` (Team-1) + `P-ADM-12/13`.
 | P-VND-24 | Engagement detail (vendor) | P1 | Ready | 🟩 Built | **FE-VEN-08 enhancement CLOSED** (RV-0105, `ec8306b`): frozen-conformant lifecycle single-next-legal-edge fix (was status-blind — always showed the same button on all 4 statuses) |
 | P-VND-25 | Delivery challan | P2 | Ready | 🟩 Built | upload path → `ESC-7-API/upload` |
 | P-VND-26 | Trade invoice issue | P2 | Ready | 🟩 Built | records only (DF-6) |
-| P-VND-27 | Finance / payments (vendor) | P2 | Ready | ⬜ | placeholder today |
+| P-VND-27 | Finance / payments (vendor) | P2 | Ready | ⬜ | placeholder today. **Reassigned FE-VEN-10 → FE-VEN-08 2026-07-03** (WBS mapping was stale/pre-reuse-strategy; genuinely unbuilt, journey J-SUP-07 same as P-VND-25/26 — own future remainder) |
 | P-VND-28 | Trust & performance | P1 | Ready | 🟩 Built (RV-0120, `32fe6fb`) | `ESC-7G-SCORE-DISPLAY`/`ESC-7B-TRUSTSCORE` ruled 2026-07-03 — Trust band+numeric, Performance band-only |
 
 ## Admin Console — `P-ADM-*` (Doc-7H · no active-org)

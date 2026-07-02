@@ -31,7 +31,11 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   CTA; reserved authed slots; empty-state/breakpoint/z-index/analytics/perf-budget contracts).
   Phases 0–5 authorized. WP card:
   `governanceReviews/milestones/fe-pub-09-mega-menu/WORK-PACKAGE.md`
-- **Next Milestone:** FE-PUB-05 ⛔ `ESC-7-API-PRODDETAIL` (still gated)
+- **Next Milestone:** `FE-PUB-10` Canonical Vendor Subdomain — **⬜ Registered 2026-07-03**
+  (Board-minted, ADR-024 realization @ `c1187a8`; owns no pages; WP card at kickoff; acceptance:
+  pixel output of all existing pages identical — only URL generation, routing, metadata,
+  redirects, discovery artifacts may change) · then FE-PUB-05 ⛔ `ESC-7-API-PRODDETAIL` (still
+  gated)
 
 ## Team-2 — Buyer (FE-BUY / FE-CLN)
 
@@ -61,22 +65,16 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-3 — Vendor (FE-VEN)
 
-- **Current Milestone:** _(none — `FE-VEN-14` Vendor↔Account Composition ✅ **Closed**, RV-0122,
-  Lane-L PASS 0 findings, Dev-team self-close 2026-07-03 @ `71dce2f`. **Board RULED on the report
-  same-session**: Option B [composed vendor-mounted page]; P-ACC-13 Workflow Settings scoped OUT of
-  `FE-VEN-12` [buyer-only RFQ-approval content, carried forward]; P-ACC-19 Lead Credits reclassified
-  `Shared` in `page_inventory.md` [labeling gap, corrected]. FE-VEN-09 Trust Center also ✅ Closed
-  prior, RV-0120)_
-- **Current Milestone (new):** `FE-VEN-10` Billing — **🔵A Review-A** (checkpoint `4e57bfc`; scope
-  complete — sole in-scope page `workspace/billing` composed)
-- **Current Page:** _(sole in-scope page — composes 5 tabs, each a direct unmodified import of the
-  real Account component: `PlansCatalog`, `SubscriptionView`, `UsageDashboard`, `LeadCreditsView`,
-  `PlatformInvoicesView` [P-ACC-16..20]. Disclosed trade-off: `PlansCatalog`'s "Select plan" and
-  `PlatformInvoicesView`'s per-row "Open" links are hard-coded inside those unmodified components to
-  `/account/subscription`/`/account/invoices/[id]` — leaving vendor chrome for that one destination
-  is an accepted consequence of composition-only reuse, not a defect — submitted to Review-A;
-  Team-3 STOPS, does not pull FE-VEN-11 before gate)_
-- **Pipeline stage:** submitted to Review-A (Lane G)
+- **Current Milestone:** _(none — `FE-VEN-10` Billing ✅ **Closed**, RV-0123, A:PASS ∧ B:PASS, 0
+  BLOCKER/MAJOR/MINOR both lanes, Review Team 5-approved 2026-07-03 @ `4e57bfc`. Composes 5
+  unmodified Account components — composition-not-fork independently verified by both lanes. FE-VEN-09/14 also ✅ Closed prior)_
+- **Current Page:** _(none — `workspace/billing` shipped: `PlansCatalog`/`SubscriptionView`/
+  `UsageDashboard`/`LeadCreditsView`/`PlatformInvoicesView` [P-ACC-16..20] composed via `BillingTabs`.
+  **Coverage correction discovered at close**: the WBS's "FE-VEN-10 owns P-VND-27" mapping was stale
+  [pre-dated the P-ACC reuse strategy] — `P-VND-27` Finance/payments was never touched by this
+  milestone and is reassigned to `FE-VEN-08`'s range [J-SUP-07, same journey as its P-VND-25/26],
+  genuinely unbuilt, own future remainder)_
+- **Pipeline stage:** idle
 - **Next Milestone:** FE-VEN-11 Organization → FE-VEN-12 Settings
 
 ---
@@ -84,17 +82,16 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
 _(`FE-BUY-10` (Team-2) checkpointed 2026-07-03, awaiting Review-A — WP card
-  `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`.
-  `FE-VEN-10` (Team-3) checkpointed `4e57bfc` — WP card
-  `governanceReviews/milestones/fe-ven-10-billing/WORK-PACKAGE.md`. Otherwise clear —
+  `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`. Otherwise clear —
   `FE-PUB-03` (RV-0111), `FE-PUB-04` (RV-0116), `FE-PUB-06` (RV-0118), `FE-PUB-07` (RV-0119),
-  `FE-PUB-01` (RV-0121), `FE-VEN-04` (RV-0110), `FE-VEN-09` (RV-0120), `FE-BUY-07` (RV-0112) all
-  cleared A and closed.)_
+  `FE-PUB-01` (RV-0121), `FE-VEN-04` (RV-0110), `FE-VEN-09` (RV-0120), `FE-VEN-10` (RV-0123),
+  `FE-BUY-07` (RV-0112) all cleared A and closed.)_
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 
-_(B-lane clear — `FE-VEN-09` cleared, RV-0120 A:PASS ∧ B:PASS, 2 OBS, 0 findings B-lane, closed by
-  Team-3.)_
+_(B-lane clear — `FE-VEN-10` cleared, RV-0123 A:PASS ∧ B:PASS, 7 OBS, closed by Team-3 [Review-B
+  by a live Team-5 session — composition-not-fork, money-boundary, render D/T/M+axe all
+  independently confirmed].)_
 
 - **`FE-PUB-03` Vendor Profile** (Team-1) — Review-B **PASS** (RV-0111, 0 B/M/M, 8 OBS, `1275f70`;
   render D/T/M + axe 0 mobile/desktop; sticky-bar no-occlusion + dup-control clean) → Team-1 self-close.

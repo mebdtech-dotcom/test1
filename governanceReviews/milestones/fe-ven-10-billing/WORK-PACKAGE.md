@@ -65,13 +65,20 @@ BLOCKER/REGRESSION/Flag-and-Halt/override only.
 ## Key dates
 
 Created 2026-07-03 · Started 2026-07-03 (Board ruling unblocked this milestone same-session; owner
-standing instruction: "no approval required, just start the work") · Scope complete —
+standing instruction: "no approval required, just start the work") · Scope complete 2026-07-03
+(checkpoint `4e57bfc`) · **Closed 2026-07-03** (RV-0123, Review Team 5-approved)
 
 ## DoD confirmation (checked at close)
 
-☐ page DoD (1 page, 5 composed tabs) ☐ responsive D/T/M ☐ WCAG-AA ☐ tsc/eslint/prettier ☐ realistic
-mock data — N/A by design (each reused component ships its own existing presentation seed) ☐ Review
-A PASS ☐ Review B PASS (B/M/M = 0) ☐ self-closed on clean gate (or Board, if BLOCKER/REGRESSION) ☐
-no TODO/dead code ☐ no duplicate components (zero components duplicated — every tab is a direct,
-unmodified import) ☐ no fork of any Account page (Flag-and-Halt condition — confirmed byte-diff
-clean on all 5 reused files) ☐ promotion candidates reviewed ☐ tracker updated ☐ card closed
+☑ page DoD (1 page, 5 composed tabs) ☑ responsive D/T/M (Playwright-verified render + axe 0
+violations) ☑ WCAG-AA (1 `role=tablist`, 5 `role=tab`/`role=tabpanel`, correct `aria-*` wiring;
+single `h1` from `PageHeader`, no second h1 from any composed child) ☑ tsc/eslint/prettier ☑
+realistic mock data — N/A by design (each reused component ships its own existing presentation
+seed) ☑ Review A PASS (RV-0123, 0 findings) ☑ Review B PASS (RV-0123, 0 BLOCKER/MAJOR/MINOR, 7 OBS)
+☑ self-closed on clean gate (Amendment v1.3 §13 — Board not invoked) ☑ no TODO/dead code ☑ no
+duplicate components (zero components duplicated — every tab is a direct, unmodified import) ☑ no
+fork of any Account page (Flag-and-Halt condition — confirmed byte-diff clean on all 5 reused files,
+independently by both review lanes) ☑ promotion candidates reviewed — none flagged ☑ tracker
+updated — **including a coverage correction**: the WBS's stale "FE-VEN-10 owns P-VND-27" mapping
+(pre-dated the reuse strategy) was discovered and corrected; `P-VND-27` reassigned to `FE-VEN-08`'s
+range (unbuilt remainder, not touched by this milestone) ☑ card closed
