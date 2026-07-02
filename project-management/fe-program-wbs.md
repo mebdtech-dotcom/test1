@@ -59,7 +59,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-PUB-01 Landing | Core Marketplace | P1 | M | Low | S: Step-3 baseline | P-PUB-01 | READY(enh) — owner-named polish item on the pre-loop 🟩 landing |
 | FE-PUB-02 Discovery | Core Marketplace | P1 | L | Med | S: Step-3 baseline | P-PUB-07, P-PUB-09 | ✅ Complete (RV-0107, A:PASS B:PASS, Dev-team self-close 2026-07-02 @ `5d9d94a`) — Categories index (P-PUB-07): featured categories, capability cards, search entry-point polish, featured vendors/products over the 🟩 stock, 22 OBS total, 0 B/M/M/NIT. P-PUB-09 stays ⛔ `ESC-7-API-CATNAV` (page-gate carve-out, not built). Promotion candidate raised: `FeaturedCategoryGrid` extraction |
 | FE-PUB-03 Vendor Profile | Vendor Growth | P1 | M | Med | S: Step-3 baseline | P-PUB-13..17 | ✅ Complete (RV-0111, A:PASS B:PASS, Dev-team self-close 2026-07-02 @ `1275f70`) — shared microsite-chrome delta: fixed stale pre-ADR-022 footer nav anchors → real routes; added spec-required sticky mobile enquire CTA. Favorite-vendor CTA + trust-ring cited out of scope (M4/Inv#6), not built |
-| FE-PUB-04 Category Page | Core Marketplace | P1 | S | Low | S: Step-3 baseline | P-PUB-08 | READY(enh) — 🟩 "partial, verify facets" |
+| FE-PUB-04 Category Page | Core Marketplace | P1 | S | Low | S: Step-3 baseline | P-PUB-08 | ✅ Complete (RV-0116, A:PASS B:PASS, Dev-team self-close 2026-07-03 @ `4777e84`) — the WBS row said "🟩 partial, verify facets" but no implementation actually existed (`/marketplace` read zero query params); new drill-down route under `ESC-7-API-CATNAV`, 3 dead category links repointed; 4 OBS total, 0 B/M/M |
 | FE-PUB-05 Product Detail | Core Marketplace | P1 | M | Med | H: `ESC-7-API-PRODDETAIL` | P-PUB-11 | ⛔ Gated — interim: modal from `search_catalog` |
 | FE-PUB-06 Vendor Directory | Vendor Growth | P1 | S | Low | S: Step-3 baseline | P-PUB-12 | READY(enh) — 🟩 |
 | FE-PUB-07 Search Result | Core Marketplace | P1 | M | Low | S: Step-3 baseline | P-PUB-10, P-PUB-19, P-PUB-20 | READY(enh) — 10/19 🟩; 20 ✅ (ungoverned compare, no matching) |
@@ -79,7 +79,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 | FE-BUY-07 Engagement | Buyer Productivity | P1 | L | Med | — | P-BUY-19..25 | ✅ Complete (RV-0112, A:PASS B:PASS after 1 fix-and-reverify cycle, Dev-team self-close 2026-07-02 @ `2d1b23e`) — Documents card dead-end fixed with static nav to PO/Payments/Trade-invoice/Challan/WCC; money boundary DF-6 |
 | FE-BUY-08 Dashboard Widgets | Buyer Productivity | P2 | S | Low | — | — (touches P-BUY-01) | ✅ Complete (RV-0113, A:PASS B:PASS, Dev-team self-close 2026-07-02 @ `d501345`) — Engagement pipeline widget added alongside BX-01's Sourcing pipeline, counts server-provided, never client-computed (R7, RV-0070 pattern); 12 OBS total, 0 B/M/M; promotion candidate registered |
 | FE-BUY-09 CRM | Buyer Productivity | P2 | M | High | — | P-BUY-26, P-BUY-27 | ✅ Complete (RV-0114, A:PASS B:PASS, Dev-team self-close 2026-07-02 @ `adc84fa`, **audit-only — zero code delta**) — thoroughly re-audited, Inv#11 blacklist-undetectability independently re-verified live (`pv_04` list-row byte-identical to non-blacklisted rows), no safe enhancement found; forward-looking CRM↔Engagement cross-link candidate recorded for a future milestone |
-| FE-BUY-10 Discovery & Favorites | Buyer Productivity | P2 | M | Med | H: owner decisions (P-BUY-03/04 route topology · P-BUY-05 favorites scope/projection) | P-BUY-02..05 | 🅿 Parked — P-BUY-02 ✅; rest owner-gated (Board agenda #3) |
+| FE-BUY-10 Discovery & Favorites | Buyer Productivity | P2 | M | Med | — (owner decisions resolved 2026-07-03) | P-BUY-02..05 | 🔵A — checkpoint done, awaiting Review-A. P-BUY-02 ✅ (unchanged); P-BUY-03 ♻ superseded (reuse, no build); P-BUY-04 ✅ complete as a link-out to the public microsite (no in-app route); P-BUY-05 🅿 held (scope confirmed product/category, projection gap unresolved, out of this milestone) |
 
 ## Track 3 — FE-VEN Vendor (Builder/Maintainer: Team-3)
 
@@ -144,7 +144,6 @@ flowchart LR
     PD["ESC-7-API-PRODDETAIL"] -.H.-> PUB05["FE-PUB-05"]
     TAX["taxonomy P1 + package approval"] -.H.-> PUB09["FE-PUB-09"]
     SD["ESC-7G-SCORE-DISPLAY"] -.H.-> VEN09["FE-VEN-09"]
-    OD["owner: topology + favorites"] -.H.-> BUY10["FE-BUY-10"]
     KS["Board kickoff scoping"] -.H.-> VEN10["FE-VEN-10/11/12"]
   end
   BUY["FE-BUY-04..09"] ==H==> CLN01["FE-CLN-01 F2-Z"]

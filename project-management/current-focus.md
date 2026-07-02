@@ -12,30 +12,41 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-1 — Public / Platform (FE-PUB · FE-PF)
 
-- **Current Milestone:** _(none — `FE-PUB-03` Vendor Profile ✅ **Closed**, RV-0111, A:PASS ∧ B:PASS
-  (Review-B by Team-5, 8 OBS), 0 BLOCKER/MAJOR/MINOR both lanes, checkpoint `1275f70`; Dev-team
-  self-close per Amendment v1.3 §13. Second FE-PUB milestone through the full Dev→A→B pipeline)_
-- **Current Page:** _(none — shared microsite chrome delta `1275f70`: stale pre-ADR-022 footer nav
-  anchors → real routes + fixed-bottom mobile-only enquire CTA; Review-B verified sticky-bar
-  no-occlusion (pb-24 96px > 61px bar) + duplicate-control-clean + axe 0 mobile/desktop)_
-- **Pipeline stage:** idle — pulling `FE-PUB-04` next (WP card pending kickoff)
-- **Next Milestone:** FE-PUB-04 → FE-PUB-06 → FE-PUB-07 → FE-PUB-01 (skip FE-PUB-05 ⛔)
+- **Current Milestone:** _(none — `FE-PUB-04` Category Page ✅ **Closed**, RV-0116, A:PASS ∧ B:PASS
+  (0 B/M/M both lanes, 4 OBS total, no fix-and-reverify cycle), checkpoint `4777e84`; Dev-team
+  self-close per Amendment v1.3 §13. FE-PUB-03 also ✅ Closed, RV-0111. Second FE-PUB milestone
+  this session to pass both lanes clean on the first submission)_
+- **Current Page:** _(none — P-PUB-08 (Category page) was tracked "🟩 Built | partial" but never
+  actually existed; new drill-down route `marketplace/category/[slug]` under the registered
+  `ESC-7-API-CATNAV` interim, disclosed in-page; Vendors/Products tabs reuse kit
+  `FilterSidebar`/`VendorCard`/`ProductCard`/`ResultsGrid`/`PaginationControl` only; 3 previously-dead
+  `?category=` links repointed to the real route)_
+- **Pipeline stage:** idle — pulling `FE-PUB-06` next (WP card pending kickoff)
+- **Next Milestone:** FE-PUB-06 → FE-PUB-07 → FE-PUB-01 (skip FE-PUB-05 ⛔)
 
 ## Team-2 — Buyer (FE-BUY / FE-CLN)
 
-- **Current Milestone:** _(none — `FE-CLN-01` Buyer F2-Z Freeze Remediation ✅ **Closed**, RV-0115,
-  A:PASS ∧ B:PASS (0 B/M/M both lanes, 5 OBS total, no fix-and-reverify cycle), checkpoint
-  `636c192`; Dev-team self-close per Amendment v1.3 §13. FE-BUY-04..09 also ✅ Closed — SEVEN
-  milestones this session, no kickoff-approval pause per owner directive.)_
-- **Current Page:** _(none — 18 buyer view files remediated: FZ-02/03/04/05/06/08/10/11 from
-  `BUYER_FRONTEND_FREEZE_REPORT_v1.0.md` §6; FZ-01/FZ-09 confirmed untouched (cross-team). New
-  buyer Tier-2 `Callout` composition; two of the freeze report's own file-count claims corrected
-  after independent re-verification [§13]. A pre-existing, out-of-scope shell a11y bug
-  (`quick-create.tsx` QuickCreate button-name <640px) discovered during this milestone's own axe
-  sweep and escalated, not fixed unilaterally — `execution-board.md` agenda #11)_
-- **Pipeline stage:** idle — Team-2 queue exhausted except the owner-gated item below
-- **Next Milestone:** none pullable. FE-BUY-10 🅿 parked (P-BUY-03/04 route topology + P-BUY-05
-  favorites scope — owner decision needed)
+- **Current Milestone:** `FE-BUY-10` Discovery & Favorites — 🔵A, checkpoint done, awaiting
+  Review-A. Owner resolved both Board agenda #3 gating decisions live 2026-07-03: P-BUY-03/04
+  route topology → **reuse existing surfaces** (no new in-app directory/profile route); P-BUY-05
+  favorites → **scope confirmed product/category, build stays held** on the display-projection
+  gap. WP card: `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`.
+- **Current Page:** P-BUY-04 closed as a link-out (no in-app route): `discover-view.tsx`'s
+  `VendorCard` href changed from the dead `/discover/${slug}` forward-ref to the live public
+  microsite `/vendors/${slug}` (P-PUB-13); `discover/page.tsx`'s `MOCK_VENDORS` re-aligned
+  field-for-field with the public discovery seed (`app/(public)/_components/discovery/seed.ts`
+  `VENDORS`) so every card's slug resolves against the microsite instead of two divergent mock
+  catalogs. P-BUY-03 superseded (no build, `/discover` = the directory). P-BUY-05 out of scope,
+  stays held. `tsc`/`eslint`/`prettier --check` clean. **Live browser verification blocked** — the
+  shared dev server on :3000 is currently 500ing on a turbopack chunk-manifest corruption from
+  ~15 accumulated concurrent `next dev` processes across parallel team sessions (pre-existing
+  environment condition, unrelated to this 2-file content diff — flagged to the owner separately,
+  not fixed unilaterally). Verification is static-only pending a clean dev server: typecheck/lint/
+  format clean + exact slug/name/category/location/verified/capability parity against the
+  already-shipped public seed and its `.find()`-based resolver.
+- **Pipeline stage:** 🔵A — awaiting Review-A (fresh context)
+- **Next Milestone:** none queued after FE-BUY-10 closes — Team-2's FE-BUY/FE-CLN queue is
+  otherwise exhausted this session.
 
 ## Team-3 — Vendor (FE-VEN)
 
@@ -54,8 +65,10 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
-_(A-lane clear — `FE-PUB-03` (RV-0111), `FE-VEN-04` (RV-0110), `FE-BUY-07` (RV-0112) all cleared A
-  and closed. Nothing currently awaiting Review-A.)_
+_(`FE-BUY-10` (Team-2) checkpointed 2026-07-03, awaiting Review-A — WP card
+  `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`. Otherwise clear —
+  `FE-PUB-03` (RV-0111), `FE-PUB-04` (RV-0116), `FE-VEN-04` (RV-0110), `FE-BUY-07` (RV-0112) all
+  cleared A and closed.)_
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 
@@ -69,7 +82,11 @@ _(B-lane clear — nothing at 🔵B awaiting Review-B.)_
   grep-confirmed gone, rationale in comments-only), FE-BUY-08 (RV-0113, no coined enum, R7 counts
   wired-not-derived, clone = rule-of-three OBS not MINOR), FE-BUY-09 (RV-0114 CRM, zero-diff audit;
   Inv#11 blacklist-undetectable + Inv#6 firewall re-confirmed by grep — status only in CRM detail,
-  every other surface's "blacklist" mention is a non-disclosure comment), FE-BUY-05 (RV-0108), FE-BUY-06 (RV-0109 Award).
+  every other surface's "blacklist" mention is a non-disclosure comment), FE-CLN-01 (RV-0115 freeze
+  remediation, 18 files; frozen-kit-untouched, new `Callout` de-dupes ~8 inline callouts [buyer-scoped,
+  no kit primitive re-impl], escalated shell a11y bug correctly pre-existing/not-fixed-unilaterally),
+  FE-BUY-05 (RV-0108), FE-BUY-06 (RV-0109 Award). _(RV-0114/RV-0115 review-log concurrence lines were
+  swapped by a concurrent-writer race — Team-5 repaired both in place.)_
 - _Prior full-B (routed to Team-5): FE-PUB-02 (RV-0107). Earlier closed: FE-BUY-04 (RV-0102),
   FE-VEN-06/07/08/13 (RV-0103/0104/0105/0106)._
 

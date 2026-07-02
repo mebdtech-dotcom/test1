@@ -1,7 +1,8 @@
-# WORK PACKAGE — FE-PUB-04 Category Page (Started)
+# WORK PACKAGE — FE-PUB-04 Category Page (✅ Closed — RV-0116, A:PASS ∧ B:PASS, Dev-team
+self-close per Amendment v1.3 §13)
 
 - **Lane:** G (anonymous contract surface; touches an already-closed FE-PUB-02 file)
-- **Reviewed-SHA record:** _(filled at checkpoint)_
+- **Reviewed-SHA record:** `4777e84` (scope complete — new category route + 3 dead-link repoints)
 - **Value:** Core Marketplace · **Priority:** P1 · **Size:** S · **Risk:** Low
 
 ## Scoping note (why this milestone looks different from a normal enhancement)
@@ -50,10 +51,22 @@ Builder = **Team-1** · Maintainer = **Team-1** · Review A → Review B (fresh 
 
 ## Key dates
 
-Created 2026-07-03 · Started 2026-07-03 · Paused — · Resumed — · Closed —
+Created 2026-07-03 · Started 2026-07-03 · Paused — · Resumed — · Closed 2026-07-03
 
 ## DoD confirmation (checked at close)
 
-☐ page DoD ☐ responsive D/T/M ☐ WCAG-AA ☐ tsc/eslint/prettier ☐ realistic mock data ☐ Review A
-PASS ☐ Review B PASS (B/M/M=0) ☐ gate approval ☐ no TODO/dead code ☐ no duplicate components ☐
-promotion candidates registered ☐ tracker updated ☐ card closed
+☑ page DoD ☑ responsive D/T/M (Playwright 390/768/1280, both tabs, Review-B) ☑ WCAG-AA (axe-core 6
+scans, 0 violations) ☑ tsc/eslint/prettier ☑ realistic mock data (existing curated seed, no
+invented records) ☑ Review A PASS (RV-0116, 2 OBS, B/M/M=0) ☑ Review B PASS (RV-0116, 2 OBS,
+B/M/M=0) ☑ gate approval (A:PASS ∧ B:PASS on `4777e84` — the clean gate is the approval signal per
+Amendment v1.3 §13) ☑ no TODO/dead code ☑ no duplicate components (reuses kit `FilterSidebar`/
+`VendorCard`/`ProductCard`/`ResultsGrid`/`PaginationControl` only; no new primitive) ☑ promotion
+candidates registered (none raised — the OBS'd `getCategoryOr404` gap is a watch item, not a
+duplication needing extraction yet) ☑ tracker updated ☑ card closed
+
+## Close record
+
+**✅ Closed 2026-07-03.** Review-A: PASS (0 B/M/M, 2 OBS). Review-B: PASS (0 B/M/M, 2 OBS). No
+fix-and-reverify cycle — both lanes passed on the first submission. Dev-team self-close per
+Amendment v1.3 §13. Full record: `project-management/review-log.md` RV-0116. Milestone-close
+commit: `milestone(FE-PUB-04): close — RV-0116 A:PASS B:PASS`.

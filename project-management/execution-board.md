@@ -10,17 +10,22 @@ Roadmap: [`fe-program-wbs.md`](fe-program-wbs.md) · pointer: [`current-focus.md
 
 **Team-1 (Public / PF):**
 ~~FE-PUB-02 Discovery~~ ✅ **Closed** (RV-0107, A:PASS ∧ B:PASS, Dev-team self-close 2026-07-02 @
-`5d9d94a`) · `FE-PUB-03 Vendor Profile` ← current (🔵A Review-A @ `1275f70` — scope complete,
-footer nav fix + sticky mobile CTA; awaiting Review-A, Team-1 holds) → FE-PUB-04 → FE-PUB-06 →
-FE-PUB-07 → FE-PUB-01 · ~~FE-PUB-05~~ ⛔ `ESC-7-API-PRODDETAIL` (skip while gated).
+`5d9d94a`) · ~~FE-PUB-03 Vendor Profile~~ ✅ **Closed** (RV-0111, A:PASS ∧ B:PASS, Dev-team
+self-close 2026-07-02 @ `1275f70`) · ~~FE-PUB-04 Category Page~~ ✅ **Closed** (RV-0116, A:PASS ∧
+B:PASS, 0 B/M/M both lanes, no fix-and-reverify cycle, Dev-team self-close 2026-07-03 @ `4777e84`
+— new drill-down route realizing P-PUB-08, which was tracked "🟩 Built" but never actually
+existed) · `FE-PUB-06` ← next (WP card pending kickoff) → FE-PUB-07 → FE-PUB-01 ·
+~~FE-PUB-05~~ ⛔ `ESC-7-API-PRODDETAIL` (skip while gated).
 
 **Team-2 (Buyer):**
 ~~FE-BUY-04..09~~ ✅ **All Closed** this session (RV-0102/0108/0109/0112/0113/0114 @ `5a4550c`/
 `79b738a`/`5654956`/`2d1b23e`/`d501345`/`adc84fa`; FE-BUY-07 after 1 fix-and-reverify cycle,
 FE-BUY-09 audit-only zero-delta) · ~~FE-CLN-01~~ ✅ **Closed** (RV-0115 @ `636c192`, A:PASS ∧
 B:PASS, 0 B/M/M both lanes, no fix-and-reverify cycle; Dev-team self-close 2026-07-02) — SEVEN
-Team-2 milestones this session. **Team-2 queue exhausted** — only FE-BUY-10 🅿 parked remains
-(owner-gated).
+Team-2 milestones this session. `FE-BUY-10 Discovery & Favorites` ← current (🔵A — owner resolved
+both gating decisions 2026-07-03: reuse existing surfaces for P-BUY-03/04, hold P-BUY-05 build;
+checkpoint done, awaiting Review-A; WP card
+`governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`).
 
 **Team-3 (Vendor):**
 ~~FE-VEN-05~~ ✅ **Closed** (RV-0101 @ `e2f8642`) · ~~FE-VEN-06~~ ✅ **Closed** (RV-0103 @
@@ -48,7 +53,6 @@ starts**; findings feed the FE-PUB packages.
 
 | Item | Decision needed |
 |---|---|
-| FE-BUY-10 | P-BUY-03/04 route topology · P-BUY-05 favorites scope + display-projection gap |
 | FE-VEN-10/11/12 | Board kickoff scoping (vendor-context reuse of P-ACC surfaces; T3 builds adaptation, T1 keeps maintaining reused pages) |
 | M2.5 vendor public microsite | continuation past the delivered foundation |
 
@@ -57,7 +61,9 @@ starts**; findings feed the FE-PUB packages.
 1. **Official brand SVGs** — supply unmodified assets (`public/brand/README.md` policy); closes FE-PF-02.
 2. **Vendor FE BLOCKER packet** — SCORE-DISPLAY · TRUSTSCORE · A7; packets ready
    (`governanceReviews/BOARD-PACKET-VENDOR-FE-BLOCKERS`, `DECISION-MATRIX-VENDOR-FE`); unblocks FE-VEN-09 + vendor companion freeze.
-3. **FE-BUY-10 decisions** — route topology (P-BUY-03/04) + favorites scope/projection (P-BUY-05).
+3. ~~**FE-BUY-10 decisions**~~ — **RESOLVED by owner 2026-07-03** (route topology P-BUY-03/04 →
+   reuse existing surfaces; favorites scope P-BUY-05 → confirmed product/category, build held on
+   the projection gap). Milestone checkpointed, awaiting Review-A.
 4. **P-ACC-12** — `ESC-IDN-DELEG-EXPIRY` (delegation reinstate path).
 5. **M2.5 microsite continuation.**
 6. **Taxonomy P1 + mega-menu package approval** — unblocks FE-PUB-09.
