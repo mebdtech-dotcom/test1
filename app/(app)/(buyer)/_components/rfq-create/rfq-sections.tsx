@@ -10,7 +10,7 @@ import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
 import { FormField } from "@/frontend/components/form-field";
 import { cn } from "@/frontend/lib/cn";
-import { Textarea, Select, CheckboxRow } from "../form-controls";
+import { Textarea, Select, CheckboxRow, RadioRow } from "../form-controls";
 import { DescriptionList, type DescriptionItem } from "../description-list";
 import {
   WORK_NATURE_OPTIONS,
@@ -190,10 +190,14 @@ export function DeliverySection({ form }: { form: RfqDraftForm }) {
         label="Delivery location"
         inputProps={{ defaultValue: form.deliveryLocation, placeholder: "Site / address" }}
       />
+      {/* FZ-06: `required` (asterisk + aria-required) — the frozen submission FIXED-set marks
+          `delivery_geography` required at submit (rfq-form-models.ts:23-24), same convention as
+          Category/Request type; draft itself stays permissive (Doc-3 §1.2), never enforced here. */}
       <FormField
         id="rfq-district"
         label="Delivery district"
         description="At least a district is required to submit."
+        required
         inputProps={{ defaultValue: form.district, placeholder: "e.g. Gazipur" }}
       />
       <FormField
@@ -224,10 +228,14 @@ export function DeliverySection({ form }: { form: RfqDraftForm }) {
 export function BudgetSection({ form }: { form: RfqDraftForm }) {
   return (
     <SectionCard title="Budget & priority (optional)">
+      {/* FZ-06: `required` (asterisk + aria-required) — `estimated_value` is in the frozen submission
+          FIXED-set (rfq-form-models.ts:23-24); draft itself stays permissive (Doc-3 §1.2), never
+          enforced here. */}
       <FormField
         id="rfq-budget"
         label="Estimated budget (BDT)"
         description="Optional guidance — required only at submit. No currency selector: BDT at create."
+        required
         inputProps={{
           defaultValue: form.budget,
           type: "number",
@@ -258,11 +266,15 @@ export function BudgetSection({ form }: { form: RfqDraftForm }) {
 export function VendorSection({ form }: { form: RfqDraftForm }) {
   return (
     <SectionCard title="Vendor preferences">
+      {/* FZ-06: `required` (asterisk + aria-required) — `routing_mode` is in the frozen submission
+          FIXED-set (rfq-form-models.ts:23-24), previously not flagged at all; draft itself stays
+          permissive (Doc-3 §1.2), never enforced here. */}
       <FormField
         id="rfq-routing"
         label="Routing"
         description="How broadly to route this RFQ. The matching engine still decides who is invited."
         className="sm:col-span-2"
+        required
       >
         <Select
           options={ROUTING_MODE_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
@@ -380,21 +392,14 @@ export function CommunicationSection({ form }: { form: RfqDraftForm }) {
         </legend>
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
           {CONTACT_TIME_OPTIONS.map((o) => (
-            <label
+            <RadioRow
               key={o.value}
-              htmlFor={`rfq-ct-${o.value}`}
-              className="flex items-center gap-1.5 text-sm text-foreground"
-            >
-              <input
-                type="radio"
-                id={`rfq-ct-${o.value}`}
-                name="rfq-contacttime"
-                value={o.value}
-                defaultChecked={form.preferredContactTime === o.value}
-                className="size-4 border-input text-iv-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              />
-              {o.label}
-            </label>
+              id={`rfq-ct-${o.value}`}
+              name="rfq-contacttime"
+              value={o.value}
+              label={o.label}
+              defaultChecked={form.preferredContactTime === o.value}
+            />
           ))}
         </div>
       </fieldset>

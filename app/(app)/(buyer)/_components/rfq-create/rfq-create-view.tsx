@@ -99,9 +99,11 @@ export function RfqCreateView({ data }: { data: RfqCreateData }) {
         className="mb-4"
       />
 
-      {/* Phase 1 — hero */}
+      {/* Phase 1 — hero. FZ-03: font-bold to match the shell PageHeader's weight (was font-semibold)
+          — this wizard hero keeps its own hand-rolled <header> (no actions slot) rather than routing
+          through PageHeader. */}
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Create a request for quotation
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">

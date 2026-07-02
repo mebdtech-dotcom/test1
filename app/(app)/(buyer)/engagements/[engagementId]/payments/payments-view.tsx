@@ -25,6 +25,7 @@ import { PageHeader, Breadcrumbs } from "../../../../_components/shell";
 import { DataListTable, type DataColumn } from "../../../_components/data-list-table";
 import { Money, formatDate } from "../../../_components/format";
 import { paymentStatusDisplay } from "../../../_components/state-display";
+import { Callout } from "../../../_components/callout";
 import type { PaymentRecordItem, PaymentsData } from "../../../_components/payment-view-models";
 
 /** "Record payment" — a parked write (gated on `can_record_payments`); disabled this milestone. */
@@ -116,14 +117,11 @@ export function PaymentsView({ data }: { data: PaymentsData }) {
 
       <div className="mt-2 flex flex-col gap-4">
         {/* Money boundary (DF-6 / R8): records only; the platform never holds or moves funds. */}
-        <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-          <Banknote aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p>
-            Payments are <span className="font-medium">records only</span>. The platform never
-            holds, escrows, or moves funds — money is settled directly between the parties and
-            logged here for reference.
-          </p>
-        </div>
+        <Callout icon={<Banknote aria-hidden />}>
+          Payments are <span className="font-medium">records only</span>. The platform never holds,
+          escrows, or moves funds — money is settled directly between the parties and logged here
+          for reference.
+        </Callout>
 
         {isEmpty ? (
           <EmptyState

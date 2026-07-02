@@ -19,6 +19,7 @@ import { Button } from "@/frontend/primitives/button";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { StatusChip } from "@/frontend/components/status-chip";
 import { FileText, Plus } from "lucide-react";
+import { PageHeader } from "../../_components/shell";
 import { KpiStatCard } from "../_components/kpi-stat-card";
 import { WorkQueueCard, type QueueColumn } from "../_components/work-queue-card";
 import { SourcingPipelineCard } from "../_components/sourcing-pipeline-card";
@@ -121,26 +122,6 @@ const ENGAGEMENT_COLUMNS: QueueColumn<EngagementQueueRow>[] = [
   },
 ];
 
-function PageHeader({ headingId }: { headingId?: string }) {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div>
-        {/* The section's `aria-labelledby` references this h1 directly (id lives on the heading). */}
-        <h1 id={headingId} className="text-2xl font-semibold tracking-tight text-foreground">
-          Procurement
-        </h1>
-        <p className="text-sm text-muted-foreground">Your procurement at a glance.</p>
-      </div>
-      <Button asChild className="gap-1.5">
-        <Link href="/rfqs/new">
-          <Plus aria-hidden />
-          New RFQ
-        </Link>
-      </Button>
-    </div>
-  );
-}
-
 /** First-run empty state (§9.1) — a single "Create RFQ" call-to-action, no fabricated metrics. */
 function FirstRunEmpty() {
   return (
@@ -164,15 +145,10 @@ function FirstRunEmpty() {
 export function BuyerDashboardView({ data }: { data: BuyerDashboardViewModel | null }) {
   if (data === null) {
     return (
-      <section aria-labelledby="dashboard-heading" className="flex flex-col gap-6">
-        <div>
-          <h1
-            id="dashboard-heading"
-            className="text-2xl font-semibold tracking-tight text-foreground"
-          >
-            Procurement
-          </h1>
-        </div>
+      <section className="flex flex-col gap-6">
+        {/* FZ-03: routed through the shell PageHeader (font-bold) instead of a hand-rolled h1
+            (was font-semibold) — the same heading text shared with the populated view below. */}
+        <PageHeader title="Procurement" />
         <FirstRunEmpty />
       </section>
     );
@@ -191,8 +167,19 @@ export function BuyerDashboardView({ data }: { data: BuyerDashboardViewModel | n
     typeof kpis.winRate === "number" ? `${Math.round(kpis.winRate * 100)}%` : undefined;
 
   return (
-    <section aria-labelledby="dashboard-heading" className="flex flex-col gap-6">
-      <PageHeader headingId="dashboard-heading" />
+    <section className="flex flex-col gap-6">
+      <PageHeader
+        title="Procurement"
+        description="Your procurement at a glance."
+        actions={
+          <Button asChild className="gap-1.5">
+            <Link href="/rfqs/new">
+              <Plus aria-hidden />
+              New RFQ
+            </Link>
+          </Button>
+        }
+      />
 
       {/* KPI stat-card band — every figure a contract read; counts non-disclosure-safe (Inv #11). */}
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">

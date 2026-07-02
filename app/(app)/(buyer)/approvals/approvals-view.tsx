@@ -23,6 +23,7 @@ import { PaginationControl } from "@/frontend/components/pagination-control";
 import { PageHeader } from "../../_components/shell";
 import { DataListTable, type DataColumn } from "../_components/data-list-table";
 import { Money, formatDate, Ref } from "../_components/format";
+import { Callout } from "../_components/callout";
 import type { ApprovalsData, ApprovalQueueItem } from "../_components/approvals-view-models";
 
 function approvalColumns(canApproveRfq: boolean): DataColumn<ApprovalQueueItem>[] {
@@ -84,14 +85,10 @@ export function ApprovalsView({ data }: { data: ApprovalsData | null }) {
 
       <div className="mt-4 flex flex-col gap-4">
         {/* No auto-approve (Doc-3 §1.2): every decision is an explicit act; nothing is ever auto-approved. */}
-        <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-          <ShieldCheck aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p>
-            Approving or rejecting is a <span className="font-medium">deliberate act</span> — an RFQ
-            is never approved automatically. Rejecting returns the RFQ to draft and requires a
-            reason.
-          </p>
-        </div>
+        <Callout icon={<ShieldCheck aria-hidden />}>
+          Approving or rejecting is a <span className="font-medium">deliberate act</span> — an RFQ
+          is never approved automatically. Rejecting returns the RFQ to draft and requires a reason.
+        </Callout>
 
         {isEmpty ? (
           <EmptyState

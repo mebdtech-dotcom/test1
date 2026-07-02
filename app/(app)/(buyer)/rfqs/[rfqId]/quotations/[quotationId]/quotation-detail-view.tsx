@@ -38,6 +38,7 @@ import { KpiStatCard } from "../../../../_components/kpi-stat-card";
 import { Money, Ref, formatDate, formatInstant } from "../../../../_components/format";
 import { quotationStateDisplay } from "../../../../_components/state-display";
 import { SealedMarker } from "../../../../_components/sealed-marker";
+import { Callout } from "../../../../_components/callout";
 import type {
   QuotationDetailData,
   QuotationPriceLine,
@@ -52,12 +53,9 @@ import type {
  *  omits while the window is open; the presentation explains any such seal-driven absence wherever it lands. */
 function SealedNotice() {
   return (
-    <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-      <Lock aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-      <p>
-        Sealed until the quotation window closes — this becomes visible once the window has closed.
-      </p>
-    </div>
+    <Callout icon={<Lock aria-hidden />}>
+      Sealed until the quotation window closes — this becomes visible once the window has closed.
+    </Callout>
   );
 }
 
@@ -279,6 +277,9 @@ function NotFoundState() {
   return (
     <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6">
       <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
+      {/* FZ-02: the in-view genuine-absence branch still needs a page heading; kept sr-only so the
+          visual stays the minimal EmptyState card (its title renders as a <p>, not a heading). */}
+      <h1 className="sr-only">Quotation not found</h1>
       <EmptyState
         icon={<FileText aria-hidden />}
         title="Quotation not found"

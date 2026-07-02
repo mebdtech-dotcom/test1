@@ -12,8 +12,14 @@ export function UploadArea({ attachments }: { attachments?: RfqAttachment[] }) {
   const files = attachments ?? [];
   return (
     <div className="flex flex-col gap-3">
-      {/* Visual drop zone only — non-interactive (no functional upload this milestone). */}
-      <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-secondary/40 px-4 py-10 text-center">
+      {/* FZ-10: visual drop zone only — non-interactive (no functional upload this milestone).
+          `aria-disabled` marks it as such for AT, since the dashed border + copy could otherwise read as
+          an interactive control; the note below already states when it connects. Full fix (labelled
+          <label>+file-input/button) lands when upload is wired — `[ESC-7-API/upload]`. */}
+      <div
+        aria-disabled="true"
+        className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-secondary/40 px-4 py-10 text-center"
+      >
         <UploadCloud aria-hidden className="size-7 text-muted-foreground" />
         <p className="text-sm font-medium text-foreground">Drag &amp; drop spec documents here</p>
         <p className="text-xs text-muted-foreground">

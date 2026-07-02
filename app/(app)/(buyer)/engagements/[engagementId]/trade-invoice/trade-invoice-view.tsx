@@ -26,6 +26,7 @@ import { PageHeader, Breadcrumbs } from "../../../../_components/shell";
 import { DescriptionList, type DescriptionItem } from "../../../_components/description-list";
 import { Money, formatDate, Ref } from "../../../_components/format";
 import { tradeInvoiceStatusDisplay } from "../../../_components/state-display";
+import { Callout } from "../../../_components/callout";
 import type { TradeInvoiceData } from "../../../_components/trade-invoice-view-models";
 
 /** Statuses where a buyer can still raise a dispute (not on a terminal/already-disputed record). */
@@ -74,15 +75,11 @@ export function TradeInvoiceView({ data }: { data: TradeInvoiceData }) {
         </Card>
 
         {/* Money boundary (DF-6 / R8): a trade invoice ≠ a platform invoice; the platform moves no funds. */}
-        <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-          <ScrollText aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p>
-            This is a <span className="font-medium">trade invoice</span> between your organization
-            and the vendor — not a platform (subscription) invoice. The platform records it but
-            never holds, escrows, or moves funds; payment progress reflects payments recorded
-            separately.
-          </p>
-        </div>
+        <Callout icon={<ScrollText aria-hidden />}>
+          This is a <span className="font-medium">trade invoice</span> between your organization and
+          the vendor — not a platform (subscription) invoice. The platform records it but never
+          holds, escrows, or moves funds; payment progress reflects payments recorded separately.
+        </Callout>
 
         {/* Review actions. Payment-driven statuses come from the Payments surface; the buyer's own review
             transition is a dispute (parked). No "approve" action exists in the machine. */}

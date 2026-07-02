@@ -65,6 +65,13 @@ starts**; findings feed the FE-PUB packages.
 9. **SiteHeader "Pricing" nav → `/pricing`** chrome wiring (RV-0087 follow-up).
 10. ~~**Authorize the Review-B Step-3 Public baseline sweep**~~ (first standing-backlog run) —
     **AUTHORIZED by owner 2026-07-02.**
+11. **Shell QuickCreate button-name a11y bug** — `app/(app)/_components/shell/quick-create.tsx:29`:
+    the trigger's `<span className="hidden sm:inline">Create</span>` label is hidden below `sm`
+    (< 640px), leaving a bare `<Plus />` icon with no accessible name at mobile widths (axe
+    `button-name`, critical impact; reproduces identically on every route since the shell mounts
+    everywhere). Discovered during FE-CLN-01's axe sweep (buyer surface); shell-owned code —
+    out of Team-2's unilateral-fix scope (same class as FZ-01). Fix is a one-line `sr-only` span
+    or `aria-label` on the trigger `Button`; needs the shell owner, not a Board ruling.
 
 ## Review pipeline (pointer)
 

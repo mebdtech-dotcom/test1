@@ -28,6 +28,7 @@ import { PageHeader, Breadcrumbs } from "../../../_components/shell";
 import { DescriptionList, type DescriptionItem } from "../../_components/description-list";
 import { Money, Ref } from "../../_components/format";
 import { engagementStateDisplay } from "../../_components/state-display";
+import { Callout } from "../../_components/callout";
 import type { EngagementDetailData } from "../../_components/engagement-detail-view-models";
 
 /** The engagement's document-kind routes — FIXED, always-known (P-BUY-21..25), never a dynamic
@@ -101,14 +102,11 @@ export function EngagementDetailView({ data }: { data: EngagementDetailData }) {
         </Card>
 
         {/* Money boundary (DF-6 / R8): recorded value only; the platform never holds or moves funds. */}
-        <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-          <Banknote aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p>
-            The awarded value is a <span className="font-medium">record only</span>. The platform
-            never holds, escrows, or moves funds — payments are settled directly between the parties
-            and are tracked as records.
-          </p>
-        </div>
+        <Callout icon={<Banknote aria-hidden />}>
+          The awarded value is a <span className="font-medium">record only</span>. The platform
+          never holds, escrows, or moves funds — payments are settled directly between the parties
+          and are tracked as records.
+        </Callout>
 
         {/* Documents: plain navigation to the fixed document-kind routes (P-BUY-21..25) — never a
             fabricated existence indicator (`ESC-7G-ENG-03` stays ungrounded, no list contract). A

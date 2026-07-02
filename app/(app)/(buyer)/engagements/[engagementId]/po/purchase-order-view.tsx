@@ -29,6 +29,7 @@ import { PageHeader, Breadcrumbs } from "../../../../_components/shell";
 import { DescriptionList, type DescriptionItem } from "../../../_components/description-list";
 import { EngagementDocumentFileCard } from "../../../_components/engagement-document-file-card";
 import { Ref } from "../../../_components/format";
+import { Callout } from "../../../_components/callout";
 import type { PurchaseOrderData } from "../../../_components/purchase-order-view-models";
 
 export function PurchaseOrderView({ data }: { data: PurchaseOrderData }) {
@@ -114,14 +115,11 @@ export function PurchaseOrderView({ data }: { data: PurchaseOrderData }) {
         </Card>
 
         {/* Money boundary (DF-6 / R8): a PO is a record only; the platform never holds or moves funds. */}
-        <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-          <Banknote aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-          <p>
-            A purchase order is a <span className="font-medium">record only</span>. The platform
-            never holds, escrows, or moves funds — payments are settled directly between the parties
-            and are tracked as records.
-          </p>
-        </div>
+        <Callout icon={<Banknote aria-hidden />}>
+          A purchase order is a <span className="font-medium">record only</span>. The platform never
+          holds, escrows, or moves funds — payments are settled directly between the parties and are
+          tracked as records.
+        </Callout>
 
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Info aria-hidden className="size-3.5 shrink-0" />

@@ -73,6 +73,47 @@ export function CheckboxRow({ id, label, defaultChecked, disabled }: CheckboxRow
   );
 }
 
+// FZ-04 (freeze remediation): the shared radio-input chrome — exported so a caller that needs its OWN
+// wrapping element (e.g. a whole card is the label, not just a text row — award-view.tsx's candidate
+// cards) can apply the identical style without nesting a second <label> inside one it already owns.
+export const RADIO_INPUT_CLASS =
+  "size-4 shrink-0 border-input text-iv-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed";
+
+export interface RadioRowProps {
+  id: string;
+  name: string;
+  value: string;
+  label: React.ReactNode;
+  defaultChecked?: boolean;
+  disabled?: boolean;
+}
+
+/** A native radio + label row (the kit ships no `radio` primitive yet — Doc-7B-deferred control). Mirrors
+ *  `CheckboxRow` exactly. Buyer Tier-2; promotion candidate the moment a 2nd workspace needs a styled
+ *  radio. For a caller whose OWN element is already the label (e.g. a selectable card), use
+ *  `RADIO_INPUT_CLASS` directly on a bare `<input>` instead — nesting this component's `<label>` inside
+ *  another `<label>` would be invalid HTML. */
+export function RadioRow({ id, name, value, label, defaultChecked, disabled }: RadioRowProps) {
+  return (
+    <label
+      htmlFor={id}
+      className="flex items-center gap-1.5 text-sm text-foreground aria-disabled:opacity-70"
+      aria-disabled={disabled || undefined}
+    >
+      <input
+        type="radio"
+        id={id}
+        name={name}
+        value={value}
+        defaultChecked={defaultChecked}
+        disabled={disabled}
+        className={RADIO_INPUT_CLASS}
+      />
+      {label}
+    </label>
+  );
+}
+
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, options, placeholder, defaultValue, value, ...props }, ref) => (
     <select

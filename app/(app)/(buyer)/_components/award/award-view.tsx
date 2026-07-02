@@ -16,11 +16,14 @@ import { Button } from "@/frontend/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { StatusChip } from "@/frontend/components/status-chip";
+import { cn } from "@/frontend/lib/cn";
 import { Breadcrumbs } from "../../../_components/shell";
 import { WizardStepper } from "../rfq-create/wizard-stepper";
 import { DescriptionList, type DescriptionItem } from "../description-list";
 import { Money, formatDate } from "../format";
 import { quotationStateDisplay } from "../state-display";
+import { RADIO_INPUT_CLASS } from "../form-controls";
+import { Callout } from "../callout";
 import type { AwardData, AwardCandidate } from "./award-view-models";
 
 const AWARD_STEPS = [
@@ -50,7 +53,10 @@ function Shell({
         className="mb-4"
       />
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Award RFQ</h1>
+        {/* FZ-03: font-bold to match the shell PageHeader's weight (was font-semibold) — this hero
+            keeps its own hand-rolled <header> (a description with an embedded Link, no actions slot)
+            rather than routing through PageHeader, whose `description` prop is a plain string. */}
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Award RFQ</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Choose one vendor to award. Awarding is a deliberate, final act — not a ranking.{" "}
           <Link
@@ -75,6 +81,9 @@ function NotFoundState() {
   return (
     <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6">
       <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
+      {/* FZ-02: the in-view genuine-absence branch still needs a page heading; kept sr-only so the
+          visual stays the minimal EmptyState card (its title renders as a <p>, not a heading). */}
+      <h1 className="sr-only">Award not available</h1>
       <EmptyState
         icon={<FileText aria-hidden />}
         title="Award not available"
@@ -98,13 +107,16 @@ function CandidateCard({ c, checked }: { c: AwardCandidate; checked: boolean }) 
       htmlFor={`award-${c.quotationId}`}
       className="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-card p-4 has-[:checked]:border-iv-brand-600 has-[:checked]:ring-1 has-[:checked]:ring-iv-brand-600"
     >
+      {/* FZ-04: shared RADIO_INPUT_CLASS (form-controls.tsx) — this card is already the label, so the
+          RadioRow component (which owns its own <label>) can't nest here without invalid HTML; the
+          underlying input styling stays consistent with every other radio in the buyer surface. */}
       <input
         type="radio"
         id={`award-${c.quotationId}`}
         name="sel"
         value={c.quotationId}
         defaultChecked={checked}
-        className="mt-1 size-4 shrink-0 border-input text-iv-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className={cn("mt-1", RADIO_INPUT_CLASS)}
       />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -170,23 +182,17 @@ export function AwardView({ data }: { data: AwardData | null }) {
           </Card>
 
           {data.aboveThreshold ? (
-            <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-              <ShieldAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-              <p>
-                This award value is above your organization&rsquo;s threshold — a Director or Owner
-                must approve it before it takes effect.
-              </p>
-            </div>
+            <Callout icon={<ShieldAlert aria-hidden />}>
+              This award value is above your organization&rsquo;s threshold — a Director or Owner
+              must approve it before it takes effect.
+            </Callout>
           ) : null}
 
-          <div className="flex items-start gap-2 rounded-md border border-border bg-iv-amber-50 p-3 text-sm text-foreground">
-            <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-iv-amber-700" />
-            <p>
-              Awarding is <span className="font-medium">final</span> and awards exactly one vendor
-              (1:1) — it can&rsquo;t be changed. To source from more than one vendor, reissue the
-              RFQ. An engagement opens automatically once you award.
-            </p>
-          </div>
+          <Callout icon={<TriangleAlert aria-hidden />} tone="warning">
+            Awarding is <span className="font-medium">final</span> and awards exactly one vendor
+            (1:1) — it can&rsquo;t be changed. To source from more than one vendor, reissue the RFQ.
+            An engagement opens automatically once you award.
+          </Callout>
 
           <div className="flex flex-wrap items-center justify-end gap-2">
             <p className="mr-auto text-xs text-muted-foreground">
@@ -210,8 +216,14 @@ export function AwardView({ data }: { data: AwardData | null }) {
       <form method="get" action={`/rfqs/${data.rfqId}/award`} className="flex flex-col gap-3">
         <input type="hidden" name="step" value="confirm" />
         <fieldset className="flex flex-col gap-3">
+          {/* FZ-08: required indicator, mirroring the sibling checkbox-group's pattern
+              (rfq-sections.tsx Request-type fieldset) — asterisk decorative + explicit sr-only text. */}
           <legend className="text-sm font-medium text-foreground">
             Choose one vendor to award
+            <span className="ml-0.5 text-destructive" aria-hidden="true">
+              *
+            </span>
+            <span className="sr-only">(required)</span>
           </legend>
           <p className="text-sm text-muted-foreground">
             Shown in the order provided — not ranked; there is no recommended winner.

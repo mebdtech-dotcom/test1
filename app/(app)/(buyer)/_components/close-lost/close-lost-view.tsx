@@ -22,6 +22,7 @@ import { Breadcrumbs, PageHeader } from "../../../_components/shell";
 import { Select, Textarea } from "../form-controls";
 import { DescriptionList, type DescriptionItem } from "../description-list";
 import { rfqStateDisplay } from "../state-display";
+import { Callout } from "../callout";
 import {
   CLOSE_LOST_REASON_OPTIONS,
   type CloseLostData,
@@ -68,6 +69,9 @@ function NotFoundState() {
   return (
     <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6">
       <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
+      {/* FZ-02: the in-view genuine-absence branch still needs a page heading; kept sr-only so the
+          visual stays the minimal EmptyState card (its title renders as a <p>, not a heading). */}
+      <h1 className="sr-only">RFQ not available</h1>
       <EmptyState
         icon={<FileText aria-hidden />}
         title="RFQ not available"
@@ -86,13 +90,10 @@ function NotFoundState() {
 /** The uniform, non-penalizing closure note (Doc-3 §9.5) — shown on both steps. */
 function NonPenalizingNote() {
   return (
-    <div className="flex items-start gap-2 rounded-md border border-border bg-secondary p-3 text-sm text-secondary-foreground">
-      <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-      <p>
-        Closing is uniform and carries no penalty to any vendor. Vendors are never told a buyer
-        &ldquo;chose someone else&rdquo; — the reason you record here is for your own records.
-      </p>
-    </div>
+    <Callout icon={<Info aria-hidden />}>
+      Closing is uniform and carries no penalty to any vendor. Vendors are never told a buyer
+      &ldquo;chose someone else&rdquo; — the reason you record here is for your own records.
+    </Callout>
   );
 }
 
@@ -126,13 +127,10 @@ export function CloseLostView({ data }: { data: CloseLostData | null }) {
 
           <NonPenalizingNote />
 
-          <div className="flex items-start gap-2 rounded-md border border-border bg-iv-amber-50 p-3 text-sm text-foreground">
-            <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0 text-iv-amber-700" />
-            <p>
-              Closing sets this RFQ to <span className="font-medium">Closed (lost)</span> and ends
-              this sourcing round. To source again, reissue the RFQ.
-            </p>
-          </div>
+          <Callout icon={<TriangleAlert aria-hidden />} tone="warning">
+            Closing sets this RFQ to <span className="font-medium">Closed (lost)</span> and ends
+            this sourcing round. To source again, reissue the RFQ.
+          </Callout>
 
           <div className="flex flex-wrap items-center justify-end gap-2">
             <p className="mr-auto text-xs text-muted-foreground">
