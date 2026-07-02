@@ -20,7 +20,7 @@ recommendation, the drafted artifact TEXT passes one final owner-confirmation ga
 
 The owner directed a new non-negotiable platform rule: every approved vendor receives one permanent
 canonical subdomain `https://{vendor-slug}.ivendorz.com/`. The frozen corpus holds the Vendor Slug
-(live-unique) but is **silent** on slug format, reserved labels, immutability, canonical primacy,
+(live-unique) but is **silent** on slug format, reserved labels, immutability, canonical-host rules,
 redirects, and host routing — and its only subdomain mention sits ambiguously under the entitled
 Custom Domain Support feature. This packet records the corpus verification, the sub-decisions, the
 adjudicated findings, and the completed ruling; the realization is the five-artifact linked patch set +
