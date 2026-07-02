@@ -152,3 +152,5 @@
 2026-07-02 · P-BUY-27 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0043)
 2026-07-02 · P-ACC-06 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0044)
 2026-07-02 · P-ADM-15 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0045)
+2026-07-02 · P-ACC-06 · ✅ Approved → ✅ committed · Owner: Team-1
+2026-07-02 · P-ACC-07 · ⬜ Pending → 🟡 In Progress · Owner: Team-1

@@ -5,29 +5,30 @@
 > (`team-1.md` / `team-2.md` / `team-3.md`) remain the **source record**; this file is the
 > **pointer**. Keep it tiny. On any change, also update the owning team file + `changelog.md`.
 
-**Updated:** 2026-07-02 · **Sprint:** Review cycle 17 (auto-check ~5min) — P-BUY-26 (RV-0040, non-disclosure crux) & P-ACC-05 (RV-0041) ✅ Approved; P-ADM-14 under review. Commits landing (P-ACC-03/04, P-ADM-12/13, P-BUY-25).
+**Updated:** 2026-07-02 · **Sprint:** Review cycle 18 (auto-check ~5min) — P-BUY-27 (RV-0043, CRM non-disclosure), P-ACC-06 (RV-0044), P-ADM-15 (RV-0045) ✅ all Approved; all three advanced. CRM pair (P-BUY-26/27) + verification pair + import pair complete.
 
 ---
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-06` Members (P1) — 🔵 Ready for Review (awaiting Team-4 QCT)
-- **Status:** 🔵 Ready for Review — T-LISTING member table; suspend/reinstate/remove (Last Owner Protection), remove-confirm; Doc-4C §C6; not committed
-- **Next Page:** `P-ACC-07` Invite member (P1, Ready)
+- **Current Page:** `P-ACC-07` Invite member (P1) — 🟡 In Progress (P-ACC-06 ✅ committed)
+- **Status:** 🟡 building (presentation-only; frozen `invite_member` + `revoke_invitation`, Doc-4C §C6)
+- **Next Page:** `P-ACC-08` Roles (P2, Ready)
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
 
-- **Current Page:** `P-BUY-27` CRM — vendor detail (P2) — 🔵 Ready for Review (axe GREEN; 2-reviewer PASS; own-status buyer-private/undetectable; writes parked)
-- **Status:** 🔵 awaiting Team-4 review
-- **Next Page:** — (CRM cluster tail; remaining ⬜ Team-2 pages: P-BUY-02/03/04/05/10/11/12/13)
+- **Current Page:** `P-BUY-02` Discover vendors (P1) — ⬜ Pending (P-BUY-27 ✅ Approved, RV-0043; CRM cluster done). Next lowest ⬜ Ready
+- **Status:** ⬜ queued to build (remaining ⬜: P-BUY-02/03/04/05/10/11/12/13)
+- **Next Page:** `P-BUY-03` Vendor directory (in-app) (P2, Ready)
 - **Updated:** 2026-07-02
 
 ## Team-3 — Vendor / Verification / Admin
 
-- **Current Page:** `P-ADM-15` Import job — new / detail (P2) — 🔵 Ready for Review (submit form + create-then-poll detail, awaiting Team-4)
-- **Status:** 🔵 Ready for Review — `submit_import_job` disabled (R5); detail = stats_jsonb + row errors; notFound Inv #11; my files green
-- **Next Page:** `P-ADM-16` Outreach campaigns (P3, Ready) — acquisition only
+- **Current Page:** `P-ADM-16` Outreach campaigns (P3) — ⬜ Pending (P-ADM-15 ✅ Approved, RV-0045). acquisition only
+- **Status:** ⬜ queued to build
+- **Next Page:** `P-ADM-17` Campaign detail (P3, Ready)
+- **Updated:** 2026-07-02
 - **Updated:** 2026-07-02
 
 ---
