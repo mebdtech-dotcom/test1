@@ -64,8 +64,14 @@ Option B composed vendor-mounted page; P-ACC-13 Workflow Settings scoped OUT of 
 both lanes; **Review Team 5 marked approved 2026-07-03** per Amendment v1.3 §13 — owning Team-3 to
 commit [checkpoints/trackers; close uncommitted] + start next; composition-not-fork verified [5
 Account components imported unmodified, thin `BillingTabs` over shared `WorkspaceTabs`, zero fork],
-money-boundary clean, render D/T/M + axe 0, disclosed hard-coded-link trade-off honest) →
-FE-VEN-11 → FE-VEN-12 (also unblocked). _(Out-of-scope note: FE-PUB-09 vendored
+money-boundary clean, render D/T/M + axe 0, disclosed hard-coded-link trade-off honest). `FE-VEN-11
+Organization` — **🔵A Review-A submitted** (checkpoint `1a5d009`; composes `OrganizationProfile` /
+`OrganizationLifecycle` / `MembersView` / `RolesView` / `PermissionsView` / `DelegationView`
+[P-ACC-04..11] via new `OrganizationTabs`, same composition-not-fork pattern as `FE-VEN-10`;
+disclosed trade-offs: Invite-member/New-role links leave vendor chrome, "New grant" disabled — a
+genuinely pre-existing dead link discovered on the Account track itself
+[`/account/delegation/new` doesn't exist], distinct from `ESC-IDN-DELEG-EXPIRY`). Team-3 STOPS,
+holds for the gate → then FE-VEN-12 (also unblocked). _(Out-of-scope note: FE-PUB-09 vendored
 `popover`/`accordion`/`navigation-menu` into `src/frontend/primitives` — verify as a legit
 demand-driven kit extension under the mega-menu package at FE-PUB-09's review.)_
 
