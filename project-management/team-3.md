@@ -23,7 +23,7 @@ Verification = `P-VND-28` + `P-PUB-18` (Team-1) + `P-ADM-12/13`.
 | P-VND-06 | Microsite preview | P1 | Ready | 🟩 Built | |
 | P-VND-07 | Products | P1 | Ready | 🟩 Built | |
 | P-VND-08 | Product create/edit | P1 | Ready | 🟩 Built | versioned |
-| P-VND-09 | Spec library | P2 | Ready | ⬜ | wired write (not upload) |
+| P-VND-09 | Spec library | P2 | Ready | 🟩 Built (RV-0110, `4b4dc5c`) | wired write (not upload) |
 | P-VND-10 | Spec documents | P2 | Waiting API | ⬜ | `ESC-7-API/upload` |
 | P-VND-11 | Category assignment | P1 | Ready | 🟩 Built | admin-governed categories |
 | P-VND-12 | Ads | P2 | Ready | 🟩 Built | **FE-VEN-13 BUILT+CLOSED** (RV-0106, `c1f54ef`): replaces the placeholder with a real list |

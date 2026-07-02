@@ -23,25 +23,28 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-2 — Buyer (FE-BUY)
 
-- **Current Milestone:** _(none — `FE-BUY-06` Award ✅ **Closed**, RV-0109, A:PASS ∧ B:PASS, 0
-  BLOCKER/MAJOR/MINOR, 10 OBS, checkpoint `5654956`; Dev-team self-close per Amendment v1.3 §13.
-  FE-BUY-04/05 also ✅ Closed — three milestones this session, no kickoff-approval pause per
-  owner directive)_
-- **Current Page:** _(none — P-BUY-17 `5654956` award fixture-consistency fix shipped: aligned
-  the mock shortlist to the same two-vendor RFQ-2026-000123 fixture used everywhere else + added
-  a "Review the comparison" cross-link to FE-BUY-05; P-BUY-18 reviewed, carried forward untouched)_
-- **Pipeline stage:** idle — pulling `FE-BUY-07` Engagement next (WP card pending kickoff)
-- **Next Milestone:** FE-BUY-07 → 08 → 09 → FE-CLN-01 (F2-Z). FE-BUY-10 🅿 parked
+- **Current Milestone:** _(none — `FE-BUY-07` Engagement ✅ **Closed**, RV-0112, A:PASS ∧ B:PASS
+  after 1 fix-and-reverify cycle, 0 BLOCKER/MAJOR/MINOR final, checkpoint `2d1b23e`; Dev-team
+  self-close per Amendment v1.3 §13. FE-BUY-04/05/06 also ✅ Closed — four milestones this
+  session, no kickoff-approval pause per owner directive)_
+- **Current Page:** _(none — P-BUY-20 `2d1b23e` engagement Documents card fixed: replaced the
+  permanent "Documents open in a later milestone" dead-end with plain navigation to the 5 already-
+  built document-kind routes (PO/Payments/Trade-invoice/Challan/WCC); Review-A caught and the
+  builder fixed an unwarranted per-engagement existence-claim caption before Review-B passed)_
+- **Pipeline stage:** idle — pulling `FE-BUY-08` Dashboard Widgets next (WP card pending kickoff)
+- **Next Milestone:** FE-BUY-08 → 09 → FE-CLN-01 (F2-Z). FE-BUY-10 🅿 parked
 
 ## Team-3 — Vendor (FE-VEN)
 
-- **Current Milestone:** `FE-VEN-04` remainder (Catalog) — **🔵A Review-A** (owner: "you should
-  not stop, just start the work, no approval required"; scope complete at checkpoint `a52dc1e`)
-- **Current Page:** _(sole in-scope page — P-VND-09 `a52dc1e` Spec library listing + edit dialog:
-  new route `workspace/company/spec-library`, `SpecLibraryList`/`SpecEntryDialog` against the
-  frozen `create_spec_library_entry.v1`/`update_spec_library_entry.v1` pair — submitted to
-  Review-A; Team-3 STOPS, does not pull further work before gate)_
-- **Pipeline stage:** submitted to Review-A (Lane G)
+- **Current Milestone:** _(none — `FE-VEN-04` remainder (Catalog) ✅ **Closed**, RV-0110, A:PASS ∧
+  B:PASS, 0 BLOCKER/MAJOR/MINOR both lanes, 21 OBS total, one fix-and-reverify cycle [1 MINOR
+  textarea token drift, raised → fixed → re-verified], checkpoint `4b4dc5c`; Dev-team self-close
+  per Amendment v1.3 §13)_
+- **Current Page:** _(none — P-VND-09 `4b4dc5c` Spec library shipped: new route
+  `workspace/company/spec-library`, `SpecLibraryList`/`SpecEntryDialog` against the frozen
+  `create/update_spec_library_entry.v1` pair; FE-VEN-04 Catalog now fully closed — 07/08/11
+  legacy, 09 this milestone, 10 stays ⛔)_
+- **Pipeline stage:** idle
 - **Next Milestone:** FE-VEN-09 ⛔ · FE-VEN-10/11/12 at Board kickoff scoping
 
 ---
@@ -50,8 +53,7 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 - **`FE-PUB-03` Vendor Profile** (Team-1) — at checkpoint `1275f70`; shared microsite-chrome delta
   (footer nav fix + sticky mobile CTA), Lane G. First submission for this milestone.
-- **`FE-VEN-04` remainder** (Team-3) — at checkpoint `a52dc1e`; P-VND-09 Spec library (sole
-  in-scope page), Lane G. First submission for this milestone.
+- _(`FE-VEN-04` remainder cleared — RV-0110 A:PASS ∧ B:PASS, closed by Team-3.)_
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 

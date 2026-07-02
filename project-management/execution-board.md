@@ -16,17 +16,18 @@ FE-PUB-07 → FE-PUB-01 · ~~FE-PUB-05~~ ⛔ `ESC-7-API-PRODDETAIL` (skip while 
 
 **Team-2 (Buyer):**
 ~~FE-BUY-04~~ ✅ **Closed** (RV-0102 @ `5a4550c`) · ~~FE-BUY-05~~ ✅ **Closed** (RV-0108 @
-`79b738a`) · ~~FE-BUY-06 Award~~ ✅ **Closed** (RV-0109, Dev-team self-close 2026-07-02 @
-`5654956`) · `FE-BUY-07 Engagement` ← next (WP card pending kickoff) → FE-BUY-08 → FE-BUY-09 →
-FE-CLN-01 (F2-Z batch). FE-BUY-10 🅿 parked.
+`79b738a`) · ~~FE-BUY-06~~ ✅ **Closed** (RV-0109 @ `5654956`) · ~~FE-BUY-07 Engagement~~ ✅
+**Closed** (RV-0112, Dev-team self-close 2026-07-02 @ `2d1b23e`, after 1 fix-and-reverify cycle) ·
+`FE-BUY-08 Dashboard Widgets` ← next (WP card pending kickoff) → FE-BUY-09 → FE-CLN-01 (F2-Z
+batch). FE-BUY-10 🅿 parked.
 
 **Team-3 (Vendor):**
 ~~FE-VEN-05~~ ✅ **Closed** (RV-0101 @ `e2f8642`) · ~~FE-VEN-06~~ ✅ **Closed** (RV-0103 @
 `4ae0ec1`) · ~~FE-VEN-07~~ ✅ **Closed** (RV-0104 @ `b1810fe`) · ~~FE-VEN-08~~ ✅ **Closed**
 (RV-0105, board-approved 2026-07-02 @ `ec8306b`) · ~~FE-VEN-13~~ ✅ **Closed** (RV-0106,
-board-approved 2026-07-02 @ `34395b2`, after one fix-and-reverify cycle) · `FE-VEN-04 remainder`
-← current (🔵A Review-A @ `a52dc1e` — P-VND-09 Spec library, scope complete; awaiting Review-A,
-Team-3 holds) → FE-VEN-10/11/12 at Board kickoff scoping. FE-VEN-09 ⛔.
+board-approved 2026-07-02 @ `34395b2`, after one fix-and-reverify cycle) · ~~FE-VEN-04 remainder~~
+✅ **Closed** (RV-0110, Dev-team self-close 2026-07-02 @ `4b4dc5c`, after one fix-and-reverify
+cycle) · Team-3 **idle** — FE-VEN-10/11/12 at Board kickoff scoping. FE-VEN-09 ⛔.
 
 **Review Team 5 standing backlog (B lane):** Step-3 Public baseline sweep (QCT 5-step Step 3) at a
 stable post-cutover SHA — **owner-authorized 2026-07-02 (agenda #10)**; runs **before FE-PUB-02

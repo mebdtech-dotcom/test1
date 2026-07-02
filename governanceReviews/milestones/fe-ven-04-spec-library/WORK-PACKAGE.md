@@ -1,7 +1,9 @@
 # WORK PACKAGE — FE-VEN-04 remainder (P-VND-09 Spec Library)
 
 - **Lane:** G (contract-bound render; new build page)
-- **Reviewed-SHA record:** _(filled at 🔵A)_
+- **Reviewed-SHA record:** `4b4dc5c` (RV-0110: Review-A PASS @ `a52dc1e` → Review-B ISSUES 1 MINOR
+  [textarea `text-iv-ink-strong` token drift] → fixed @ `4b4dc5c` → re-submitted to Review-A per
+  Amendment v1.3 §13 unified re-review)
 - **Value:** Vendor Growth · **Priority:** P2 · **Size:** S · **Risk:** Low
 
 ## In scope
@@ -52,12 +54,23 @@ BLOCKER/REGRESSION/Flag-and-Halt/override only.
 ## Key dates
 
 Created 2026-07-02 · Started 2026-07-02 (owner: "you should not stop, just start the work, no
-approval required") · Scope complete 2026-07-02 · Closed —
+approval required") · Scope complete 2026-07-02 (checkpoint `a52dc1e`) · Fix-and-reverify cycle:
+Review-B MINOR (textarea `text-iv-ink-strong` token drift) raised → fixed → checkpoint `4b4dc5c` →
+re-entered Review-A per Amendment v1.3 §13 → **Closed 2026-07-02** (RV-0110, Dev-team self-close)
 
 ## DoD confirmation (checked at close)
 
-☐ page DoD (1 page) ☐ responsive D/T/M ☐ WCAG-AA ☐ tsc/eslint/prettier ☐ realistic mock data —
-N/A by design (genuine-empty pattern, consistent with the rest of the vendor workspace) ☐ Review A
-PASS ☐ Review B PASS (B/M/M = 0) ☐ self-closed on clean gate (or Board, if BLOCKER/REGRESSION) ☐ no
-TODO/dead code ☐ no duplicate components ☐ promotion candidates reviewed ☐ tracker updated ☐ card
-closed
+☑ page DoD (1 page) ☑ responsive D/T/M (Tailwind classes mirror `products-list.tsx`/`ad-list.tsx`;
+live-render-verified at `/workspace/company/spec-library`) ☑ WCAG-AA (dialog a11y wiring verified —
+`FormField` id↔label↔control, `DialogTitle`/`DialogDescription` correctly nested for Radix's
+automatic `aria-labelledby`/`aria-describedby`) ☑ tsc/eslint/prettier (independently re-verified
+across all four review passes) ☑ realistic mock data — N/A by design: genuine-empty pattern,
+consistent with the rest of the vendor workspace ☑ Review A PASS (RV-0110, 8 OBS @ `a52dc1e` + 5
+OBS re-entry @ `4b4dc5c`) ☑ Review B PASS after one fix-and-reverify cycle (RV-0110 — 1 MINOR found
++ fixed + independently re-verified resolved, 3 OBS + 5 OBS, B/M/M=0 final) ☑ self-closed on clean
+gate (Amendment v1.3 §13 — Board not invoked, no BLOCKER/REGRESSION/Flag-and-Halt raised) ☑ no
+TODO/dead code ☑ no duplicate components (the sole native `<textarea>` verified as a sanctioned
+kit-gap interim, not a duplicate) ☑ promotion candidates registered — none flagged; the
+`TEXTAREA_CLASS` gap routed as OBS housekeeping to a future FE-DS sweep (kit `Textarea` primitive,
+`ESC-7B-TEXTAREA`), not a promotion candidate ☑ tracker updated
+(current-focus/execution-board/team-3/fe-program-wbs/changelog) ☑ card closed
