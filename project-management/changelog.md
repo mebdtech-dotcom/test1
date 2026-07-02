@@ -154,3 +154,20 @@
 2026-07-02 · P-ADM-15 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0045)
 2026-07-02 · P-ACC-06 · ✅ Approved → ✅ committed · Owner: Team-1
 2026-07-02 · P-ACC-07 · ⬜ Pending → 🟡 In Progress · Owner: Team-1
+2026-07-02 · P-ADM-15 · ✅ Approved → ✅ committed (e411fed) · Owner: Team-3
+2026-07-02 · P-ADM-16 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-02 · P-ADM-16 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-02 · P-ADM-16 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0046)
+2026-07-02 · P-ACC-07 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-1
+2026-07-02 · P-BUY-27 · ✅ committed (2c7b7ec) · Owner: Team-2
+2026-07-02 · P-BUY-02 · ⬜ Pending → 🟡 In Progress · Owner: Team-2
+2026-07-02 · P-BUY-02 · 🟡 In Progress → 🟡 axe-BLOCKED (frozen-kit `[PLAT-P7]` CapabilityMatrix OFF-chip contrast 2.84:1 fails AA) · Owner: Team-2 — FLAG-AND-HALT, escalated to kit-owner/Board
+2026-07-02 · P-ADM-16 · ✅ Approved → ✅ committed (7408a5f) · Owner: Team-3
+2026-07-02 · P-ADM-17 · ⬜ Pending → 🟡 In Progress · Owner: Team-3
+2026-07-02 · P-ADM-17 · 🟡 In Progress → 🔵 Ready for Review · Owner: Team-3
+2026-07-02 · P-ACC-07 · 🔵 Ready for Review → ✅ Approved · Owner: Team-4 (RV-0047)
+2026-07-02 · P-BUY-02 · [PLAT-P7] frozen-kit AA fail VALID (Team-4 corroborated 2.85:1) — human/kit-owner-gated; stays blocked · Owner: Team-4
+2026-07-02 · [PLAT-P7] · RESOLVED — owner AUTHORIZED kit fix; `capability-matrix.tsx` compact OFF-chip drops opacity-70 → AA-safe muted ink (benefits all VendorCard consumers) · Owner: Team-2 (kit fix, owner-gated)
+2026-07-02 · P-BUY-02 · 🟡 axe-BLOCKED → 🔵 Ready for Review · Owner: Team-2 (axe GREEN 0 own-content after PLAT-P7 fix)
+2026-07-02 · P-ACC-07 · ✅ Approved → ✅ committed · Owner: Team-1
+2026-07-02 · P-ACC-08 · ⬜ Pending → 🟡 In Progress · Owner: Team-1

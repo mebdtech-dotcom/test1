@@ -11,24 +11,23 @@
 
 ## Team-1 — Public / Shared / Identity
 
-- **Current Page:** `P-ACC-07` Invite member (P1) — 🟡 In Progress (P-ACC-06 ✅ committed)
-- **Status:** 🟡 building (presentation-only; frozen `invite_member` + `revoke_invitation`, Doc-4C §C6)
-- **Next Page:** `P-ACC-08` Roles (P2, Ready)
+- **Current Page:** `P-ACC-08` Roles (P2) — 🟡 In Progress (P-ACC-07 ✅ committed)
+- **Status:** 🟡 building (presentation-only; T-LISTING; frozen `list_roles`, Doc-4C §C7)
+- **Next Page:** `P-ACC-09` Role editor (P2, Ready)
 - **Updated:** 2026-07-02
 
 ## Team-2 — Buyer
 
-- **Current Page:** `P-BUY-02` Discover vendors (P1) — ⬜ Pending (P-BUY-27 ✅ Approved, RV-0043; CRM cluster done). Next lowest ⬜ Ready
-- **Status:** ⬜ queued to build (remaining ⬜: P-BUY-02/03/04/05/10/11/12/13)
-- **Next Page:** `P-BUY-03` Vendor directory (in-app) (P2, Ready)
+- **Current Page:** `P-BUY-02` Discover vendors (P1) — 🔵 Ready for Review (axe GREEN after owner-authorized **PLAT-P7 kit fix**; 2-reviewer PASS; trust=binary Verified, capability=4-flag matrix, non-disclosure clean)
+- **Status:** 🔵 awaiting Team-4 review. **PLAT-P7 kit fix applied to `capability-matrix.tsx` (OFF-chip contrast → AA) — benefits ALL VendorCard consumers (Vendor/Public/Buyer); commits with P-BUY-02**
+- **Next Page:** `P-BUY-03` Vendor directory (P2, Ready) — also VendorCard (now AA-clean via PLAT-P7)
 - **Updated:** 2026-07-02
 
 ## Team-3 — Vendor / Verification / Admin
 
-- **Current Page:** `P-ADM-16` Outreach campaigns (P3) — ⬜ Pending (P-ADM-15 ✅ Approved, RV-0045). acquisition only
-- **Status:** ⬜ queued to build
-- **Next Page:** `P-ADM-17` Campaign detail (P3, Ready)
-- **Updated:** 2026-07-02
+- **Current Page:** `P-ADM-17` Campaign detail (P3) — 🔵 Ready for Review (campaign + contacts, awaiting Team-4)
+- **Status:** 🔵 Ready for Review — Run/Complete disabled (R5); contacts (jsonb stage illustrative); moat acquisition-only; notFound Inv #11
+- **Next Page:** `P-ADM-18` Outreach contacts (P3, Ready)
 - **Updated:** 2026-07-02
 
 ---
