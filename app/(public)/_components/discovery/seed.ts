@@ -371,11 +371,12 @@ export function getPublicVendorProducts(slug: string): ProductCardVM[] {
 
 // ── Public product detail (P-PUB-11 · FE-PUB-05, ADR-025 + Doc-4D v1.0.3 / Doc-5D v1.0.1). The
 //    composed Product Detail Projection: product core + a breadcrumb resolved by the frozen
-//    deterministic pick rule + related published products from the same vendor. NORMATIVE
-//    EXCLUSIONS carried from the folded contract: NO trust/performance values on this record itself
-//    (a page composes TrustBadge BESIDE it, never inside), NO price/currency, NO counts, NO
-//    buyer-private/entitlement facts. `vendor_slug` is resolved here for server-side href
-//    construction only — never rendered as bare text (ADR-024/ADR-025 builder-only discipline). ──
+//    deterministic pick rule. NORMATIVE EXCLUSIONS carried from the folded contract: NO
+//    trust/performance values on this record itself (a page composes the binary
+//    `VendorVerifiedBadge` BESIDE it, never inside), NO price/currency, NO counts, NO related
+//    items (carried separately to `ESC-7-API/related`), NO buyer-private/entitlement facts.
+//    `vendor_slug` is resolved here for server-side href construction only — never rendered as
+//    bare text (ADR-024/ADR-025 builder-only discipline). ──────────────────────────────────────
 
 const TAXONOMY = buildTaxonomyIndex(taxonomySeed.nodes as CategoryNodeData[], OVERLAY_V1);
 
