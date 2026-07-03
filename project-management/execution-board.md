@@ -168,7 +168,13 @@ round 2 (confirmatory) at `54e8d5f`: ISSUES again** — round 1's findings recon
 adversarial re-sweep found a THIRD instance of the recurring buyer-copy-carried-onto-vendor failure
 class (1 MAJOR: §2's description text contradicted the correct disclosure 70 lines later; 1 MINOR: a
 second stale comment). **Fixed at checkpoint `b1dad70`** — exhaustive re-sweep confirms no further
-instances. **Correctly re-entering at Review-A** (round 2) at `b1dad70` per Amendment v1.3 §13 —
+instances. **Correctly re-entering at Review-A** (round 2) at `b1dad70` per Amendment v1.3 §13.
+**Review-A round 2 (re-entry): REVISION** — a FOURTH instance: the real, frozen `loi`
+engagement-document kind was silently missing from §2's description and both `FACETS` lists,
+contradicting the correct per-row disclosure in the same component. **Fixed at checkpoint
+`c7ff7b7`** — §2 description + Document Type/Status facets all corrected; an exhaustive
+string-by-string comparison against the buyer hub confirms no further omissions. **Re-entering at
+Review-A round 3** at `c7ff7b7` per Amendment v1.3 §13 —
 Team-3 STOPS, holds for the gate → then `FE-DOC-03 Templates & Generated Documents` (S-dep on the
 FE-SH-01 ruling, kit-primitive-rows fallback documented in the packet). _(Out-of-scope note:
 FE-PUB-09 vendored `popover`/`accordion`/`navigation-menu` into `src/frontend/primitives` — verify

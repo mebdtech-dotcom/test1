@@ -39,6 +39,21 @@
   buyer-vs-vendor contrast, not a stale claim. tsc/eslint/prettier green.
   **Per the binding Amendment v1.3 §13 rule, this now correctly re-enters at Review-A** on
   checkpoint `b1dad70` — not a further Review-B-only cycle.
+  **RV-0131 Review-A round 2 (re-entry) at `b1dad70`: REVISION.** Both round-2 fixes reconfirmed
+  genuine; fork check + scope discipline clean across the whole history; static gates clean. A
+  maximally-adversarial re-sweep (explicitly briefed given the 3-prior-instance track record) found
+  a FOURTH instance: 1 MAJOR — §2's description omitted the real, frozen `loi` engagement-document
+  kind, contradicting the correct per-row disclosure 70 lines later in the same component (present
+  since the original `8c0cb40` draft, missed by every prior round); 1 MINOR — the `FACETS` lists
+  similarly omitted LOI and the frozen `Recorded`/`Confirmed` payment-record statuses. Both fixed at
+  `c7ff7b7` (§2 description now lists LOI; both facets gain their missing options).
+  `GENERATED_DOC_KIND_LABEL` deliberately left untouched — LOI is correctly absent there (a
+  different concept: generated-document kinds, not `engagement_document_kind`; byte-identical to
+  the buyer hub's own established map). Before this next submission, ran an exhaustive
+  string-by-string comparison of every user-facing string in this file against the buyer hub's
+  equivalents — the only remaining differences are legitimate, disclosed vendor-framing choices, no
+  further omissions found. tsc/eslint/prettier green. Re-entering at Review-A (round 3) on
+  checkpoint `c7ff7b7` per Amendment v1.3 §13.
 - **Value:** Vendor Growth · **Priority:** P1 · **Size:** M · **Risk:** Med
 
 ## In scope

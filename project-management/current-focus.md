@@ -114,24 +114,26 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   text and live render [`hasWorkflowTab:false`]. No leave-chrome trade-off this time — none of the
   3 reused components carries an internal link to another Account route)_
 - **Current Milestone (new):** `FE-DOC-02` Vendor Documents Hub — **🔵A Review-A (re-entry, round
-  2)** at checkpoint `b1dad70`. Round 1 Review-B ISSUES → fix → I mistakenly resubmitted straight to
-  a confirmatory Review-B, citing review-process.md §5's original re-entry nuance — **superseded by
-  Amendment v1.3 §13** ("any Review-B ISSUES... always re-enters at Review-A... no more B-only
-  re-entry shortcut"), caught by the confirmatory Review-B itself. That round-2 Review-B also found
-  a THIRD instance of this milestone's recurring failure class (buyer-shape content carried onto
-  the vendor track unchecked): 1 MAJOR [§2's description text was a near-verbatim buyer-hub
-  carryover contradicting the correct disclosure 70 lines later], 1 MINOR [a second stale "five
-  fixed routes" comment]. Both fixed at `b1dad70`; correctly re-entering at Review-A this time.
+  3)** at checkpoint `c7ff7b7`. Review-A round 2 (RV-0131) verdict: **REVISION** — a FOURTH instance
+  of the recurring buyer-carryover failure class: the real, frozen `loi` engagement-document kind
+  was silently missing from §2's description and both `FACETS` lists (Document Type, Status),
+  contradicting the correct per-row disclosure in the same component. Fixed at `c7ff7b7`; ran an
+  exhaustive string-by-string comparison against the buyer hub before this resubmission — only
+  legitimate, disclosed vendor-framing differences remain. Correctly re-entering at Review-A per
+  Amendment v1.3 §13 (my earlier round-1 process misstep — resubmitting straight to Review-B — is
+  now consistently followed correctly).
 - **Current Page:** _(sole in-scope page — LifecycleStrip/SearchBar/ViewChips/RecentlyOpenedStrip/
   FilterSidebar + 4 sections, reusing the shared documents home + vendor's own
-  `EngagementStatusChip`/`TradeInvoiceStatusChip`/`MoneyBoundaryBanner`. THREE route/copy-topology
+  `EngagementStatusChip`/`TradeInvoiceStatusChip`/`MoneyBoundaryBanner`. FOUR route/copy-topology
   defects caught and fixed across this milestone's build+review cycle, all disclosed plainly, none
   absorbed: (1) self-caught pre-submission [5 fabricated per-kind engagement routes], (2)
   Review-B-caught round 1 [1 fabricated quotation-detail route], (3) Review-B-caught round 2 [1
-  contradictory buyer-copy description + 1 stale comment]. Axe 0 violations attributable to this
-  milestone [1 pre-existing shared-shell `button-name` hit at mobile, same defect already disclosed
-  at `FE-DOC-01`'s own review, Board standing agenda #11] — Team-3 STOPS, holds for the gate)_
-- **Pipeline stage:** submitted to Review-A, re-entry round 2 (Lane G)
+  contradictory buyer-copy description + 1 stale comment], (4) Review-A-caught round 2 [LOI/
+  Recorded/Confirmed silently missing from enumeration text + facets]. Axe 0 violations
+  attributable to this milestone [1 pre-existing shared-shell `button-name` hit at mobile, same
+  defect already disclosed at `FE-DOC-01`'s own review, Board standing agenda #11] — Team-3 STOPS,
+  holds for the gate)_
+- **Pipeline stage:** submitted to Review-A, re-entry round 3 (Lane G)
 - **Next Milestone:** `FE-DOC-03 Templates & Generated Documents` (Track 7, WBS v1.2 — S-dep on the
   FE-SH-01 promotion ruling, Board agenda #13, fallback documented — groundwork submitted as
   `FE-SH-01/05/07/08 Shared Kit Promotion`, 🔵A 2026-07-03, WP card
@@ -143,14 +145,17 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
-- **`FE-DOC-02` Vendor Documents Hub** (Team-3) — 🔵A **re-entry, round 2**, checkpoint `b1dad70`;
+- **`FE-DOC-02` Vendor Documents Hub** (Team-3) — 🔵A **re-entry, round 3**, checkpoint `c7ff7b7`;
   WP card `governanceReviews/milestones/fe-doc-02-vendor-documents-hub/WORK-PACKAGE.md`. Per
-  Amendment v1.3 §13, any Review-B ISSUES always re-enters at A — this is that re-entry after round
-  2's Review-B found a third buyer-copy carryover (§2 description text + a stale comment), both
-  fixed. Lens hotspots (in addition to the standard fork/scope checks): re-verify no FOURTH instance
-  of the buyer→vendor copy-paste failure class survives anywhere in the feature folder — this
-  milestone has now had 3 confirmed instances (5 fake routes pre-submission, 1 fake quotation route
-  round 1, 1 contradictory description + 1 stale comment round 2).
+  Amendment v1.3 §13, any Review-A REVISION/Review-B ISSUES always re-enters at A — this is that
+  re-entry after round 2's Review-A (re-entry) found a FOURTH instance: LOI/Recorded/Confirmed
+  silently missing from §2's description + both `FACETS` lists, contradicting the correct per-row
+  disclosure in the same component; fixed. Lens hotspots (in addition to the standard fork/scope
+  checks): given the milestone's now-4-instance track record of the same buyer→vendor copy-paste
+  failure class (5 fake routes pre-submission, 1 fake quotation route round 1, 1 contradictory
+  description + 1 stale comment round 2, LOI/Recorded/Confirmed omission round 2-re-entry), do a
+  maximally adversarial exhaustive string/enum comparison against the buyer hub one more time before
+  clearing this gate.
 - **`FE-DOC-01` Buyer Documents Hub** (Team-2) — 🔵A submitted 2026-07-03 @ `3293009`; WP card
   `governanceReviews/milestones/fe-doc-01-buyer-documents-hub/WORK-PACKAGE.md` (carries the R1–R3
   owner-findings adjudication annex; lens hotspots: LifecycleStrip navigation-not-state, no coined
