@@ -1,7 +1,8 @@
 # WORK PACKAGE — FE-DOC-00 Charter & Governance Package
 
 - **Lane:** L (documentation/PM deliverable — FE-VEN-14 precedent; no product code)
-- **Reviewed-SHA record:** _(fill at submission)_
+- **Reviewed-SHA record:** `296b2d0` (the governance-package commit — all package files; coverage
+  verified PASS 150/150 pre-commit)
 - **Value:** Platform · **Priority:** P1 · **Size:** S · **Risk:** Low
 
 ## In scope (the deliverable)

@@ -34,7 +34,11 @@ export const BUYER_NAV: NavSection[] = [
   {
     id: "operations",
     label: "Operations",
-    items: [{ label: "Engagements", href: "/engagements", icon: "engagements" }],
+    items: [
+      { label: "Engagements", href: "/engagements", icon: "engagements" },
+      // FE-DOC-01 (P-DOC-01): the cross-workspace Documents hub, buyer leg (page_inventory §12).
+      { label: "Documents", href: "/documents", icon: "documents" },
+    ],
   },
   {
     id: "private",

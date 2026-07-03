@@ -6,6 +6,7 @@ import {
   CircleUserRound,
   ClipboardList,
   CreditCard,
+  Files,
   FileText,
   FolderTree,
   Globe,
@@ -52,6 +53,8 @@ export const NAV_ICONS = {
   approvals: CheckSquare,
   engagements: Briefcase,
   crm: Users,
+  // Cross-workspace Documents hub (FE-DOC, P-DOC-01/02 — page_inventory §8A/§12).
+  documents: Files,
   // Vendor workspace (Doc-7G).
   company: Building2,
   catalog: Package,
