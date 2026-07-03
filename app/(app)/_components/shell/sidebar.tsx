@@ -11,10 +11,91 @@ import { PanelLeft, PanelLeftClose } from "lucide-react";
 import { cn } from "@/frontend/lib/cn";
 import { Button } from "@/frontend/primitives/button";
 import { NAV_ICONS } from "./icons";
-import type { NavSection } from "./types";
+import type { NavItem, NavSection } from "./types";
 
 function isActive(pathname: string, href: string): boolean {
   return pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
+}
+
+/** A leaf link — used both for flat top-level items and for a group's indented children. */
+function NavLink({
+  item,
+  pathname,
+  collapsed,
+  indented,
+}: {
+  item: NavItem;
+  pathname: string;
+  collapsed: boolean;
+  indented?: boolean;
+}) {
+  const Icon = item.icon ? NAV_ICONS[item.icon] : null;
+  const active = isActive(pathname, item.href);
+  return (
+    <Link
+      href={item.href}
+      aria-current={active ? "page" : undefined}
+      title={collapsed ? item.label : undefined}
+      className={cn(
+        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        active
+          ? "bg-iv-nav-selected-bg text-iv-nav-selected-fg"
+          : "text-iv-nav-fg hover:bg-iv-nav-hover",
+        collapsed && "justify-center px-0",
+        indented && !collapsed && "py-1.5 pl-9 text-[13px] font-normal",
+      )}
+    >
+      {Icon && !indented ? <Icon className="size-4 shrink-0" aria-hidden="true" /> : null}
+      {!collapsed ? <span className="truncate">{item.label}</span> : null}
+      {!collapsed && typeof item.badge === "number" && item.badge > 0 ? (
+        <span
+          data-numeric
+          className="ml-auto rounded-full bg-iv-nav-badge-bg px-1.5 text-2xs tabular-nums text-iv-nav-badge-fg"
+        >
+          {item.badge}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
+/** A group header (e.g. "RFQs") with indented children (e.g. "My RFQs" / "Draft Requests"). The
+ *  header itself is NOT a link — `item.href` is a stable fallback, never rendered as `<a>` here. */
+function NavGroup({
+  item,
+  pathname,
+  collapsed,
+}: {
+  item: NavItem;
+  pathname: string;
+  collapsed: boolean;
+}) {
+  const Icon = item.icon ? NAV_ICONS[item.icon] : null;
+  const hasActiveChild = item.children?.some((c) => isActive(pathname, c.href)) ?? false;
+  return (
+    <li>
+      <div
+        title={collapsed ? item.label : undefined}
+        className={cn(
+          "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-iv-nav-fg",
+          hasActiveChild && "text-iv-nav-selected-fg",
+          collapsed && "justify-center px-0",
+        )}
+      >
+        {Icon ? <Icon className="size-4 shrink-0" aria-hidden="true" /> : null}
+        {!collapsed ? <span className="truncate">{item.label}</span> : null}
+      </div>
+      {!collapsed && item.children && item.children.length > 0 ? (
+        <ul className="flex flex-col gap-0.5">
+          {item.children.map((child) => (
+            <li key={child.href}>
+              <NavLink item={child} pathname={pathname} collapsed={collapsed} indented />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </li>
+  );
 }
 
 export function Sidebar({ nav }: { nav: NavSection[] }) {
@@ -51,37 +132,20 @@ export function Sidebar({ nav }: { nav: NavSection[] }) {
               </p>
             ) : null}
             <ul className="flex flex-col gap-0.5">
-              {section.items.map((item) => {
-                const Icon = item.icon ? NAV_ICONS[item.icon] : null;
-                const active = isActive(pathname, item.href);
-                return (
+              {section.items.map((item) =>
+                item.children && item.children.length > 0 ? (
+                  <NavGroup
+                    key={item.label}
+                    item={item}
+                    pathname={pathname}
+                    collapsed={collapsed}
+                  />
+                ) : (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      title={collapsed ? item.label : undefined}
-                      className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                        active
-                          ? "bg-iv-nav-selected-bg text-iv-nav-selected-fg"
-                          : "text-iv-nav-fg hover:bg-iv-nav-hover",
-                        collapsed && "justify-center px-0",
-                      )}
-                    >
-                      {Icon ? <Icon className="size-4 shrink-0" aria-hidden="true" /> : null}
-                      {!collapsed ? <span className="truncate">{item.label}</span> : null}
-                      {!collapsed && typeof item.badge === "number" && item.badge > 0 ? (
-                        <span
-                          data-numeric
-                          className="ml-auto rounded-full bg-iv-nav-badge-bg px-1.5 text-2xs tabular-nums text-iv-nav-badge-fg"
-                        >
-                          {item.badge}
-                        </span>
-                      ) : null}
-                    </Link>
+                    <NavLink item={item} pathname={pathname} collapsed={collapsed} />
                   </li>
-                );
-              })}
+                ),
+              )}
             </ul>
           </div>
         ))}

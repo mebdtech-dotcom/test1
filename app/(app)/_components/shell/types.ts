@@ -39,6 +39,14 @@ export interface NavItem {
   /** Optional count badge — MUST be non-disclosure-safe (Invariant #11; IA §4.1/§4.3). */
   badge?: number;
   disabled?: boolean;
+  /**
+   * Optional one-level grouping (IA — Buyer sidebar sub-groups, e.g. "RFQs" containing "My RFQs" /
+   * "Draft Requests" / "Closed RFQs"). When present, the client nav components (`Sidebar`/`MobileNav`)
+   * render this item as a non-interactive group header (icon + label, `href` unused for the header
+   * itself — kept as a stable fallback, never rendered as a link) followed by the indented children.
+   * A workspace that never sets `children` renders exactly as before (flat items) — additive, optional.
+   */
+  children?: NavItem[];
 }
 
 export interface NavSection {

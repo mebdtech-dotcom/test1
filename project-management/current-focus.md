@@ -67,22 +67,27 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   route topology → **reuse existing surfaces** (no new in-app directory/profile route); P-BUY-05
   favorites → **scope confirmed product/category, build stays held** on the display-projection
   gap. WP card: `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`.
-- **Current Page:** `P-BUY-01` — **BX-03 enhancement CLOSED** (RV-0133, `6316763`; owner-direct
-  edit + Team-2 verification pass): `WelcomeBand` welcome-back card on the populated dashboard
-  (single shared `BUYER_IDENTITY_SEED`, no second fabricated identity), `KpiStatCard` icon/tone
-  treatment (decorative, `StatusChip` tone vocabulary, buyer-scoped not a new kit primitive),
-  topbar search shortcut (`ShellViewModel.search`, additive/optional field — plain `Link` to the
-  real `/discover` route, GI-12-clean). tsc/eslint/prettier clean; axe 0 desktop, 1 mobile OBS
-  (pre-existing shell `quick-create` `button-name`, Board agenda #11, confirmed not this delta's
-  defect); confirmed the new optional shell field doesn't regress any of the other 21
-  `ShellViewModel` construction sites (vendor/admin/account all still render clean).
-  Prior page: P-BUY-04 closed as a link-out (no in-app route): `discover-view.tsx`'s
+- **Current Page:** **BX-04 CLOSED** (RV-0134; owner-directed in-session, verbatim 6-point
+  directive): the whole Buyer left-nav re-grouped into the canonical IA — Dashboard / Procurement
+  (RFQs·Quotations·Purchase Orders groups + Documents) / Marketplace (Vendor Directory·Saved
+  Vendors·Specification Library·Vendor CRM) / Communication (Messages·Notifications) / Analytics
+  (Reports & Analytics) / Organization (Team·Organization) / Account (Profile·Settings). Reuse
+  audited first: 8/24 leaves direct-reuse (incl. `/notifications`, previously built but never
+  nav-mounted — Board agenda #8), 2 reuse `/rfqs` via the real frozen `draft` state, `Archived
+  RFQs`→`Closed RFQs` (no fictional state coined), 4 already-shipped pages the mockup didn't name
+  (Approvals/Engagements/Documents/Vendor CRM) folded in rather than dropped. 8 leaves with zero
+  backing contract scaffolded via one new shared `ImplementationPendingView` — no fake data/filters
+  (GI-12). Shared shell extension: `NavItem.children?` (additive/optional), `Sidebar`+`MobileNav`
+  both updated, 3 new nav icons. tsc/eslint/prettier clean; all 22 routes live 200; axe 0 desktop
+  (1 pre-existing mobile OBS, Board agenda #11, not new); mobile drawer + vendor/admin regression
+  verified.
+  Prior page: **BX-03 enhancement CLOSED** (RV-0133, `6316763`; owner-direct
+  edit + Team-2 verification pass): `WelcomeBand` welcome-back card on the populated dashboard,
+  `KpiStatCard` icon/tone treatment, topbar search shortcut (`ShellViewModel.search`).
+  Before that: P-BUY-04 closed as a link-out (no in-app route): `discover-view.tsx`'s
   `VendorCard` href changed from the dead `/discover/${slug}` forward-ref to the live public
-  microsite `/vendors/${slug}` (P-PUB-13); `discover/page.tsx`'s `MOCK_VENDORS` re-aligned
-  field-for-field with the public discovery seed (`app/(public)/_components/discovery/seed.ts`
-  `VENDORS`) so every card's slug resolves against the microsite instead of two divergent mock
-  catalogs. P-BUY-03 superseded (no build, `/discover` = the directory). P-BUY-05 out of scope,
-  stays held.
+  microsite `/vendors/${slug}` (P-PUB-13). P-BUY-03 superseded (no build, `/discover` = the
+  directory). P-BUY-05 out of scope, stays held.
 - **Pipeline stage:** idle — `FE-DOC-01` ✅ **Approved** (RV-0129, A:PASS ∧ B:PASS, 0
   BLOCKER/MAJOR/MINOR both lanes, `3293009`; Review Team 5 marked approved 2026-07-03). `FE-DOC-00`
   deliverable COMPLETE @ `296b2d0` (✅ Approved, RV-0127, Lane-L, closes on deliverable, FE-VEN-14
@@ -92,10 +97,12 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   non-blocking. *(Available in parallel while gated — proposed `FE-PLAT-08` buyer workflow test
   coverage, `fe-program-wbs.md` Track 8, pending Board mint.)*
 - **Next Milestone:** no unambiguous next pull — `P-BUY-05` stays held on the target-resolution-read
-  projection gap (not a scope decision); `BX-04+` further Buyer UX enhancements are P2 and explicitly
-  owner-paced ("per owner, page-by-page after each review" — Phase F2 rule); `FE-DOC-02 → 03` are
-  Team-3-owned (vendor leg); `FE-PLAT-08` pending Board mint. Awaiting owner direction on which Buyer
-  deliverable to pull next.
+  projection gap (not a scope decision); `BX-05+` further Buyer UX enhancements are P2 and explicitly
+  owner-paced ("per owner, page-by-page after each review" — Phase F2 rule); the 6 BX-04-scaffolded
+  routes (`/quotations`, `/quotations/compare`, `/purchase-orders`, `/saved-vendors`,
+  `/spec-library`, `/messages`, `/reports`) each need their own additive contract before real
+  implementation; `FE-DOC-02 → 03` are Team-3-owned (vendor leg); `FE-PLAT-08` pending Board mint.
+  Awaiting owner direction on which Buyer deliverable to pull next.
 
 ## Team-3 — Vendor (FE-VEN)
 

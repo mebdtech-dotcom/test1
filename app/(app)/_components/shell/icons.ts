@@ -1,4 +1,6 @@
 import {
+  BarChart3,
+  Bell,
   Boxes,
   Briefcase,
   Building2,
@@ -17,6 +19,7 @@ import {
   Library,
   Lock,
   Megaphone,
+  MessageSquare,
   Package,
   Search,
   Settings,
@@ -71,6 +74,10 @@ export const NAV_ICONS = {
   roles: ShieldCheck,
   delegation: KeyRound,
   security: Lock,
+  // Buyer sidebar IA (BX-04) — Communication + Analytics groups.
+  notifications: Bell,
+  messages: MessageSquare,
+  reports: BarChart3,
 } as const satisfies Record<string, LucideIcon>;
 
 export type NavIconKey = keyof typeof NAV_ICONS;
