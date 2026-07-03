@@ -120,28 +120,24 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   forward not fabricated, independently confirmed by both review lanes against the actual report
   text and live render [`hasWorkflowTab:false`]. No leave-chrome trade-off this time — none of the
   3 reused components carries an internal link to another Account route)_
-- **Current Milestone (new):** `FE-DOC-02` Vendor Documents Hub — **🔵B Review-B** at checkpoint
-  `067c5c0`. Review-A round 5 (RV-0131) verdict: **PASS** — the 6-instance recurring-failure streak
-  is genuinely closed. Full end-to-end read of all 3 files + buyer-hub parity check: every frozen
-  enum enumeration complete, every claim grounded, all cross-file comments consistent. 2 OBS carried
-  (non-gating, byte-identical to the already-passed buyer hub): `FACETS` "Status" omits `cancelled`;
-  the "Pending approval" chip label's mild tension with the "no RFQ approvals" framing is
-  WP-card-prescribed and buyer-identical, declined to gate (Raise≠Accept — not overriding an
-  approved preset name). Dispatching Review-B on the same checkpoint next.
-- **Current Page:** _(sole in-scope page — LifecycleStrip/SearchBar/ViewChips/RecentlyOpenedStrip/
-  FilterSidebar + 4 sections, reusing the shared documents home + vendor's own
-  `EngagementStatusChip`/`TradeInvoiceStatusChip`/`MoneyBoundaryBanner`. SIX route/copy-topology
-  defects caught and fixed across this milestone's build+review cycle, all disclosed plainly, none
-  absorbed: (1) self-caught pre-submission [5 fabricated per-kind engagement routes], (2)
-  Review-B-caught round 1 [1 fabricated quotation-detail route], (3) Review-B-caught round 2 [1
-  contradictory buyer-copy description + 1 stale comment], (4) Review-A-caught round 2 [LOI/
-  Recorded/Confirmed silently missing from enumeration text + facets], (5) Review-A-caught round 3
-  [WCC silently missing from a second enumeration string], (6) Review-A-caught round 4 [1 invented,
-  ungrounded "quotation history" claim, self-contradicting the file's own disclosure]. Axe 0
-  violations attributable to this milestone [1 pre-existing shared-shell `button-name` hit at
-  mobile, same defect already disclosed at `FE-DOC-01`'s own review, Board standing agenda #11] —
-  Team-3 STOPS, holds for the gate)_
-- **Pipeline stage:** submitted to Review-B (Lane G)
+- **Current Milestone:** _(none — `FE-DOC-02` Vendor Documents Hub ✅ **Closed**, RV-0131, A:PASS ∧
+  B:PASS, B/M/M=0 both lanes at checkpoint `067c5c0`, Dev-team self-close per Amendment v1.3 §13.
+  **5 fix-and-reverify cycles, 6 confirmed instances** of buyer-track content/routes carried onto
+  the vendor track unchecked — (1) self-caught pre-submission [5 fabricated per-kind engagement
+  routes], (2) Review-B round 1 [1 fabricated quotation-detail route], (3) Review-B round 2 [1
+  contradictory buyer-copy description + 1 stale comment], (4) Review-A round 2 [LOI/Recorded/
+  Confirmed silently missing], (5) Review-A round 3 [WCC silently missing from a second
+  enumeration], (6) Review-A round 4 [1 invented, ungrounded "quotation history" claim]. Every
+  instance small, genuine, disclosed, fixed — the pipeline produced zero false positives across an
+  unusually long cycle. `FE-VEN-09/10/11/12/14` also ✅ Closed prior)_
+- **Current Page:** _(none — sole in-scope page shipped: LifecycleStrip/SearchBar/ViewChips/
+  RecentlyOpenedStrip/FilterSidebar + 4 sections, reusing the shared documents home + vendor's own
+  `EngagementStatusChip`/`TradeInvoiceStatusChip`/`MoneyBoundaryBanner`. Axe 0 violations
+  attributable to this milestone [1 pre-existing shared-shell `button-name` hit at mobile, Board
+  standing agenda #11]. 2 non-gating OBS carried, both byte-identical to the buyer hub: `FACETS`
+  "Status" omits `cancelled`; "Pending approval" chip label's mild framing tension, WP-card-
+  prescribed)_
+- **Pipeline stage:** idle
 - **Next Milestone:** `FE-DOC-03 Templates & Generated Documents` (Track 7, WBS v1.2 — S-dep on the
   FE-SH-01 promotion ruling, Board agenda #13, fallback documented — groundwork submitted as
   `FE-SH-01/05/07/08 Shared Kit Promotion`, 🔵A 2026-07-03, WP card
@@ -153,16 +149,6 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Review Team 4 — Architecture & Governance (A lane) — queue
 
-- **`FE-DOC-02` Vendor Documents Hub** (Team-3) — 🔵A **re-entry, round 3**, checkpoint `c7ff7b7`;
-  WP card `governanceReviews/milestones/fe-doc-02-vendor-documents-hub/WORK-PACKAGE.md`. Per
-  Amendment v1.3 §13, any Review-A REVISION/Review-B ISSUES always re-enters at A — this is that
-  re-entry after round 2's Review-A (re-entry) found a FOURTH instance: LOI/Recorded/Confirmed
-  silently missing from §2's description + both `FACETS` lists, contradicting the correct per-row
-  disclosure in the same component; fixed. **Now at round 5** (checkpoint `067c5c0`) after a 6th
-  instance (round 4: an invented "quotation history" claim, a new fabrication-not-omission failure
-  shape) — fixed by deletion. Lens hotspots: given the milestone's 6-instance track record, check
-  BOTH failure shapes this time — enum/route omissions AND invented/ungrounded claims — via a
-  genuine sentence-by-sentence grounding read of the whole file, not another mechanical diff.
 - **`FE-DOC-01` Buyer Documents Hub** (Team-2) — 🔵A submitted 2026-07-03 @ `3293009`; WP card
   `governanceReviews/milestones/fe-doc-01-buyer-documents-hub/WORK-PACKAGE.md` (carries the R1–R3
   owner-findings adjudication annex; lens hotspots: LifecycleStrip navigation-not-state, no coined
@@ -190,10 +176,10 @@ _(`FE-BUY-10` (Team-2) checkpointed 2026-07-03, awaiting Review-A — WP card
 
 ## Review Team 5 — Quality & Adversarial (B lane) — queue
 
-_(B-lane momentarily clear on `FE-DOC-02` — it round-tripped through 2 rounds of B:ISSUES
-  (RV-0131: round 1 a fabricated quotation route, round 2 a contradictory buyer-copy description +
-  stale comment, both fixed) and per Amendment v1.3 §13 is now back at Review-A round 2 [checkpoint
-  `b1dad70`] before it can return to this queue. `FE-VEN-12` cleared, RV-0125 A:PASS ∧
+_(B-lane clear — `FE-DOC-02` cleared, RV-0131 A:PASS ∧ B:PASS, B/M/M=0, closed by Team-3 after 5
+  fix-and-reverify cycles [6 confirmed instances of buyer-content/route carryover onto the vendor
+  track, every one caught, disclosed, fixed — 0 false positives across the whole cycle]. `FE-VEN-12`
+  cleared prior, RV-0125 A:PASS ∧
   B:PASS, closed by Team-3
   [Review-B by a live
   Team-5 session — composition-not-fork, P-ACC-13 exclusion, no-leave-chrome, render D/T/M+axe all
