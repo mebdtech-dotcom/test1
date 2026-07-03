@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/frontend/primitives/button";
 import { Card } from "@/frontend/primitives/card";
 import type { PublicVendorProfileVM } from "../discovery/seed";
+import { vendorHref } from "../vendor-url";
 
 export interface VendorMicrositeFooterProps {
   profile: PublicVendorProfileVM;
@@ -16,12 +17,11 @@ export interface VendorMicrositeFooterProps {
 }
 
 export function VendorMicrositeFooter({ profile, authHref }: VendorMicrositeFooterProps) {
-  const base = `/vendors/${profile.slug}`;
   const sectionLinks = [
-    { href: `${base}/about`, label: "About" },
-    { href: `${base}/products`, label: "Products" },
-    { href: `${base}/projects`, label: "Projects" },
-    { href: `${base}/contact`, label: "Contact" },
+    { href: vendorHref(profile.slug, "about"), label: "About" },
+    { href: vendorHref(profile.slug, "products"), label: "Products" },
+    { href: vendorHref(profile.slug, "projects"), label: "Projects" },
+    { href: vendorHref(profile.slug, "contact"), label: "Contact" },
   ];
 
   return (

@@ -20,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/frontend/primitives/sheet";
 import { cn } from "@/frontend/lib/cn";
+import { vendorHref, type VendorSubpage } from "../vendor-url";
 
 export interface VendorMicrositeNavigationProps {
   /** Vendor slug — the base for every route link (`/vendors/[slug]/…`). */
@@ -41,10 +42,10 @@ const NAV = [
 export function VendorMicrositeNavigation({ slug }: VendorMicrositeNavigationProps) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname() ?? "";
-  const base = `/vendors/${slug}`;
+  const base = vendorHref(slug);
 
   const items = NAV.map((n) => {
-    const href = n.segment ? `${base}/${n.segment}` : base;
+    const href = n.segment ? vendorHref(slug, n.segment as VendorSubpage) : base;
     // Home is active only on the exact base; a sub-route never lights Home. Others match exact or nested.
     const active = n.segment
       ? pathname === href || pathname.startsWith(`${href}/`)

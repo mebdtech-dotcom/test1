@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { vendorHref } from "../../../_components/vendor-url";
 
 // M2.7 back-compat redirect (ADR-022 / Doc-7D §10.2). "Certifications" is NOT a top-level route; its content
 // now lives on the Resources page. This stub preserves any existing/linked `/certifications` URL. (The
@@ -9,5 +10,5 @@ export default async function VendorCertificationsRedirect({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  redirect(`/vendors/${slug}/resources`);
+  redirect(vendorHref(slug, "resources"));
 }

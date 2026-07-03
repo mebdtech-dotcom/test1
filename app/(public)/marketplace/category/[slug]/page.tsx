@@ -17,6 +17,7 @@ import {
   VENDOR_FACETS,
 } from "../../../_components/discovery/seed";
 import { productDetailHref } from "../../../_components/product-detail";
+import { vendorHref } from "../../../_components/vendor-url";
 import { CategorySidebarTree } from "./category-sidebar-tree";
 
 // P-PUB-08 Category page (Doc-7D Public surface · FE-PUB-04; FE-PUB-09 **Category Landing
@@ -182,7 +183,7 @@ export default async function CategoryPage({
               footer={<PaginationControl hasMore hasPrevious={false} />}
             >
               {vendors.map((v) => (
-                <VendorCard key={v.slug} vendor={v} href={`/vendors/${v.slug}`} />
+                <VendorCard key={v.slug} vendor={v} href={vendorHref(v.slug)} />
               ))}
             </ResultsGrid>
           ) : (

@@ -4,6 +4,7 @@ import { Button } from "@/frontend/primitives/button";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { VendorVerifiedBadge } from "../_components/microsite/vendor-verified-badge";
 import { VENDORS } from "../_components/discovery/seed";
+import { vendorHref } from "../_components/vendor-url";
 import { cn } from "@/frontend/lib/cn";
 
 // Public Compare route (`/compare`) — P-PUB-20 (Doc-7D Public surface · T-DETAILS; screen_specifications
@@ -140,7 +141,7 @@ export default async function ComparePage({
                         <th key={v.slug} scope="col" className="px-4 py-3 text-left align-top">
                           <div className="flex items-start justify-between gap-2">
                             <Link
-                              href={`/vendors/${v.slug}`}
+                              href={vendorHref(v.slug)}
                               className="font-semibold text-foreground underline-offset-2 hover:underline"
                             >
                               {v.name}

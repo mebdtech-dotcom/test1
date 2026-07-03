@@ -13,6 +13,7 @@ import {
   getCompanyContent,
 } from "../../_components/microsite";
 import { getPublicVendorProfile, getPublicVendorProducts } from "../../_components/discovery/seed";
+import { vendorHref } from "../../_components/vendor-url";
 import { getVendorOr404 } from "./get-vendor";
 
 // P-PUB-13 Vendor Microsite — HOME / landing page (M2.7 · ADR-022 / Doc-7D §10). PRESENTATION & COMPOSITION
@@ -31,9 +32,15 @@ export async function generateMetadata({
   const { slug } = await params;
   const profile = getPublicVendorProfile(slug);
   if (!profile) return { title: "Vendor · iVendorz" };
+  // FE-PUB-10: canonical + og:url built via the ONE canonical URL builder (ADR-024 Decision 6 /
+  // Doc-7D §11.8) — the interim path shape today; CHR-resolved subdomain once the backend read
+  // lands, still through this same builder (single swap point, no call-site change).
+  const canonical = vendorHref(slug);
   return {
     title: `${profile.name} · iVendorz`,
     description: profile.about ?? `${profile.name} — ${profile.category} on iVendorz.`,
+    alternates: { canonical },
+    openGraph: { url: canonical },
   };
 }
 
@@ -66,7 +73,7 @@ export default async function VendorHomePage({ params }: { params: Promise<{ slu
       <VendorSection
         id="capabilities"
         title="Capabilities"
-        action={viewAll(`/vendors/${slug}/about`)}
+        action={viewAll(vendorHref(slug, "about"))}
       >
         <CapabilitySection capabilityFlags={profile.capability} capabilities={coreCapabilities} />
       </VendorSection>
@@ -74,7 +81,7 @@ export default async function VendorHomePage({ params }: { params: Promise<{ slu
       <VendorSection
         id="featured-products"
         title="Featured products"
-        action={viewAll(`/vendors/${slug}/products`)}
+        action={viewAll(vendorHref(slug, "products"))}
       >
         <ProductShowcase products={featuredProducts} authHref={AUTH_HREF} />
       </VendorSection>
@@ -82,7 +89,7 @@ export default async function VendorHomePage({ params }: { params: Promise<{ slu
       <VendorSection
         id="featured-projects"
         title="Featured projects"
-        action={viewAll(`/vendors/${slug}/projects`)}
+        action={viewAll(vendorHref(slug, "projects"))}
       >
         <ProjectShowcase projects={featuredProjects} />
       </VendorSection>
@@ -90,7 +97,7 @@ export default async function VendorHomePage({ params }: { params: Promise<{ slu
       <VendorSection
         id="industries"
         title="Industries served"
-        action={viewAll(`/vendors/${slug}/industries`)}
+        action={viewAll(vendorHref(slug, "industries"))}
       >
         <IndustryGrid industries={topIndustries} />
       </VendorSection>
@@ -105,7 +112,7 @@ export default async function VendorHomePage({ params }: { params: Promise<{ slu
               <Link href={AUTH_HREF}>Request quote</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href={`/vendors/${slug}/contact`}>Contact</Link>
+              <Link href={vendorHref(slug, "contact")}>Contact</Link>
             </Button>
           </div>
         </Card>

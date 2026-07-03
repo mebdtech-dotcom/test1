@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { vendorHref } from "../../../_components/vendor-url";
 
 // M2.7 back-compat redirect (ADR-022 / Doc-7D §10.2). "Capabilities" is NOT one of the seven top-level routes;
 // its content now lives on the About page. This stub preserves any existing/linked `/capabilities` URL. (The
@@ -9,5 +10,5 @@ export default async function VendorCapabilitiesRedirect({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  redirect(`/vendors/${slug}/about`);
+  redirect(vendorHref(slug, "about"));
 }

@@ -5,6 +5,7 @@ import { ResultsGrid } from "@/frontend/components/results-grid";
 import { PaginationControl } from "@/frontend/components/pagination-control";
 import { SearchBar } from "@/frontend/components/search-bar";
 import { VENDORS, VENDOR_FACETS } from "../_components/discovery/seed";
+import { vendorHref } from "../_components/vendor-url";
 
 // P-PUB-12 Vendor Directory (Doc-7D Public surface · landing_page_spec §5). PRESENTATION & COMPOSITION
 // ONLY: anonymous, read-only, binds NO Doc-5 contract. Composes the M2.1 VendorCard (no new card type)
@@ -57,7 +58,7 @@ export default function VendorsPage() {
             footer={<PaginationControl hasMore hasPrevious={false} />}
           >
             {VENDORS.map((vendor) => (
-              <VendorCard key={vendor.slug} vendor={vendor} href={`/vendors/${vendor.slug}`} />
+              <VendorCard key={vendor.slug} vendor={vendor} href={vendorHref(vendor.slug)} />
             ))}
           </ResultsGrid>
         </div>

@@ -11,6 +11,7 @@
 import { LandingSection } from "@/frontend/components/landing-section";
 import { VendorCard } from "@/frontend/components/vendor-card";
 import { FEATURED_VENDORS } from "../discovery/seed";
+import { vendorHref } from "../vendor-url";
 
 export function SupplierShowcase() {
   return (
@@ -23,7 +24,7 @@ export function SupplierShowcase() {
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {FEATURED_VENDORS.map((vendor) => (
-          <VendorCard key={vendor.slug} vendor={vendor} href={`/vendors/${vendor.slug}`} />
+          <VendorCard key={vendor.slug} vendor={vendor} href={vendorHref(vendor.slug)} />
         ))}
       </div>
     </LandingSection>

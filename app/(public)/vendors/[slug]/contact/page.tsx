@@ -6,6 +6,7 @@ import {
   getCompanyContent,
 } from "../../../_components/microsite";
 import { getPublicVendorProfile } from "../../../_components/discovery/seed";
+import { vendorHref } from "../../../_components/vendor-url";
 import { getVendorOr404 } from "../get-vendor";
 
 // Vendor Microsite — CONTACT page (M2.7 · ADR-022 / Doc-7D §10). Address + business hours (editorial, open);
@@ -23,9 +24,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const profile = getPublicVendorProfile(slug);
   if (!profile) return { title: "Vendor · iVendorz" };
+  // FE-PUB-10: canonical + og:url via the ONE canonical URL builder (ADR-024 Decision 6 / Doc-7D
+  // §11.8) — see `vendors/[slug]/page.tsx` for the full rationale.
+  const canonical = vendorHref(slug, "contact");
   return {
     title: `Contact · ${profile.name} · iVendorz`,
     description: `Get in touch with ${profile.name} on iVendorz.`,
+    alternates: { canonical },
+    openGraph: { url: canonical },
   };
 }
 

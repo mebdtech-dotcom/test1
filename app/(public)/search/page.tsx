@@ -11,6 +11,7 @@ import { ResultsGrid } from "@/frontend/components/results-grid";
 import { ErrorState } from "@/frontend/components/error-state";
 import { PaginationControl } from "@/frontend/components/pagination-control";
 import { ProductDetail, productDetailHref } from "../_components/product-detail";
+import { vendorHref } from "../_components/vendor-url";
 import { Skeleton } from "@/frontend/primitives/skeleton";
 import { Button } from "@/frontend/primitives/button";
 import { cn } from "@/frontend/lib/cn";
@@ -174,7 +175,7 @@ export default async function SearchPage({
           footer={<PaginationControl hasMore hasPrevious={false} />}
         >
           {vendors.map((v) => (
-            <VendorCard key={v.slug} vendor={v} href={`/vendors/${v.slug}`} />
+            <VendorCard key={v.slug} vendor={v} href={vendorHref(v.slug)} />
           ))}
         </ResultsGrid>
       );
@@ -241,7 +242,7 @@ export default async function SearchPage({
         // (route-wise) per the [ESC-7-API-PRODDETAIL] interim; "Back to results" returns to the list.
         <ProductDetail
           product={detail}
-          vendorHref={`/vendors/${detail.vendorSlug}`}
+          vendorHref={vendorHref(detail.vendorSlug)}
           backHref={q ? `/search?q=${encodeURIComponent(q)}` : "/search"}
           authHref="/login"
           related={PRODUCTS.filter(
