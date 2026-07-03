@@ -43,6 +43,7 @@ export const VENDOR_NAV: NavSection[] = [
       { label: "RFQs & Quotations", href: `${BASE}/rfqs`, icon: "quotations" },
       { label: "Leads & Pipeline", href: `${BASE}/leads`, icon: "pipeline" },
       { label: "Engagements", href: `${BASE}/engagements`, icon: "deals" },
+      { label: "Documents", href: `${BASE}/documents`, icon: "documents" },
     ],
   },
   {
