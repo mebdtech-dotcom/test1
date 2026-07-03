@@ -71,12 +71,13 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   surviving clean dev server confirms `/discover` 200 with all 8 cards linking `/vendors/[slug]`,
   and `/vendors/padma-valve-fittings` 200 rendering the matching "Padma Valve & Fittings Ltd."
   profile — card identity and microsite identity now match end-to-end.
-- **Pipeline stage:** ✅ APPROVED (A:PASS ∧ B:PASS, RV-0117) — Team-2 to commit + start next
-- **Next Milestone:** `FE-DOC-00 Charter & Governance Package` → `FE-DOC-01 Buyer Documents Hub`
-  (Track 7 — owner Board-minted 2026-07-03, WBS v1.2; FE-DOC-00 = Lane-L mint/ESC/packet
-  deliverable, then the buyer hub build starts immediately per owner decision 3; WP cards
-  `governanceReviews/milestones/fe-doc-00-governance-charter/` +
-  `fe-doc-01-buyer-documents-hub/`).
+- **Pipeline stage:** `FE-DOC-01` 🔵A Review-A @ `3293009` — Team-2 STOPS (no further pull before
+  gate). `FE-DOC-00` deliverable COMPLETE @ `296b2d0` (Lane-L pass pending; closes on deliverable,
+  FE-VEN-14 precedent — Board rulings on packet items stay open without blocking).
+- **Next Milestone:** _(after the FE-DOC-01 gate)_ — Team-3 holds `FE-DOC-02 → 03`; `FE-DOC-04`
+  Board-assign. Track 7 minted 2026-07-03 (WBS v1.2, universe 144 → 150, coverage PASS 150/150);
+  WP cards `governanceReviews/milestones/fe-doc-00-governance-charter/` +
+  `fe-doc-01-buyer-documents-hub/` (R1–R3 owner-findings adjudication annex).
 
 ## Team-3 — Vendor (FE-VEN)
 
@@ -102,6 +103,13 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 ---
 
 ## Review Team 4 — Architecture & Governance (A lane) — queue
+
+- **`FE-DOC-01` Buyer Documents Hub** (Team-2) — 🔵A submitted 2026-07-03 @ `3293009`; WP card
+  `governanceReviews/milestones/fe-doc-01-buyer-documents-hub/WORK-PACKAGE.md` (carries the R1–R3
+  owner-findings adjudication annex; lens hotspots: LifecycleStrip navigation-not-state, no coined
+  kinds/facets, opaque counterparty refs, `?q=` refine-not-search, shared-home boundary).
+- **`FE-DOC-00` Charter & Governance Package** (Team-2) — Lane-L deliverable @ `296b2d0`
+  (docs/PM only; coverage 150/150; closes on deliverable per the FE-VEN-14 precedent).
 
 _(`FE-BUY-10` (Team-2) checkpointed 2026-07-03, awaiting Review-A — WP card
   `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`. Otherwise clear —

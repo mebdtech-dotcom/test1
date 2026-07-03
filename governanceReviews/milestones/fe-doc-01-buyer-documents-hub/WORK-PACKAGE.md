@@ -1,7 +1,8 @@
 # WORK PACKAGE — FE-DOC-01 Buyer Documents Hub
 
 - **Lane:** G (cross-module presentation composition; DF-6/R6/R7/Inv#8/Inv#11 adjacency)
-- **Reviewed-SHA record:** _(fill at submission)_
+- **Reviewed-SHA record:** `3293009` (scope complete — P-DOC-01 + shared documents home + the two
+  disclosed touches; package precursor `296b2d0`)
 - **Value:** Buyer Productivity · **Priority:** P1 · **Size:** M · **Risk:** Med
 
 ## In scope
@@ -104,7 +105,7 @@ Amendment v1.3 §13 (Dev-team self-close on clean A:PASS ∧ B:PASS).
 ## Key dates
 
 Created 2026-07-03 · Started 2026-07-03 (owner decision 3: package then immediate build) ·
-Closed —
+Submitted to Review-A 2026-07-03 @ `3293009` · Closed —
 
 ## Owner findings adjudication annex (§13 Validate-Findings record — Raise ≠ Accept)
 

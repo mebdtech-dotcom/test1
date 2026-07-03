@@ -54,11 +54,12 @@ record uncommitted] + start next; owner resolved both gating decisions 2026-07-0
 surfaces for P-BUY-03/04, hold P-BUY-05 build; P-BUY-04 link-out repointed to the public microsite,
 8/8 buyer slugs resolve, favorites correctly held; WP card
 `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`).
-**Next pull: `FE-DOC-00 Charter & Governance Package` → `FE-DOC-01 Buyer Documents Hub`**
-(Track 7, WBS v1.2 — owner Board-minted 2026-07-03; FE-DOC-00 = Lane-L docs/PM deliverable
-[mint + ESC rows + packet], closes on deliverable; FE-DOC-01 starts immediately after per owner
-decision 3; WP cards `governanceReviews/milestones/fe-doc-00-governance-charter/` +
-`fe-doc-01-buyer-documents-hub/`).
+`FE-DOC-00 Charter & Governance Package` — **deliverable COMPLETE @ `296b2d0`, 🔵A Lane-L**
+(Track 7 minted: WBS v1.2, universe 144 → 150, coverage PASS 150/150, 3 ESC rows, Board packet
+[agenda #13]; closes on deliverable, FE-VEN-14 precedent) · `FE-DOC-01 Buyer Documents Hub` —
+**🔵A Review-A @ `3293009`** (built same session per owner decision 3; walkthrough 7/7 + deep
+links 8/8; WP cards `governanceReviews/milestones/fe-doc-00-governance-charter/` +
+`fe-doc-01-buyer-documents-hub/`). **Team-2 STOPS before the gate.**
 
 **Team-3 (Vendor):**
 ~~FE-VEN-05~~ ✅ **Closed** (RV-0101 @ `e2f8642`) · ~~FE-VEN-06~~ ✅ **Closed** (RV-0103 @
