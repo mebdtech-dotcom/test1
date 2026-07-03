@@ -1,4 +1,4 @@
-import type { NotificationItem } from "../_components/shell";
+import type { NotificationItem } from "../../_components/shell";
 
 // Presentation SEED for the notification surfaces (P-SH-02 full page + the topbar dropdown). A wired build
 // resolves these from the M6 notification read (Doc-5H §5); until then they are a benign, static preview.

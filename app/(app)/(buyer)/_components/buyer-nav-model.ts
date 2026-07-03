@@ -24,6 +24,20 @@
 // Specification Library, Messages, Reports & Analytics) have no frozen-corpus read behind them yet —
 // each RESERVES its route via `ImplementationPendingView` (see each `page.tsx`'s own header comment
 // for exactly what's missing) rather than a dead link or fabricated data.
+//
+// SHELL-PERSISTENCE BUG FIX (2026-07-03): Team/Organization/Profile/Settings/Notifications originally
+// pointed at `/account/members|organization|profile|settings` and `/notifications` — all OUTSIDE the
+// `(buyer)` route group, each with its OWN `layout.tsx` mounting a DIFFERENT `ShellViewModel` (a
+// generic Account/shell nav, not `BUYER_NAV`), so every click was a real layout-tree remount
+// (verified empirically with a DOM probe). Fixed the same way the Vendor track already fixed the
+// identical problem (FE-VEN-10/11/12, composition-not-fork, Board-ruled Option B): new buyer-mounted
+// pages (`(buyer)/team`, `/organization`, `/profile`, `/settings`) compose the EXISTING, UNMODIFIED
+// Account view components (`MembersView`, `OrganizationProfile`, `UserProfileForm`,
+// `SecuritySettings`, `NotificationPreferences`) inside the persistent Buyer shell; `/notifications`
+// (a shared P-SH-02 page with zero non-buyer consumers, repo-wide grepped) was relocated bodily into
+// `(buyer)/notifications/` at the SAME URL. The original `/account/*` routes are untouched — Account
+// stays the canonical surface for anyone landing there directly; these are ADDITIONAL buyer-native
+// entry points, not a fork.
 import type { NavItem, NavSection, QuickCreateItem } from "../../_components/shell";
 
 export const BUYER_NAV: NavSection[] = [
@@ -94,16 +108,16 @@ export const BUYER_NAV: NavSection[] = [
     id: "organization",
     label: "Organization",
     items: [
-      { label: "Team", href: "/account/members", icon: "team" },
-      { label: "Organization", href: "/account/organization", icon: "org" },
+      { label: "Team", href: "/team", icon: "team" },
+      { label: "Organization", href: "/organization", icon: "org" },
     ],
   },
   {
     id: "account",
     label: "Account",
     items: [
-      { label: "Profile", href: "/account/profile", icon: "account" },
-      { label: "Settings", href: "/account/settings", icon: "settings" },
+      { label: "Profile", href: "/profile", icon: "account" },
+      { label: "Settings", href: "/settings", icon: "settings" },
     ],
   },
 ];

@@ -81,7 +81,7 @@ FE-PF-01 Design Tokens ✅ (ongoing ownership → FE-DS) · FE-PF-03 Platform Sh
 
 | ID · Title | Value | Pri | Sz | Rk | Depends-on | Owns | Status · Scope |
 |---|---|---|---|---|---|---|---|
-| FE-BUY-01 Dashboard | Buyer Productivity | — | — | — | — | P-BUY-01 | ✅ Complete (BX-01, RV-0070) — **BX-03 enhancement CLOSED** (RV-0133, `6316763`): WelcomeBand + KpiStatCard icon/tone + topbar search shortcut, owner-direct edit + Team-2 verification pass. **BX-04 enhancement CLOSED** (RV-0134): canonical Buyer sidebar IA — touches the shared shell (`NavItem.children`, additive) not just P-BUY-01, see `team-2.md` BX-04 row |
+| FE-BUY-01 Dashboard | Buyer Productivity | — | — | — | — | P-BUY-01 | ✅ Complete (BX-01, RV-0070) — **BX-03 enhancement CLOSED** (RV-0133, `6316763`): WelcomeBand + KpiStatCard icon/tone + topbar search shortcut, owner-direct edit + Team-2 verification pass. **BX-04 enhancement CLOSED** (RV-0134): canonical Buyer sidebar IA — touches the shared shell (`NavItem.children`, additive) not just P-BUY-01, see `team-2.md` BX-04 row. **BX-05 bug fix CLOSED** (RV-0135): accordion sidebar + fixed a real shell-remount bug on 5 nav items (Team/Organization/Profile/Settings/Notifications), see `team-2.md` BX-05 row |
 | FE-BUY-02 RFQ Workspace | Procurement Moat | — | — | — | — | P-BUY-06/07/08, P-BUY-10..13 | ✅ Complete (BX-02, RV-0075; F1 freeze audit covers 🟩 stock) |
 | FE-BUY-03 Quotations | Procurement Moat | — | — | — | — | P-BUY-09 | ✅ Complete |
 | FE-BUY-04 Quotation Detail | Procurement Moat | P1 | M | Med | — | P-BUY-14, P-BUY-16 | ✅ Complete (RV-0102, board-approved 2026-07-02 @ `5a4550c`) — **the awaited BX-03**: quotation presentation + clarification thread |

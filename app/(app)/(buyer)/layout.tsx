@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 import { AppShell, type ShellViewModel } from "../_components/shell";
 import { BUYER_NAV, BUYER_QUICK_BAR, BUYER_QUICK_CREATE } from "./_components/buyer-nav-model";
 import { BUYER_IDENTITY_SEED } from "./_components/identity-seed";
+import { NOTIFICATIONS, UNREAD_COUNT } from "./notifications/notifications-seed";
 
 const BUYER_SHELL_VM: ShellViewModel = {
   identity: {
@@ -22,6 +23,10 @@ const BUYER_SHELL_VM: ShellViewModel = {
   // Discover doubles as the buyer's supplier/vendor search surface (`search_catalog`, Doc-4D §B) — a
   // legitimate destination, unlike a fabricated live-search box (GI-12). Presentation-only nav shortcut.
   search: { placeholder: "Search vendors, RFQs…", href: "/discover" },
+  // BX-04 bug fix: the SAME seed the full `/notifications` page (relocated into this route group)
+  // reads, so the topbar bell dropdown and the full page stay a single source, as before.
+  notifications: NOTIFICATIONS,
+  unreadCount: UNREAD_COUNT,
 };
 
 export default function BuyerLayout({ children }: { children: ReactNode }) {

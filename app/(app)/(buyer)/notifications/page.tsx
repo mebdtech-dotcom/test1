@@ -1,17 +1,26 @@
-import { Bell, Info } from "lucide-react";
-import { PageHeader } from "../_components/shell/page-header";
-import { StatusChip } from "@/frontend/components/status-chip";
-import { EmptyState } from "@/frontend/components/empty-state";
-import { Button } from "@/frontend/primitives/button";
-import { cn } from "@/frontend/lib/cn";
-import { NOTIFICATIONS, UNREAD_COUNT } from "./notifications-seed";
-
 // Notification center — full page (`/notifications`) — P-SH-02 (Doc-7C Shared Authenticated Shell ·
-// T-LISTING; IA §5.4). A SERVER COMPONENT; ROUTING + COMPOSITION ONLY, mounted in the Platform Shell by
-// the co-located layout. This is the full-history view of the same M6 notifications shown in the topbar
-// dropdown (NotificationCenter) — a different presentation of one source (notifications-seed.ts).
+// T-LISTING; IA §5.4). A SERVER COMPONENT; ROUTING + COMPOSITION ONLY, mounted in the Platform Shell.
 //
-// FIELD DISCIPLINE (invent nothing):
+// RELOCATED into `(buyer)/` (BX-04 bug fix, 2026-07-03): this page previously lived at the bare
+// `app/(app)/notifications/` top level with its own `layout.tsx` mounting a DIFFERENT ShellViewModel
+// (the generic `ACCOUNT_NAV`) — every buyer click into Notifications was a real Next.js layout-tree
+// remount (verified empirically: a DOM probe attached to the sidebar did not survive navigation),
+// swapping out the Buyer sidebar/topbar entirely. The original `layout.tsx`'s own header comment
+// already flagged this as unresolved ("SHELL PLACEMENT... not settled in the corpus... flagged for
+// Team-4"). Zero non-buyer code referenced `/notifications` (grepped repo-wide) — buyer was its only
+// real consumer, so relocating it under `(buyer)/` resolves the OBS in the direction the evidence
+// already pointed, at the SAME URL (`(buyer)` is a route group, invisible in the path — no link
+// anywhere needed to change). If a vendor/admin notification center is ever needed, it mints its own
+// path under `/workspace/*` or `/admin/*`, the same pattern every other cross-workspace concept in
+// this codebase already follows (e.g. vendor's own `/workspace/settings`, `/workspace/organization`).
+// The old top-level `app/(app)/notifications/` (page + layout + seed) is deleted, not left dangling.
+//
+// This is the full-history view of the same M6 notifications shown in the topbar dropdown
+// (NotificationCenter) — a different presentation of one source (`notifications-seed.ts`, now
+// co-located here and fed into the Buyer shell's `ShellViewModel.notifications` by `../layout.tsx`,
+// so the bell count and this page stay consistent, exactly as before the relocation).
+//
+// FIELD DISCIPLINE (invent nothing) — unchanged from the pre-relocation page:
 //  • Renders ONLY the frozen `NotificationItem` fields {id,title,body?,href?,read?,timeLabel?}. The frozen
 //    projection has NO notification "type"/"category"/"archived" field, so the spec's optional Archived tab
 //    + type filter + per-type columns are DEFERRED (they need a richer M6 read — [ESC-7-API]); none is
@@ -22,6 +31,13 @@ import { NOTIFICATIONS, UNREAD_COUNT } from "./notifications-seed";
 //  • Manage actions (mark read / archive — Doc-5H §5) are DEFERRED (no wired mutation); the control is
 //    present but disabled and labelled as a preview. Pagination is deferred with the wired cursor read — no
 //    fabricated totals (GI-03). Binds no Doc-5 contract. The page owns the single `<h1>` (via PageHeader).
+import { Bell, Info } from "lucide-react";
+import { PageHeader } from "../../_components/shell/page-header";
+import { StatusChip } from "@/frontend/components/status-chip";
+import { EmptyState } from "@/frontend/components/empty-state";
+import { Button } from "@/frontend/primitives/button";
+import { cn } from "@/frontend/lib/cn";
+import { NOTIFICATIONS, UNREAD_COUNT } from "./notifications-seed";
 
 const FILTERS = [
   { key: "all", label: "All" },
