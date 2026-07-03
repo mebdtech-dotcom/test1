@@ -288,14 +288,16 @@ export function DocumentsHubView({ data }: { data: DocumentsHubData }) {
               </p>
             </DocumentCollection>
 
-            {/* §2 — engagement document records (links to the five fixed routes; timeline restates facts). */}
+            {/* §2 — engagement document records (link to the one real engagement detail page;
+                timeline restates facts). UNLIKE the buyer leg, the vendor track has no per-kind
+                document sub-routes — see this file's own header for the full disclosure. */}
             <DocumentCollection
               id="engagement-documents"
               title={active_view === "pending" ? "Needs attention" : "Engagement document records"}
               description={
                 active_view === "pending"
                   ? "Trade invoices in an attention status."
-                  : "Per-engagement records — purchase order, challan, trade invoice, payments, and WCC live on their own pages."
+                  : "Per-engagement records — purchase order, challan, trade invoice, payments, and WCC live on each engagement's Documents tab."
               }
             >
               {active_view === "pending" ? (
