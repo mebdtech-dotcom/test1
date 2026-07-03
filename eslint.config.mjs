@@ -24,6 +24,9 @@ const config = [
       "playwright-report/**",
       "test-results/**",
       "next-env.d.ts",
+      // Standalone v0 design-reference project (its own package.json/deps, not installed in this
+      // workspace) — a style/token reference only, not part of the governed app.
+      "buyer-dashboard-layout/**",
     ],
   },
 

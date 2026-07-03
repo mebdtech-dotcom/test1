@@ -67,27 +67,26 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   route topology → **reuse existing surfaces** (no new in-app directory/profile route); P-BUY-05
   favorites → **scope confirmed product/category, build stays held** on the display-projection
   gap. WP card: `governanceReviews/milestones/fe-buy-10-discovery-favorites/WORK-PACKAGE.md`.
-- **Current Page:** **BX-05 CLOSED** (RV-0135; owner bug report — accordion sidebar + "Preserve
+- **Current Page:** **BX-06 CLOSED** (RV-0136; owner request — match the dashboard to the
+  `buyer-dashboard-layout/` v0 reference in "color, font size, style"). The reference's color
+  palette (Indigo-primary) predates and conflicts with the 2026-06-30 Navy-dominant brand
+  migration — escalated live rather than deciding unilaterally; **owner chose keep Navy, style
+  only**. Bigger KPI value text (`text-3xl`), bigger icon badges, roomier card padding, bigger
+  greeting text, mobile-first KPI grid. Caught + fixed a real regression before shipping: the
+  bigger value text overflowed the "Spend" KPI card (CSS Grid's default `min-width:auto`) — fixed
+  with `min-w-0`+`break-words`, re-verified via screenshots on both `KpiStatCard` consumers.
+  Adjacent hygiene fix: excluded the newly-staged `buyer-dashboard-layout/` folder from root
+  `tsconfig.json`/`eslint.config.mjs` (was polluting `tsc`/`eslint` with 497/19 unrelated
+  findings); folder itself untouched. tsc/eslint/prettier clean; axe 0 on dashboard +
+  quotation-detail desktop, 1 pre-existing mobile OBS not new.
+  Prior page: **BX-05 CLOSED** (RV-0135; owner bug report — accordion sidebar + "Preserve
   Dashboard Shell" fix). Verified empirically (DOM probe + real clicks) that only 5 of the 7
   reported items actually remounted the shell (Notifications, Team, Organization, Profile,
   Settings — Messages/Reports were already fine). Rejected the literal `/dashboard/*` URL-prefix
   proposal (no such mechanism exists here; would've renamed ~25 shipped routes); reused the SAME
-  composition-not-fork fix the Vendor track already proved for the identical bug (FE-VEN-10/11/12):
-  4 new buyer-mounted pages (`/team`, `/organization`, `/profile`, `/settings`) compose the
-  existing unmodified Account components; `/notifications` (zero non-buyer consumers) relocated
-  bodily into `(buyer)/` at the same URL. Accordion: `Sidebar`/`MobileNav` group headers are now
-  `<button aria-expanded>` with single-open state, auto-opening the group containing the active
-  route. Caught + fixed a real defect before shipping: `isActive` ignored query strings, so
-  `?state=draft`-style filters never highlighted/auto-opened — fixed with `useSearchParams()`.
-  tsc/eslint/prettier clean; remount probe confirms all 7 items now persist the shell; axe 0 on 6
-  surfaces + 1 pre-existing `color-contrast` hit on `/settings` independently reproduced on the
-  untouched original `/account/security` (not this fix's defect); vendor/admin regression clean.
-  Prior page: **BX-04 CLOSED** (RV-0134; owner-directed in-session, verbatim 6-point
-  directive): the whole Buyer left-nav re-grouped into the canonical IA — Dashboard / Procurement
-  (RFQs·Quotations·Purchase Orders groups + Documents) / Marketplace (Vendor Directory·Saved
-  Vendors·Specification Library·Vendor CRM) / Communication (Messages·Notifications) / Analytics
-  (Reports & Analytics) / Organization (Team·Organization) / Account (Profile·Settings).
-  Before that: **BX-03 enhancement CLOSED** (RV-0133, `6316763`): `WelcomeBand`, `KpiStatCard`
+  composition-not-fork fix the Vendor track already proved for the identical bug (FE-VEN-10/11/12).
+  Before that: **BX-04 CLOSED** (RV-0134): the whole Buyer left-nav re-grouped into the canonical
+  IA. Before that: **BX-03 enhancement CLOSED** (RV-0133, `6316763`): `WelcomeBand`, `KpiStatCard`
   icon/tone treatment, topbar search shortcut.
 - **Pipeline stage:** idle — `FE-DOC-01` ✅ **Approved** (RV-0129, A:PASS ∧ B:PASS, 0
   BLOCKER/MAJOR/MINOR both lanes, `3293009`; Review Team 5 marked approved 2026-07-03). `FE-DOC-00`
@@ -98,7 +97,7 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
   non-blocking. *(Available in parallel while gated — proposed `FE-PLAT-08` buyer workflow test
   coverage, `fe-program-wbs.md` Track 8, pending Board mint.)*
 - **Next Milestone:** no unambiguous next pull — `P-BUY-05` stays held on the target-resolution-read
-  projection gap (not a scope decision); `BX-06+` further Buyer UX enhancements are P2 and explicitly
+  projection gap (not a scope decision); `BX-07+` further Buyer UX enhancements are P2 and explicitly
   owner-paced ("per owner, page-by-page after each review" — Phase F2 rule); the 6 BX-04-scaffolded
   routes (`/quotations`, `/quotations/compare`, `/purchase-orders`, `/saved-vendors`,
   `/spec-library`, `/messages`, `/reports`) each need their own additive contract before real

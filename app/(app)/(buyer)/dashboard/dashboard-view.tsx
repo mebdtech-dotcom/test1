@@ -144,12 +144,14 @@ function FirstRunEmpty() {
 }
 
 /** Presentation-only welcome band (§9.1 layout pass) — echoes the SAME neutral identity placeholder the
- *  shell topbar already renders (`identity-seed.ts`), never a second, independently-fabricated name. */
+ *  shell topbar already renders (`identity-seed.ts`), never a second, independently-fabricated name.
+ *  Typography sized/weighted to match the BX-06 reference styling pass (bigger greeting text), still on
+ *  our existing Navy-dominant token system — no color change. */
 function WelcomeBand({ userName, orgName }: { userName: string; orgName: string }) {
   return (
     <Card className="shadow-iv-xs">
-      <CardContent className="flex flex-col gap-1 p-5">
-        <p className="text-lg font-semibold text-foreground">Welcome back</p>
+      <CardContent className="flex flex-col gap-0.5 p-5">
+        <p className="text-xl font-semibold tracking-tight text-foreground">Welcome back</p>
         <p className="text-sm text-muted-foreground">
           {userName} · {orgName}
         </p>
@@ -207,8 +209,9 @@ export function BuyerDashboardView({
 
       {identity ? <WelcomeBand userName={identity.userName} orgName={identity.orgName} /> : null}
 
-      {/* KPI stat-card band — every figure a contract read; counts non-disclosure-safe (Inv #11). */}
-      <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+      {/* KPI stat-card band — every figure a contract read; counts non-disclosure-safe (Inv #11).
+          Mobile-first single column (BX-06 reference styling pass), 2-up at sm, full 4-up at xl. */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiStatCard
           label="Spend"
           value={kpis.spend ? <Money value={kpis.spend} /> : undefined}

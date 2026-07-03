@@ -54,17 +54,23 @@ export function KpiStatCard({
   className,
 }: KpiStatCardProps) {
   return (
-    <Card className={cn("shadow-iv-xs", className)}>
-      {/* Buyer-scoped KPI layout variant: compact `p-4` (vs the kit Card default `p-6`) for the
-          dense auto-fill KPI grid (§9.1). A composition delta only — the Card primitive is unmodified. */}
-      <CardContent className="flex flex-col gap-3 p-4">
-        <div className="flex items-start justify-between gap-2">
-          <span className="text-xs font-medium text-muted-foreground">{label}</span>
+    // `min-w-0` — a CSS Grid item's default min-width is `auto` (its content's intrinsic width), so a
+    // long unbroken value (e.g. a BDT amount) would overflow a narrow grid track instead of wrapping;
+    // this lets the card shrink to its track and the value below wrap/break normally instead.
+    <Card className={cn("min-w-0 shadow-iv-xs", className)}>
+      {/* Buyer-scoped KPI layout variant: `p-5` (vs the kit Card default `p-6`) for the dense
+          auto-fill KPI grid (§9.1) — sized/weighted to match the BX-06 reference styling pass
+          (bigger icon box, bigger value text) while staying on our existing Navy-dominant tone
+          system (`TONE_ICON_BOX` above is unchanged). A composition delta only — the Card
+          primitive is unmodified. */}
+      <CardContent className="flex flex-col gap-3 p-5">
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-sm font-medium text-muted-foreground">{label}</span>
           {icon ? (
             <span
               aria-hidden
               className={cn(
-                "flex size-8 shrink-0 items-center justify-center rounded-lg [&_svg]:size-4",
+                "flex size-9 shrink-0 items-center justify-center rounded-lg [&_svg]:size-5",
                 TONE_ICON_BOX[tone],
               )}
             >
@@ -72,7 +78,7 @@ export function KpiStatCard({
             </span>
           ) : null}
         </div>
-        <div className="text-2xl font-semibold tracking-tight text-foreground">
+        <div className="break-words text-3xl font-semibold leading-tight tracking-tight text-foreground tabular-nums">
           {value ?? <span className="text-muted-foreground">—</span>}
         </div>
         {caption ? <div className="text-xs text-muted-foreground">{caption}</div> : null}
