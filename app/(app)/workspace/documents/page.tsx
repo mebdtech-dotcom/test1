@@ -281,7 +281,10 @@ export default async function VendorDocumentsHubPage({
       {
         id: "r3",
         label: "QTN-2026-000456",
-        href: `${BASE}/rfqs/rfq_01/quotations/q_1`,
+        // Real vendor route is /rfqs/[rfqId]/quotation (singular, no quotation-id segment) — a
+        // vendor has exactly one quotation per RFQ. See the matching fix + note in
+        // documents-hub-view.tsx's §3 sourcing-documents link.
+        href: `${BASE}/rfqs/rfq_01/quotation`,
         kindKey: "quotation",
       },
     ],

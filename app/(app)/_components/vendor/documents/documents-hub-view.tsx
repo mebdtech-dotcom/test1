@@ -425,7 +425,12 @@ export function DocumentsHubView({ data }: { data: DocumentsHubData }) {
                   {
                     id: "quotation",
                     label: "Quotation QTN-2026-000456",
-                    href: `${BASE}/rfqs/rfq_01/quotations/q_1`,
+                    // Vendor route shape differs from the buyer's: a vendor has exactly ONE
+                    // quotation per RFQ (their own), so there's no per-quotation-id sub-route —
+                    // unlike the buyer's `/rfqs/[rfqId]/quotations/[quotationId]`, the real vendor
+                    // page is `/rfqs/[rfqId]/quotation` (singular). Caught by Review-B: an earlier
+                    // draft copy-pasted the buyer's route shape without checking it.
+                    href: `${BASE}/rfqs/rfq_01/quotation`,
                     kindKey: "quotation",
                   },
                 ]}

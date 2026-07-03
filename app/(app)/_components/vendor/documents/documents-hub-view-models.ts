@@ -5,11 +5,14 @@
 // workspace's own snake_case convention (`_components/vendor/engagements/types.ts`), not the
 // buyer's camelCase — a disclosed, intentional per-workspace convention divergence, not drift.
 //
-// SOURCES (by pointer, composition — Content ≠ Presentation): identical to the buyer leg —
-// generated documents = M4 BC-OPS-4 `ops.list_generated_documents.v1`; engagement document
-// records = M4 BC-OPS-2 (the five fixed per-engagement document routes, vendor-mounted at
-// `/workspace/engagements/[id]/*`); trade-invoice pointers = the frozen `TradeInvoiceStatus` set
-// (`../engagements/types`); platform invoices (M7) are a LINK-OUT ONLY (DF-6).
+// SOURCES (by pointer, composition — Content ≠ Presentation): identical to the buyer leg for the
+// underlying reads — generated documents = M4 BC-OPS-4 `ops.list_generated_documents.v1`;
+// engagement document records = M4 BC-OPS-2. UNLIKE the buyer leg's five fixed per-kind routes,
+// the vendor track has no per-kind document sub-routes — the vendor's `EngagementDocuments`
+// doc-kind tabs are enumeration-build-blocked (`ESC-7G-ENG-03`) and live entirely inside the one
+// `/workspace/engagements/[id]` page (see `documents-hub-view.tsx`'s own header for the full
+// disclosure). Trade-invoice pointers = the frozen `TradeInvoiceStatus` set (`../engagements/types`);
+// platform invoices (M7) are a LINK-OUT ONLY (DF-6).
 //
 // DIRECTION IS A PRESENTATION DERIVATION (same ESC-7G-ENG-01-family wiring-time note as the buyer
 // leg, from the vendor's own-org perspective): "received" | "sent" derives from comparing the
