@@ -14,12 +14,13 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
+import { Card, CardContent } from "@/frontend/primitives/card";
 import { ErrorState } from "@/frontend/components/error-state";
 import { Breadcrumbs } from "../../../_components/shell";
 import { WizardStepper } from "./wizard-stepper";
 import { UploadArea } from "./upload-area";
 import { SubmitPreview } from "./submit-preview";
+import { CommunicationSection } from "./communication-section";
 import {
   TitledCard,
   RequirementSection,
@@ -27,8 +28,6 @@ import {
   DeliverySection,
   VendorSection,
   BudgetSection,
-  CommunicationSection,
-  ReviewSection,
 } from "./rfq-sections";
 import { RFQ_WIZARD_STEPS } from "./rfq-options";
 import type { RfqCreateData } from "./rfq-form-models";
@@ -56,28 +55,6 @@ function SubmittedState() {
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-/** Compact tips card nested above the sticky Review column (Phase 1 content, restyled). Presentation-only
- *  guidance — no AI (Board scope). */
-function TipsCard() {
-  return (
-    <Card aria-label="Help">
-      <CardHeader className="p-4">
-        <CardTitle className="text-sm font-semibold">Tips for a strong RFQ</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2 p-4 pt-0 text-sm text-muted-foreground">
-        <p>
-          • Be specific about grade, dimensions, and tolerances — it gets you better-matched quotes.
-        </p>
-        <p>• Attach drawings or a bill of quantities so vendors quote against the same scope.</p>
-        <p>• Set a realistic delivery date and a district so logistics can be priced.</p>
-        <p className="text-xs">
-          Vendors are matched by the routing engine — you choose the breadth, not the winner.
-        </p>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -131,26 +108,18 @@ export function RfqCreateView({ data }: { data: RfqCreateData }) {
         />
       ) : null}
 
-      {/* Two-column layout ported from the reference prototype: left = stacked section cards, right =
-          sticky Review column (top offset clears the sticky topbar + sticky steps bar above). */}
-      <div className="grid grid-cols-1 gap-6 pb-8 lg:grid-cols-12 lg:items-start">
-        <div className="flex flex-col gap-4 lg:col-span-7">
-          <RequirementSection form={form} />
-          <TechnicalSection form={form} />
-          <TitledCard title="Attachments">
-            <UploadArea attachments={form.attachments} />
-          </TitledCard>
-          <DeliverySection form={form} />
-          <VendorSection form={form} />
-          <BudgetSection form={form} />
-          <CommunicationSection form={form} />
-        </div>
-        <div className="flex flex-col gap-4 lg:sticky lg:top-32 lg:col-span-5">
-          <TitledCard title="Review">
-            <ReviewSection form={form} />
-          </TitledCard>
-          <TipsCard />
-        </div>
+      {/* Single-column stacked section cards — the Review column is retired; Review now surfaces as a
+          floating preview from the Submit action below (see SubmitPreview). */}
+      <div className="mx-auto flex max-w-[var(--iv-content-max)] flex-col gap-4 pb-8">
+        <RequirementSection form={form} />
+        <TechnicalSection form={form} />
+        <TitledCard title="Attachments">
+          <UploadArea attachments={form.attachments} />
+        </TitledCard>
+        <DeliverySection form={form} />
+        <VendorSection form={form} />
+        <BudgetSection form={form} />
+        <CommunicationSection form={form} />
       </div>
 
       {/* Phase 8 — submit action. Save Draft is a disabled placeholder; Submit opens a floating

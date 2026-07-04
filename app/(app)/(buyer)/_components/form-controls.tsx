@@ -48,13 +48,24 @@ export interface CheckboxRowProps {
   id: string;
   label: React.ReactNode;
   defaultChecked?: boolean;
+  /** Controlled mode (e.g. a client surface that reveals a dependent block on toggle). Omit for the
+   *  default uncontrolled `defaultChecked` usage. */
+  checked?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   /** Disabled + checked encodes an always-on choice (e.g. Platform messages as system of record). */
   disabled?: boolean;
 }
 
 /** A native checkbox + label row (the kit ships no `checkbox` primitive yet — Doc-7B-deferred control).
  *  Buyer Tier-2; promotion candidate the moment a 2nd workspace needs a styled checkbox. */
-export function CheckboxRow({ id, label, defaultChecked, disabled }: CheckboxRowProps) {
+export function CheckboxRow({
+  id,
+  label,
+  defaultChecked,
+  checked,
+  onChange,
+  disabled,
+}: CheckboxRowProps) {
   return (
     <label
       htmlFor={id}
@@ -64,7 +75,9 @@ export function CheckboxRow({ id, label, defaultChecked, disabled }: CheckboxRow
       <input
         type="checkbox"
         id={id}
-        defaultChecked={defaultChecked}
+        defaultChecked={checked === undefined ? defaultChecked : undefined}
+        checked={checked}
+        onChange={onChange}
         disabled={disabled}
         className="mt-0.5 size-4 shrink-0 rounded border-input text-iv-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed"
       />

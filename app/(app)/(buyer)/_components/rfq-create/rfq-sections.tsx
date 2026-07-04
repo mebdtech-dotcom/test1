@@ -7,10 +7,12 @@
 // them in its quotation (Board ruling 2026-07-01); the buyer states only optional budget GUIDANCE (R8).
 
 import * as React from "react";
+import { Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/frontend/primitives/tooltip";
 import { FormField } from "@/frontend/components/form-field";
 import { cn } from "@/frontend/lib/cn";
-import { Textarea, Select, CheckboxRow, RadioRow } from "../form-controls";
+import { Textarea, Select, CheckboxRow } from "../form-controls";
 import { ItemRequirementsTable } from "./item-requirements-table";
 import { DescriptionList, type DescriptionItem } from "../description-list";
 import {
@@ -21,7 +23,6 @@ import {
   CONDITION_OPTIONS,
   DELIVERY_SITE_OPTIONS,
   URGENCY_OPTIONS,
-  CONTACT_TIME_OPTIONS,
   VENDOR_TYPE_OPTIONS,
 } from "./rfq-options";
 import type { RfqDraftForm } from "./rfq-form-models";
@@ -31,39 +32,93 @@ import type { RfqDraftForm } from "./rfq-form-models";
  *  "Review" `<h2>` for a correct heading outline. */
 export function TitledCard({
   title,
+  titleSuffix,
   children,
   contentClassName,
   titleAs,
 }: {
   title: string;
+  /** Optional content rendered inline after the title (e.g. a hover tips icon). */
+  titleSuffix?: React.ReactNode;
   children: React.ReactNode;
   contentClassName?: string;
   titleAs?: "h2" | "h3";
 }) {
   return (
     <Card>
-      <CardHeader className="p-4">
+      <CardHeader className="flex flex-row items-center gap-1.5 p-4">
         <CardTitle as={titleAs} className="text-sm font-semibold">
           {title}
         </CardTitle>
+        {titleSuffix}
       </CardHeader>
       <CardContent className={cn("p-4 pt-0", contentClassName)}>{children}</CardContent>
     </Card>
   );
 }
 
-function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+function SectionCard({
+  title,
+  titleSuffix,
+  children,
+}: {
+  title: string;
+  titleSuffix?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <TitledCard title={title} contentClassName="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <TitledCard
+      title={title}
+      titleSuffix={titleSuffix}
+      contentClassName="grid grid-cols-1 gap-4 sm:grid-cols-2"
+    >
       {children}
     </TitledCard>
+  );
+}
+
+/** Small hover-only tips affordance — a kit `Tooltip` on an info icon (no click/dismiss state; pure
+ *  hover/focus disclosure). Presentation-only guidance, no AI (Board scope). */
+function TipsHint({ label, tips }: { label: string; tips: string[] }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          aria-label={label}
+          className="inline-flex size-4 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:text-iv-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <Info aria-hidden className="size-4" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs text-left" side="right">
+        <ul className="flex flex-col gap-1">
+          {tips.map((t) => (
+            <li key={t}>• {t}</li>
+          ))}
+        </ul>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
 // ── Phase 2 — Requirement details ─────────────────────────────────────────────────────────────────────
 export function RequirementSection({ form }: { form: RfqDraftForm }) {
   return (
-    <SectionCard title="Requirement details">
+    <SectionCard
+      title="Requirement details"
+      titleSuffix={
+        <TipsHint
+          label="Tips for a strong RFQ"
+          tips={[
+            "Be specific about grade, dimensions, and tolerances — it gets you better-matched quotes.",
+            "Attach drawings or a bill of quantities so vendors quote against the same scope.",
+            "Set a realistic delivery date and a district so logistics can be priced.",
+            "Vendors are matched by the routing engine — you choose the breadth, not the winner.",
+          ]}
+        />
+      }
+    >
       <FormField
         id="rfq-industry"
         label="Industry"
@@ -308,90 +363,9 @@ export function VendorSection({ form }: { form: RfqDraftForm }) {
   );
 }
 
-// ── Communication preferences — Platform messages ALWAYS ON (system of record, M6); others optional &
-//    buyer-controlled. WhatsApp number shared only with vendors who receive this RFQ (Board ruling). ─────
-export function CommunicationSection({ form }: { form: RfqDraftForm }) {
-  return (
-    <SectionCard title="Communication preferences">
-      <fieldset className="sm:col-span-2">
-        <legend className="text-sm font-medium text-foreground">Preferred contact method</legend>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Platform messages stay on — the official record and audit trail. The rest are optional and
-          buyer-controlled.
-        </p>
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <CheckboxRow
-            id="rfq-cm-platform"
-            label="Platform messages (always on)"
-            defaultChecked
-            disabled
-          />
-          <CheckboxRow id="rfq-cm-phone" label="Phone call" defaultChecked={form.contactPhone} />
-          <CheckboxRow
-            id="rfq-cm-whatsapp"
-            label="WhatsApp"
-            defaultChecked={form.contactWhatsapp}
-          />
-          <CheckboxRow id="rfq-cm-email" label="Email" defaultChecked={form.contactEmail} />
-        </div>
-      </fieldset>
-
-      {/* WhatsApp contact — applies when WhatsApp is selected. */}
-      <div className="rounded-md border border-border p-3 sm:col-span-2">
-        <p className="text-sm font-medium text-foreground">WhatsApp contact</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">If you allow WhatsApp:</p>
-        <div className="mt-2 flex flex-col gap-2">
-          <CheckboxRow
-            id="rfq-wa-allow"
-            label="Allow verified vendors to contact me via WhatsApp"
-            defaultChecked={form.whatsappAllow}
-          />
-          <CheckboxRow
-            id="rfq-wa-useaccount"
-            label="Use my account phone number"
-            defaultChecked={form.whatsappUseAccount}
-          />
-        </div>
-        <div className="mt-3">
-          <FormField
-            id="rfq-wa-number"
-            label="Alternative WhatsApp number"
-            description="Only if different from your account number."
-            inputProps={{
-              defaultValue: form.whatsappNumber,
-              type: "tel",
-              inputMode: "tel",
-              placeholder: "+880 1XXXXXXXXX",
-            }}
-          />
-        </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Your WhatsApp number is shared only with vendors who receive this RFQ.
-        </p>
-      </div>
-
-      {/* Preferred contact time — radio group (single choice). */}
-      <fieldset className="sm:col-span-2">
-        <legend className="text-sm font-medium text-foreground">
-          Preferred contact time{" "}
-          <span className="text-xs font-normal text-muted-foreground">(optional)</span>
-        </legend>
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-          {CONTACT_TIME_OPTIONS.map((o) => (
-            <RadioRow
-              key={o.value}
-              id={`rfq-ct-${o.value}`}
-              name="rfq-contacttime"
-              value={o.value}
-              label={o.label}
-              defaultChecked={form.preferredContactTime === o.value}
-            />
-          ))}
-        </div>
-      </fieldset>
-    </SectionCard>
-  );
-}
+// NOTE: `CommunicationSection` moved to `./communication-section.tsx` (CLIENT — the WhatsApp contact
+// block reveals only while its checkbox is checked, a local UI toggle no longer expressible as a
+// server-rendered, uncontrolled section).
 
 // ── Phase 7 — Review (read-only summary cards) ────────────────────────────────────────────────────────
 function dash(v?: string) {
