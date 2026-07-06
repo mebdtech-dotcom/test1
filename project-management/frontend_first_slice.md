@@ -3,7 +3,7 @@
 **Role:** Lead Product Designer + Frontend UI Engineer
 **Status:** **DRAFT v0.1** — Frontend First Slice (non-authoritative companion; **planned, not started**)
 **Date:** 2026-06-29
-**Companions:** [`landing_page_spec.md`](landing_page_spec.md) · [`page_inventory.md`](page_inventory.md) · [`screen_specifications.md`](screen_specifications.md) · [`page_templates.md`](page_templates.md) · [`shared_conventions.md`](shared_conventions.md) · [`esc_registry.md`](esc_registry.md)
+**Companions:** [`landing_page_spec.md`](../docs/product/ux/landing_page_spec.md) · [`page_inventory.md`](../docs/product/ux/page_inventory.md) · [`screen_specifications.md`](../docs/product/ux/screen_specifications.md) · [`page_templates.md`](../docs/frontend/design-system/page_templates.md) · [`shared_conventions.md`](../docs/frontend/components/shared_conventions.md) · [`esc_registry.md`](../esc_registry.md)
 
 ---
 
