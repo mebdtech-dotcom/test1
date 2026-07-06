@@ -97,7 +97,7 @@ is insufficient.
 | State machines | Doc-4M · Event catalog | Doc-4J · Cross-module flows | Doc-4L |
 | Current phase | **Wave 2 — Core Platform (M0 → M1)** (Waves 0–1 delivered: `generatedDocs/Wave0_Baseline_Report_v1.0.md` · `generatedDocs/Wave1_Baseline_Report_v1.0.md`). `generatedDocs/Build_Roadmap_v1.0.md` (the gated build sequence; **Wave 2 next**) · `generatedDocs/Development_Decomposition_v1.0.md` (work breakdown) · all module realizations FROZEN (Doc-5/6/7) + the Doc-8 conformance fabric (`Doc-8_SERIES_FROZEN_v1.0`) |
 | Per-module ledger | `generatedDocs/Program_Status_And_Roadmap.md` · `CORPUS_INDEX.md` · `00_AUTHORITY_MAP.md` |
-| Frontend design companions (non-authoritative — supplement Doc-7, never override it) | `design_philosophy.md` · `information_architecture.md` · `ux_patterns.md` · `marketplace_ux.md` · `page_inventory.md` · `page_templates.md` · `screen_specifications.md` · `landing_page_spec.md` · `shared_conventions.md` · `esc_registry.md` · `glossary.md` · `deferred_decisions.md`. **First FE slice** (Public/Doc-7D, **Wave 3** with M2): `frontend_first_slice.md` |
+| Frontend design companions (non-authoritative — supplement Doc-7, never override it) | `design_philosophy.md` · `information_architecture.md` · `ux_patterns.md` · `marketplace_ux.md` · `page_inventory.md` · `page_templates.md` · `screen_specifications.md` · `landing_page_spec.md` · `shared_conventions.md` · `esc_registry.md` · `glossary.md` · `deferred_decisions.md` · `visual_reference_implementation.md`. **First FE slice** (Public/Doc-7D, **Wave 3** with M2): `frontend_first_slice.md` |
 
 ---
 
