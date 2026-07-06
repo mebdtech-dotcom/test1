@@ -1,6 +1,7 @@
 // P-BUY-21 Buyer Letter of intent — host view (`T-DETAILS`, Doc-7F). Pure function of its view-model (a
 // Server Component; no hooks, no fetch, no mutation — Content ≠ Presentation, Inv #9). The server page
-// resolves the data via the wired `ops.get_engagement_document.v1` (Doc-4F §F5.8, GI-02) and passes it
+// resolves the data bound to `ops.get_engagement_document.v1` (Doc-4F §F5.8 — a mock this milestone;
+// the GI-02 wiring is PARKED to Wave 4) and passes it
 // here; an unknown/absent/non-party document collapses to `notFound()` BY THE PAGE (byte-identical;
 // Inv #11 / GI-12), so this view always receives non-null data.
 //

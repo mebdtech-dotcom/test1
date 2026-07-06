@@ -8,7 +8,9 @@
 //
 // `ops.get_engagement_document.v1` projects (Doc-4F §F5.8 Response Schema):
 //   document : { document_id, doc_kind, human_ref, version_no, is_active_revision, storage_ref }
-// This view-model carries ONLY those fields:
+// Of the DOCUMENT, this view-model carries ONLY those fields (plus two grounded parent-engagement
+// context fields — `engagementId` from the route param and `engagementRef` from `get_engagement.v1`'s
+// projected `human_ref` — for the breadcrumb; nothing coined):
 //   • `document_id`  → `id` (OPAQUE routing id, Inv #5).
 //   • `doc_kind`     → pinned to `"loi"` (this page only ever renders an LOI; the enum is frozen §F5.8).
 //   • `human_ref`    → `humanRef` ("DOC-…" year-scoped display label; routes use the opaque id).

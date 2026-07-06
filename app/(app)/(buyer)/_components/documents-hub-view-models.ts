@@ -6,8 +6,9 @@
 // SOURCES (by pointer, composition — Content ≠ Presentation):
 //  • Generated documents — M4 BC-OPS-4 `ops.list_generated_documents.v1` (Doc-4F §F7):
 //    {human_ref DOC-…, doc_kind, version_no, storage_ref, source_entity_id}.
-//  • Engagement document records — M4 BC-OPS-2 (Doc-4F §F5): the five fixed per-engagement
-//    document routes (P-BUY-21..25) — the hub LINKS to them, never re-renders them.
+//  • Engagement document records — M4 BC-OPS-2 (Doc-4F §F5): the six fixed per-engagement
+//    document routes (P-BUY-21..25 + the LOI face of P-BUY-21, WP-1) — the hub LINKS to them,
+//    never re-renders them.
 //  • Trade-invoice pointers — the frozen `TradeInvoiceStatus` set (view-models.ts, verbatim).
 //  • Platform invoices (M7) are a LINK-OUT ONLY (DF-6) — never mixed into trade-document rows.
 //

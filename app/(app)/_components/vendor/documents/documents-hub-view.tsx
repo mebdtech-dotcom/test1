@@ -61,7 +61,8 @@ import {
 
 const BASE = "/workspace";
 
-// UNLIKE the buyer leg (which has five fixed per-kind document routes, P-BUY-21..25), the vendor
+// UNLIKE the buyer leg (which has six fixed per-kind document routes — P-BUY-21..25 + the LOI
+// face of P-BUY-21, WP-1), the vendor
 // engagement track has NO per-kind sub-routes — `EngagementDocuments`'s doc-kind tabs are
 // enumeration-build-blocked (`ESC-7G-ENG-03`) and live entirely inside the one engagement detail
 // page (`/workspace/engagements/[id]`). Linking to fabricated per-kind routes here would be a real

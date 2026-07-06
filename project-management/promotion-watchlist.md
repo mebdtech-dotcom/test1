@@ -35,6 +35,7 @@ Candidate → Approved (Board) → Extracted → Migrated → Old-removed → Cl
 | `EngagementDocumentFileCard` | already extracted at rule-of-three (PO/Challan/WCC) — watch for cross-surface need | buyer engagement docs | Team-2 | RV-0038 (byte-equivalence proof) | — | S | Deferred (single-surface today) |
 | `PipelineCard` (generic over `SourcingPipelineCard`/`EngagementPipelineCard`) | 2 structurally-parallel lifecycle-funnel widgets (RFQ + engagement); rule-of-three not yet met | buyer dashboard (both cards) | Team-2 | RV-0070 (Sourcing) · RV-0113 B#1 (Engagement, promotion-candidate flagged) | — | S | Deferred (2 instances only — extract if a 3rd funnel widget appears) |
 | `RadioRow` consolidation | FZ-04 — hand-rolled radios across buyer/account forms | buyer + account forms | Kit owner | freeze report FZ-04 · RV-0036/0066 (OBS) | FE-DS-06 | S | Candidate |
+| `EngagementDocumentDetail` composition | WP-1 Review-A OBS (2026-07-06): LOI is the FOURTH near-verbatim engagement-document `T-DETAILS` view (PO/Challan/WCC/LOI — Breadcrumbs + PageHeader + details `DescriptionList` + `EngagementDocumentFileCard` + money `Callout` + party-scope note); rule-of-three crossed for the whole view shape (the PO's approval section stays a per-kind slot — `can_approve_po` is po-only) | buyer engagement docs (4 views) | Team-2 | WP-1 Review-A round 1 OBS · RV-0022/0038 lineage | next touch on any of the 4 views | S | Candidate |
 
 ## Reuse Register — shipped shared packages (point here before building navigation UI)
 

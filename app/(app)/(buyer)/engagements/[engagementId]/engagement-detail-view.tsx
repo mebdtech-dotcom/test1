@@ -110,7 +110,8 @@ export function EngagementDetailView({ data }: { data: EngagementDetailData }) {
           and are tracked as records.
         </Callout>
 
-        {/* Documents: plain navigation to the fixed document-kind routes (P-BUY-21..25) — never a
+        {/* Documents: plain navigation to the fixed document-kind routes (P-BUY-21..25 + the LOI face
+            of P-BUY-21) — never a
             fabricated existence indicator (`ESC-7G-ENG-03` stays ungrounded, no list contract). A
             document that doesn't exist for this engagement collapses to the destination's own
             byte-identical not-found (Inv#11/H.9). */}

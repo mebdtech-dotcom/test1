@@ -1,7 +1,8 @@
 // Buyer Workspace — EngagementDocumentFileCard (Tier-2). The single "Document file" card for a versioned
 // engagement document's rendered artifact (BC-OPS-4-generated), reached off the frozen `storage_ref`
 // (Doc-4F §F5.8). Extracted at the third consumer (rule of three) — PO (P-BUY-21), Challan (P-BUY-24) and
-// WCC (P-BUY-25) rendered byte-identical copies of this card; they now all compose this one. Pure
+// WCC (P-BUY-25) rendered byte-identical copies of this card; they now all compose this one, joined by
+// the LOI view (the P-BUY-21 LOI face, WP-1) as the fourth composer. Pure
 // presentation (Server Component, no hooks/fetch).
 //
 // GOVERNANCE: the artifact is a FILE-LINK off the opaque `storage_ref` — the document BODY (`content_jsonb`)
