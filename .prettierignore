@@ -3,6 +3,9 @@ generatedDocs/
 governanceReviews/
 *.md
 
+# Quarantined standalone experiments — excluded from root build gates (REPOSITORY_STRUCTURE v1.1 P-4).
+prototypes/
+
 # Generated / build artifacts (gitignored).
 generated-contracts-registry/
 src/generated/
