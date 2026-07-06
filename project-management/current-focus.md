@@ -5,8 +5,29 @@
 > [`execution-board.md`](execution-board.md), process is [`review-process.md`](review-process.md).
 > Team files remain the **page-level source record**. On any change, append to `changelog.md`.
 
-**Updated:** 2026-07-03 · **Model:** FE Program Management v1.0 (cutover complete — Phases 0/A/B/C
+**Updated:** 2026-07-06 · **Model:** FE Program Management v1.0 (cutover complete — Phases 0/A/B/C
 done; page-loop terminus RV-0100). Teams pull milestones from the execution board, never from chat.
+
+---
+
+## ⚖️ Owner sequencing ruling (2026-07-06) — READ BEFORE PULLING WORK
+
+1. **WP-1 APPROVED — finish Team-2 buyer implementation** under the frozen-journey rules: approved
+   pages only · mock adapters · no backend logic · no reserved/blocked routes · no new workflow
+   states · the frozen journey exactly.
+2. **WP-2 (Quotation Compare) is HELD** until the Compare UX product freeze is signed:
+   [`productSpec/COMPARE_SHEET_UX_FREEZE_v0.1.md`](../productSpec/COMPARE_SHEET_UX_FREEZE_v0.1.md)
+   — D1 already RULED (side-by-side min 2 / max 5); D2–D7 drafted, awaiting owner sign-off. Teams
+   do NOT decide these during implementation.
+3. **Implementation order:** Buyer → Vendor → RFQ spine → Admin, from the approved journeys.
+   Single execution map: [`fe-navigation-screen-matrix.md`](fe-navigation-screen-matrix.md)
+   (owner-requested deliverable, produced 2026-07-06). Admin dev ownership: UNASSIGNED — Board to
+   assign (Team-4/5 are review lanes, not dev teams).
+4. **Business Operations (Post-Award) Journey document is DEFERRED** until the Marketplace/RFQ
+   frontend is substantially complete (40–60%) or backend implementation begins. (The M4 SURFACES
+   already exist as built presentation — the deferral is the journey doc + wiring, see matrix §7.)
+5. ESC items go through **Board intake** (ESC → discussion → decision → patch → freeze) — frozen
+   journey documents are never edited in place.
 
 ---
 
@@ -62,7 +83,26 @@ done; page-loop terminus RV-0100). Teams pull milestones from the execution boar
 
 ## Team-2 — Buyer (FE-BUY / FE-CLN)
 
-- **Current Milestone:** `FE-BUY-10` Discovery & Favorites — ✅ **APPROVED** (RV-0117, A:PASS ∧
+- **Current Milestone:** `WP-1 Buyer LOI Document View` — ✅ **Closed 2026-07-06** (RV-0140
+  completed in place; A:PASS [round 3 of 3] ∧ B:PASS, B/M/M = 0 both lanes at `1ce722a`; Dev-team
+  self-close per Amendment v1.3 §13; owner-approved via the `buyer_journey_v1.0.md` Decision
+  Register + the 2026-07-06 sequencing ruling; live owner directive "no backend now" honored —
+  presentation-only). New `/engagements/[engagementId]/loi` = the second `T-DETAILS` face of
+  P-BUY-21 ("PO / LOI"), sibling of `/po`, frozen `engagement_documents` family by pointer,
+  deliberate no-approval divergence (`can_approve_po` is po-only). Linked from the P-BUY-20
+  Documents card + `/documents` hub (no stageKey — LifecycleStrip excludes LOI/WCC). No new page
+  ID; coverage 151/151. 3 A-rounds (13 findings, all accepted, 0 false positives) including a
+  live concurrent-review conflict at round 2 (two independent reviews, PASS vs REVISION on the
+  same SHA) reconciled on fact-checked findings to REVISION — both records preserved on the WP
+  card. Review-B in an isolated worktree also surfaced a **pre-existing repo-wide `next build`
+  breakage** (shell `useSearchParams()` without Suspense — sidebar.tsx:154 / mobile-nav.tsx:146),
+  escalated as **Board agenda #16** (blocks the RV-0126 isolated-prod-build lane for every
+  milestone; shell owner needed). Checkpoints `c382d44` → `6fd1a71` → `1ce722a`; WP card
+  `governanceReviews/milestones/wp-1-buyer-loi-view/WORK-PACKAGE.md`. **Next pull:** WP-2
+  compare picker stays 🅿 (awaits owner D2–D7 sign-off on
+  `productSpec/COMPARE_SHEET_UX_FREEZE_v0.1.md`); otherwise awaiting the next owner-approved
+  buyer deliverable.
+- **Prior Milestone:** `FE-BUY-10` Discovery & Favorites — ✅ **APPROVED** (RV-0117, A:PASS ∧
   B:PASS, 0 BLOCKER/MAJOR/MINOR both lanes, checkpoint `6306de4`; **Review Team 5 marked approved in
   `execution-board.md` 2026-07-03** — owning Team-2 to commit [checkpoints/trackers; close record
   uncommitted] + start next. First buyer-track milestone ROUTED to Team-5 for a full mode-A

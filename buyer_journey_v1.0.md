@@ -1,5 +1,6 @@
-> **STATUS — v1.0 · 2026-07-06.** Buyer Journey Map + Gap-Closure Plan. **NON-AUTHORITATIVE
-> companion** — conforms to FROZEN **Doc-7F** (Buyer Workspace) · **Doc-4M** (state index; engagement
+> **STATUS — v1.0 · 2026-07-06 · FROZEN for implementation (owner, 2026-07-06).** Only Decision
+> Register items remain open; any status change edits the **Decision Register only**, never the
+> body. Buyer Journey Map + Gap-Closure Plan. **NON-AUTHORITATIVE companion** — conforms to FROZEN **Doc-7F** (Buyer Workspace) · **Doc-4M** (state index; engagement
 > rows carried as the §0.1 Flag-and-Halt of `buyer_planning_and_design.md`) · **Doc-3** (RFQ engine
 > operational spec) · **Doc-5E/5F/5D** (buyer-leg contracts) and to the consolidated companion
 > **`buyer_planning_and_design.md` v1.1** (J-PROC / P-BUY / state→screen source). **Coins nothing** —
@@ -223,14 +224,14 @@ held with a recorded reason). Update this register — never the body — when a
 
 | Item | Status | Owner |
 |---|---|---|
-| WP-1 Buyer LOI View | **Approved** (2026-07-06) | Team-2 |
-| WP-2 Compare Picker | Owner Decision | Product |
-| Received Quotes (`/quotations`) | ESC Required | Board |
-| Purchase Orders (`/purchase-orders`) | ESC Required | Board |
-| Messages (`/messages`) | Future | Board |
-| Reports (`/reports`) | Future | Board |
-| Saved Vendors (`/saved-vendors`) | Hold | Board |
-| Spec Library (`/spec-library`) | Future | Board |
+| WP-1 Buyer LOI View | **Approved** (2026-07-06) — **built 2026-07-06**, awaiting Review-A (WP card: `governanceReviews/milestones/wp-1-buyer-loi-view/`) | Team-2 |
+| WP-2 Compare Picker | **Held** (owner, 2026-07-06) behind the product freeze `productSpec/COMPARE_SHEET_UX_FREEZE_v0.1.md` — D1 RULED (side-by-side min 2 / max 5, a UI selection limit only, not a business rule; absent/invalid selection renders the full statement unchanged); D2–D7 await owner sign-off → v1.0 un-gates implementation | Product → Team-2 |
+| Received Quotes (`/quotations`) | ESC Required — **intake opened** (`ESC-BUY-QUOTES-LIST`, BOARD-PACKET-BUYER-FE-CONTRACT-GAPS_v1.0) | Board |
+| Purchase Orders (`/purchase-orders`) | ESC Required — **intake opened** (`ESC-BUY-PO-LIST`, same packet) | Board |
+| Messages (`/messages`) | Future — **intake opened** (`ESC-BUY-MSG-INBOX`, same packet) | Board |
+| Reports (`/reports`) | Future — **intake opened** (`ESC-BUY-REPORTS`, same packet) | Board |
+| Saved Vendors (`/saved-vendors`) | Hold — **intake opened** (`ESC-BUY-SAVED-VENDORS`, same packet) | Board |
+| Spec Library (`/spec-library`) | Future — **intake opened** (`ESC-BUY-SPEC-LIB`, same packet) | Board |
 | P-BUY-05 Favorites (projection gap) | Hold (FE-BUY-10, RV-0117) | Board |
 | Buyer candidate-targeting `[ESC-7-7F-INVITE]` | Carried Flag-and-Halt | Board (human) |
 

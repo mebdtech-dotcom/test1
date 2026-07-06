@@ -101,6 +101,20 @@ link-out verified. **1 non-gating OBS → shell owner (FE-SH): PRE-EXISTING shar
 `aria-label`, icon-only+unnamed <640px; reproduces on `/rfqs`+`/engagements`, NOT FE-DOC-01's; fix =
 add `aria-label="Create"`.** WP cards `governanceReviews/milestones/fe-doc-00-governance-charter/` +
 `fe-doc-01-buyer-documents-hub/`. Owning Team-2 commits [checkpoints/trackers; close uncommitted] + proceeds.
+`WP-1 Buyer LOI Document View` — ✅ **Closed** (RV-0140 completed in place, A:PASS [round 3] ∧
+B:PASS, B/M/M=0 both lanes at `1ce722a`; Dev-team self-close 2026-07-06 per Amendment v1.3 §13 —
+owner-approved 2026-07-06 via the `buyer_journey_v1.0.md` Decision Register + same-day sequencing
+ruling; "no backend now" honored, presentation-only). New `/engagements/[engagementId]/loi` as the
+second `T-DETAILS` face of P-BUY-21 ("PO / LOI") over the frozen `engagement_documents` family —
+no new page ID, coverage 151/151 untouched; linked from the P-BUY-20 Documents card + `/documents`
+hub (no stageKey, WCC-parity). Deliberate no-approval divergence from the PO sibling
+(`can_approve_po` is po-only — frozen-correct). 3 Review-A rounds (13 findings, all
+comment/claim-truthfulness class, all accepted, 0 false positives) incl. ONE live
+concurrent-review conflict at round 2 — two independent reviews of the same SHA returned PASS vs
+REVISION; reconciled on fact-checked findings to REVISION, both records preserved (RV-0125/0126
+transparency style). Checkpoints `c382d44` → `6fd1a71` → `1ce722a`. WP card
+`governanceReviews/milestones/wp-1-buyer-loi-view/WORK-PACKAGE.md`. Next Team-2 pull: WP-2 stays
+🅿 (compare-sheet UX freeze awaits owner D2–D7 sign-off, `productSpec/COMPARE_SHEET_UX_FREEZE_v0.1.md`).
 
 **Team-3 (Vendor):**
 ~~FE-VEN-05~~ ✅ **Closed** (RV-0101 @ `e2f8642`) · ~~FE-VEN-06~~ ✅ **Closed** (RV-0103 @
@@ -324,6 +338,18 @@ already updated in the same change.
     **`FE-PUB-05` un-gated — Team-1's next pull.** The FE Doc-7 leg (builder code, redirects, Host
     Resolution Matrix) is FE-PUB-05's own build scope, not a further escalation. Closed milestones
     not reopened.
+
+16. **Shell `useSearchParams()` prod-build breakage (repo-wide, pre-existing)** — discovered by
+    WP-1's Review-B isolated prod build (2026-07-06), decisively attributed pre-existing by a
+    parent-SHA rebuild (fails identically at `2371675` and `1ce722a`):
+    `app/(app)/_components/shell/sidebar.tsx:154` + `app/(app)/_components/shell/mobile-nav.tsx:146`
+    call `useSearchParams().toString()` without a Suspense boundary, aborting static prerender of
+    fully-static `(app)` pages (`next build` exits 1 — surfaced on `/workspace/organization`,
+    `/account/roles`, `/workspace/settings` depending on prerender ordering). **Blocks the RV-0126
+    isolated-prod-build verification lane for EVERY milestone** until fixed. Shell-owned code —
+    same ownership class as agenda #11; fix is a Suspense wrapper or `useSearchParams` removal in
+    the two nav components; needs the shell owner, not a Board ruling on substance (listed for
+    visibility + ownership assignment).
 
 ## Review pipeline (pointer)
 

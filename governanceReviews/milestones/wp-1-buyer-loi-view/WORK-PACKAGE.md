@@ -11,7 +11,7 @@
   checkpoint `6fd1a71` (stable target; concurrent-tree discipline unchanged) · **🔵A round 2:
   TWO independent concurrent reviews at `6fd1a71` returned CONFLICTING verdicts (PASS vs
   REVISION) — reconciled on verified facts to REVISION; see "Round-2 reconciliation" below** ·
-  🔵A round 3 submitted 2026-07-06 at fix checkpoint (SHA in the round-3 line below)
+  🔵A round 3 submitted 2026-07-06 at fix checkpoint `1ce722a`
 - **In scope (the delta, concretely):**
   1. New route `app/(app)/(buyer)/engagements/[engagementId]/loi/` — `page.tsx` (server page +
      presentation mock keyed on opaque engagement id, `notFound()` collapse), `loi-view.tsx`
@@ -42,11 +42,58 @@
   (single-doc reach only, same posture as the PO view).
 - **Lifecycle ownership:** Builder = Team-2 · Maintainer = Team-2 (buyer track) · Review A =
   Team-4 lane · Review B = Team-5 lane · Board = owner.
-- **Key dates:** created 2026-07-06 (kickoff) / started 2026-07-06 / closed —
+- **Key dates:** created 2026-07-06 (kickoff) / started 2026-07-06 / **closed 2026-07-06
+  (dev-team self-close per Amendment v1.3 §13 — A:PASS ∧ B:PASS, B/M/M = 0 both lanes at
+  `1ce722a`; RV-0140)**
 - **Owner directive (2026-07-06, live):** "no backend now" — reconfirms the presentation-only
   constraint mid-build. Honored: mock-driven only, no wiring, no server data layer, no contract
   code; GI-02 stays PARKED (Wave 4).
-- **DoD confirmation:** _§6 checklist checked at close_
+- **DoD confirmation (checked at close, 2026-07-06):** ☑ in-scope page passes the
+  page-standards DoD (LOI face of P-BUY-21) · ☑ responsive D/T/M (1440/768/375 live-rendered,
+  no horizontal overflow) · ☑ WCAG-AA (axe 0 attributable violations D/T/M + not-found; 1
+  pre-existing shell `button-name` hit reproduced identically on the approved PO sibling —
+  Board agenda #11) · ☑ tsc/eslint/prettier green (both lanes re-ran independently) · ☑
+  realistic mock data (refs unique repo-wide, engagement fixtures consistent, v1 + v2-revised
+  paths) · ☑ Review A PASS (round 3, after rounds 1–2 REVISION — 13 findings total, all
+  dispositioned, 0 false positives) · ☑ Review B PASS (B/M/M = 0, isolated worktree, real
+  install) · ☑ close per Amendment v1.3 §13 (no Board gate triggered — no
+  BLOCKER/REGRESSION/Flag-and-Halt/override) · ☑ no TODO/dead code · ☑ no duplicate
+  components (composition verified by both lanes) · ☑ promotion candidate registered
+  (`EngagementDocumentDetail`, watchlist) · ☑ trackers updated (RV-0140 completed in place,
+  changelog, current-focus, execution-board) · ☑ WP card closed (this record).
+
+## Review-B — verdict **PASS** (2026-07-06, at `1ce722a`, fresh context, isolated worktree)
+
+**0 BLOCKER · 0 MAJOR · 0 MINOR · 1 NIT · 2 OBS → B/M/M = 0, gate MET.** Evidence highlights:
+static gates all green at the SHA (tsc/eslint exit 0, prettier clean on all WP files, coverage
+151/151); LOI renders D/T/M with the frozen-projected fields only; absence path byte-identical
+to the PO sibling **modulo kind noun (1853 = 1853 normalized chars)** with no ref leak and
+identical status semantics; click-throughs land (detail card + hub cluster; `?stage=po`
+WCC-parity drop-out confirmed); zero pay/settle/escrow/approve affordances (role-scan); frozen
+enums only; mock refs unique + consistent; vendor files mechanically verified comment-only;
+po/challan/wcc/payments/trade-invoice routes byte-untouched across the WP diff. NIT: the
+committed card's dangling round-3 SHA parenthetical (retired by the working-tree card + this
+record). **OBS escalated to the Board (not WP-1's):** repo-wide `next build` static export is
+broken at BOTH `1ce722a` and parent `2371675` — shared-shell `useSearchParams()` without a
+Suspense boundary (`shell/sidebar.tsx:154`, `shell/mobile-nav.tsx:146`) aborts prerender of
+static (app) pages; attribution decisive (pre-existing; WP-1 adds zero client components).
+Registered on the execution-board Board agenda — it currently blocks the RV-0126
+isolated-prod-build lane for every milestone.
+
+> **Second concurrent Review-B (2026-07-06, live-tree session, same SHA): ✅ PASS — 0 B · 0 M ·
+> 0 MINOR, verdict CONCORDANT** — no reconciliation required, this close stands. Independent
+> corpus-text anchor re-verification, live-render of both hub-narrowing branches (`?stage=po`
+> drop-out + `?stage=rfq` empty-narrowing fallback), and 1 net-new NIT + 2 net-new OBS (all
+> non-gating) recorded in the RV-0140 second-B addendum (review-log). Cumulative: 3 A + 2 B.
+
+## Close statement
+
+WP-1 delivered as approved: the buyer LOI document view is live presentation-only at
+`/engagements/[engagementId]/loi`, linked from the P-BUY-20 Documents card and the `/documents`
+hub, grounded solely in the frozen `engagement_documents` contract family, with nothing coined.
+Checkpoints `c382d44` → `6fd1a71` → `1ce722a` committed; close records ride uncommitted per
+practice. 3 Review-A rounds + 1 Review-B; 13 raised findings all adjudicated (all accepted, 0
+false positives); one live concurrent-review conflict reconciled transparently on facts.
 
 ## Kickoff determination — page-key ownership (the journey doc's "confirm at WP kickoff" item)
 
@@ -177,6 +224,23 @@ findings, and three validated MINORs existed at `6fd1a71`). No fault attaches to
 both records were honestly produced; the conflict is the expected cost of live concurrent
 sessions and is resolved transparently here, RV-0126 style. Re-entering **Review-A round 3** at
 the fix checkpoint per Amendment v1.3 §13.
+
+## Review-A round 3 — verdict **PASS** (2026-07-06, at `1ce722a`, fresh context)
+
+- Fix audit N1/N2/N3: **all CONFIRMED FIXED**, pre-states independently reproduced at `6fd1a71`,
+  no new falsehood introduced (whole vendor headers re-read consistent; the watchlist row's every
+  remaining claim grepped true — money `Callout` verified PO/LOI-only in the rendered code,
+  challan:19/wcc:19 disclaimers exact).
+- Reconciliation record audited **ACCURATE** (superseded-PASS annotation preserved unedited;
+  §13 effective-verdict logic conforms; RV-0125 precedent cite verified in the committed log).
+- Final adversarial class sweep across both trees at `1ce722a`: route topology re-grounded
+  (exactly six per-kind route dirs), every remaining five/six/ordinal claim judged true or out of
+  blast radius. Scope: exactly 4 files, every hunk disposition-traced, comment/tracker-only.
+- Findings: **0 BLOCKER · 0 MAJOR · 0 MINOR · 1 NIT** (the Reviewed-SHA bullet's "SHA in the
+  round-3 line below" self-reference — retired by this very section recording `1ce722a`).
+- **A-lane gate MET → hand-off to Team-5 (Review-B), lane G.** Cumulative Review-A record:
+  round 1 REVISION (10) → round 2 dual-record reconciled REVISION (3, all fact-checked) →
+  round 3 PASS.
 
 ## Concurrent-tree disclosure
 
