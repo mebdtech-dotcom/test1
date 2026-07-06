@@ -35,7 +35,9 @@ const MODULE_LAYERS = ["domain", "application", "infrastructure", "api"];
 const CONTRACT_FILES = ["index.ts", "services.ts", "events.ts", "types.ts"];
 const SHARED = ["db", "ids", "result", "telemetry", "validation"];
 const SERVER = ["auth", "authz", "context", "guards"];
-const ROUTE_GROUPS = ["(public)", "(auth)", "(app)", "(admin)"];
+// (admin) retired per the owner-frozen URL/SEO adjudication OBS-03; Board-sanctioned closed-list
+// update at REPOSITORY_STRUCTURE v1.1 P-2 (G1 ask ③, 2026-07-06) — admin surface = (app)/admin.
+const ROUTE_GROUPS = ["(public)", "(auth)", "(app)"];
 
 const violations = [];
 const fileMustExist = (rel) => {

@@ -3,8 +3,9 @@
 **Document type:** Structural Constitution — non-authoritative engineering reference defining
 **ownership, boundaries, and folder shape** (not implementation design; that is Doc-5…8).
 **Date:** 2026-06-23 · **Governance freeze:** 2026-06-27
-**Version:** v1.0
-**Status:** **FROZEN v1.0** (governance layer freeze `governance-frozen-v1`, 2026-06-27). The
+**Version:** v1.1
+**Status:** **FROZEN v1.0, additively patched v1.1** (governance layer freeze
+`governance-frozen-v1`, 2026-06-27; Additive Patch v1.1 Board-approved 2026-07-06). The
 governance *architecture* is ratified; content remains non-authoritative under, and patched to
 match, the frozen corpus.
 **Authoritative source:** On any conflict, the frozen document wins. See [`project_details.md`](project_details.md)
@@ -333,3 +334,88 @@ Engineering. This document sits below all of them and is additive only.
 
 *Non-authoritative engineering reference. Ratify §6 at Doc-6; patch additively as
 implementation contracts (Doc-5…8) land.*
+
+---
+
+## Additive Patch v1.1 — Documentation Consolidation (Board-approved 2026-07-06)
+
+### Version history
+
+| Version | Date | Change |
+|---|---|---|
+| v1.0 | 2026-06-23 (frozen 2026-06-27) | Original Constitution |
+| v1.1 | 2026-07-06 | Documentation Consolidation (this patch) |
+
+This table is maintained additively by every future patch.
+
+### P-1 · Erratum — M6 module folder name
+
+§4's label `comms/` is **superseded**. The canonical M6 folder and schema name is
+`communication`, bound by pointer to the frozen Doc-2 schema map and CLAUDE.md §3 (this patch
+coins nothing). Resolution direction follows this document's own conflict clause ("the frozen
+document wins; content is patched to match"). The on-disk module `src/modules/communication/`
+was always conformant; it is never renamed. Companion: the `comms` cell in `project_details.md`
+§3 is patched to match (that document's charter is patched-to-match).
+
+### P-2 · §8 addendum — App Router route groups
+
+The route-group set is `(public)/ · (auth)/ · (app)/ · api/`. `(auth)` is authorized by pointer
+to `Build_Roadmap_v1.0.md` §2 (Wave-0 scaffold list). **`(admin)/` is retired** per the
+owner-frozen `governanceReviews/URL-NAMING-SEO-REVIEW-ADJUDICATION_v1.0.md` OBS-03 (ACTIONED,
+commit `a9de258`): the admin surface lives at `(app)/admin/` (route groups are non-URL; no URL
+is affected). This patch **sanctions the matching closed-list update** in
+`scripts/check-structure.mjs` (`ROUTE_GROUPS` minus `(admin)`), restoring the ratified gate to
+GREEN — the script's "coins nothing; closed list" charter requires exactly this Board sanction.
+*(Alternative recorded per audit F-02(b): reinstating the placeholder instead would reverse the
+frozen OBS-03 disposition — the owner ruled for direction (a) at G1 ask ③, 2026-07-06.)* Nested
+route groups (e.g. `(app)/(buyer)`) and area folders (`account/`, `admin/`, `workspace/`) are
+**composition detail** outside constitutional scope — the binding rule remains §8's "routing and
+composition only."
+
+### P-3 · `src/frontend/`
+
+Registered as an existing top-level `src/` area (the platform frontend kit). Its internal shape
+is owned by the **frozen Doc-7 series** by pointer; this constitution remains silent on its
+internals — v1.0's "reserved for Doc-7" is hereby fulfilled, not restated.
+
+### P-4 · Directory registry
+
+The following top-level areas are registered (all documentation areas are non-authoritative
+under the frozen corpus):
+
+| Area | Purpose | Owner (pointed, not coined) | Mutability |
+|---|---|---|---|
+| `generatedDocs/` | Frozen architecture corpus | Architecture authority per §7 | ❌ frozen (additive patches only) |
+| `governanceReviews/` | Audit history, Board records, proposal provenance | Governance (§13 process) | **Append-only archive.** PINNED: existing records never relocate — frozen documents reference them by path (audit F-15). Per the G1 ask-⑤ ruling (2026-07-06): finalized governance records continue to append here; **new working documents** go to `docs/governance/` + `docs/adr/`. |
+| `docs/` | Living engineering & product documentation (`README.md` = philosophy + this Ownership Matrix; `INDEX.md` = navigation map; `architecture/ product/ frontend/ backend/ testing/ governance/ adr/ reference/`) | Engineering | ✅ |
+| `project-management/` | Execution tracking (FE-PM ledger) | Delivery | ✅ |
+| `prompts/` | AI prompt library | Engineering | ✅ |
+| `design/` | **Design source files only** (figma/exports/assets). Rule: `design/` = sources; `docs/frontend/` = engineering documentation. | UX | ✅ |
+| `templates/` | Recurring document templates (first artifact: `execution-checklist.md`) | Engineering | ✅ |
+| `examples/` | Onboarding/AI reference examples | Engineering | ✅ |
+| `prototypes/` | Quarantined standalone experiments; excluded from root build gates | Engineering | ✅ |
+| `tools/` | Reserved name (no content yet) | Engineering | reserved |
+
+**Reserved-Directory rule:** *Reserved directories are part of the approved taxonomy but are
+created only when they receive their first committed artifact.* Directories materialize with a
+README charter or first content — never as empty scaffolding.
+
+**`docs/adr/` note:** reserved ONLY for engineering implementation notes and future RFCs. The
+authoritative ADR corpus remains under `generatedDocs/`; nothing is duplicated.
+
+### P-5 · Root-file policy
+
+Root contains only: `README.md` · `CLAUDE.md` · `REPOSITORY_STRUCTURE.md` ·
+`IMPLEMENTATION_START_HERE.md` · `project_details.md` · `CONTRIBUTING.md` (sanctioned at G1
+ask ⑦) · `LICENSE` (owner-provided only, never invented) · `repo.manifest.json` (sanctioned at
+G1 ask ⑨ — **generated metadata**, derived from this registry and regenerated on every
+structure change via `scripts/build-repo-manifest.mjs`, committed together with the structure
+change; never an independently maintained source of truth, never hand-edited) · standard
+tool/config files and the canonical lockfile (npm, G1 ask ②) · **pinned exceptions** whose
+paths are cited by frozen documents and therefore cannot move: `esc_registry.md`, `ROADMAP.md`,
+`00_PROJECT_STATUS.md`, `iVendorz_New_Chat_Primer.md`, `Wave_Template_v1.0.md`,
+`Governance_Freeze_v1.0.md`.
+`project_details.md`: relocation to `docs/reference/` is **registered as deferred**
+(frozen-mentioned; constitutional §2 entry) — a future additive patch executes it.
+**Rule:** any NEW root file requires Board approval. Loose documents live in registered
+documentation areas, never at root.
