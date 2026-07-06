@@ -24,12 +24,9 @@ const config = [
       "playwright-report/**",
       "test-results/**",
       "next-env.d.ts",
-      // Standalone v0 design-reference project (its own package.json/deps, not installed in this
-      // workspace) — a style/token reference only, not part of the governed app.
-      "buyer-dashboard-layout/**",
-      // Standalone Vite RFQ-creator reference app (own package.json/tsconfig) — not part of the
-      // governed Next.js app; excluded from the root gates like buyer-dashboard-layout.
-      "ivendorz-rfq-creator/**",
+      // Quarantined standalone experiments (own package.json/tsconfig where applicable) — not part
+      // of the governed Next.js app; excluded from the root gates (REPOSITORY_STRUCTURE v1.1 P-4).
+      "prototypes/**",
     ],
   },
 

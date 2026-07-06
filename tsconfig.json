@@ -26,7 +26,6 @@
     "generated-contracts-registry",
     "src/generated",
     ".next",
-    "buyer-dashboard-layout",
-    "ivendorz-rfq-creator"
+    "prototypes"
   ]
 }
