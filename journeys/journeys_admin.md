@@ -20,9 +20,9 @@ staff click-path over these lifecycles)
 
 ---
 
-## H1. Moderation Case Journey — `J-MOD`
+## H1. Moderation Case Lifecycle — `J-MOD`
 
-**Breadcrumb:** Atlas ▸ Admin ▸ Moderation Case Journey
+**Breadcrumb:** Atlas ▸ Admin ▸ Moderation Case Lifecycle
 
 | Ownership | |
 |---|---|
@@ -74,27 +74,28 @@ instrument; ✔ escalations traceable.
 | Authoritative Documents | Doc-4J (ban lifecycle `[active] → [lifted] / [expired]`; `issue_ban`/`lift_ban`/`expire_ban`; emits `(VendorBanned)` — the sole Admin §8 event) |
 | Read-only References | Doc-7H (enforcement console) |
 
-**Actors:** Primary — staff User (enforcement authority). ⚙ System — `expire_ban` on term lapse.
+**Actors:** Primary — staff User (enforcement authority). ⚙ System — `expire_ban` archival (from
+`[lifted]` only).
 
-**Intent arc:** Violation → Enforcement → Term → Restoration.
+**Intent arc:** Violation → Enforcement → Restoration → Archive.
 **Goal:** platform-level enforcement whose effect is executed by the owning module, never by an
 admin table-write.
 
 **Entry:** an adjudicated violation (J-MOD/J-CMPL/J-FRD disposition).
-**Exit:** ban `[lifted]` or `[expired]`; profile restored via M2.
+**Exit:** ban `[lifted]` (profile restored via M2), later archived `[expired]`.
 
 ```
 issue_ban → ban [active] + (VendorBanned) → M2: profile [active] → [banned] (public banner)
 ban [active] → lift_ban → [lifted] → M2: [banned] → [active]
-ban [active] → ⚙ expire_ban → [expired] → M2 restoration
+ban [lifted] → ⚙ expire_ban → [expired]   (archival of a lifted ban — expiry never ends a live ban)
 ```
 
 | ID | Step | Key actions (pattern · contract) | Ban state (Doc-4J) | Outcome / governance |
 |---|---|---|---|---|
 | J-BAN-01 | Issue | `issue_ban` | `[active]` | Emits `(VendorBanned)` → seam M6-4; **M8 decides, M2 executes** the profile transition |
 | J-BAN-02 | Effect | M2 consumer | — | Vendor profile `[active] → [banned]` (public banner; Doc-2 §5.3); excluded from routing/search |
-| J-BAN-03 | Lift | `lift_ban` | `[active] → [lifted]` | M2 restores `[banned] → [active]` |
-| J-BAN-04 | Expire | ⚙ `expire_ban` | `[active] → [expired]` | Term-limited bans end without staff action |
+| J-BAN-03 | Lift | `lift_ban` | `[active] → [lifted]` | M2 restores `[banned] → [active]` — restoration is the **lift** reflection |
+| J-BAN-04 | Archive | ⚙ `expire_ban` (`expected_state = lifted`) | `[lifted] → [expired]` | **Expiry only from `[lifted]`** (Doc-4J: linear `active → lifted → expired`; expire-from-active is a forbidden-source STATE error) |
 
 **Governance rails:** the ban record and the profile status are **two records in two modules** —
 never conflated; ban rationale is staff-internal (non-disclosure beyond the public banner);

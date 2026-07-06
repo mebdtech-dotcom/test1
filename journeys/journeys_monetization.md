@@ -126,7 +126,7 @@ fees (J-SITE) · composed by `J-BUY-06`, `J-VND-06`.
 |---|---|
 | Owner Module | M7 Billing (BC-BILL-4: `lead_credit_accounts` + `lead_credit_transactions`, usage ledger) |
 | Participating Modules | M4 (owns the lead-access **action**; Billing owns the usage/credit **effect** — `usage_ledger.source=lead_access`) |
-| Authoritative Documents | Doc-4I BC-BILL-4 §HB-4.1 (`credit_lead_account` / `debit_lead_account`); Doc-3 §6 (`leads.credit_value` shortfall credit) |
+| Authoritative Documents | Doc-4I BC-BILL-4 §HB-4.1 (`credit_lead_account` / `debit_lead_account`); Doc-3 §11 (`leads.credit_value` shortfall credit — Marketplace Economics) |
 | Read-only References | Doc-7G (credit balance view) |
 
 **Actors:** ⚙ System (metering, shortfall credits). Primary — vendor org (purchases packages).
@@ -142,13 +142,13 @@ standing**.
 ```
 purchase package (J-PINV) → credit_lead_account → balance
 lead access (J-LEAD) → ⚙ usage_ledger (source=lead_access) → debit_lead_account
-shortfall (Doc-3 §6 leads.credit_value) → ⚙ credit_lead_account (compensating credit)
+shortfall (Doc-3 §11 leads.credit_value) → ⚙ credit_lead_account (compensating credit)
 ```
 
 | ID | Step | Key actions (pattern · contract) | Outcome / governance |
 |---|---|---|---|
 | J-CRED-01 | Purchase | lead package → J-PINV (`purpose lead_package`) | Commercial transaction only |
-| J-CRED-02 | Credit | `credit_lead_account` (purchase or Doc-3 §6 shortfall credit) | Append to `lead_credit_transactions` — ledger, never rewritten |
+| J-CRED-02 | Credit | `credit_lead_account` (purchase or Doc-3 §11 shortfall credit) | Append to `lead_credit_transactions` — ledger, never rewritten |
 | J-CRED-03 | Meter | ⚙ usage ledger on lead access (`source=lead_access`) | **M4 owns the action; M7 owns the effect** (Doc-4I §DF-BILL-4) |
 | J-CRED-04 | Debit | `debit_lead_account` (lead consumption) | Balance accounting only |
 | J-CRED-05 | Review | balance + transaction reads | Vendor-facing transparency of the commercial ledger |

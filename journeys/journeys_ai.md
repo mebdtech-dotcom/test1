@@ -10,9 +10,13 @@ panels)
 `J-SUP` surfaces when activated (marketplace_ux.md §12 `FX-AI` remains the future-extension
 hook for a full assistant)
 
-> **Authority stance.** Non-authoritative companion. States resolve to **Doc-2 §10.10** (the
-> derived-artifact **cache lifecycle** — not a business state machine); contracts to **Doc-4K**
-> (BC-AI-1…4). Escalation markers carried verbatim: **`[ESC-AI-EVENT]`** (AI carries no Doc-2 §8
+> **Authority stance.** Non-authoritative companion. The cache walk below resolves to **Doc-2
+> §10.10 cache attributes** (`expires_at` etc.) + **§3.10** ("regenerable, disposable"); the
+> `[fresh]`/`[stale]`/`[expired]` strings are **Doc-4M §M4/§M5 navigation keys, not Doc-2
+> states** — quoted here for navigation only, exactly as Doc-4M frames them ("this matrix
+> introduces no state"). This is the one journey whose bracketed tokens are navigation keys
+> rather than Doc-2 §5/§3 states — an explicit, marked exception to the atlas §2 legend.
+> Contracts resolve to **Doc-4K** (BC-AI-1…4). Escalation markers carried verbatim: **`[ESC-AI-EVENT]`** (AI carries no Doc-2 §8
 > event) and **`[ESC-AI-SLUG]`** (AI holds no permission slug — advisory access rides upstream
 > entitlement, Doc-4L §L5-8 navigation). Binding rails: **"AI suggests; modules decide"**
 > (Invariant #12, Golden Rule #6); M9 owns **regenerable derived artifacts only** — never

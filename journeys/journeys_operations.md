@@ -58,7 +58,9 @@ consumer; there is no acceptance step.
 | J-ENG-06 | Close | administrative close | `[completed] → [closed]` | Soft close/archive; audit retained |
 
 **Governance rails:** shared tenancy — both parties read via party columns, neither owns the
-other's private annotations; buyer feedback submission (→ J-REV) requires the engagement;
+other's private annotations; buyer feedback has **two distinct frozen instruments** — the
+engagement-bound `ops.record_buyer_feedback.v1` (emits `(BuyerFeedbackRecorded)` → Trust
+performance input) and the public review `trust.submit_review.v1` (→ J-REV) — never conflated;
 dispute evidence requires the **full document chain** (Doc-2 §9).
 **Success:** ✔ engagement exists before any post-award document; ✔ status walk matches the
 frozen enum only; ✔ closure preserves the immutable record.
@@ -84,8 +86,10 @@ additionally required for `doc_kind = po`** — an issuer-side financial-authori
 collapsed into document creation).
 
 **Intent arc:** Commitment → Formalization → Evidence → Archive.
-**Goal:** the immutable commercial paper trail: `loi → po → challan → wcc` (`doc_kind` — the
-frozen kind set; trade invoices and payments are **separate aggregates**, → J-FIN).
+**Goal:** the immutable commercial paper trail: `loi → po → challan → wcc` — where LOI/PO/WCC
+ride `ops.issue_engagement_document.v1` (`doc_kind enum<loi|po|wcc>`) and **challans ride
+`ops.record_delivery.v1` only** (§F5.3, → J-DLV); trade invoices and payments are **separate
+aggregates** (→ J-FIN).
 
 **Entry:** engagement `[open]`+ (J-ENG).
 **Exit:** chain archived within the engagement record — documents have **no lifecycle states**,
@@ -98,15 +102,17 @@ issue LOI ↦ … → issue PO («can_approve_po») ↦ revision (reason) → ch
 
 | ID | Step | Key actions (pattern · contract) | Outcome / governance |
 |---|---|---|---|
-| J-DOC-01 | Issue | `ops.issue_engagement_document.v1` (kind ∈ `loi/po/challan/wcc`) | `version_no = 1`, `issued_by/at` recorded; generated docs record the `template_version` used (J-TPL) |
+| J-DOC-01 | Issue | `ops.issue_engagement_document.v1` (`doc_kind ∈ loi/po/wcc` — challans are §F5.3-only, → J-DLV) | `version_no = 1`, `issued_by/at` recorded; generated docs record the `template_version` used (J-TPL) |
 | J-DOC-02 | Approve PO | `«can_approve_po»` gate on `doc_kind = po` | **Issuer-side authority only — no "vendor accepts PO" transition exists anywhere; never draw one** |
 | J-DOC-03 | Revise | `ops.revise_engagement_document.v1` | `↦` new `version_no` + `revision_reason`; `is_active_revision` flips; **no event — state + audit only** |
 | J-DOC-04 | Evidence | chain accumulates (challan legs → J-DLV; WCC leg → J-WCC) | Dispute evidence requires the **full chain** (J-DSP) |
 | J-DOC-05 | Archive | rests within engagement `[closed]` | Immutable forever (Invariant #8) |
 
 **Governance rails:** documents carry **no acceptance/approval status enum** — acceptance
-semantics simply do not exist in the frozen model; issuance/revision emit **no domain event**;
-counterparty visibility rides the shared engagement, not per-document grants.
+semantics simply do not exist in the frozen model; **LOI/PO** issuance/revision emit **no domain
+event** (state + audit only) — WCC issuance is the exception: it emits `(WorkCompletionIssued)`
+as a performance input (→ J-WCC); counterparty visibility rides the shared engagement, not
+per-document grants.
 **Success:** ✔ kinds within the frozen enum only; ✔ every change a reasoned version; ✔ zero
 acceptance states drawn.
 
@@ -186,8 +192,8 @@ work progresses → inspection (buyer-internal) → issue WCC ↦ → engagement
 |---|---|---|---|---|
 | J-WCC-01 | Progress | deliveries accumulate (J-DLV) | `[in_delivery]` | — |
 | J-WCC-02 | Inspect | buyer-internal review of the chain | `[in_delivery]` | Platform records outcomes; inspection process itself is off-platform/buyer-internal |
-| J-WCC-03 | Certify | issue WCC (`ops.issue_engagement_document.v1`, kind `wcc`) | — | Versioned like all documents (`↦` revisions with reason) |
-| J-WCC-04 | Complete | engagement transition | `[in_delivery] → [completed]` | WCC = **proof-of-work** — feeds performance inputs (J-PSC) by event/pointer |
+| J-WCC-03 | Certify | issue WCC (`ops.issue_engagement_document.v1`, `doc_kind wcc`) | — | Versioned like all documents (`↦` revisions with reason); **emits `(WorkCompletionIssued)`** — emit, never score (Doc-4F §F5.4) |
+| J-WCC-04 | Complete | engagement transition | `[in_delivery] → [completed]` | WCC = **proof-of-work** — `(WorkCompletionIssued)` consumed by Trust into performance inputs (J-PSC) |
 | J-WCC-05 | Review (optional) | → J-REV (buyer feedback, engagement-anchored) | `[completed]` | Post-award-only review gate satisfied |
 
 **Governance rails:** the WCC is a certificate **document**, not a state machine; completion
@@ -230,13 +236,14 @@ raise → dispute recorded (audit, engagement container) → evidence = full doc
 |---|---|---|---|
 | J-DSP-01 | Record | dispute recorded on the engagement (audited mutation, Doc-2 §9) | **Not an engagement state** — the container keeps its frozen enum |
 | J-DSP-02 | Evidence | full chain assembled (LOI/PO/challans/invoices/WCC) | **Dispute evidence requires the full chain** (Doc-2 §9) — why J-DOC immutability matters |
-| J-DSP-03 | Commercial leg | trade invoice `→ [disputed]` where money is contested | The only frozen `disputed` status in this domain (J-FIN) |
+| J-DSP-03 | Commercial leg | trade invoice `→ [disputed]` where money is contested | The only frozen `disputed` status in this domain (J-FIN); the transition emits `(DisputeRecorded)` — consumed by Trust as a performance input (`input_type = dispute`) |
 | J-DSP-04 | Communicate | engagement thread (J-CHAT); complaint intake (J-CMPL) if platform action is sought | Platform facilitates records + talk — **never arbitrates funds** |
 | J-DSP-05 | Resolve | resolution recorded; invoice leaves `[disputed]` per J-FIN edges | Buyer's private stance may change in J-CRM (private, firewalled) |
 
-**Governance rails:** no dispute step mutates platform scores (buyer feedback rides J-REV,
-CRM stance stays private per Invariant #11); the platform records and communicates — settlement
-is off-platform (money boundary).
+**Governance rails:** dispute consequences reach scores **by event, never by write** —
+`(DisputeRecorded)` feeds Trust performance inputs (`input_type = dispute`, J-PSC); the buyer's
+private stance stays firewalled (J-CRM, Invariant #11); the platform records and communicates —
+settlement is off-platform (money boundary).
 **Success:** ✔ dispute + resolution recorded with evidence; ✔ zero coined states; ✔ zero funds
 movement.
 
@@ -292,9 +299,9 @@ per that item's interim ruling (per-module authority).
 
 ---
 
-## E7. Private Vendor CRM Journey — `J-CRM`
+## E7. Private Vendor Record Lifecycle (Buyer CRM) — `J-CRM`
 
-**Breadcrumb:** Atlas ▸ Operations ▸ Private Vendor CRM Journey
+**Breadcrumb:** Atlas ▸ Operations ▸ Private Vendor Record Lifecycle (Buyer CRM)
 
 | Ownership | |
 |---|---|
@@ -407,7 +414,7 @@ payment record: [recorded] → counterparty confirms → [confirmed]
 | J-FIN-02 | Record payment | payment record append (optional link to invoice) | payment `[recorded]` | Money moved **off-platform**; `method_note` is descriptive only |
 | J-FIN-03 | Confirm | counterparty confirmation | `[recorded] → [confirmed]` | Two-sided acknowledgment — still zero custody |
 | J-FIN-04 | Progress | balances derived from records | `[issued] → [partially_paid] → [paid]` | Reconciliation is **derived** — no invented stat |
-| J-FIN-05 | Contest / cancel | dispute leg (J-DSP) · cancellation | `→ [disputed]` / `[cancelled]` | The only frozen `disputed` status in operations |
+| J-FIN-05 | Contest / cancel | dispute leg (J-DSP) · cancellation | `→ [disputed]` / `[cancelled]` | `→ [disputed]` emits `(DisputeRecorded)` (→ Trust performance input, J-PSC) |
 
 **Governance rails (money boundary — binding):** the platform never settles, escrows, holds, or
 routes buyer↔vendor funds; it earns only its own revenue (that's J-SUB/J-PINV/J-CRED in M7);
@@ -429,6 +436,7 @@ by `J-PROC-13` · platform-side billing is J-PINV (different module, different m
 | Engagement `disputed` state | Not ratified — dispute is recorded (audit), and only `trade_invoices` carry `[disputed]` | Doc-2 §9/§3; J-DSP |
 | ESC-OPS-DOC-* additional document kinds (Mushok/VAT etc.) | Board-gated (FE-DOC track, agenda #13) — kinds stay `loi/po/challan/wcc` until ruled | esc_registry.md |
 | Reconciliation dashboards / stat tiles | Derived views only — no reconciliation aggregate is ratified (ENG-03 discipline) | vendor FE track notes |
+| Buyer-feedback journey (engagement-bound) | `ops.record_buyer_feedback.v1` (+ `(BuyerFeedbackRecorded)`) is narrated as a J-ENG rail, not a separate journey — distinct from the public review J-REV; expand later if a surface needs it | Doc-4F Part2; Doc-2 §8 |
 
 *Cross-links:* actor journeys [`../marketplace_ux.md`](../marketplace_ux.md) §4 (`J-PROC`), §6
 (`J-SUP`) · registry [`JOURNEY_ATLAS.md`](JOURNEY_ATLAS.md) §5-E.

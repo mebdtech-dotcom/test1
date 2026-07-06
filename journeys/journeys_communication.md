@@ -123,20 +123,25 @@ participant-owned and idempotent.
 the resolution.
 
 **Entry:** authenticated user with an org context (ticket carries `organization_id`, `opened_by`).
-**Exit:** `[closed]` (from resolution or administratively).
+**Exit:** `[closed]` (only from `[resolved]`).
 
 ```
 [open] → assign/work → [in_progress] → [resolved] → [closed]
-            [resolved] ⇄ [in_progress] (reopen)      [open]/[in_progress] → [closed] (administrative)
+(strictly linear per Doc-4H BC-COMM-4 — no reopen edge; a non-[resolved] ticket cannot be closed)
 ```
 
 | ID | Step | Key actions (pattern · contract) | State (Doc-2 §3) | Outcome / governance |
 |---|---|---|---|---|
-| J-TKT-01 | Open | ticket creation (BC-COMM-4; subject, priority) | `[open]` | Org-scoped record |
-| J-TKT-02 | Work | staff assignment + handling | `[open] → [in_progress]` | Staff act on the ticket by ID (Doc-7H) |
-| J-TKT-03 | Resolve | resolution | `[in_progress] → [resolved]` | — |
-| J-TKT-04 | Reopen | user/staff reopen | `[resolved] ⇄ [in_progress]` | Unhappy resolution never needs a new ticket |
-| J-TKT-05 | Close | closure | `[resolved] → [closed]` (also `[open]`/`[in_progress]` → `[closed]`) | Terminal; record retained |
+| J-TKT-01 | Open | `comm.create_ticket.v1` (subject, priority) | `[open]` | Org-scoped record |
+| J-TKT-02 | Work | `comm.update_ticket.v1` (per-transition actor authority explicit) + `comm.add_ticket_message.v1` | `[open] → [in_progress]` | Staff act on the ticket by ID (Doc-7H) |
+| J-TKT-03 | Resolve | `comm.update_ticket.v1` | `[in_progress] → [resolved]` | — |
+| J-TKT-04 | Close | `comm.close_ticket.v1` | `[resolved] → [closed]` | Terminal; record retained; **only `[resolved]` may close** (Doc-4H) — an unhappy resolution opens a fresh ticket |
+
+> **Variance note (registered):** Doc-4M §M5 consolidates additional ticket edges (reopen,
+> non-resolved close) that the owning Doc-4H contracts forbid ("no state added; no transition
+> added"). This journey binds the **Doc-4H** machine (per-module authority); the variance is
+> Flag-and-Halt registered as **`ESC-JRN-TKT-MACHINE`** (esc_registry.md) — human corpus
+> reconciliation, mirroring `ESC-7G-LEAD-MACHINE`.
 
 **Governance rails:** support handling never becomes a bypass — a support action that touches a
 business record executes through the owning module's contracts (Red-Flag: Admin never bypasses a

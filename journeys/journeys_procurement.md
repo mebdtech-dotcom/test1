@@ -143,10 +143,10 @@ J-DEL). Supporting — buyer (reads, clarifications). ⚙ System — expiry.
 | ID | Step | Key actions (pattern · contract) | State (Doc-2 §5.5) | Outcome / governance |
 |---|---|---|---|---|
 | J-QUO-01 | Draft | quotation builder (8 frozen submit fields) | `[draft]` | One-active-per-vendor-per-RFQ |
-| J-QUO-02 | Submit | `submit_quotation` (against active `rfq_version`) | `[draft] → [submitted]` | **Quota consumed from the Controlling Organization** regardless of acting representative |
+| J-QUO-02 | Submit | `submit_quotation` (against active `rfq_version`) | `[draft] → [submitted]` | Emits `(QuotationSubmitted)`; **quota consumed from the Controlling Organization** regardless of acting representative |
 | J-QUO-03 | Revise | `rfq.revise_quotation.v1` | `[submitted] ↦ [submitted]` (new `quotation_version`) | Prior version **superseded, never overwritten**; **no domain event; no quota**; soft cap `POLICY quote.max_revisions` (beyond → clarification-thread justification) |
 | J-QUO-04 | Clarify | `manage_clarification` (+ M6 thread → J-CHAT) | `[submitted]` | Buyer-driven reopen = best-and-final / window-reopen (Doc-3 §8.2/§8.5) |
-| J-QUO-05 | Withdraw | `rfq.withdraw_quotation.v1` (or `request_late_extension`) | `→ [withdrawn]` | Terminal; **zero performance penalty** (Doc-3 §5.4) |
+| J-QUO-05 | Withdraw | `rfq.withdraw_quotation.v1` (or `request_late_extension`) | `→ [withdrawn]` | Terminal; emits `(QuotationWithdrawn)`; **counts as a response — no performance-score penalty**, but habitual late-withdrawal patterns feed Quote Quality / matching confidence (Doc-3 §8.3); the fully zero-effect action is formal decline (Doc-3 §8.4, J-RINV-05) |
 | J-QUO-06 | Outcome | buyer awards / RFQ closes | `→ [selected]` / `[not_selected]` / `[expired]` | Vendor never sees competitor data or exclusion reasons (byte-equivalence) |
 
 **Governance rails:** shortlisting is an **RFQ-level state** (`[shortlisted]`, Doc-2 §5.4) — the
@@ -233,10 +233,10 @@ RFQ [shortlisted] → award (threshold approval) → quotation [selected] · RFQ
 | ID | Step | Key actions (pattern · contract) | State (Doc-2) | Outcome / governance |
 |---|---|---|---|---|
 | J-AWD-01 | Approve | award-threshold approval per workflow settings (Doc-3 §9.4; `J-ORG-04` config) | RFQ `[shortlisted]` | Governed by the buyer's own chain |
-| J-AWD-02 | Award | `award_rfq` | quotation `→ [selected]`; RFQ `→ [closed_won]` | **Explicit, unranked, 1:1, never auto-recommended**; deal value recorded (transaction intelligence) |
+| J-AWD-02 | Award | `award_rfq` | quotation `→ [selected]`; RFQ `→ [closed_won]` | **Explicit, unranked, 1:1, never auto-recommended**; emits `(QuotationSelected)`; deal value recorded (transaction intelligence) |
 | J-AWD-03 | Notify losers | ⚙ closure fan-out | other quotations `→ [not_selected]` | Uniform closure; non-penalizing; no exclusion reasons disclosed |
 | J-AWD-04 | Hand over | `(RFQClosedWon)` → seam M6-1 | engagement `[open]` (M4) | **No "vendor accepts award" state exists — never draw one**; M4 creates directly |
-| J-AWD-05 | Or close lost | `close_lost_rfq` | RFQ `→ [closed_lost]` | Clean, uniform, non-penalizing |
+| J-AWD-05 | Or close lost | `close_lost_rfq` | RFQ `→ [closed_lost]` | Emits `(RFQClosedLost)`; clean, uniform, non-penalizing |
 
 **Governance rails:** split sourcing = `reissue_rfq`, **never multi-award**; `[closed_won]` also
 triggers performance inputs (J-PSC) — by event, not by write; payment/entitlement never

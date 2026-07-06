@@ -201,8 +201,10 @@ outcomes (RFQ / engagement / WCC / published reviews) ─▶ ⚙ ingest ─▶ �
 
 **Governance rails (firewall — binding):** Financial Tier does **not** affect Performance Score;
 win-rate style metrics use *received invitations* as denominator, never all-matchable RFQs
-(marketplace_ux.md §6 rail); decline of an invitation and quotation withdrawal are **zero-penalty**
-(Doc-3 §5.4).
+(marketplace_ux.md §6 rail); formal invitation decline has **zero negative performance effect**
+(Doc-3 §8.4); quotation withdrawal counts as a response with no performance-score penalty, though
+habitual late-withdrawal patterns feed Quote Quality / matching confidence (Doc-3 §8.3) —
+outside this score.
 **Success:** ✔ inputs traceable to frozen outcomes; ✔ System-only computation; ✔ band-only
 display everywhere.
 
@@ -254,9 +256,9 @@ moderation leg composed by `J-ADM-01`.
 
 ---
 
-## B6. Fraud & Risk Signal Journey — `J-FRD` (⚙ System / staff)
+## B6. Fraud & Risk Signal Lifecycle — `J-FRD` (⚙ System / staff)
 
-**Breadcrumb:** Atlas ▸ Trust ▸ Fraud & Risk Signal Journey
+**Breadcrumb:** Atlas ▸ Trust ▸ Fraud & Risk Signal Lifecycle
 
 | Ownership | |
 |---|---|
@@ -273,20 +275,21 @@ visible.
 signals are firewalled out of every display (Board ruling; §4).
 
 **Entry:** an anomaly or complaint produces a signal.
-**Exit:** signal actioned (consequences ride owning-module instruments: revocation J-VER-07, ban
-J-BAN, score effect inside M5) — or dismissed.
+**Exit:** signal `[actioned]` (consequences ride owning-module instruments: revocation J-VER-07,
+ban J-BAN, score effect inside M5) — or `[dismissed]`.
 
 ```
-create signal → review → action (→ revoke / ban / score effect via owning instruments) | dismiss
+[open] → review → [reviewed] → [actioned] (→ revoke / ban / score effect via owning instruments) / [dismissed]
+(staff-internal walk — never displayed on any surface)
 ```
 
-| ID | Step | Key actions (pattern · contract) | Outcome / governance |
-|---|---|---|---|
-| J-FRD-01 | Create | `trust.create_fraud_signal.v1` (⚙/staff) | Signal recorded, staff-internal |
-| J-FRD-02 | Review | `trust.review_fraud_signal.v1` | Investigation leg — ops intake via J-CMPL |
-| J-FRD-03 | Action | `trust.action_fraud_signal.v1` | Consequences execute via owning instruments only (J-VER-07 revoke, J-BAN ban) — never a direct score write |
-| J-FRD-04 | Dismiss | `trust.dismiss_fraud_signal.v1` | Recorded disposition; no residue on display |
-| J-FRD-05 | Read | `trust.get_fraud_signal.v1`, `trust.list_fraud_signals.v1` | Staff-only reads |
+| ID | Step | Key actions (pattern · contract) | State (Doc-2 §3) | Outcome / governance |
+|---|---|---|---|---|
+| J-FRD-01 | Create | `trust.create_fraud_signal.v1` (⚙/staff) | `[open]` | Signal recorded, staff-internal |
+| J-FRD-02 | Review | `trust.review_fraud_signal.v1` | `[open] → [reviewed]` | Investigation leg — ops intake via J-CMPL |
+| J-FRD-03 | Action | `trust.action_fraud_signal.v1` | `→ [actioned]` | Consequences execute via owning instruments only (J-VER-07 revoke, J-BAN ban) — never a direct score write |
+| J-FRD-04 | Dismiss | `trust.dismiss_fraud_signal.v1` | `→ [dismissed]` | Recorded disposition; no residue on display |
+| J-FRD-05 | Read | `trust.get_fraud_signal.v1`, `trust.list_fraud_signals.v1` | any | Staff-only reads |
 
 **Governance rails:** fraud signals are **never displayed** on any surface (Board ruling —
 "never fraud"); signal → consequence always passes through an owning module's governed

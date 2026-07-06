@@ -198,7 +198,7 @@ Per-step composition (anchor steps from `marketplace_ux.md`):
 | `J-ADM-03` | J-CATA, J-ADV (review leg), J-CLM (status leg) |
 | `J-ADM-04` | J-BAN |
 | `J-ADM-05` | J-IMP, J-MATCH (rule assist leg) |
-| `J-ADM-06` | J-SUB (activate leg), J-ORG (suspend/reinstate leg) |
+| `J-ADM-06` | J-SUB (activate leg), J-SUC (org suspend/reinstate leg) |
 
 Lifecycle→lifecycle handoffs ride the frozen cross-module seams (navigation labels Doc-4M §M6):
 `M6-1 (RFQClosedWon)` J-AWD→J-ENG · `M6-2 (VendorInvited)` J-RINV→J-LEAD+J-NTF · `M6-3
@@ -241,7 +241,7 @@ docs-only; no build-wave gate).
 
 | Key | Type | Title | Frozen lifecycle anchor |
 |---|---|---|---|
-| J-FRD | J | Fraud & Risk Signal Journey | BC-TRUST-4 (⚙ System; no public enum) |
+| J-FRD | L | Fraud & Risk Signal Lifecycle | `[open] → [reviewed] → [actioned]/[dismissed]` (Doc-2 §3.6; staff-internal — **never displayed**) |
 | J-PSC | J | Performance Score Update Journey | Derived aggregate — **not a state machine** (Doc-2 §8 events) |
 | J-REV | L | Public Review Lifecycle | `[submitted]/[approved]/[published]/[rejected]/[removed]` (Doc-2 §3 `public_reviews`) |
 | J-TIER | L | Verified Financial Tier Lifecycle | `[pending_verification] → [verified] ⇄ [suspended] → [expired]` (Doc-2 §5.6) |
@@ -274,7 +274,7 @@ docs-only; no build-wave gate).
 
 | Key | Type | Title | Frozen lifecycle anchor |
 |---|---|---|---|
-| J-CRM | L | Private Vendor CRM Journey | `[active] ⇄ [archived]` (PATCH-02: claim lifecycle N/A); Invariant #11 |
+| J-CRM | L | Private Vendor Record Lifecycle (buyer CRM) | `[active] ⇄ [archived]` (PATCH-02: claim lifecycle N/A); Invariant #11 |
 | J-DLV | J | Delivery Recording Journey | Document-evidenced: `ops.record_delivery.v1` ↦ challan + `(DeliveryRecorded)`; **no goods-delivery machine** |
 | J-DOC | J | Engagement Document Chain Journey | LOI/PO/challan/WCC — immutable `↦` versions, **no acceptance states**; `«can_approve_po»` issuer-side |
 | J-DSP | J | Dispute Recording Journey | Dispute **recorded** (audit; Doc-2 §9) — **not** an engagement state |
@@ -290,7 +290,7 @@ docs-only; no build-wave gate).
 |---|---|---|---|
 | J-CHAT | L | Messaging Thread Lifecycle | `[open] → [closed]` (`comm.close_thread.v1`; participant-initiated; append-only messages) |
 | J-NTF | J | Notification Delivery Journey | Outbox-consumer; channel logs `[queued] → [sent] → [delivered]/[failed]` |
-| J-TKT | L | Support Ticket Lifecycle | `[open] → [in_progress] → [resolved] → [closed]` (+ reopen) (Doc-2 §3) |
+| J-TKT | L | Support Ticket Lifecycle | `[open] → [in_progress] → [resolved] → [closed]` (strictly linear per Doc-4H; Doc-4M variance = `ESC-JRN-TKT-MACHINE`) |
 
 ### File G — [`journeys_monetization.md`](journeys_monetization.md) (M7 · Doc-4I) — Phase 2
 
@@ -304,18 +304,18 @@ docs-only; no build-wave gate).
 
 | Key | Type | Title | Frozen lifecycle anchor |
 |---|---|---|---|
-| J-BAN | L | Ban Lifecycle | `[active] → [lifted]/[expired]`; `(VendorBanned)`; seam M6-4 |
+| J-BAN | L | Ban Lifecycle | `[active] → [lifted] → [expired]` (linear; expiry archives a **lifted** ban only); `(VendorBanned)`; seam M6-4 |
 | J-CATA | J | Category Management Journey | Admin leg of taxonomy (M8-governed) |
 | J-CMPL | J | Complaint & Fraud Investigation Journey | Ops leg → J-FRD (Trust owns signals) |
 | J-IMP | J | Import Job Journey | BC-ADM import; ⚙ System out-of-wire processing |
-| J-MOD | L | Moderation Case Journey | Case `[approved]/[rejected]/[escalated]` (Doc-4J) |
+| J-MOD | L | Moderation Case Lifecycle | Case `[approved]/[rejected]/[escalated]` (Doc-4J) |
 | J-VQ | J | Verification Queue Journey | Seam M6-5; "Admin decides, Trust owns" |
 
 ### File I — [`journeys_ai.md`](journeys_ai.md) (M9 · Doc-4K) — Phase 3
 
 | Key | Type | Title | Frozen lifecycle anchor |
 |---|---|---|---|
-| J-AI | L | AI Derived-Artifact Lifecycle | Cache: `(absent) → [fresh] ⇄ [stale] → [expired]` (Doc-2 §10.10); Invariant #12; `[ESC-AI-EVENT]` `[ESC-AI-SLUG]` |
+| J-AI | L | AI Derived-Artifact Lifecycle | Cache: `(absent) → [fresh] ⇄ [stale] → [expired]` (tokens = **Doc-4M §M4 navigation keys**; substance = Doc-2 §10.10 cache attributes + §3.10 regenerable/disposable); Invariant #12; `[ESC-AI-EVENT]` `[ESC-AI-SLUG]` |
 
 **Totals:** 6 reserved actor journeys + 45 lifecycle journeys = **51 registered**.
 
@@ -381,28 +381,28 @@ where already minted in `page_inventory.md` / FE WBS.
 | J-TIER | 7G · 7H | tier verification (Doc-4G) | Doc-2 §5.6 | `(VendorTierChanged)` |
 | J-TSC / J-PSC | display-only (7D/7F/7G) | `get_trust_score`, `get_performance_score` | — (derived) | Doc-2 §8 score events |
 | J-REV | 7F (author) · 7D (read) | review contracts (Doc-4G BC-TRUST-5) | Doc-2 §3 `public_reviews` | — |
-| J-FRD | ⚙ System · 7H | BC-TRUST-4 (Doc-4G) | — | — |
-| J-CLM | 7E→7G | `claim_vendor_profile`, `create_vendor_profile`, `update_vendor_profile` | Doc-2 §5.3 | `(VendorBanned)` in |
+| J-FRD | ⚙ System · 7H | BC-TRUST-4 (Doc-4G) | Doc-2 §3.6 (staff-internal) | — |
+| J-CLM | 7E→7G | `claim_vendor_profile`, `create_vendor_profile`, `update_vendor_profile` | Doc-2 §5.3 | `(VendorClaimed)`, `(VendorSuspended)`; `(VendorBanned)` in |
 | J-PRD | 7G · 7D | `create_product`, `update_product`, `set_product_status` | Doc-2 §3 | — |
-| J-SITE | 7G · 7D | `publish_*`/`unpublish_*`, domain contracts (Doc-4D) | Doc-2 §3 | — |
+| J-SITE | 7G · 7D | `publish_*`/`unpublish_*`, domain contracts (Doc-4D) | Doc-2 §3 | `(MicrositePublished)`, `(MicrositeDomainChanged)` |
 | J-PORT | 7G · 7D | `marketplace.create/update/publish_showcase_project.v1` (Doc-4D §D7.3) | Doc-2 §3 | — (none; never coin) |
 | J-CAT | 7G | `assign_category`, `list_categories` | Doc-2 §3 | — |
 | J-ADV | 7G · 7H | `create_advertisement`, `submit_advertisement`, `review_advertisement` | Doc-2 §5.8 (A-07) | — |
 | J-VOT | 7G · 7H | ownership-transfer contracts (Doc-4D) | — | `(VendorOwnershipTransferred)` |
 | J-RINV | 7G | `get_invitation`, `list_invitations`, `respond_to_invitation` | Doc-2 §3 | `(VendorInvited)` |
-| J-QUO | 7G · 7F | `submit_quotation`, `rfq.revise_quotation.v1`, `rfq.withdraw_quotation.v1` | Doc-2 §5.5 | — (revision: none) |
+| J-QUO | 7G · 7F | `submit_quotation`, `rfq.revise_quotation.v1`, `rfq.withdraw_quotation.v1` | Doc-2 §5.5 | `(QuotationSubmitted)`, `(QuotationWithdrawn)`, `(QuotationSelected)` (revision: none) |
 | J-CMP | 7F | `get_comparison_statement` | — | — |
-| J-AWD | 7F | `award_rfq`, `close_lost_rfq` | Doc-2 §5.4/§5.5 | `(RFQClosedWon)` |
-| J-MATCH | ⚙ System (7F observe) | matching/routing pipeline (Doc-4E Part2/3), `get_routing_log` | Doc-2 §5.4 | — |
-| J-ENG | 7F · 7G | engagement contracts (Doc-4F BC-OPS-2) | Doc-2 §3 | `(RFQClosedWon)` in |
+| J-AWD | 7F | `award_rfq`, `close_lost_rfq` | Doc-2 §5.4/§5.5 | `(RFQClosedWon)`, `(QuotationSelected)`, `(RFQClosedLost)` |
+| J-MATCH | ⚙ System (7F observe) | matching/routing pipeline (Doc-4E Part2/3), `get_routing_log` | Doc-2 §5.4 | `(RFQMatched)`, `(RFQRouted)` |
+| J-ENG | 7F · 7G | engagement contracts (Doc-4F BC-OPS-2) | Doc-2 §3 | `(RFQClosedWon)` in; `(EngagementCompleted)`, `(BuyerFeedbackRecorded)` |
 | J-DOC | 7F · 7G | `ops.issue_engagement_document.v1`, `ops.revise_engagement_document.v1` | — (immutable `↦`) | — |
 | J-DLV | 7G · 7F | `ops.record_delivery.v1`, `upload_delivery_challan` | — | `(DeliveryRecorded)` |
-| J-WCC | 7F · 7G | WCC issuance (Doc-4F) | engagement `[completed]` | — |
-| J-DSP | 7F · 7G | dispute recording (Doc-4F; Doc-2 §9 audit) | — (recorded, not a state) | — |
+| J-WCC | 7F · 7G | WCC issuance (Doc-4F) | engagement `[completed]` | `(WorkCompletionIssued)` |
+| J-DSP | 7F · 7G | dispute recording (Doc-4F; Doc-2 §9 audit) | — (recorded, not a state) | `(DisputeRecorded)` (via trade invoice `→ [disputed]`) |
 | J-LEAD | 7G | `ops.create_lead_on_invitation.v1`, `update_lead_stage`, `add_lead_activity` | Doc-2 §3 | `(VendorInvited)` in |
 | J-CRM | 7F | `get/update_crm_status`, `add_crm_note`, `set_approved`, `set_blacklist` | Doc-2 §3 | — |
 | J-TPL | 7F | template contracts (Doc-4F BC-OPS-4) | Doc-2 §5.9 | — |
-| J-FIN | 7F · 7G | `issue_trade_invoice`, payment records (Doc-4F BC-OPS-5) | Doc-2 §3 | — |
+| J-FIN | 7F · 7G | `issue_trade_invoice`, payment records (Doc-4F BC-OPS-5) | Doc-2 §3 | `(DisputeRecorded)` on `→ [disputed]` |
 | J-NTF | shell (7C) | BC-COMM-2/3 (Doc-4H) | Doc-2 §3 logs | consumes outbox |
 | J-CHAT | 7F · 7G | messaging + `comm.close_thread.v1` (Doc-4H BC-COMM-1) | `[open]→[closed]` | — |
 | J-TKT | 7E · 7H | support contracts (Doc-4H BC-COMM-4) | Doc-2 §3 | — |
@@ -446,11 +446,38 @@ where already minted in `page_inventory.md` / FE WBS.
 
 ---
 
-## 10. Appendix — Board Review R1 adjudication (plan stage, 2026-07-06)
+## 10. Appendix — Review adjudication records
 
-The plan for this program received an Architecture Board Hard Review (0 BLOCKER / 4 MAJOR /
-8 MINOR / 9 NIT → PASS WITH PATCH). All findings were adjudicated per CLAUDE.md §13 (Validate
-Findings gate) and **accepted**; they are realized structurally in this atlas:
+### R2 — Review B (fresh-context adversarial, 2026-07-06)
+
+Verdict on the authored suite: REVISION — 2 BLOCKER / 4 MAJOR / 5 MINOR / 1 NIT / 1 OBS. All 13
+findings adjudicated **valid + accepted** (§13 gate) and fixed in place:
+
+- **BLOCKER-1** J-BAN drew expiry from `[active]` — frozen machine is linear `active → lifted →
+  expired`, expiry archives a **lifted** ban only (`expected_state=lifted`). Redrawn.
+- **BLOCKER-2** J-TKT drew reopen/admin-close edges — Doc-4H BC-COMM-4 is strictly linear; the
+  Doc-4M §M5 variant edges are an unregistered frozen-vs-frozen variance → **registered as
+  `ESC-JRN-TKT-MACHINE`** (Flag-and-Halt, mirrors `ESC-7G-LEAD-MACHINE`). Rebound to Doc-4H.
+- **MAJOR-1** `issue_engagement_document` `doc_kind` is `<loi|po|wcc>` — challan is §F5.3-only. Fixed.
+- **MAJOR-2** `(WorkCompletionIssued)` exists (WCC issuance → Trust input); the "no event" rail
+  scoped to LOI/PO. Fixed in J-DOC/J-WCC + §7.
+- **MAJOR-3** `(DisputeRecorded)` exists (trade invoice `→ [disputed]` → Trust input
+  `input_type=dispute`). Named in J-DSP/J-FIN + §7; rail reworded to "by event, never by write".
+- **MAJOR-4** §7 Events column under-populated — Doc-2 §8 families added (`QuotationSubmitted/
+  Withdrawn/Selected`, `RFQMatched/RFQRouted`, `VendorClaimed/VendorSuspended`,
+  `MicrositePublished/MicrositeDomainChanged`, `EngagementCompleted`, `RFQClosedLost`,
+  `BuyerFeedbackRecorded`).
+- **MINORs** J-AI tokens reframed as Doc-4M navigation keys (marked legend exception);
+  withdrawal-penalty nuance rebound to Doc-3 §8.3/§8.4; lead-credit citations §6→§11; J-FRD bound
+  to the Doc-2 §3.6 signal enum (retyped L); §4 composition `J-ADM-06` org leg → J-SUC.
+- **NIT** J-CRM/J-MOD retitled per the §1 convention. **OBS** `ops.record_buyer_feedback.v1`
+  vs `trust.submit_review.v1` distinction added to J-ENG rails + File E ledger.
+
+### R1 — Board Review (plan stage, 2026-07-06)
+
+The plan received an Architecture Board Hard Review (0 BLOCKER / 4 MAJOR / 8 MINOR / 9 NIT →
+PASS WITH PATCH). All findings adjudicated per CLAUDE.md §13 and **accepted**; realized
+structurally in this atlas:
 
 | Finding | Realized where |
 |---|---|
