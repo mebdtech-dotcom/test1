@@ -150,6 +150,27 @@ pass is **already registered** as `ESC-7G-LEAD-MACHINE` (above) — not re-regis
 | **`ESC-JRN-LEAD-DIST`** | Admin "lead distribution" is **unmodeled** — Doc-4J has no lead entity or function; `vendor_leads` are created **only** by seam M6-2 (`VendorInvited` at invitation `delivered`); M7 lead credits are a commercial balance, never an assignment instrument | No admin lead-assignment surface or journey; leads remain invitation-born only | Human Architecture Board (owner product decision) — would require Doc-4J + Doc-4F additive patches |
 | **`ESC-JRN-TKT-MACHINE`** | Support-ticket machine variance (frozen-vs-frozen): **Doc-4H BC-COMM-4** contracts are strictly linear `open → in_progress → resolved → closed` ("a non-resolved ticket cannot be closed"; no reopen; "no state added; no transition added") while **Doc-4M §M5** consolidates extra edges (`resolved ⇄ in_progress` reopen; `open/in_progress → closed`). Same class as `ESC-7G-LEAD-MACHINE` | Journey J-TKT binds the **Doc-4H** machine (per-module authority); no reopen/admin-close affordance rendered | Human corpus-reconciliation (Flag-and-Halt; not AI, not API-Gov) |
 
+### Buyer Frontend Contract Gaps (buyer_journey_v1.0 intake, 2026-07-06)
+
+Source: [`buyer_journey_v1.0.md`](buyer_journey_v1.0.md) Part C (owner-directed Board intake,
+2026-07-06 — "resolve individually, never by modifying the journey document"). Packet:
+[`BOARD-PACKET-BUYER-FE-CONTRACT-GAPS_v1.0.md`](governanceReviews/BOARD-PACKET-BUYER-FE-CONTRACT-GAPS_v1.0.md).
+All six routes were **reserved at BX-04** with the absence recorded in each `page.tsx` header;
+adjacencies checked and NOT re-registered: `ESC-7G-Q-DRAFT` (vendor quotation draft — different
+concept), `ESC-7G-ENG-03` (per-engagement doc enumeration — different scope), and the two frozen
+favorites forms (`marketplace.catalog_favorites`, `operations.vendor_favorites` — frozen, not
+escalated). **Opening this intake does not imply Board acceptance; each handle remains unresolved
+until individually ratified.**
+
+| Handle | Scope / gap | Interim presentation | Channel |
+|---|---|---|---|
+| **`ESC-BUY-QUOTES-LIST`** | No **cross-RFQ quotation list** read — quotations exist only per-RFQ (`list_quotations_for_rfq`) or per-doc (`get_quotation`); a buyer-org-wide "all received quotes" aggregate is absent | `/quotations` reserved via `ImplementationPendingView` (BX-04); no data fabricated | Additive Doc-5E patch (human Board) |
+| **`ESC-BUY-PO-LIST`** | No **cross-engagement purchase-order list** read — the PO is per-engagement (P-BUY-21, `get_engagement_document`); an "all my POs / order history" roll-up is absent | `/purchase-orders` (`?status=active\|history` copy-only) reserved via `ImplementationPendingView` | Additive Doc-5F patch (human Board) |
+| **`ESC-BUY-MSG-INBOX`** | No **unified cross-RFQ message inbox** read — M6 exposes only per-RFQ clarification threads (`manage_clarification`, P-BUY-16) | `/messages` reserved via `ImplementationPendingView`; messaging stays per-RFQ | Additive Doc-5H patch (human Board) |
+| **`ESC-BUY-REPORTS`** | No **org-wide procurement reporting** reads — the only analytics-tagged buyer surface is the per-RFQ comparison statement (P-BUY-15); every figure must be a contract read (R7), so no report is renderable | `/reports` reserved via `ImplementationPendingView`; journey-KPI candidates travel with this intake (buyer_journey §A.6, proposed non-authoritative) | Additive Doc-5E/5F reporting reads (human Board) |
+| **`ESC-BUY-SAVED-VENDORS`** | No **vendor-saving** read/concept — explicitly distinct from P-BUY-05 Favorites (product/category only, owner ruling FE-BUY-10) and from the buyer-private CRM (Inv #11, a different concept) | `/saved-vendors` reserved via `ImplementationPendingView`; neither existing surface repurposed under a mismatched label | Product decision → additive Doc-5D/5F patch (human Board) |
+| **`ESC-BUY-SPEC-LIB`** | No **buyer-facing specification library** concept — a spec library exists only vendor-side (`/workspace/company/spec-library`, P-VND-09); a buyer sourcing-reference library is absent everywhere in the corpus | `/spec-library` reserved via `ImplementationPendingView`; the vendor page is never repurposed across the workspace boundary | Product decision → module-ownership ruling + additive patch (human Board) |
+
 ### Known non-ESC gaps (recorded, not escalations)
 - **Industry taxonomy** — now tracked as **`ESC-CLASS-INDUSTRY`** above (was: "not modeled"); the
   `Doc-2_IndustryTaxonomy` patch proposal recommends an M2-owned model for Board ratification.

@@ -224,7 +224,7 @@ held with a recorded reason). Update this register — never the body — when a
 
 | Item | Status | Owner |
 |---|---|---|
-| WP-1 Buyer LOI View | **Approved** (2026-07-06) — **built 2026-07-06**, awaiting Review-A (WP card: `governanceReviews/milestones/wp-1-buyer-loi-view/`) | Team-2 |
+| WP-1 Buyer LOI View | ✅ **CLOSED** (2026-07-06 — built, Review-A PASS r3 ∧ Review-B PASS ×2 concordant @ `1ce722a`, RV-0140; WP card: `governanceReviews/milestones/wp-1-buyer-loi-view/`) | Team-2 |
 | WP-2 Compare Picker | **Held** (owner, 2026-07-06) behind the product freeze `productSpec/COMPARE_SHEET_UX_FREEZE_v0.1.md` — D1 RULED (side-by-side min 2 / max 5, a UI selection limit only, not a business rule; absent/invalid selection renders the full statement unchanged); D2–D7 await owner sign-off → v1.0 un-gates implementation | Product → Team-2 |
 | Received Quotes (`/quotations`) | ESC Required — **intake opened** (`ESC-BUY-QUOTES-LIST`, BOARD-PACKET-BUYER-FE-CONTRACT-GAPS_v1.0) | Board |
 | Purchase Orders (`/purchase-orders`) | ESC Required — **intake opened** (`ESC-BUY-PO-LIST`, same packet) | Board |
