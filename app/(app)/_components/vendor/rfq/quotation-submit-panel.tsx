@@ -15,19 +15,31 @@ import type { QuotaView } from "./types";
 
 export interface QuotationSubmitPanelProps {
   quota?: QuotaView;
+  /** Owner PRD 2026-07-07 §7: the submit action moved to the preview dialog — the authoring page
+   *  hides this button. Defaults true so other mounts keep their behavior. */
+  showSubmitAction?: boolean;
+  /** Owner PRD 2026-07-07 §6: the presentation-only notice is suppressed on the authoring page. */
+  showPresentationNote?: boolean;
 }
 
-export function QuotationSubmitPanel({ quota }: QuotationSubmitPanelProps) {
+export function QuotationSubmitPanel({
+  quota,
+  showSubmitAction = true,
+  showPresentationNote = true,
+}: QuotationSubmitPanelProps) {
   return (
     <div className="space-y-4">
       <QuotaMeter quota={quota} />
 
-      <div className="rounded-md border border-iv-warning-base bg-iv-warning-subtle px-3 py-2 text-sm text-iv-warning-text">
-        <p className="font-medium">Before you can submit</p>
+      {/* Darker foreground ink for readability (owner PRD 2026-07-07 §4); warning tint kept on the frame. */}
+      <div className="rounded-md border border-iv-warning-base bg-iv-warning-subtle px-3 py-2 text-sm text-foreground">
+        <p className="font-semibold">Before you can submit</p>
         <ul className="mt-1 list-disc space-y-0.5 pl-5">
-          <li>Complete the required sections: price breakdown, delivery terms and compliance.</li>
-          <li>Upload every attachment you reference.</li>
-          <li>The quotation window must still be open.</li>
+          <li>Complete all required quotation information.</li>
+          <li>Enter pricing for every applicable item.</li>
+          <li>Review commercial terms and compliance.</li>
+          <li>Upload all referenced attachments.</li>
+          <li>Ensure the quotation submission window is still open.</li>
         </ul>
       </div>
 
@@ -37,12 +49,16 @@ export function QuotationSubmitPanel({ quota }: QuotationSubmitPanelProps) {
         RFQ references are taken from your grant automatically.
       </p>
 
-      <div className="flex flex-col gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <PresentationFormNote />
-        <Button type="button" disabled>
-          Submit quotation
-        </Button>
-      </div>
+      {showSubmitAction || showPresentationNote ? (
+        <div className="flex flex-col gap-2 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between">
+          {showPresentationNote ? <PresentationFormNote /> : <span />}
+          {showSubmitAction ? (
+            <Button type="button" disabled>
+              Submit quotation
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

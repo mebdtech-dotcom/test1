@@ -1,31 +1,24 @@
 // S4 Quote Authoring (compose) — the quotation builder (companion §13.1), bound to a FIXED
-// `rfq_version_id` snapshot (read = `rfq.get_rfq.v1`, grant-scoped [B-1]). The hero band shows: the
-// invitation state, the locked version, the window chip (live countdown deferred — no client clock),
-// the Doc-5I quota, and a note that the frozen-required `invitation_id` + `rfq_id` are resolved
-// server-side from the grant (not vendor-typed [m-4]). Draft persistence is client-local-only pending
+// `rfq_version_id` snapshot (read = `rfq.get_rfq.v1`, grant-scoped [B-1]). The navy hero card was
+// REMOVED (owner 2026-07-07); the former hero-band facts survive: locked version + window chip +
+// deadline render in the RFQ-details grid, the Doc-5I quota + the [m-4] "references resolved from
+// your grant" note render in the submit panel. Draft persistence is client-local-only pending
 // [ESC-7G-Q-DRAFT] — surfaced as an honest "saved on this device" note, NOT a server-persisted note.
 //
-// Quotation-document format delta (owner reference format, 2026-07-06): the step rail (WorkspaceTabs)
-// is replaced by a SINGLE-SCROLL stacked-card document — all seven §13.1 sections are retained
-// (price / delivery / warranty / compliance / attachments / preview / submit), regrouped as: navy
-// hero → buyer-parameters strip → price card → terms card (three frozen term fields) → attachments →
-// preview → submit. The hero + parameters strip bind EXISTING `RfqSnapshotView` fields the vendor is
-// already granted (no new read pattern, no coined field); `estimated_value` is the one frozen
-// create_rfq field already vendor-shown (types.ts ND note) — no VAT/AIT or commercial-guidance
-// fabrication. Server component; presentation-only, all actions disabled.
-import { Badge } from "@/frontend/primitives/badge";
+// Owner functional spec delta (2026-07-06): the static section cards are replaced by the INTERACTIVE
+// QuotationWorkbench (client) — amendable item rows with undo + amber tracking, live row totals,
+// AIT/VAT/grand-total math, currency select, condition groups + device-local reusable sets, buyer
+// read-only conditions, submission info, live preview. All seven §13.1 sections remain present.
+// Contract gaps are registered intake (ESC-QTN-AMEND / -TERMS-GROUPS / -CONDITION-SETS /
+// -SUBMIT-INFO / -CURRENCY-LIST — see esc_registry.md); nothing here wires a server write and
+// submit stays disabled. This file stays a Server Component: hero + parameters strip render on the
+// server; only the workbench is client.
+import type { ReactNode } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
-import { CurrencyDisplay } from "@/frontend/components/currency-display";
-import { InvitationStateChip } from "./state-chips";
 import { WindowStateChip } from "./window-state-chip";
-import { QuotaMeter } from "./quota-meter";
-import { PriceBreakdownTable } from "./price-breakdown-table";
-import { QuotationTermsField } from "./quotation-terms-fields";
-import { QuotationAttachments } from "./quotation-attachments";
-import { QuotationPreview } from "./quotation-preview";
-import { QuotationSubmitPanel } from "./quotation-submit-panel";
+import { QuotationWorkbench } from "./quotation-workbench";
+import { RfqQuickActions } from "./rfq-quick-actions";
 import type {
-  InvitationView,
   PriceBreakdownLine,
   FileRefView,
   QuotaView,
@@ -48,31 +41,30 @@ export interface QuotationBuilderProps {
   warrantyTerms?: string;
   specComplianceDeclaration?: string;
   attachments?: FileRefView[];
-  /** The vendor-entitled RFQ snapshot (rfq.get_rfq.v1, already granted) — hero budget + parameters strip. */
+  /** The vendor-entitled RFQ snapshot (rfq.get_rfq.v1, already granted) — RFQ details + parameters strip. */
   rfq?: RfqSnapshotView;
-  /** The vendor's own invitation on this RFQ — hero state chip + received line. */
-  invitation?: InvitationView;
+  /** SYSTEM-MANAGED revision display (owner ruling 2026-07-07): count of already-submitted immutable
+   *  versions (frozen `current_version_no`); a never-submitted draft is Rev 0. Read-only. */
+  revisionNo?: number;
+  /** Contact defaults from the shell identity source (the signed-in user when wired). */
+  defaultContactPerson?: string;
+  defaultContactNumber?: string;
 }
 
 export function QuotationBuilder({
-  rfqHumanRef,
   versionLockedLabel,
-  windowState,
-  windowDeadlineLabel,
-  windowUrgency,
   quota,
   lines,
   currency = "BDT",
-  subtotal,
   deliveryTerms,
   warrantyTerms,
   specComplianceDeclaration,
   attachments,
   rfq,
-  invitation,
+  revisionNo,
+  defaultContactPerson,
+  defaultContactNumber,
 }: QuotationBuilderProps) {
-  const lineCount = lines?.length ?? 0;
-
   const parameterBlocks = [
     { label: "Brand preference", value: rfq?.brand_preference },
     { label: "Standards required", value: rfq?.standards },
@@ -80,49 +72,71 @@ export function QuotationBuilder({
     { label: "Certifications", value: rfq?.certifications },
   ] as const;
 
+  // Vendor-visible urgency = the UI-derived window urgency label (companion §7.1). The buyer's
+  // INTERNAL priority guidance is ND-excluded by design (types.ts non-disclosure block) — never shown.
+  const priorityLabel = rfq?.window_urgency
+    ? (
+        {
+          normal: "Standard",
+          soon: "High — window closing soon",
+          imminent: "Urgent — window closing imminently",
+        } as const
+      )[rfq.window_urgency]
+    : undefined;
+
+  // RFQ Details rows (owner directive 2026-07-07). Every value binds an existing granted snapshot
+  // field; Buyer / Contact person render genuine-empty until the wired grant read carries them —
+  // never fabricated. "Remaining time" = the window chip (live countdown deferred — no client clock).
+  const rfqDetailRows: { label: string; value: ReactNode }[] = [
+    {
+      label: "RFQ number",
+      value: rfq?.human_ref ? <span className="font-mono">{rfq.human_ref}</span> : undefined,
+    },
+    { label: "RFQ title", value: rfq?.summary },
+    { label: "Buyer", value: rfq?.buyer_org_name },
+    { label: "Plant", value: rfq?.delivery_site ?? rfq?.delivery_location },
+    { label: "Contact person", value: rfq?.contact_person },
+    { label: "Phone", value: rfq?.contact_phone ?? rfq?.contact_whatsapp },
+    { label: "Email", value: rfq?.contact_email },
+    { label: "Deadline", value: rfq?.window_deadline_label },
+    { label: "Priority", value: priorityLabel },
+    {
+      label: "Remaining time",
+      value: rfq?.window_state ? (
+        <WindowStateChip
+          state={rfq.window_state}
+          deadlineLabel={rfq.window_deadline_label}
+          urgency={rfq.window_urgency}
+        />
+      ) : undefined,
+    },
+    { label: "Version locked", value: versionLockedLabel },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Hero — invitation state, RFQ ref, window, buyer's estimated value */}
-      <Card className="overflow-hidden">
-        <div className="bg-iv-navy-900 p-6 text-white">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0 space-y-2">
-              <InvitationStateChip state={invitation?.state} />
-              <h2 className="font-mono text-2xl font-semibold leading-none tracking-tight text-white">
-                {rfqHumanRef ?? "This RFQ"}
-              </h2>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-iv-navy-200">
-                {invitation?.delivered_at ? <span>Received {invitation.delivered_at}</span> : null}
-                {versionLockedLabel ? <span>Version locked: {versionLockedLabel}</span> : null}
-                <WindowStateChip
-                  state={windowState}
-                  deadlineLabel={windowDeadlineLabel}
-                  urgency={windowUrgency}
-                />
+      {/* RFQ details (owner directive 2026-07-07) — granted snapshot facts + quick actions.
+          The navy hero card was REMOVED per owner 2026-07-07; its load-bearing facts survive
+          elsewhere: quota + grant note render in the submit panel, deadline/remaining time render
+          here, and the locked-version fact moved into this grid. */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">RFQ details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+            {rfqDetailRows.map((row) => (
+              <div key={row.label}>
+                <dt className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {row.label}
+                </dt>
+                <dd className="mt-1 text-sm font-medium text-foreground">
+                  {row.value ?? <span className="font-normal text-muted-foreground">—</span>}
+                </dd>
               </div>
-            </div>
-            {typeof rfq?.estimated_value === "number" ? (
-              <div className="shrink-0 text-right">
-                <p className="text-2xs font-semibold uppercase tracking-wide text-iv-navy-200">
-                  Buyer&apos;s estimated value
-                </p>
-                <p className="mt-1 text-2xl font-semibold tabular-nums text-iv-amber-400">
-                  <CurrencyDisplay
-                    amount={rfq.estimated_value}
-                    currency={rfq.currency ?? currency}
-                  />
-                </p>
-                <p className="text-xs text-iv-navy-200">Stated on the RFQ</p>
-              </div>
-            ) : null}
-          </div>
-        </div>
-        <CardContent className="space-y-2 pt-4">
-          <QuotaMeter quota={quota} />
-          <p className="text-xs text-muted-foreground">
-            Your invitation and RFQ references are taken from your grant automatically — you do not
-            enter them. Drafts are kept on this device until you submit.
-          </p>
+            ))}
+          </dl>
+          {rfq?.rfq_id ? <RfqQuickActions rfqId={rfq.rfq_id} /> : null}
         </CardContent>
       </Card>
 
@@ -145,72 +159,20 @@ export function QuotationBuilder({
         </CardContent>
       </Card>
 
-      {/* Price breakdown — frozen `price_breakdown` jsonb (companion §13.1 section 1) */}
-      <Card>
-        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 pb-3">
-          <div className="space-y-1">
-            <CardTitle className="text-base">Price breakdown</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              The line items, quantities and unit prices that make up your offer.
-            </p>
-          </div>
-          <Badge variant="neutral">
-            {lineCount} {lineCount === 1 ? "line" : "lines"}
-          </Badge>
-        </CardHeader>
-        <CardContent>
-          <PriceBreakdownTable lines={lines} currency={currency} subtotal={subtotal} />
-        </CardContent>
-      </Card>
-
-      {/* Terms & declarations — the three frozen term fields (sections 2–4), one card */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Terms &amp; declarations</CardTitle>
-        </CardHeader>
-        <CardContent className="divide-y divide-border [&>form]:py-6 [&>form:first-child]:pt-0 [&>form:last-child]:pb-0">
-          <QuotationTermsField section="delivery" value={deliveryTerms} showNote={false} />
-          <QuotationTermsField section="warranty" value={warrantyTerms} showNote={false} />
-          <QuotationTermsField section="compliance" value={specComplianceDeclaration} />
-        </CardContent>
-      </Card>
-
-      {/* Attachments — frozen `attachments_refs` (section 5) */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Attachments</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <QuotationAttachments attachments={attachments} />
-        </CardContent>
-      </Card>
-
-      {/* Preview — own-data-only summary (section 6, skippable) */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Preview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <QuotationPreview
-            lines={lines}
-            currency={currency}
-            subtotal={subtotal}
-            deliveryTerms={deliveryTerms}
-            warrantyTerms={warrantyTerms}
-            specComplianceDeclaration={specComplianceDeclaration}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Submit — the only quota-consuming action (section 7) */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Submit</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <QuotationSubmitPanel quota={quota} />
-        </CardContent>
-      </Card>
+      {/* Interactive workbench — items/pricing, terms + sets, compliance, attachments, submit, preview */}
+      <QuotationWorkbench
+        rfq={rfq}
+        lines={lines}
+        currency={currency}
+        deliveryTerms={deliveryTerms}
+        warrantyTerms={warrantyTerms}
+        specComplianceDeclaration={specComplianceDeclaration}
+        attachments={attachments}
+        quota={quota}
+        revisionNo={revisionNo}
+        defaultContactPerson={defaultContactPerson}
+        defaultContactNumber={defaultContactNumber}
+      />
     </div>
   );
 }

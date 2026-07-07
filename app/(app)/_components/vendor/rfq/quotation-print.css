@@ -1,0 +1,23 @@
+/* S4 Author Quotation — print scoping (owner directive 2026-07-07):
+   · the authoring quick action prints ONLY the buyer RFQ sheet;
+   · the preview dialog's Print prints ONLY the vendor offer (the canonical QuotationDocument —
+     the SAME template as the preview, so print output cannot drift from what is previewed).
+   The trigger sets body[data-iv-print="rfq"|"offer"] for the duration of the print and removes it
+   on afterprint. On screen the print sheets never render. The sheets are portaled directly under
+   <body>, so hiding every other body child yields a clean single-document printout (no blank
+   pages, no app chrome). Standalone-CSS class — same convention as the CS print view. */
+
+.iv-print-sheet {
+  display: none;
+}
+
+@media print {
+  body[data-iv-print] > *:not(.iv-print-sheet) {
+    display: none !important;
+  }
+
+  body[data-iv-print="rfq"] > .iv-print-rfq,
+  body[data-iv-print="offer"] > .iv-print-offer {
+    display: block !important;
+  }
+}

@@ -20,11 +20,46 @@ export function CommunicationSection({ form }: { form: RfqDraftForm }) {
       title="Communication preferences"
       contentClassName="grid grid-cols-1 gap-4 sm:grid-cols-2"
     >
-      <fieldset className="sm:col-span-2">
-        <legend className="text-sm font-medium text-foreground">Preferred contact method</legend>
+      {/* Per-RFQ contact person (owner directive 2026-07-07) — VISUALLY SEPARATED from "Your
+          preferred contact method" below so the two are never confused: this block is WHO vendors
+          contact about the RFQ (may be someone other than the creator); the fieldset below is how
+          YOU — the RFQ creator — prefer to be reached. */}
+      <div className="rounded-md border border-border p-3 sm:col-span-2">
+        <p className="text-sm font-medium text-foreground">RFQ contact person</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Platform messages stay on — the official record and audit trail. The rest are optional and
-          buyer-controlled.
+          The person vendors should reach about this RFQ — can be someone other than you. Shared
+          only with vendors who receive this RFQ.
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <FormField
+            id="rfq-contact-person"
+            label="Contact person"
+            inputProps={{
+              defaultValue: form.contactPersonName,
+              placeholder: "e.g. Engr. Kamrul Hassan",
+            }}
+          />
+          <FormField
+            id="rfq-contact-number"
+            label="Contact number"
+            inputProps={{
+              defaultValue: form.contactPersonNumber,
+              type: "tel",
+              inputMode: "tel",
+              placeholder: "+880 1XXXXXXXXX",
+            }}
+          />
+        </div>
+      </div>
+
+      <fieldset className="sm:col-span-2">
+        <legend className="text-sm font-medium text-foreground">
+          Your preferred contact method
+        </legend>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          How you — the person creating this RFQ — prefer to be contacted. This is separate from the
+          RFQ contact person above. Platform messages stay on — the official record and audit trail.
+          The rest are optional and buyer-controlled.
         </p>
         <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
           <CheckboxRow
@@ -83,7 +118,7 @@ export function CommunicationSection({ form }: { form: RfqDraftForm }) {
       {/* Preferred contact time — radio group (single choice). */}
       <fieldset className="sm:col-span-2">
         <legend className="text-sm font-medium text-foreground">
-          Preferred contact time{" "}
+          Your preferred contact time{" "}
           <span className="text-xs font-normal text-muted-foreground">(optional)</span>
         </legend>
         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">

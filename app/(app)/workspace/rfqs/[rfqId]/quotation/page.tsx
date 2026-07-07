@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs, PageHeader } from "../../../../_components/shell";
 import { rfqWorkflowData } from "../../../../_components/rfq-workflow";
 import { QuotationBuilder } from "../../../../_components/vendor/rfq";
+import { VENDOR_SHELL_VM } from "../../../../_components/vendor/vendor-shell-vm";
 
 export const metadata: Metadata = { title: "Author quotation" };
 
@@ -25,13 +26,21 @@ export default async function QuotationBuilderPage({
   params: Promise<{ rfqId: string }>;
 }) {
   const { rfqId } = await params;
-  const [draft, quota, snapshot, invitation] = await Promise.all([
+  const [draft, quota, snapshot, quotation] = await Promise.all([
     rfqWorkflowData.vendor.getQuotationDraft(rfqId),
     rfqWorkflowData.vendor.getQuota(),
     rfqWorkflowData.vendor.getRfqSnapshot(rfqId),
-    rfqWorkflowData.vendor.getInvitation(rfqId),
+    rfqWorkflowData.vendor.getOwnQuotation(rfqId),
   ]);
   if (!draft) notFound();
+
+  // SYSTEM-MANAGED revision display (owner ruling 2026-07-07): Rev N = the count of already-submitted
+  // immutable versions (frozen `current_version_no`); a never-submitted draft shows Rev 0.
+  const revisionNo = quotation?.current_version_no ?? 0;
+
+  // Contact defaults come from the shell identity source — the same single identity the workspace
+  // shell renders, so the default follows the real signed-in user automatically at wiring.
+  const shellUser = VENDOR_SHELL_VM.identity.user;
 
   return (
     <div>
@@ -52,7 +61,9 @@ export default async function QuotationBuilderPage({
         {...draft}
         quota={quota}
         rfq={snapshot ?? undefined}
-        invitation={invitation ?? undefined}
+        revisionNo={revisionNo}
+        defaultContactPerson={shellUser.name}
+        defaultContactNumber=""
       />
     </div>
   );

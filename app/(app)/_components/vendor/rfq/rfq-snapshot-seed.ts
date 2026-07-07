@@ -6,6 +6,7 @@ import type { RfqSnapshotView } from "./types";
 export const RFQ_SNAPSHOT_SEED: RfqSnapshotView = {
   rfq_id: "rfq-000318",
   human_ref: "RFQ-2026-000318",
+  buyer_org_name: "Dhaka Industrial Fabricators Ltd.",
   summary: "MS plate 10mm · 20 ton, delivered to Savar EPZ",
   state: "vendors_notified",
   scope_text:
@@ -42,4 +43,8 @@ export const RFQ_SNAPSHOT_SEED: RfqSnapshotView = {
     "Deliver during working hours (9am–5pm); forklift unloading available on site.",
   preferred_contact_channels: ["platform", "whatsapp"],
   preferred_contact_time_label: "Weekdays, 10am–5pm",
+  contact_phone: "+880 1712-000000",
+  contact_whatsapp: "+880 1712-000000",
+  contact_email: "procurement@buyer.example",
+  contact_person: "Engr. Kamrul Hassan",
 };

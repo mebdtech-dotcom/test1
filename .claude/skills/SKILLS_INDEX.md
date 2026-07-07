@@ -156,7 +156,7 @@ Submit for Review-A
 - `/review-a-lens` — scope, contracts, governance
 
 ### Level 3: End-to-End Verification (20–30 min)
-- `/ivendorz-verify-fe` — 8-layer verification (run app, design, governance, journey, errors, perf, edge cases, prod build)
+- `/ivendorz-verify-fe` — 8-layer verification (run app, design, governance, journey, state matrix, perf, edge cases, prod build)
 - `/fe-verify-bundle` — isolated prod build, chunk manifests, barrel audits
 
 ### Level 4: Comprehensive Review (30–60 min)
@@ -223,7 +223,7 @@ Submit for Review-A
 
 ### `/fe-design-apply`
 **Purpose:** Reuse frozen design patterns
-**Scope:** 7 pattern templates (sidebar+content, card grid, tabs, forms, table, hero, modal)
+**Scope:** 8 pattern templates (sidebar+content, card grid, tabs, forms, table, hero, modal, document flow) + composition rules + selection matrix
 **Output:** Quick reference to apply frozen patterns to new pages
 **Location:** `.claude/skills/fe-design-apply/SKILL.md`
 
@@ -236,7 +236,7 @@ Submit for Review-A
 
 ### `/ivendorz-verify-fe`
 **Purpose:** Full frontend end-to-end verification
-**Scope:** 8-layer verification (run app, design conformance, governance, journey, error handling, performance, edge cases, prod build)
+**Scope:** 8-layer verification (run app, design conformance, governance, journey, state matrix, performance, edge cases, prod build)
 **When:** After local testing, before Review-A
 **Location:** `.claude/skills/ivendorz-verify-fe/SKILL.md`
 

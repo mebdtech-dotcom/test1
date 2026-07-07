@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if [[ \"$f\" =~ \\.(ts|tsx|js|jsx|json|yaml|yml)$ ]]; then pnpm prettier --write \"$f\" 2>/dev/null || true; fi; }",
+            "statusMessage": "Auto-formatting with prettier...",
+            "once": false
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git diff --name-only HEAD 2>/dev/null | head -5 | xargs -I {} echo '💡 Tip: Use /fe-checklist before committing frontend code or /ivendorz-security for backend'",
+            "statusMessage": "Checking for pending changes...",
+            "once": false,
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(git *)",
+      "Bash(prettier *)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep"
+    ]
+  }
+}

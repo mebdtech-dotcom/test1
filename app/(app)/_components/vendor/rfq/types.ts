@@ -91,6 +91,10 @@ export interface InboxItemView {
 export interface RfqSnapshotView {
   rfq_id: string;
   human_ref?: string;
+  /** Resolved display name for the frozen `buyer_org_id` (resolved by integration — same pattern as
+   *  `category_label`; added 2026-07-07, owner directive). Grant-scoped: an invited vendor
+   *  legitimately sees the client's identity — ND rules cover competitor/matching info, not this. */
+  buyer_org_name?: string;
   /** Display descriptor projected from content_jsonb / scope_text (not a standalone frozen column). */
   summary?: string;
   state?: RfqState;
@@ -157,6 +161,16 @@ export interface RfqSnapshotView {
    *  into, shared only with vendors who receive this RFQ (non-disclosure). */
   preferred_contact_channels?: ("platform" | "phone" | "whatsapp" | "email")[];
   preferred_contact_time_label?: string;
+  /** Contact VALUES for the opted-in channels above — completes the declared RfqDraftForm mirror
+   *  (contactPhone/contactWhatsapp/contactEmail; added 2026-07-07, owner RFQ-details directive).
+   *  Shared only with granted vendors, same non-disclosure scope as the channels list. */
+  contact_phone?: string;
+  contact_whatsapp?: string;
+  contact_email?: string;
+  /** Per-RFQ contact person the buyer designates at RFQ creation (mirrors RfqDraftForm
+   *  contactPersonName; owner directive 2026-07-07). Shown to granted vendors on authoring
+   *  surfaces ONLY — NEVER rendered on the vendor's offer document (owner rule). */
+  contact_person?: string;
 }
 
 /** The vendor's own invitation on an RFQ (S3 right pane) — frozen rfq_invitations fields. */

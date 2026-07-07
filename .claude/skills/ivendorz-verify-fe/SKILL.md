@@ -89,20 +89,39 @@ Test the user flow end-to-end:
 
 ---
 
-### Layer 5: Error Handling
-Verify graceful degradation:
+### Layer 5: State Matrix (loading / empty / error / success)
+Every surface has more states than its happy path. Walk the full matrix for each new/changed
+surface. **Presentation-only phase:** verify the states render correctly from props/fixtures
+(no network to simulate); **wired surfaces:** exercise them live with the DevTools steps below.
 
-- [ ] Network error → shows error message, not blank page
-- [ ] Missing data → shows empty state with helpful copy
-- [ ] Permission denied → shows Unauthorized, not 500
+**Loading:**
+- [ ] Route has a `loading.tsx` (skeleton-first convention — e.g. `app/(app)/workspace/rfqs/[rfqId]/quotation/loading.tsx`) or a Suspense fallback
+- [ ] Skeleton uses kit `Skeleton` (`src/frontend/primitives/skeleton.tsx`) or a shared content skeleton (e.g. `VendorContentSkeleton`) — never a spinner-only blank page
+- [ ] Skeleton mirrors the loaded layout (no layout shift when content resolves)
+
+**Empty:**
+- [ ] Kit `EmptyState` (`src/frontend/components/empty-state.tsx`) with honest title/description + optional action
+- [ ] Copy NEVER implies exclusion, filtering, or a hidden decision (GI-12; Invariant #11 — blacklist must be undetectable). "No RFQs yet" ✓ · "No vendors match your criteria" ✗ on governed lists
+- [ ] No fabricated counts ("0 of 128") unless the contract provides the number
+
+**Error:**
+- [ ] Network error → error message, not blank page
+- [ ] Permission denied → Unauthorized surface, not 500 — and 404-vs-403 must not leak whether a private record exists
 - [ ] Form validation → client + server-side both work
 - [ ] Session expired → redirects to login, not silent fail
 
-**Test:**
+**Success / confirmation:**
+- [ ] Submit → visible confirmation (toast, state change, or confirmation panel)
+- [ ] The surface reflects the new state without a manual refresh
+- [ ] Presentation-only phase: disabled actions carry an honest note ("Totals and VAT calculate in the integration phase", "Drafts are kept on this device") — never a fake success or fake save
+
+**Test (wired surfaces):**
 ```bash
-# Simulate network error (DevTools → Network → Throttle)
-# Simulate permission error (modify API response in DevTools)
-# Delete/clear localStorage (simulate session loss)
+# Loading: DevTools → Network → Slow 3G, hard-reload the route → skeleton must show
+# Empty: point at a fixture/org with no rows
+# Network error: DevTools → Network → Offline, retry the action
+# Permission error: modify API response in DevTools
+# Session loss: delete/clear localStorage
 ```
 
 ---
@@ -186,10 +205,11 @@ Layer 4 - Journey:
 - [ ] [User flow step 2] ✓
 - [ ] [User flow step 3] ✓
 
-Layer 5 - Error Handling:
-- [ ] Network error handled
-- [ ] Missing data handled
-- [ ] Permission error handled
+Layer 5 - State Matrix:
+- [ ] Loading: loading.tsx / skeleton, no layout shift
+- [ ] Empty: kit EmptyState, exclusion-silent copy, no fabricated counts
+- [ ] Error: network / permission (no 404-vs-403 leak) / validation / session
+- [ ] Success: confirmation visible; honest notes on unwired actions
 
 Layer 6 - Performance:
 - [ ] Loads <3s

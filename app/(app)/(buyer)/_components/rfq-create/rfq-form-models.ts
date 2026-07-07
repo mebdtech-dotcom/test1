@@ -60,6 +60,9 @@ export interface RfqItemRow {
   size: string;
   quantity: string;
   unit: string;
+  /** Optional rich per-line description (owner directive 2026-07-07: bold + 3 colors, multiline;
+   *  HTML from the kit RichNoteEditor; dev-doc capture with the row into `content_jsonb`). */
+  description?: string;
 }
 
 export interface RfqDraftForm {
@@ -135,6 +138,11 @@ export interface RfqDraftForm {
   whatsappUseAccount?: boolean;
   whatsappNumber?: string;
   preferredContactTime?: string;
+  /** Per-RFQ contact person (owner directive 2026-07-07) — the named person + number the buyer
+   *  designates for THIS RFQ (dev-doc capture, serialized with the other communication fields).
+   *  Shared only with vendors who receive this RFQ (non-disclosure). */
+  contactPersonName?: string;
+  contactPersonNumber?: string;
 }
 
 /** Submission states for Phase 8 (presentation only — NO real submit occurs this milestone). */
