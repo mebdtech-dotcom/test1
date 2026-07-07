@@ -23,3 +23,14 @@ export type VendorSubpage =
 export function vendorHref(slug: string, subpage?: VendorSubpage): string {
   return subpage ? `/vendors/${slug}/${subpage}` : `/vendors/${slug}`;
 }
+
+/**
+ * Canonical builder for a single project detail URL (FE-PUB-11 · P-PUB-25): the vendor's projects base +
+ * the project slug child segment. Built ON the vendor URL builder above (never a raw vendor-host concat),
+ * so it inherits the same single swap point when real Canonical Host Resolution lands. The project URL's
+ * own id-anchored shape (ADR-025 principles) remains a future additive Board decision; this emits today's
+ * path shape verbatim.
+ */
+export function vendorProjectHref(slug: string, projectSlug: string): string {
+  return `${vendorHref(slug, "projects")}/${projectSlug}`;
+}

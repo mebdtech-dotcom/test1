@@ -126,6 +126,7 @@
         --iv-duration-slow: 300ms;
         --iv-ease-out: cubic-bezier(0, 0, 0.2, 1);
         --iv-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+        --iv-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
         /* Z-index */
         --iv-z-raised: 10;
         --iv-z-sticky: 200;
@@ -558,21 +559,37 @@
         width: 22px;
         height: 22px;
       }
-      /* Interactive input variant */
+      /* Interactive input variant — generous, deliberate spacing */
+      .stars-input {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
       .stars-input button {
         display: inline-flex;
-        padding: 3px;
-        border-radius: var(--iv-radius-sm);
+        padding: 4px;
+        border-radius: var(--iv-radius-md);
         color: var(--iv-navy-200);
-        transition: transform var(--iv-duration-fast) var(--iv-ease-out);
+        transition:
+          transform var(--iv-duration-fast) var(--iv-ease-spring),
+          color var(--iv-duration-fast) var(--iv-ease-out);
       }
       .stars-input button .icon {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         stroke-width: 1.5;
+        transition:
+          fill var(--iv-duration-normal) var(--iv-ease-out),
+          stroke var(--iv-duration-normal) var(--iv-ease-out);
       }
       .stars-input button:hover {
-        transform: scale(1.12);
+        transform: scale(1.14);
+      }
+      .stars-input button:active {
+        transform: scale(0.96);
+      }
+      .stars-input:hover button:hover ~ button .icon {
+        fill: none;
       }
       .stars-input button[data-on="true"] .icon {
         fill: var(--iv-navy-600);
@@ -1237,13 +1254,31 @@
         margin-top: 1px;
         flex: none;
       }
+      /* Quiet, understated — communicates "private" without shouting */
       .privacy-crm {
-        background: var(--iv-amber-50);
-        border: 1px solid var(--iv-amber-200);
-        color: #79560a;
+        background: var(--iv-surface-2);
+        border: 1px solid var(--iv-border);
+        color: var(--iv-fg-secondary);
       }
       .privacy-crm .icon {
-        color: var(--iv-amber-700);
+        color: var(--iv-fg-muted);
+      }
+      .privacy-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: var(--iv-text-2xs);
+        font-weight: 600;
+        color: var(--iv-fg-muted);
+        background: var(--iv-surface-2);
+        border: 1px solid var(--iv-border);
+        border-radius: var(--iv-radius-full);
+        padding: 3px 9px;
+        white-space: nowrap;
+      }
+      .privacy-pill .icon {
+        width: 12px;
+        height: 12px;
       }
       .privacy-adm {
         background: #f6f3fe;
@@ -1252,6 +1287,61 @@
       }
       .privacy-adm .icon {
         color: #6d28d9;
+      }
+      /* Internal staff-tool signalling (Surface 5) — utilitarian, "system" feel */
+      .internal-bar {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 13px;
+        background: repeating-linear-gradient(
+          135deg,
+          #f7f5fe,
+          #f7f5fe 9px,
+          #f1eefb 9px,
+          #f1eefb 18px
+        );
+        border: 1px solid #e3daf9;
+        border-radius: var(--iv-radius-md);
+        font-family: var(--iv-font-mono);
+        font-size: var(--iv-text-xs);
+        color: #5b21b6;
+        letter-spacing: 0.02em;
+        margin-bottom: 18px;
+      }
+      .internal-bar .icon {
+        width: 14px;
+        height: 14px;
+        flex: none;
+      }
+      .internal-bar b {
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .data-kv {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 6px 16px;
+        font-size: var(--iv-text-xs);
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px dashed var(--iv-border);
+      }
+      .data-kv dt {
+        color: var(--iv-fg-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: var(--iv-text-2xs);
+        font-weight: 600;
+        align-self: center;
+      }
+      .data-kv dd {
+        font-family: var(--iv-font-mono);
+        color: var(--iv-fg-strong);
+        font-variant-numeric: tabular-nums;
+      }
+      .surface[data-surface="s5"] .card {
+        border-radius: var(--iv-radius-md);
       }
       .info-note {
         display: flex;
@@ -1384,6 +1474,96 @@
         align-items: center;
         gap: 6px;
       }
+      /* Neutral verified-engagement medallion — provenance, NEVER identity.
+         The public read shape carries no author, so this is a marker of "real
+         engagement", not a person/org avatar. */
+      .rvw-medallion {
+        width: 38px;
+        height: 38px;
+        border-radius: var(--iv-radius-full);
+        background: var(--iv-navy-50);
+        color: var(--iv-navy-600);
+        border: 1px solid var(--iv-navy-100);
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .rvw-medallion .icon {
+        width: 19px;
+        height: 19px;
+      }
+      .rvw-source {
+        font-size: var(--iv-text-xs);
+        color: var(--iv-fg-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .rvw-source .icon {
+        color: var(--iv-success-base);
+      }
+      /* ---- Layout A — spacious "testimonial" card ---- */
+      .rvw-a {
+        padding: 22px 22px 20px;
+      }
+      .rvw-a-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .rvw-a-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+        flex: 1;
+      }
+      .rvw-a .rvw-body {
+        font-size: 0.95rem;
+      }
+      /* ---- Layout B — compact "feed row" card (higher density) ---- */
+      .rvw-grid-b {
+        display: grid;
+        gap: 10px;
+      }
+      .rvw-b {
+        display: grid;
+        grid-template-columns: 132px 1fr;
+        gap: 18px;
+        padding: 15px 18px;
+        align-items: start;
+      }
+      .rvw-b-side {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .rvw-b .rvw-medallion {
+        width: 30px;
+        height: 30px;
+      }
+      .rvw-b .rvw-medallion .icon {
+        width: 15px;
+        height: 15px;
+      }
+      .rvw-b .rvw-body {
+        padding-left: 18px;
+        border-left: 2px solid var(--iv-navy-100);
+      }
+      .rvw-scrollnote {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin-top: 14px;
+        padding: 11px;
+        font-size: var(--iv-text-xs);
+        color: var(--iv-fg-muted);
+        border: 1px dashed var(--iv-border);
+        border-radius: var(--iv-radius-md);
+      }
 
       /* Skeleton loaders */
       .sk {
@@ -1413,25 +1593,61 @@
       }
       .qtable {
         width: 100%;
-        min-width: 40rem;
+        min-width: 30rem;
         font-size: var(--iv-text-sm);
+        table-layout: fixed;
+      }
+      .qtable th:nth-child(1),
+      .qtable td:nth-child(1) {
+        width: 30%;
+      }
+      .qtable th:nth-child(3),
+      .qtable td:nth-child(3) {
+        width: 13%;
+      }
+      .qtable th:nth-child(4),
+      .qtable td:nth-child(4) {
+        width: 18%;
+      }
+      .qtable th:nth-child(5),
+      .qtable td:nth-child(5) {
+        width: 11%;
       }
       .qtable thead tr {
         border-bottom: 1px solid var(--iv-border);
         text-align: left;
       }
       .qtable th {
-        padding: 11px 14px;
+        padding: 9px 12px;
         font-size: var(--iv-text-2xs);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--iv-fg-muted);
+        position: sticky;
+        top: 0;
+        background: var(--iv-surface);
+        z-index: 1;
       }
       .qtable td {
-        padding: 12px 14px;
+        padding: 8px 12px;
         border-bottom: 1px solid var(--iv-border);
         vertical-align: middle;
+      }
+      .q-rating {
+        font-weight: 600;
+        color: var(--iv-navy-700);
+        font-variant-numeric: tabular-nums;
+      }
+      .q-age {
+        font-size: var(--iv-text-xs);
+        color: var(--iv-fg-muted);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      .qscroll {
+        max-height: 460px;
+        overflow: auto;
       }
       .qtable tbody tr:last-child td {
         border-bottom: 0;
@@ -1450,11 +1666,14 @@
       .q-vendor {
         font-weight: 600;
         color: var(--iv-fg-strong);
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .q-snip {
         color: var(--iv-fg-muted);
         font-size: var(--iv-text-xs);
-        max-width: 30ch;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1549,12 +1768,23 @@
         padding: 34px 26px;
       }
       .confirm-ic {
-        width: 56px;
-        height: 56px;
+        width: 60px;
+        height: 60px;
         border-radius: var(--iv-radius-full);
         display: grid;
         place-items: center;
-        margin: 0 auto 16px;
+        margin: 0 auto 18px;
+        animation: confirm-pop var(--iv-duration-slow) var(--iv-ease-spring);
+      }
+      @keyframes confirm-pop {
+        from {
+          opacity: 0;
+          transform: scale(0.6);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
       .confirm-ic .icon {
         width: 28px;
@@ -1595,6 +1825,71 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
+      }
+
+      /* =====================================================================
+         06b. MOTION POLISH (subtle; fully disabled under reduced-motion)
+         ===================================================================== */
+      .sstate.is-active {
+        animation: state-in var(--iv-duration-slow) var(--iv-ease-out);
+      }
+      @keyframes state-in {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .rvw-card {
+        transition:
+          transform var(--iv-duration-normal) var(--iv-ease-out),
+          box-shadow var(--iv-duration-normal) var(--iv-ease-out),
+          border-color var(--iv-duration-normal) var(--iv-ease-out);
+      }
+      .rvw-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--iv-shadow-md);
+        border-color: var(--iv-navy-200);
+      }
+      .btn {
+        transition:
+          background var(--iv-duration-fast) var(--iv-ease-out),
+          filter var(--iv-duration-fast) var(--iv-ease-out),
+          border-color var(--iv-duration-fast) var(--iv-ease-out),
+          color var(--iv-duration-fast) var(--iv-ease-out),
+          transform var(--iv-duration-fast) var(--iv-ease-out);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .rail-item,
+      .qtable tbody tr,
+      .chip {
+        transition:
+          background var(--iv-duration-fast) var(--iv-ease-out),
+          color var(--iv-duration-fast) var(--iv-ease-out),
+          border-color var(--iv-duration-fast) var(--iv-ease-out);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+          scroll-behavior: auto !important;
+        }
+        .sstate.is-active {
+          animation: none;
+        }
+        .rvw-card:hover,
+        .btn:active,
+        .stars-input button:hover {
+          transform: none;
+        }
       }
 
       /* =====================================================================
@@ -1641,6 +1936,26 @@
         .rvw-top {
           flex-wrap: wrap;
           gap: 6px;
+        }
+        .rvw-a-head {
+          flex-wrap: wrap;
+          row-gap: 8px;
+        }
+        .rvw-a-head .rvw-date {
+          margin-left: auto;
+        }
+        .rvw-b {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .rvw-b-side {
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+        }
+        .rvw-b .rvw-body {
+          border-left: 0;
+          padding-left: 0;
         }
         .detail-actions .btn {
           flex: 1 1 auto;
@@ -1866,6 +2181,11 @@
                               <svg class="icon" viewBox="0 0 24 24"><use href="#i-info" /></svg>
                               <span>You'll be notified when it's published. Moderation details (who reviews it, queue position) are never shown to authors.</span>
                             </div>
+                            <div style="margin-top: 22px">
+                              <button class="btn btn-outline" data-toast="Back to engagement|Mock only — routes to the engagement in production.">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-back" /></svg>Back to engagement
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1985,42 +2305,103 @@
                       <span class="anno-chip" data-s="grounded">No derived stats</span>
                     </div>
 
-                    <!-- STATE: with reviews -->
-                    <div class="sstate is-active" data-state="list" data-state-label="With reviews">
+                    <!-- STATE: Layout A — spacious testimonial cards -->
+                    <div class="sstate is-active" data-state="layout-a" data-state-label="Cards · Option A">
                       <div class="rvw-grid">
-                        <article class="rvw-card" data-anno="grounded" data-note="ReviewCard = one published review: stars (display) + body + published date. No author name — the frozen public read shape carries none.">
-                          <span class="anno-chip" data-s="grounded">Grounded</span>
-                          <div class="rvw-top">
-                            <span class="stars" role="img" aria-label="Rated 5 out of 5">
-                              <span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span>
-                            </span>
+                        <article class="rvw-card rvw-a" data-anno="grounded" data-note="Avatar treatment: a NEUTRAL verified-engagement medallion — provenance, not identity. The frozen public read shape carries no author (name/org/photo), so no identifying avatar is possible without a new contract field. This medallion means 'from a real, completed engagement', nothing more.">
+                          <span class="anno-chip" data-s="grounded">Neutral medallion · no identity</span>
+                          <div class="rvw-a-head">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <div class="rvw-a-meta">
+                              <span class="stars" role="img" aria-label="Rated 5 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                              <span class="rvw-source"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
+                            </div>
                             <span class="rvw-date" data-type="date">6 Jul 2026</span>
                           </div>
                           <p class="rvw-body">Supplied 40 cast-steel gate valves for our boiler feed line. Every unit matched the datasheet, hydro-test certs were included, and delivery beat the quoted lead time. Communication throughout was prompt and technical.</p>
-                          <span class="rvw-anon"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
                         </article>
 
-                        <article class="rvw-card">
-                          <div class="rvw-top">
-                            <span class="stars" role="img" aria-label="Rated 4 out of 5">
-                              <span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="false"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span>
-                            </span>
+                        <article class="rvw-card rvw-a">
+                          <div class="rvw-a-head">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <div class="rvw-a-meta">
+                              <span class="stars" role="img" aria-label="Rated 4 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="false"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                              <span class="rvw-source"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
+                            </div>
                             <span class="rvw-date" data-type="date">28 Jun 2026</span>
                           </div>
-                          <p class="rvw-body">Good quality fittings and fair pricing. One line item shipped a few days late but they flagged it early and kept us updated. Would work with them again for standard PN16 stock.</p>
-                          <span class="rvw-anon"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
+                          <p class="rvw-body">We engaged Padma for a complete boiler-feed-line valve package — 40 DN100 gate valves plus the associated flanged spools and fittings. From RFQ to delivery the process was genuinely professional. Their quotation was itemised against our datasheet line by line, and they raised two sensible technical clarifications on the trim material before quoting rather than after. Every unit shipped with hydro-test and mill certificates, and delivery landed two days inside the quoted window. The one bit of friction was a packaging dent on a single crate, which had no impact on function and which they proactively flagged on the delivery note. On the strength of this engagement we've added them to our preferred-supplier list for gate-valve work.</p>
                         </article>
 
-                        <article class="rvw-card">
-                          <div class="rvw-top">
-                            <span class="stars" role="img" aria-label="Rated 5 out of 5">
-                              <span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span>
-                            </span>
+                        <article class="rvw-card rvw-a">
+                          <div class="rvw-a-head">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <div class="rvw-a-meta">
+                              <span class="stars" role="img" aria-label="Rated 5 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                              <span class="rvw-source"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
+                            </div>
                             <span class="rvw-date" data-type="date">15 Jun 2026</span>
                           </div>
                           <p class="rvw-body">Fabricated a custom flanged spool to drawing with no back-and-forth. Dimensional check was spot on. This is our second engagement with Padma and the consistency is why we keep coming back.</p>
-                          <span class="rvw-anon"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
                         </article>
+
+                        <article class="rvw-card rvw-a">
+                          <div class="rvw-a-head">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <div class="rvw-a-meta">
+                              <span class="stars" role="img" aria-label="Rated 4 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="false"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                              <span class="rvw-source"><svg class="icon-xs" viewBox="0 0 24 24"><use href="#i-shield" /></svg>Verified engagement</span>
+                            </div>
+                            <span class="rvw-date" data-type="date">2 Jun 2026</span>
+                          </div>
+                          <p class="rvw-body">Good quality fittings and fair pricing. One line item shipped a few days late but they flagged it early and kept us updated.</p>
+                        </article>
+                      </div>
+                      <div class="rvw-scrollnote" data-anno="grounded" data-note="Pagination (Load more) is grounded — list_reviews is a cursor/page-size read. A visible TOTAL count (e.g. '4 of 12') is NOT shown: whether a listing count is a derived statistic is an open question (planning §9(a)); until ruled, no count renders.">
+                        <span class="anno-chip" data-s="grounded">Pagination · no count</span>
+                        <button class="btn btn-outline btn-sm" data-toast="Load more reviews|Mock only — list_reviews.v1 pagination is not wired.">Load more reviews</button>
+                      </div>
+                    </div>
+
+                    <!-- STATE: Layout B — compact feed rows (higher density) -->
+                    <div class="sstate" data-state="layout-b" data-state-label="Cards · Option B">
+                      <div class="rvw-grid-b" data-anno="grounded" data-note="Layout B — a denser 'feed row': the neutral medallion, stars and date sit in a fixed left rail; the body runs full-width. More reviews visible per screen. Same frozen fields, no author identity.">
+                        <span class="anno-chip" data-s="grounded" style="top: -6px">Compact · higher density</span>
+                        <article class="rvw-card rvw-b">
+                          <div class="rvw-b-side">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <span class="stars" role="img" aria-label="Rated 5 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                            <span class="rvw-date" data-type="date">6 Jul 2026</span>
+                          </div>
+                          <p class="rvw-body">Supplied 40 cast-steel gate valves for our boiler feed line. Every unit matched the datasheet, hydro-test certs were included, and delivery beat the quoted lead time. Communication throughout was prompt and technical.</p>
+                        </article>
+                        <article class="rvw-card rvw-b">
+                          <div class="rvw-b-side">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <span class="stars" role="img" aria-label="Rated 4 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="false"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                            <span class="rvw-date" data-type="date">28 Jun 2026</span>
+                          </div>
+                          <p class="rvw-body">We engaged Padma for a complete boiler-feed-line valve package — 40 DN100 gate valves plus the associated flanged spools and fittings. From RFQ to delivery the process was genuinely professional. Their quotation was itemised against our datasheet line by line, and they raised two sensible technical clarifications on the trim material before quoting rather than after. Every unit shipped with hydro-test and mill certificates, and delivery landed two days inside the quoted window. The one bit of friction was a packaging dent on a single crate, which had no impact on function and which they proactively flagged on the delivery note. On the strength of this engagement we've added them to our preferred-supplier list for gate-valve work.</p>
+                        </article>
+                        <article class="rvw-card rvw-b">
+                          <div class="rvw-b-side">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <span class="stars" role="img" aria-label="Rated 5 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                            <span class="rvw-date" data-type="date">15 Jun 2026</span>
+                          </div>
+                          <p class="rvw-body">Fabricated a custom flanged spool to drawing with no back-and-forth. Dimensional check was spot on. This is our second engagement with Padma and the consistency is why we keep coming back.</p>
+                        </article>
+                        <article class="rvw-card rvw-b">
+                          <div class="rvw-b-side">
+                            <span class="rvw-medallion" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-shield" /></svg></span>
+                            <span class="stars" role="img" aria-label="Rated 4 out of 5"><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="false"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span></span>
+                            <span class="rvw-date" data-type="date">2 Jun 2026</span>
+                          </div>
+                          <p class="rvw-body">Good quality fittings and fair pricing. One line item shipped a few days late but they flagged it early and kept us updated.</p>
+                        </article>
+                      </div>
+                      <div class="rvw-scrollnote">
+                        <button class="btn btn-outline btn-sm" data-toast="Load more reviews|Mock only — list_reviews.v1 pagination is not wired.">Load more reviews</button>
                       </div>
                     </div>
 
@@ -2094,40 +2475,21 @@
                     <!-- STATE: submitted selected (approve / reject) -->
                     <div class="sstate is-active" data-state="submitted" data-state-label="Submitted → moderate">
                       <div class="adm-split">
-                        <div class="card qtable-wrap" data-anno="grounded" data-note="Reuses the shared AdminQueueTable pattern (the Nth consumer). Queue = reviews in `submitted` (moderatable) and `approved` (publishable). The table decides nothing; a row opens the case detail where the command acts (R5).">
+                        <div class="card qtable-wrap qscroll" data-anno="grounded" data-note="Reuses the shared AdminQueueTable pattern (the Nth consumer), high-density variant: sticky header, Age column, compact rows. Queue = reviews in `submitted` (moderatable) and `approved` (publishable). The table decides nothing; a row opens the case detail where the command acts (R5).">
                           <span class="anno-chip" data-s="grounded">Grounded · AdminQueueTable</span>
                           <table class="qtable">
                             <caption class="vh">Reviews awaiting moderation</caption>
-                            <thead><tr><th>Vendor</th><th>Review</th><th>Rating</th><th>Status</th><th>Submitted</th></tr></thead>
+                            <thead><tr><th>Vendor</th><th>Review</th><th>Rating</th><th>Status</th><th>Age</th></tr></thead>
                             <tbody>
-                              <tr class="is-sel">
-                                <td><span class="q-vendor">Padma Valve &amp; Fittings</span></td>
-                                <td><div class="q-snip">Valves arrived ahead of schedule and matched…</div></td>
-                                <td><span style="font-weight: 600; color: var(--iv-navy-700)" data-numeric>4/5</span></td>
-                                <td><span class="badge badge-warning">Submitted</span></td>
-                                <td class="mono" style="font-size: var(--iv-text-xs); color: var(--iv-fg-muted)">5 Jul</td>
-                              </tr>
-                              <tr>
-                                <td><span class="q-vendor">Karnaphuli Steel Co.</span></td>
-                                <td><div class="q-snip">Good material but the second shipment was…</div></td>
-                                <td><span style="font-weight: 600; color: var(--iv-navy-700)" data-numeric>3/5</span></td>
-                                <td><span class="badge badge-warning">Submitted</span></td>
-                                <td class="mono" style="font-size: var(--iv-text-xs); color: var(--iv-fg-muted)">5 Jul</td>
-                              </tr>
-                              <tr>
-                                <td><span class="q-vendor">Dhaka Pumps Ltd.</span></td>
-                                <td><div class="q-snip">Excellent service, fabricated to drawing…</div></td>
-                                <td><span style="font-weight: 600; color: var(--iv-navy-700)" data-numeric>5/5</span></td>
-                                <td><span class="badge badge-info">Approved</span></td>
-                                <td class="mono" style="font-size: var(--iv-text-xs); color: var(--iv-fg-muted)">4 Jul</td>
-                              </tr>
-                              <tr>
-                                <td><span class="q-vendor">Meghna Fasteners</span></td>
-                                <td><div class="q-snip">Contact them on 01XXX for a better price…</div></td>
-                                <td><span style="font-weight: 600; color: var(--iv-navy-700)" data-numeric>2/5</span></td>
-                                <td><span class="badge badge-warning">Submitted</span></td>
-                                <td class="mono" style="font-size: var(--iv-text-xs); color: var(--iv-fg-muted)">3 Jul</td>
-                              </tr>
+                              <tr class="is-sel"><td><span class="q-vendor">Padma Valve &amp; Fittings</span></td><td><div class="q-snip">Valves arrived ahead of schedule and matched…</div></td><td><span class="q-rating">4/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">2h</span></td></tr>
+                              <tr><td><span class="q-vendor">Karnaphuli Steel Co.</span></td><td><div class="q-snip">Good material but the second shipment was late…</div></td><td><span class="q-rating">3/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">5h</span></td></tr>
+                              <tr><td><span class="q-vendor">Meghna Fasteners</span></td><td><div class="q-snip">Contact them on 01XXX for a better price…</div></td><td><span class="q-rating">2/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">2d</span></td></tr>
+                              <tr><td><span class="q-vendor">Titas Instruments</span></td><td><div class="q-snip">Delivered on time; packaging could be better…</div></td><td><span class="q-rating">4/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">6h</span></td></tr>
+                              <tr><td><span class="q-vendor">Dhaka Pumps Ltd.</span></td><td><div class="q-snip">Excellent service, fabricated to drawing…</div></td><td><span class="q-rating">5/5</span></td><td><span class="badge badge-info">Approved</span></td><td><span class="q-age">1d</span></td></tr>
+                              <tr><td><span class="q-vendor">Rupsha Engineering</span></td><td><div class="q-snip">Responsive team, minor delay on custom parts…</div></td><td><span class="q-rating">4/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">1d</span></td></tr>
+                              <tr><td><span class="q-vendor">Bengal Pipe &amp; Tube</span></td><td><div class="q-snip">Great communication throughout the order…</div></td><td><span class="q-rating">5/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">1d</span></td></tr>
+                              <tr><td><span class="q-vendor">Jamuna Fittings</span></td><td><div class="q-snip">Product quality below what was quoted…</div></td><td><span class="q-rating">2/5</span></td><td><span class="badge badge-warning">Submitted</span></td><td><span class="q-age">3d</span></td></tr>
+                              <tr><td><span class="q-vendor">Surma Valve Works</span></td><td><div class="q-snip">Solid supplier, would order again…</div></td><td><span class="q-rating">5/5</span></td><td><span class="badge badge-info">Approved</span></td><td><span class="q-age">2d</span></td></tr>
                             </tbody>
                           </table>
                         </div>
@@ -2142,12 +2504,13 @@
                             <span class="stars" role="img" aria-label="Rated 4 out of 5">
                               <span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="true"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span><span data-on="false"><svg class="icon" viewBox="0 0 24 24"><use href="#i-star" /></svg></span>
                             </span>
-                            <p class="rvw-body" style="margin-top: 10px">Valves arrived two days ahead of schedule and matched the DN100 PN16 spec exactly. Documentation was complete and the mill test certificates checked out. Would invite again.</p>
+                            <p class="rvw-body" style="margin-top: 10px">We engaged Padma for a complete boiler-feed-line valve package — 40 DN100 gate valves plus the associated flanged spools and fittings. From RFQ to delivery the process was genuinely professional. Their quotation was itemised against our datasheet line by line, and they raised two sensible technical clarifications on the trim material before quoting rather than after. Every unit shipped with hydro-test and mill certificates, and delivery landed two days inside the quoted window. The one bit of friction was a packaging dent on a single crate, which had no impact on function and which they proactively flagged on the delivery note.</p>
                           </div>
                           <dl style="margin-bottom: 14px">
                             <div class="detail-row"><dt>Vendor</dt><dd>Padma Valve &amp; Fittings</dd></div>
                             <div class="detail-row"><dt>Author org</dt><dd>Meghna Refinery Ltd.</dd></div>
                             <div class="detail-row"><dt>Engagement</dt><dd class="mono" style="font-size: var(--iv-text-xs)">ENG-2026-000418</dd></div>
+                            <div class="detail-row"><dt>Submitted</dt><dd>5 Jul 2026 · 2h ago</dd></div>
                           </dl>
                           <div class="detail-actions">
                             <button class="btn btn-success btn-sm" data-toast="Approve|Mock only — moderate_review.v1 (approve) is not wired.">
@@ -2295,7 +2658,10 @@
                           <div class="card" data-anno="grounded" data-note="Activates the already-built (parked) CRM Ratings card. ops.set_private_vendor_rating.v1 (BC-OPS-1) — a private score + comment gated on can_manage_private_vendors. A GOLD star + numeric score, deliberately distinct from the public 1–5 review lane.">
                             <span class="anno-chip" data-s="grounded">ops.set_private_vendor_rating.v1</span>
                             <div class="row-between" style="padding: 16px; border-bottom: 1px solid var(--iv-border)">
-                              <strong style="font-size: var(--iv-text-sm)">Private ratings</strong>
+                              <span style="display: inline-flex; align-items: center; gap: 10px">
+                                <strong style="font-size: var(--iv-text-sm)">Private ratings</strong>
+                                <span class="privacy-pill"><svg class="icon" viewBox="0 0 24 24"><use href="#i-lock" /></svg>Private to your org</span>
+                              </span>
                               <button class="btn btn-outline btn-sm" data-goto-state="edit"><svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-plus" /></svg>Add rating</button>
                             </div>
                             <div style="padding: 6px 16px 14px">
@@ -2364,7 +2730,10 @@
                         <div class="stack">
                           <div class="card">
                             <div class="row-between" style="padding: 16px; border-bottom: 1px solid var(--iv-border)">
-                              <strong style="font-size: var(--iv-text-sm)">Private ratings</strong>
+                              <span style="display: inline-flex; align-items: center; gap: 10px">
+                                <strong style="font-size: var(--iv-text-sm)">Private ratings</strong>
+                                <span class="privacy-pill"><svg class="icon" viewBox="0 0 24 24"><use href="#i-lock" /></svg>Private to your org</span>
+                              </span>
                               <button class="btn btn-outline btn-sm" data-goto-state="edit"><svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-plus" /></svg>Add rating</button>
                             </div>
                             <div style="padding: 16px">
@@ -2410,6 +2779,11 @@
 
                   <div class="work-body">
                     <div class="content-narrow">
+                      <div class="internal-bar" data-anno="grounded" data-note="Internal-tool signalling: this surface deliberately reads as a back-office staff console — utilitarian panel, monospace IDs/timestamps, hatched 'system' strip — not a polished public feature. It is Lane ADM, staff-only.">
+                        <span class="anno-chip" data-s="grounded">Internal tool</span>
+                        <svg class="icon" viewBox="0 0 24 24"><use href="#i-eye-off" /></svg>
+                        <span><b>INTERNAL</b> · Staff Trust console · not a buyer- or vendor-facing feature</span>
+                      </div>
                       <div class="page-head">
                         <div>
                           <h1>Internal admin rating</h1>
@@ -2433,7 +2807,11 @@
                               <span class="crm-score" style="color: #6d28d9"><svg class="icon" viewBox="0 0 24 24" style="fill: #6d28d9; stroke: #6d28d9"><use href="#i-star" /></svg>4 / 5</span>
                             </div>
                             <p style="font-size: var(--iv-text-sm); color: var(--iv-fg-secondary); background: var(--iv-surface-2); border: 1px solid var(--iv-border); border-radius: var(--iv-radius-md); padding: 12px">Consistent verification history and responsive to compliance requests. Watch capacity claims on large fabrication lots.</p>
-                            <p class="field-hint" style="margin-top: 10px">Last updated by Staff · Trust · 2 Jul 2026</p>
+                            <dl class="data-kv">
+                              <dt>Vendor ref</dt><dd>VND·8f3a…c210</dd>
+                              <dt>Rated by</dt><dd>staff:trust·r.karim</dd>
+                              <dt>Updated</dt><dd>2026-07-02 14:08</dd>
+                            </dl>
                             <div class="detail-actions" style="margin-top: 14px">
                               <button class="btn btn-outline btn-sm" data-goto-state="update"><svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-edit" /></svg>Update rating</button>
                             </div>

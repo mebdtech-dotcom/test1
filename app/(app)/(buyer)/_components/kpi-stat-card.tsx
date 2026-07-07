@@ -78,13 +78,14 @@ export function KpiStatCard({
     // this lets the card shrink to its track and the value below wrap/break normally instead.
     <Card className={cn("min-w-0 shadow-iv-xs", className)}>
       {/* Buyer-scoped KPI layout variant: `p-5` (vs the kit Card default `p-6`) for the dense
-          auto-fill KPI grid (§9.1) — sized/weighted to match the BX-06 reference styling pass
-          (bigger icon box, bigger value text) while staying on our existing Navy-dominant tone
-          system (`TONE_ICON_BOX` above is unchanged). A composition delta only — the Card
-          primitive is unmodified. */}
+          auto-fill KPI grid (§9.1). Typography follows the dashboard's rebalanced scale: the metric
+          `value` is a `text-2xl` "big number" (the single largest element in the card, matching the
+          pipeline-count tier) over a `text-xs` metadata `label`, so the value dominates and the label
+          reads as subordinate. Stays on the existing Navy-dominant tone system (`TONE_ICON_BOX` above
+          is unchanged). A composition delta only — the Card primitive is unmodified. */}
       <CardContent className="flex flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
-          <span className="text-sm font-medium text-muted-foreground">{label}</span>
+          <span className="text-xs font-medium text-muted-foreground">{label}</span>
           {icon ? (
             <span
               aria-hidden
@@ -97,7 +98,7 @@ export function KpiStatCard({
             </span>
           ) : null}
         </div>
-        <div className="break-words text-3xl font-semibold leading-tight tracking-tight text-foreground tabular-nums">
+        <div className="break-words text-2xl font-semibold leading-tight tracking-tight text-foreground tabular-nums">
           {value ?? <span className="text-muted-foreground">—</span>}
         </div>
         {trend || caption ? (

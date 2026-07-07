@@ -11,7 +11,11 @@ export { VendorMicrositeNavigation } from "./vendor-microsite-navigation";
 export { VendorMicrositeFooter, type VendorMicrositeFooterProps } from "./vendor-microsite-footer";
 export { VendorHero, type VendorHeroProps } from "./vendor-hero";
 export { VendorSection, type VendorSectionProps } from "./vendor-section";
-export { VendorBreadcrumb, type VendorBreadcrumbProps } from "./vendor-breadcrumb";
+export {
+  VendorBreadcrumb,
+  type VendorBreadcrumbProps,
+  type VendorBreadcrumbCrumb,
+} from "./vendor-breadcrumb";
 export { VendorVerifiedBadge } from "./vendor-verified-badge";
 export { VendorPageHeading, type VendorPageHeadingProps } from "./vendor-page-heading";
 
@@ -27,11 +31,31 @@ export { CompanyStatistics, type CompanyStatisticsProps } from "./company-statis
 export { CompanyTimeline, type CompanyTimelineProps } from "./company-timeline";
 export { WhyChooseUs, type WhyChooseUsProps } from "./why-choose-us";
 export { ProjectShowcase, type ProjectShowcaseProps } from "./project-showcase";
-export { ProjectHero, type ProjectHeroProps } from "./project-hero";
 export {
   ProjectVendorSummaryCard,
   type ProjectVendorSummaryCardProps,
 } from "./project-vendor-summary-card";
+
+// ── Project Detail template (FE-PUB-11 · P-PUB-25) — prop-driven, auto-hiding sections. ──
+export { ProjectDetailHeader, type ProjectDetailHeaderProps } from "./project-detail-header";
+export { ProjectShareButton, type ProjectShareButtonProps } from "./project-share-button";
+export { ProjectMediaGallery, type ProjectMediaGalleryProps } from "./project-media-gallery";
+export { ProjectNarrative, type ProjectNarrativeProps } from "./project-narrative";
+export { ProjectSpecifications, type ProjectSpecificationsProps } from "./project-specifications";
+export { ProjectMaterials, type ProjectMaterialsProps } from "./project-materials";
+export { ProjectTechnologies, type ProjectTechnologiesProps } from "./project-technologies";
+export {
+  ProjectComplianceRepository,
+  type ProjectComplianceRepositoryProps,
+} from "./project-compliance-repository";
+export { ProjectGallery, type ProjectGalleryProps } from "./project-gallery";
+export { ProjectTestimonial, type ProjectTestimonialProps } from "./project-testimonial";
+export { ProjectDetailsCard, type ProjectDetailsCardProps } from "./project-details-card";
+export {
+  ProjectDeliverablesCard,
+  type ProjectDeliverablesCardProps,
+} from "./project-deliverables-card";
+export { ProjectRelated, type ProjectRelatedProps } from "./project-related";
 export { ProductShowcase, type ProductShowcaseProps } from "./product-showcase";
 export { DownloadCenter, type DownloadCenterProps } from "./download-center";
 export { CompanyFaq, type CompanyFaqProps } from "./company-faq";
@@ -49,6 +73,13 @@ export {
   type CapabilityAreaVM,
   type GalleryItemVM,
   type ProjectShowcaseVM,
+  type ProjectDetailVM,
+  type ProjectMediaKind,
+  type ProjectMediaItemVM,
+  type ProjectSpecRowVM,
+  type ProjectDocumentVM,
+  type ProjectDocumentGroupVM,
+  type ProjectTestimonialVM,
   type DownloadItemVM,
   type FaqItemVM,
   type CompanyContactVM,

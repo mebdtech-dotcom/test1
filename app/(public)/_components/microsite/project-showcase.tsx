@@ -12,7 +12,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/frontend/primitives/badge";
 import { Button } from "@/frontend/primitives/button";
 import { Card, CardContent } from "@/frontend/primitives/card";
-import { vendorHref } from "../vendor-url";
+import { vendorProjectHref } from "../vendor-url";
 import type { ProjectShowcaseVM } from "./company-content-seed";
 
 export interface ProjectShowcaseProps {
@@ -62,9 +62,7 @@ export function ProjectShowcase({ projects, vendorSlug }: ProjectShowcaseProps) 
                 <div className="mt-auto pt-1">
                   {vendorSlug && project.slug ? (
                     <Button asChild size="sm" variant="outline">
-                      <Link href={`${vendorHref(vendorSlug, "projects")}/${project.slug}`}>
-                        View details
-                      </Link>
+                      <Link href={vendorProjectHref(vendorSlug, project.slug)}>View details</Link>
                     </Button>
                   ) : (
                     // No vendor slug or no project slug -> no deep route fabricated (stays disabled).

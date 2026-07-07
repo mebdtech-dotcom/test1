@@ -4,6 +4,12 @@
 build gates) · non-authoritative · coins no route, contract, token, page ID, score, or workflow
 state. On any conflict the **frozen corpus wins** (CLAUDE.md §7, §11).
 
+**Visual approval:** ✅ **GRANTED (owner, 2026-07-08)** — the UX/visual direction for Surfaces 1–5
+is signed off. This is a **design** approval only; it authorizes no production build. The backend
+stays roadmap-gated (M5 = Wave 3 · M8 moderation = Wave 5; current = Wave 2) and FE page-IDs /
+milestones remain **Board-only** to mint. Open item folded next: Surface 2 card layout — Option A
+(testimonial) vs Option B (compact feed).
+
 **Purpose:** a mockup-first **Visual Approval** artifact for stakeholder review **before any
 production code** — the same gate used for the Comparative Statement and Single Product Page
 surfaces. It validates information architecture, visual hierarchy, state coverage, lane
@@ -37,12 +43,47 @@ review harness, *not* part of the product. It gives you:
 
 ---
 
+## Round 2 refinements (2026-07-08)
+
+A refinement pass (no implementation) addressing the Round-1 review notes:
+
+- **Surface 2 — two public-review card layouts to compare** (State switcher → *Cards · Option A*
+  vs *Option B*):
+  - **Option A — testimonial:** spacious card, neutral medallion + stars + "Verified engagement"
+    on one row, mono date top-right, prominent body.
+  - **Option B — compact feed:** fixed left rail (medallion / stars / date), body with a navy
+    accent — higher density, more reviews per screen.
+  - **Avatar treatment (governance-critical):** both use a **neutral verified-engagement
+    medallion** — *provenance, not identity*. The frozen public read shape carries **no author**
+    (name/org/photo), so no identifying avatar is possible without a new contract field; the
+    medallion only means "from a real, completed engagement." Flagged on-screen.
+  - **Long-review example** included in both layouts and in the Surface 3 case detail to test
+    wrapping/spacing. **Timestamps** are monospace absolute dates. **Scrolling** uses a
+    grounded *Load more* pagination affordance — **no total count** is shown (a listing count is
+    the open §9(a) question).
+- **Surface 3 — high-density moderation queue:** 9 rows, compact cells, sticky header, an **Age**
+  column, fixed column widths with truncation; long review in the case detail.
+- **Surface 1 — polish:** more generous, spring-eased star spacing; a confirmation "pop"; a
+  "Back to engagement" action on the success state.
+- **Surface 4 — quieter privacy signal:** the loud amber banner is replaced by a small
+  "Private to your org" lock **pill** at the data plus a calm, neutral footer note (gold CRM
+  stars retained for lane identity).
+- **Surface 5 — reads as an internal staff tool:** a hatched monospace "INTERNAL · Staff Trust
+  console" strip and a utilitarian mono metadata panel (opaque vendor ref, staff id, ISO
+  timestamp).
+- **Animation polish:** subtle state-in fade, card hover-lift, star spring, confirmation pop —
+  all disabled under `prefers-reduced-motion`.
+- **Accessibility pass:** star input is a keyboard `radiogroup`; queue header sticky with an
+  `sr-only` caption; status by chip text + colour; reduced-motion honoured; focus-visible rings.
+
+---
+
 ## The five surfaces
 
 | # | Surface | Lane | Context | States |
 |---|---|---|---|---|
 | 1 | Buyer review submission | PUB | Buyer workspace, from a completed engagement | Empty · Filled · Success · Not eligible · Already reviewed (view-only) |
-| 2 | Public reviews | PUB | Anonymous vendor public microsite | With reviews · Empty · Loading (desktop + mobile) |
+| 2 | Public reviews | PUB | Anonymous vendor public microsite | Cards · Option A (testimonial) · Cards · Option B (compact feed) · Empty · Loading (desktop + mobile) |
 | 3 | Admin moderation | PUB (staff) | Admin console | Submitted → moderate · Reject (note required) · Approved → publish/remove · Empty queue |
 | 4 | Private CRM rating | CRM | Buyer workspace CRM record | Saved ratings · Add/edit · Empty |
 | 5 | Admin ratings | ADM (staff) | Admin console | With history · Update · Empty |

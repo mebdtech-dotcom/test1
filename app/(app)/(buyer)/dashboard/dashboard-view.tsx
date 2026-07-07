@@ -3,34 +3,41 @@
 // (`page.tsx`) resolves the data via the Doc-7C wired data layer (GI-02) and passes it here; this file
 // renders presentation only.
 //
-// Anatomy (§9.1): page-header → KPI stat-card band → sourcing + engagement pipeline widgets (FE-BUY-08
-// adds the second) → content grid (three work queues + recent activity) → optional right-rail. First-run
-// (`data === null`) renders the single "Create RFQ" CTA (§9.1).
+// Anatomy (§9.1), redesigned pass: greeting hero (branded welcome + primary CTAs) → priority-approval
+// action banner (only when the buyer has items awaiting their decision) → KPI stat-card band → sourcing +
+// engagement pipeline widgets → content grid (three work queues + recent activity + quick actions rail).
+// First-run (`data === null`) renders the hero + the single "Create RFQ" CTA (§9.1).
 //
 // GOVERNANCE realized here:
 //  • R6 / Inv #12 — there is NO "recommended winner", ranked-to-winner, or auto-select widget anywhere.
 //  • Inv #11 / GI-12 — KPI counts carry NO excluded/blacklist figure; CRM status is never shown (it lives
-//    only in P-BUY-26/27). `total` renders only if the contract provides it.
+//    only in P-BUY-26/27). `total` renders only if the contract provides it. The priority banner surfaces
+//    only the buyer's OWN awaiting-approval count (P-BUY-12), never a party-exclusion figure.
 //  • R7 firewall — every figure is a contract read, never client-computed.
 //  • Engagement states use the pinned contract-authority set (§0.1 carried Flag-and-Halt).
+//  • The hero / quick-actions rail carry only plain NAVIGATION links to existing routes — no second live
+//    org-switcher/notification/search widget is instantiated (the shell topbar owns those on every page).
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@/frontend/primitives/button";
-import { Card, CardContent } from "@/frontend/primitives/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { StatusChip } from "@/frontend/components/status-chip";
 import {
-  Bell,
+  ArrowRight,
+  BarChart3,
+  Bookmark,
   Building2,
   ClipboardCheck,
   FileText,
-  MessageSquare,
+  FolderOpen,
   Plus,
   Search,
   TrendingUp,
+  Users,
   Wallet,
 } from "lucide-react";
-import { PageHeader, initials } from "../../_components/shell";
 import { KpiStatCard } from "../_components/kpi-stat-card";
 import { WorkQueueCard, type QueueColumn } from "../_components/work-queue-card";
 import { SourcingPipelineCard } from "../_components/sourcing-pipeline-card";
@@ -133,6 +140,140 @@ const ENGAGEMENT_COLUMNS: QueueColumn<EngagementQueueRow>[] = [
   },
 ];
 
+/** Small uppercase section eyebrow used to group the dashboard's bands (presentation only). */
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      {children}
+    </h2>
+  );
+}
+
+/**
+ * Greeting hero (redesign pass) — a single branded welcome band that consolidates the page heading + the
+ * former utility "dashboard header card". Navy-dominant per the frozen palette (`iv-navy-*`). It carries
+ * ONLY plain navigation links + the primary "New RFQ" CTA — NOT a second live org-switcher / notification
+ * / search-shortcut instance (the shell topbar owns those interactive widgets on every `(app)` page, so we
+ * never double the focus/dropdown state). Echoes the same neutral identity placeholder the topbar renders
+ * (`identity-seed.ts`) — never an independently-fabricated name.
+ */
+function GreetingHero({ userName, orgName }: { userName?: string; orgName?: string }) {
+  return (
+    <section className="overflow-hidden rounded-xl border border-iv-navy-800/40 bg-gradient-to-br from-iv-navy-800 via-iv-navy-700 to-iv-navy-800 p-6 text-white shadow-iv-md sm:p-8">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wider text-white/60">
+            Procurement workspace
+          </p>
+          <h1 className="mt-1 text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+            Welcome back
+          </h1>
+          {orgName ? (
+            <p className="mt-2 flex items-center gap-1.5 text-sm text-white/80">
+              <Building2 aria-hidden className="size-4 shrink-0" />
+              <span className="truncate">
+                {orgName}
+                {userName ? ` · ${userName}` : ""}
+              </span>
+            </p>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            asChild
+            className="gap-1.5 border-transparent bg-white text-iv-navy-800 hover:bg-iv-navy-50"
+          >
+            <Link href="/rfqs/new">
+              <Plus aria-hidden />
+              New RFQ
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="gap-1.5 border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
+          >
+            <Link href="/discover">
+              <Search aria-hidden />
+              Find vendors
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Priority action banner — surfaces the single most time-sensitive buyer action: items awaiting THIS
+ * buyer's approval (P-BUY-12). Rendered only when the wired count is > 0; the figure is the buyer's own
+ * approval count (a contract read), never a party-exclusion/blacklist figure (Inv #11). It is a plain
+ * navigation link into the approvals queue — no decision is made or recommended here (R6).
+ */
+function ApprovalPriorityBanner({ count }: { count: number }) {
+  return (
+    <Link
+      href="/approvals"
+      className="group flex items-center gap-3 rounded-lg border border-iv-amber-200 bg-iv-amber-50 p-4 transition-colors hover:bg-iv-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <span
+        aria-hidden
+        className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-iv-amber-100 text-iv-amber-700 [&_svg]:size-5 group-hover:bg-iv-amber-200"
+      >
+        <ClipboardCheck />
+      </span>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-foreground">
+          {count} {count === 1 ? "item" : "items"} awaiting your approval
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Review and decide on pending requests to keep sourcing moving.
+        </p>
+      </div>
+      <ArrowRight
+        aria-hidden
+        className="ml-auto size-5 shrink-0 text-iv-amber-700 transition-transform group-hover:translate-x-0.5"
+      />
+    </Link>
+  );
+}
+
+/** Quick-actions rail — plain navigation shortcuts to existing buyer routes (presentation only, no state). */
+const QUICK_ACTIONS: { href: string; label: string; icon: ReactNode }[] = [
+  { href: "/rfqs/new", label: "New RFQ", icon: <Plus aria-hidden /> },
+  { href: "/discover", label: "Find vendors", icon: <Users aria-hidden /> },
+  { href: "/documents", label: "Documents", icon: <FolderOpen aria-hidden /> },
+  { href: "/approvals", label: "Approvals", icon: <ClipboardCheck aria-hidden /> },
+  { href: "/saved-vendors", label: "Saved vendors", icon: <Bookmark aria-hidden /> },
+  { href: "/reports", label: "Reports", icon: <BarChart3 aria-hidden /> },
+];
+
+function QuickActionsCard() {
+  return (
+    <Card>
+      <CardHeader className="p-4">
+        <CardTitle className="text-sm font-semibold">Quick actions</CardTitle>
+      </CardHeader>
+      <CardContent className="p-4 pt-0">
+        <div className="grid grid-cols-2 gap-2">
+          {QUICK_ACTIONS.map((a) => (
+            <Link
+              key={a.href}
+              href={a.href}
+              className="flex flex-col gap-2 rounded-md border border-border p-3 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span className="flex size-8 items-center justify-center rounded-md bg-iv-navy-50 text-iv-navy-700 [&_svg]:size-4 dark:bg-iv-navy-900/50 dark:text-iv-navy-200">
+                {a.icon}
+              </span>
+              <span className="text-sm font-medium text-foreground">{a.label}</span>
+            </Link>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 /** First-run empty state (§9.1) — a single "Create RFQ" call-to-action, no fabricated metrics. */
 function FirstRunEmpty() {
   return (
@@ -153,73 +294,6 @@ function FirstRunEmpty() {
   );
 }
 
-/**
- * Dashboard header card (BX-06 reference structural pass) — a bundled utility row (org context ·
- * search · notifications · messages · profile) + greeting inside one bordered Card, matching the
- * reference's `DashboardHeader` layout. DELIBERATE, OWNER-CONFIRMED DUPLICATION: the shell topbar
- * already carries a live org-switcher/search-shortcut/notification-dropdown/quick-create/user-menu
- * on every `(app)` page — this row repeats org/search/notifications/messages/profile as PLAIN
- * NAVIGATION LINKS (not a second live dropdown-menu instance; no duplicate interactive/focus-trap
- * state on one page) so the page-level layout visually matches the reference without doubling the
- * topbar's actual interactive widgets. Echoes the SAME neutral identity placeholder the topbar
- * renders (`identity-seed.ts`) — never a second, independently-fabricated name.
- */
-function DashboardHeaderCard({ userName, orgName }: { userName: string; orgName: string }) {
-  return (
-    <Card className="shadow-iv-xs">
-      <CardContent className="flex flex-col gap-4 p-4 sm:p-5">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="inline-flex max-w-[220px] items-center gap-2 truncate rounded-md border border-border bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground">
-            <Building2 aria-hidden className="size-4 shrink-0 text-muted-foreground" />
-            <span className="truncate">{orgName}</span>
-          </span>
-
-          <Link
-            href="/discover"
-            className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm text-muted-foreground shadow-iv-xs transition-colors hover:bg-accent sm:max-w-xs"
-          >
-            <Search aria-hidden className="size-4 shrink-0" />
-            <span className="truncate">Search vendors, RFQs…</span>
-          </Link>
-
-          <div className="ml-auto flex items-center gap-1">
-            <Link
-              href="/notifications"
-              aria-label="Notifications"
-              className="inline-flex size-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
-            >
-              <Bell aria-hidden className="size-5" />
-            </Link>
-            <Link
-              href="/messages"
-              aria-label="Messages"
-              className="inline-flex size-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
-            >
-              <MessageSquare aria-hidden className="size-5" />
-            </Link>
-            <Link
-              href="/profile"
-              aria-label="Profile"
-              className="inline-flex size-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent"
-            >
-              <span className="flex size-8 items-center justify-center rounded-full bg-iv-navy-700 text-xs font-medium text-primary-foreground">
-                {initials(userName)}
-              </span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="min-w-0">
-          <p className="text-xl font-semibold tracking-tight text-foreground">Welcome back</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">
-            {userName} · {orgName}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 export function BuyerDashboardView({
   data,
   identity,
@@ -232,9 +306,7 @@ export function BuyerDashboardView({
   if (data === null) {
     return (
       <section className="flex flex-col gap-6">
-        {/* FZ-03: routed through the shell PageHeader (font-bold) instead of a hand-rolled h1
-            (was font-semibold) — the same heading text shared with the populated view below. */}
-        <PageHeader title="Procurement" />
+        <GreetingHero userName={identity?.userName} orgName={identity?.orgName} />
         <FirstRunEmpty />
       </section>
     );
@@ -251,32 +323,23 @@ export function BuyerDashboardView({
   } = data;
   const winRatePct =
     typeof kpis.winRate === "number" ? `${Math.round(kpis.winRate * 100)}%` : undefined;
+  const hasPipelines =
+    (rfqPipeline && rfqPipeline.length > 0) ||
+    (engagementPipeline && engagementPipeline.length > 0);
+  const awaitingApproval =
+    typeof kpis.awaitingMyApprovalCount === "number" ? kpis.awaitingMyApprovalCount : 0;
 
   return (
     <section className="flex flex-col gap-6">
-      <PageHeader
-        title="Procurement"
-        description="Your procurement at a glance."
-        actions={
-          <Button asChild className="gap-1.5">
-            <Link href="/rfqs/new">
-              <Plus aria-hidden />
-              New RFQ
-            </Link>
-          </Button>
-        }
-      />
+      <GreetingHero userName={identity?.userName} orgName={identity?.orgName} />
 
-      {identity ? (
-        <DashboardHeaderCard userName={identity.userName} orgName={identity.orgName} />
-      ) : null}
+      {awaitingApproval > 0 ? <ApprovalPriorityBanner count={awaitingApproval} /> : null}
 
       {/* KPI stat-card band — every VALUE is a contract read; counts non-disclosure-safe (Inv #11).
-          Mobile-first single column (BX-06 reference styling pass), 2-up at sm, full 4-up at xl.
-          `trend` on each card is UI-layer illustrative decoration (BX-06), gated on the real value
-          being present — never shown next to a "—" placeholder — same disclosure posture as the
-          rest of this page's presentation-fixture SEED (page.tsx's own header comment), not a
-          contract-traced figure (no frozen trend/delta read exists). */}
+          Mobile-first single column, 2-up at sm, full 4-up at xl. `trend` on each card is UI-layer
+          illustrative decoration, gated on the real value being present — never shown next to a "—"
+          placeholder — same disclosure posture as the rest of this page's presentation-fixture SEED
+          (page.tsx's own header comment), not a contract-traced figure (no frozen trend/delta read exists). */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiStatCard
           label="Spend"
@@ -326,49 +389,58 @@ export function BuyerDashboardView({
       {/* Sourcing + engagement pipelines — pre- and post-award lifecycle funnels (aggregate contract
           reads; observe-only, R6). Each renders only when its own wired read supplies stages; otherwise
           omitted (no fabricated funnel) — the two are independent, not a single combined widget. */}
-      {(rfqPipeline && rfqPipeline.length > 0) ||
-      (engagementPipeline && engagementPipeline.length > 0) ? (
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          {rfqPipeline && rfqPipeline.length > 0 ? (
-            <SourcingPipelineCard stages={rfqPipeline} viewAllHref="/rfqs" />
-          ) : null}
-          {engagementPipeline && engagementPipeline.length > 0 ? (
-            <EngagementPipelineCard stages={engagementPipeline} viewAllHref="/engagements" />
-          ) : null}
+      {hasPipelines ? (
+        <div className="flex flex-col gap-3">
+          <SectionLabel>Pipelines</SectionLabel>
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {rfqPipeline && rfqPipeline.length > 0 ? (
+              <SourcingPipelineCard stages={rfqPipeline} viewAllHref="/rfqs" />
+            ) : null}
+            {engagementPipeline && engagementPipeline.length > 0 ? (
+              <EngagementPipelineCard stages={engagementPipeline} viewAllHref="/engagements" />
+            ) : null}
+          </div>
         </div>
       ) : null}
 
-      {/* Content grid — three "needs your action" queues + recent activity (per-widget streaming, §9.1). */}
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="flex flex-col gap-4 xl:col-span-2">
-          <WorkQueueCard
-            title="RFQs by state"
-            columns={RFQ_COLUMNS}
-            rows={rfqQueue}
-            getRowKey={(r) => r.id}
-            getRowHref={(r) => `/rfqs/${r.id}`}
-            emptyMessage="No RFQs yet"
-            viewAllHref="/rfqs"
-          />
-          <WorkQueueCard
-            title="Quotations awaiting review"
-            columns={QUOTATION_COLUMNS}
-            rows={quotationQueue}
-            getRowKey={(q) => q.id}
-            getRowHref={(q) => `/rfqs/${q.rfqId}`}
-            emptyMessage="No quotations awaiting review"
-          />
-          <WorkQueueCard
-            title="Engagements needing action"
-            columns={ENGAGEMENT_COLUMNS}
-            rows={engagementQueue}
-            getRowKey={(e) => e.id}
-            getRowHref={(e) => `/engagements/${e.id}`}
-            emptyMessage="No engagements need action"
-            viewAllHref="/engagements"
-          />
+      {/* Content grid — three "needs your action" queues (left) + recent activity & quick actions (right,
+          per-widget streaming, §9.1). */}
+      <div className="flex flex-col gap-3">
+        <SectionLabel>Needs your attention</SectionLabel>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+          <div className="flex flex-col gap-4 xl:col-span-2">
+            <WorkQueueCard
+              title="RFQs by state"
+              columns={RFQ_COLUMNS}
+              rows={rfqQueue}
+              getRowKey={(r) => r.id}
+              getRowHref={(r) => `/rfqs/${r.id}`}
+              emptyMessage="No RFQs yet"
+              viewAllHref="/rfqs"
+            />
+            <WorkQueueCard
+              title="Quotations awaiting review"
+              columns={QUOTATION_COLUMNS}
+              rows={quotationQueue}
+              getRowKey={(q) => q.id}
+              getRowHref={(q) => `/rfqs/${q.rfqId}`}
+              emptyMessage="No quotations awaiting review"
+            />
+            <WorkQueueCard
+              title="Engagements needing action"
+              columns={ENGAGEMENT_COLUMNS}
+              rows={engagementQueue}
+              getRowKey={(e) => e.id}
+              getRowHref={(e) => `/engagements/${e.id}`}
+              emptyMessage="No engagements need action"
+              viewAllHref="/engagements"
+            />
+          </div>
+          <div className="flex flex-col gap-4">
+            <ActivityTimeline entries={recentActivity} />
+            <QuickActionsCard />
+          </div>
         </div>
-        <ActivityTimeline entries={recentActivity} />
       </div>
     </section>
   );
