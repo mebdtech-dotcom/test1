@@ -79,6 +79,18 @@
         --iv-light-border: #e2e8f0;
         --iv-light-hover: #f8fafc;
         --iv-light-selected: #eef2ff;
+        /* Surface — Dark Mode base palette (copied verbatim from app/globals.css;
+           powers the .dark product-theme toggle — a first-class frozen theme). */
+        --iv-surface-base: #0a0e1a;
+        --iv-surface-raised: #0f1424;
+        --iv-surface-overlay: #151b2e;
+        --iv-surface-muted: #1c2340;
+        --iv-surface-border: #252d47;
+        --iv-surface-hover: #1e2540;
+        --iv-surface-selected: #202745;
+        --iv-neutral-muted: #374151;
+        --iv-neutral-bright: #9ca3af;
+        --iv-neutral-text: #d1d5db;
         /* Status — base hues (from globals.css); light tints derived below */
         --iv-success-subtle: rgba(22, 163, 74, 0.08);
         --iv-success-base: #16a34a;
@@ -1893,6 +1905,158 @@
       }
 
       /* =====================================================================
+         06c. DARK THEME — first-class, frozen `.dark` tokens, scoped to the
+              PRODUCT frame only (the review harness chrome keeps its own
+              palette). Semantic reassignments are copied VERBATIM from
+              app/globals.css `.dark`; per-component tweaks keep contrast
+              legible (design both themes — never a naive invert).
+         ===================================================================== */
+      .device-frame {
+        position: relative;
+      }
+      .device-frame.dark {
+        --iv-bg: var(--iv-surface-base);
+        --iv-surface: var(--iv-surface-raised);
+        --iv-surface-2: var(--iv-surface-muted);
+        --iv-border: var(--iv-surface-border);
+        --iv-hover: var(--iv-surface-hover);
+        --iv-selected: var(--iv-surface-selected);
+        --iv-fg-strong: #ffffff;
+        /* body text eased off pure #fff for long-form legibility (prototype tuning) */
+        --iv-fg: #e6eaf2;
+        --iv-fg-secondary: var(--iv-neutral-text);
+        --iv-fg-muted: var(--iv-neutral-bright);
+        --iv-fg-heading: #e2e8f0;
+        --iv-fg-heading-strong: #f1f5f9;
+        --iv-fg-inverse: #0a0e1a;
+        --iv-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+        --iv-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+        --iv-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+        --iv-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        --iv-shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.7), 0 8px 16px rgba(0, 0, 0, 0.5);
+        --primary: var(--iv-navy-600);
+      }
+      /* keep the navy rail distinct from the (near-black) canvas on dark */
+      .device-frame.dark .rail {
+        background: #0c1526;
+      }
+      .device-frame.dark .sk {
+        background: linear-gradient(90deg, #141b30 25%, #1c2340 50%, #141b30 75%);
+        background-size: 200% 100%;
+      }
+      .device-frame.dark .badge-success { background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.32); color: #4ade80; }
+      .device-frame.dark .badge-warning { background: rgba(234, 179, 8, 0.15); border-color: rgba(234, 179, 8, 0.32); color: #fbbf24; }
+      .device-frame.dark .badge-danger { background: rgba(248, 113, 113, 0.14); border-color: rgba(248, 113, 113, 0.3); color: #f87171; }
+      .device-frame.dark .badge-info { background: rgba(96, 165, 250, 0.14); border-color: rgba(96, 165, 250, 0.3); color: #60a5fa; }
+      .device-frame.dark .badge-neutral { background: rgba(148, 163, 184, 0.14); border-color: var(--iv-border); color: #cbd5e1; }
+      .device-frame.dark .badge-navy { background: rgba(139, 160, 198, 0.16); border-color: rgba(139, 160, 198, 0.3); color: #b7c6e0; }
+      .device-frame.dark .lane-pub { background: rgba(139, 160, 198, 0.14); border-color: rgba(139, 160, 198, 0.3); color: #b7c6e0; }
+      .device-frame.dark .lane-adm { background: rgba(167, 139, 250, 0.16); border-color: rgba(167, 139, 250, 0.34); color: #c4b5fd; }
+      .device-frame.dark .lane-crm { background: rgba(205, 164, 52, 0.16); border-color: rgba(205, 164, 52, 0.34); color: #e6c66a; }
+      .device-frame.dark .privacy-adm { background: rgba(124, 58, 237, 0.14); border-color: rgba(139, 92, 246, 0.3); color: #c4b5fd; }
+      .device-frame.dark .privacy-adm .icon { color: #a78bfa; }
+      .device-frame.dark .internal-bar {
+        background: repeating-linear-gradient(135deg, #16152e, #16152e 9px, #1c1a3a 9px, #1c1a3a 18px);
+        border-color: rgba(139, 92, 246, 0.3);
+        color: #c4b5fd;
+      }
+      .device-frame.dark .hist-dot { background: rgba(124, 58, 237, 0.2); color: #c4b5fd; }
+      .device-frame.dark .info-note { background: rgba(96, 165, 250, 0.12); border-color: rgba(96, 165, 250, 0.26); color: #bfdbfe; }
+      .device-frame.dark .info-note .icon { color: #60a5fa; }
+      .device-frame.dark .eng-ic { background: rgba(139, 160, 198, 0.14); color: #b7c6e0; }
+      .device-frame.dark .rvw-medallion { background: rgba(139, 160, 198, 0.14); color: #cbd8ec; border-color: rgba(139, 160, 198, 0.28); }
+      .device-frame.dark .rvw-source .icon { color: #4ade80; }
+      .device-frame.dark .micro-tab-active { background: rgba(139, 160, 198, 0.16); border-color: rgba(139, 160, 198, 0.32); color: #cdd8ec; }
+      .device-frame.dark .q-rating { color: #b7c6e0; }
+      .device-frame.dark .qtable tbody tr.is-sel { background: rgba(99, 102, 241, 0.16); box-shadow: inset 3px 0 0 var(--iv-brand-400); }
+      .device-frame.dark .stars { color: #3b4a63; }
+      .device-frame.dark .stars [data-on="true"] .icon { fill: #c7d4ea; stroke: #c7d4ea; }
+      .device-frame.dark .stars-input button { color: #3b4a63; }
+      .device-frame.dark .stars-input button[data-on="true"] .icon { fill: #c7d4ea; stroke: #c7d4ea; }
+      .device-frame.dark .stars-input[data-gold] button[data-on="true"] .icon { fill: #e6c66a; stroke: #e6c66a; }
+      .device-frame.dark .stars-input[data-violet] button[data-on="true"] .icon { fill: #a78bfa; stroke: #a78bfa; }
+      .device-frame.dark .crm-score .icon { fill: #e6c66a; stroke: #e6c66a; }
+      .device-frame.dark .confirm-ok { background: rgba(34, 197, 94, 0.16); color: #4ade80; }
+      .device-frame.dark .btn-danger { background: var(--iv-surface); color: #f87171; border-color: rgba(248, 113, 113, 0.4); }
+      .device-frame.dark .reviews-guard { background: rgba(139, 160, 198, 0.12); border-color: rgba(139, 160, 198, 0.26); color: #cdd8ec; }
+      .device-frame.dark .reviews-guard .icon { color: #8ba0c6; }
+
+      /* =====================================================================
+         06d. INTERACTIVE WIDGETS — accordion · dropdown menu · queue tools ·
+              modal. Mock behaviour only (Phase-P): filtering is client-side,
+              the modal confirms then fires a mock toast — nothing persists or
+              transitions the business state machine.
+         ===================================================================== */
+      /* Public-reviews "no derived stats" banner — was inline; classed so it flips with theme */
+      .reviews-guard { background: var(--iv-navy-50); border-color: var(--iv-navy-100); color: var(--iv-navy-700); }
+      .reviews-guard .icon { color: var(--iv-navy-600); }
+
+      /* Accordion */
+      .acc { border: 1px solid var(--iv-border); border-radius: var(--iv-radius-md); background: var(--iv-surface); overflow: hidden; }
+      .acc-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 13px 15px; font-size: var(--iv-text-sm); font-weight: 600; color: var(--iv-fg-secondary); text-align: left; }
+      .acc-head:hover { background: var(--iv-surface-2); }
+      .acc-head .lead { color: var(--iv-navy-400); display: inline-flex; }
+      .acc-head .chev { margin-left: auto; color: var(--iv-fg-muted); transition: transform var(--iv-duration-normal) var(--iv-ease-out); }
+      .acc-head[aria-expanded="true"] .chev { transform: rotate(90deg); }
+      .acc-body { display: none; padding: 0 15px 14px 41px; font-size: var(--iv-text-xs); color: var(--iv-fg-muted); line-height: 1.6; }
+      .acc-body.open { display: block; animation: acc-in var(--iv-duration-slow) var(--iv-ease-out); }
+      @keyframes acc-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+      .acc-body li { position: relative; padding: 3px 0 3px 14px; }
+      .acc-body li::before { content: ""; position: absolute; left: 0; top: 11px; width: 5px; height: 5px; border-radius: 1px; background: var(--iv-navy-300); }
+
+      /* Dropdown menu */
+      .pc-menu-wrap { position: relative; display: inline-flex; }
+      .menu-trigger .chev { transition: transform var(--iv-duration-normal) var(--iv-ease-out); }
+      .menu-trigger[aria-expanded="true"] .chev { transform: rotate(90deg); }
+      .pc-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        z-index: var(--iv-z-overlay);
+        min-width: 194px;
+        background: var(--iv-surface);
+        border: 1px solid var(--iv-border);
+        border-radius: var(--iv-radius-md);
+        box-shadow: var(--iv-shadow-lg);
+        padding: 5px;
+        display: none;
+      }
+      .pc-menu.open { display: block; animation: menu-in var(--iv-duration-normal) var(--iv-ease-out); }
+      @keyframes menu-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+      .pc-menu button { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 8px 10px; border-radius: var(--iv-radius-sm); font-size: var(--iv-text-sm); color: var(--iv-fg-secondary); }
+      .pc-menu button:hover { background: var(--iv-surface-2); color: var(--iv-fg-strong); }
+      .pc-menu button .tick { margin-left: auto; opacity: 0; color: var(--iv-brand-500); }
+      .pc-menu button[aria-checked="true"] { color: var(--iv-fg-strong); font-weight: 600; }
+      .pc-menu button[aria-checked="true"] .tick { opacity: 1; }
+
+      /* Queue tools (search + filter) */
+      .q-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+      .q-search { position: relative; flex: 1 1 auto; max-width: 340px; }
+      .q-search > .icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--iv-fg-muted); pointer-events: none; }
+      .q-search input { padding-left: 34px; height: 38px; }
+      .q-none { padding: 22px; text-align: center; font-size: var(--iv-text-sm); color: var(--iv-fg-muted); }
+
+      /* Modal — overlays the product frame only (child of .device-frame) */
+      .pc-modal-scrim {
+        position: absolute;
+        inset: 0;
+        z-index: var(--iv-z-overlay);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 26px;
+        background: rgba(2, 6, 23, 0.55);
+      }
+      .pc-modal-scrim.open { display: flex; animation: scrim-in var(--iv-duration-normal) var(--iv-ease-out); }
+      @keyframes scrim-in { from { opacity: 0; } to { opacity: 1; } }
+      .pc-modal { width: min(430px, 100%); background: var(--iv-surface); border: 1px solid var(--iv-border); border-radius: var(--iv-radius-lg); box-shadow: var(--iv-shadow-xl); padding: 22px; animation: modal-pop var(--iv-duration-slow) var(--iv-ease-spring); }
+      @keyframes modal-pop { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+      .pc-modal-ic { width: 44px; height: 44px; border-radius: var(--iv-radius-full); display: grid; place-items: center; margin-bottom: 14px; background: var(--iv-danger-subtle); color: var(--iv-danger-base); }
+      .pc-modal h3 { font-size: var(--iv-text-lg); color: var(--iv-fg-heading-strong); }
+      .pc-modal p { font-size: var(--iv-text-sm); color: var(--iv-fg-muted); margin-top: 8px; line-height: 1.6; }
+      .pc-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+      /* =====================================================================
          07. RESPONSIVE — container queries on the device frame
          ===================================================================== */
       @container page (max-width: 720px) {
@@ -1960,6 +2124,17 @@
         .detail-actions .btn {
           flex: 1 1 auto;
         }
+        .q-toolbar {
+          flex-wrap: wrap;
+        }
+        .q-search {
+          max-width: none;
+          flex: 1 1 100%;
+        }
+        .pc-menu {
+          right: auto;
+          left: 0;
+        }
       }
     </style>
   </head>
@@ -2006,6 +2181,10 @@
       <button class="pc-btn pc-group" id="pc-anno" aria-pressed="true" title="Toggle governance annotations">
         <svg class="icon" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Z" /><path d="m2 17 10 5 10-5M2 12l10 5 10-5" /></svg>Annotations
       </button>
+
+      <button class="pc-btn pc-group" id="pc-theme" aria-pressed="false" title="Toggle light / dark product theme">
+        <svg class="icon" viewBox="0 0 24 24"><use href="#i-moon" id="pc-theme-ic" /></svg><span data-theme-label>Light</span>
+      </button>
     </div>
 
     <!-- ============================= STAGE ============================= -->
@@ -2042,6 +2221,9 @@
                 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></symbol>
                 <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M7 7l-4 6h8ZM17 7l-4 6h8ZM4 21h16" /></symbol>
                 <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" /></symbol>
+                <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z" /></symbol>
+                <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></symbol>
+                <symbol id="i-filter" viewBox="0 0 24 24"><path d="M22 3H2l8 9.5V19l4 2v-8.5Z" /></symbol>
               </defs>
             </svg>
 
@@ -2123,6 +2305,23 @@
                               </div>
                             </div>
                           </form>
+
+                          <!-- Accordion — review guidelines (mock; content disclosure only) -->
+                          <div class="acc">
+                            <button type="button" class="acc-head" aria-expanded="false" data-acc>
+                              <span class="lead"><svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-info" /></svg></span>
+                              What makes a good review?
+                              <svg class="icon icon-sm chev" viewBox="0 0 24 24"><use href="#i-chevron" /></svg>
+                            </button>
+                            <div class="acc-body">
+                              <ul>
+                                <li>Focus on this engagement: delivery, quality, documentation, and communication.</li>
+                                <li>Be specific and factual — what was supplied, whether it met spec, how lead time compared to the quote.</li>
+                                <li>Don't include prices, phone numbers, or confidential commercial terms — these are removed in moderation.</li>
+                                <li>One review per completed engagement. Reviews are public once approved and can't be edited afterwards.</li>
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
@@ -2299,8 +2498,8 @@
                     </div>
 
                     <!-- No-derived-statistics guard (the governance headline of this surface) -->
-                    <div class="info-note" data-anno="grounded" data-note="DP-R1 derived-statistics freeze: no average, no star-average, no review count-as-score, no recommendation %. The corpus defines no aggregation formula, so none is shown. Individual published reviews only." style="margin: 12px 0 20px; background: var(--iv-navy-50); border-color: var(--iv-navy-100); color: var(--iv-navy-700)">
-                      <svg class="icon" viewBox="0 0 24 24" style="color: var(--iv-navy-600)"><use href="#i-info" /></svg>
+                    <div class="info-note reviews-guard" data-anno="grounded" data-note="DP-R1 derived-statistics freeze: no average, no star-average, no review count-as-score, no recommendation %. The corpus defines no aggregation formula, so none is shown. Individual published reviews only." style="margin: 12px 0 20px">
+                      <svg class="icon" viewBox="0 0 24 24"><use href="#i-info" /></svg>
                       <span><strong>Individual reviews from verified engagements.</strong> No overall score, average, or recommendation percentage is shown — each review stands on its own.</span>
                       <span class="anno-chip" data-s="grounded">No derived stats</span>
                     </div>
@@ -2474,6 +2673,24 @@
 
                     <!-- STATE: submitted selected (approve / reject) -->
                     <div class="sstate is-active" data-state="submitted" data-state-label="Submitted → moderate">
+                      <div class="q-toolbar" data-anno="grounded" data-note="Client-side search + status filter over the queue (mock). Filtering is presentation only — it changes nothing server-side and derives no statistic; it just narrows visible rows to statuses in the frozen set (submitted / approved).">
+                        <span class="anno-chip" data-s="grounded">Search · filter</span>
+                        <label class="q-search">
+                          <svg class="icon" viewBox="0 0 24 24"><use href="#i-search" /></svg>
+                          <input class="field-input" id="s3-search" type="search" placeholder="Search by vendor…" aria-label="Search reviews by vendor" />
+                        </label>
+                        <div class="pc-menu-wrap">
+                          <button class="btn btn-outline btn-sm menu-trigger" type="button" data-menu="s3-filter" aria-haspopup="true" aria-expanded="false">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-filter" /></svg><span data-filter-label>All statuses</span>
+                            <svg class="icon icon-sm chev" viewBox="0 0 24 24"><use href="#i-chevron" /></svg>
+                          </button>
+                          <div class="pc-menu" id="s3-filter" role="menu">
+                            <button type="button" role="menuitemradio" data-filter="all" aria-checked="true">All statuses<svg class="icon icon-sm tick" viewBox="0 0 24 24"><use href="#i-check" /></svg></button>
+                            <button type="button" role="menuitemradio" data-filter="submitted" aria-checked="false">Submitted<svg class="icon icon-sm tick" viewBox="0 0 24 24"><use href="#i-check" /></svg></button>
+                            <button type="button" role="menuitemradio" data-filter="approved" aria-checked="false">Approved<svg class="icon icon-sm tick" viewBox="0 0 24 24"><use href="#i-check" /></svg></button>
+                          </div>
+                        </div>
+                      </div>
                       <div class="adm-split">
                         <div class="card qtable-wrap qscroll" data-anno="grounded" data-note="Reuses the shared AdminQueueTable pattern (the Nth consumer), high-density variant: sticky header, Age column, compact rows. Queue = reviews in `submitted` (moderatable) and `approved` (publishable). The table decides nothing; a row opens the case detail where the command acts (R5).">
                           <span class="anno-chip" data-s="grounded">Grounded · AdminQueueTable</span>
@@ -2589,7 +2806,7 @@
                             <button class="btn btn-primary btn-sm" data-toast="Publish|Mock only — publish_review.v1 is not wired. Publish feeds Buyer Feedback via BC-TRUST-3 (Path B).">
                               <svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-eye" /></svg>Publish
                             </button>
-                            <button class="btn btn-danger btn-sm" data-toast="Remove|Mock only — remove_review.v1 hides (soft-delete), never erases.">
+                            <button class="btn btn-danger btn-sm" type="button" data-modal-open="pc-modal-remove">
                               <svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-trash" /></svg>Remove
                             </button>
                           </div>
@@ -2895,6 +3112,21 @@
               </div>
             </section>
           </div>
+
+          <!-- Modal host — child of the device frame, overlays product only (Phase-P: confirm → mock toast, no state change) -->
+          <div class="pc-modal-scrim" id="pc-modal-remove" role="dialog" aria-modal="true" aria-labelledby="pc-modal-remove-t" hidden>
+            <div class="pc-modal">
+              <span class="pc-modal-ic"><svg class="icon" viewBox="0 0 24 24"><use href="#i-trash" /></svg></span>
+              <h3 id="pc-modal-remove-t">Remove this review?</h3>
+              <p>Removing hides the review from the vendor's public profile. It is soft-deleted — never erased — and never affects any governance score.</p>
+              <div class="pc-modal-actions">
+                <button class="btn btn-outline btn-sm" type="button" data-modal-close>Cancel</button>
+                <button class="btn btn-danger btn-sm" type="button" data-modal-close data-toast="Remove|Mock only — remove_review.v1 hides (soft-delete), never erases.">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><use href="#i-trash" /></svg>Remove review
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
@@ -3104,10 +3336,7 @@
 
         // ---- Toasts (mock action feedback) ----------------------------------
         const toasts = $("#pc-toasts");
-        scroll.addEventListener("click", (e) => {
-          const t = e.target.closest("[data-toast]");
-          if (!t) return;
-          e.preventDefault();
+        function fireToast(t) {
           if (t.getAttribute("aria-disabled") === "true" || t.disabled) return;
           const [title, body] = t.getAttribute("data-toast").split("|");
           const el = document.createElement("div");
@@ -3124,6 +3353,131 @@
             setTimeout(() => el.remove(), 320);
           }, 3600);
           while (toasts.children.length > 3) toasts.removeChild(toasts.firstChild);
+        }
+        scroll.addEventListener("click", (e) => {
+          const t = e.target.closest("[data-toast]");
+          if (!t) return;
+          e.preventDefault();
+          fireToast(t);
+        });
+
+        // ---- Theme toggle (product frame only; frozen `.dark` tokens) --------
+        const themeBtn = $("#pc-theme");
+        const themeIc = $("#pc-theme-ic");
+        const themeLab = $("[data-theme-label]", themeBtn);
+        function setTheme(dark) {
+          frame.classList.toggle("dark", dark);
+          themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
+          if (themeIc) themeIc.setAttribute("href", dark ? "#i-sun" : "#i-moon");
+          if (themeLab) themeLab.textContent = dark ? "Dark" : "Light";
+        }
+        themeBtn.addEventListener("click", () => setTheme(!frame.classList.contains("dark")));
+
+        // ---- Accordion (content disclosure) ---------------------------------
+        scroll.addEventListener("click", (e) => {
+          const head = e.target.closest("[data-acc]");
+          if (!head) return;
+          const open = head.getAttribute("aria-expanded") !== "true";
+          head.setAttribute("aria-expanded", open ? "true" : "false");
+          const body = head.nextElementSibling;
+          if (body) body.classList.toggle("open", open);
+          fit();
+        });
+
+        // ---- Queue search + status filter (client-side mock; no server, no stats) ----
+        let qFilter = "all";
+        const qSearch = $("#s3-search");
+        function applyQueue() {
+          const body = $(".surface[data-surface='s3'] .sstate[data-state='submitted'] .qtable tbody");
+          if (!body) return;
+          const q = (qSearch ? qSearch.value : "").trim().toLowerCase();
+          let shown = 0;
+          $$("tr", body).forEach((r) => {
+            const v = (r.querySelector(".q-vendor") || {}).textContent || "";
+            const status = (r.querySelector(".badge") || {}).textContent || "";
+            const okF = qFilter === "all" || status.trim().toLowerCase() === qFilter;
+            const okQ = !q || v.toLowerCase().indexOf(q) !== -1;
+            const show = okF && okQ;
+            r.style.display = show ? "" : "none";
+            if (show) shown++;
+          });
+          const wrap = $(".surface[data-surface='s3'] .sstate[data-state='submitted'] .qtable-wrap");
+          let none = wrap ? $(".q-none", wrap) : null;
+          if (wrap && !none) {
+            none = document.createElement("div");
+            none.className = "q-none";
+            none.textContent = "No reviews match your search.";
+            wrap.appendChild(none);
+          }
+          if (none) none.style.display = shown ? "none" : "block";
+        }
+        if (qSearch) qSearch.addEventListener("input", applyQueue);
+
+        // ---- Dropdown menus + modal (delegated on the frame; covers overlays) ----
+        function closeMenus() {
+          $$(".pc-menu.open").forEach((m) => {
+            m.classList.remove("open");
+            const trig = $('[data-menu="' + m.id + '"]');
+            if (trig) trig.setAttribute("aria-expanded", "false");
+          });
+        }
+        function closeModal(s) {
+          s.classList.remove("open");
+          s.setAttribute("hidden", "");
+        }
+        frame.addEventListener("click", (e) => {
+          const mo = e.target.closest("[data-modal-open]");
+          if (mo) {
+            e.preventDefault();
+            const s = document.getElementById(mo.getAttribute("data-modal-open"));
+            if (s) {
+              s.removeAttribute("hidden");
+              s.classList.add("open");
+            }
+            closeMenus();
+            return;
+          }
+          const mc = e.target.closest("[data-modal-close]");
+          if (mc) {
+            const s = mc.closest(".pc-modal-scrim");
+            if (s) closeModal(s);
+            if (mc.hasAttribute("data-toast")) {
+              e.preventDefault();
+              fireToast(mc);
+            }
+            return;
+          }
+          const trig = e.target.closest("[data-menu]");
+          if (trig) {
+            e.preventDefault();
+            const m = document.getElementById(trig.getAttribute("data-menu"));
+            const willOpen = m && !m.classList.contains("open");
+            closeMenus();
+            if (willOpen) {
+              m.classList.add("open");
+              trig.setAttribute("aria-expanded", "true");
+            }
+            return;
+          }
+          const item = e.target.closest(".pc-menu [data-filter]");
+          if (item) {
+            e.preventDefault();
+            qFilter = item.getAttribute("data-filter");
+            const menu = item.closest(".pc-menu");
+            $$("[data-filter]", menu).forEach((b) => b.setAttribute("aria-checked", b === item ? "true" : "false"));
+            const trigLab = $('[data-menu="' + menu.id + '"] [data-filter-label]');
+            if (trigLab) trigLab.textContent = item.textContent.trim();
+            applyQueue();
+            closeMenus();
+            return;
+          }
+          if (!e.target.closest(".pc-menu")) closeMenus();
+          if (e.target.classList.contains("pc-modal-scrim")) closeModal(e.target);
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key !== "Escape") return;
+          $$(".pc-modal-scrim.open").forEach(closeModal);
+          closeMenus();
         });
 
         // ---- Init (supports deep-links: ?surface=s3&state=approved) ----------
@@ -3139,6 +3493,7 @@
           const mb = $('[data-device="mobile"]');
           if (mb) mb.click();
         }
+        if (params.get("theme") === "dark") setTheme(true);
         requestAnimationFrame(fit);
         setTimeout(fit, 120);
       })();

@@ -1,5 +1,9 @@
 <!--
-Status:     Draft v0.9 (pending adversarial review round + owner/Board disposition).
+Status:     v1.0-rc — adversarial review round COMPLETE (AR-01 folded); prototype
+            (prototypes/review-system/) VISUALLY APPROVED by owner 2026-07-08; Surface 2
+            card layout = Option A (testimonial). Next gate: Board packet for FE page-ID +
+            milestone mints (governanceReviews/BOARD-PACKET-REVIEW-SYSTEM-FE-MINTS_v1.0.md).
+            Authorizes NO build (backend wave-gated; FE page-IDs Board-only).
 Authority:  NON-AUTHORITATIVE planning/design companion. PLANNING ONLY · wave-gated ·
             reorders no roadmap · coins nothing. On any conflict the frozen
             generatedDocs/ corpus wins (CLAUDE.md §7) and this document is patched to match.
@@ -245,6 +249,13 @@ the frozen status vocabulary only.
 - **Composition:** microsite section shell (existing pattern in
   `app/(public)/_components/microsite/`), `ReviewCard` (§5), `RatingStars` (display mode),
   pagination per `trust.list_page_size_max` semantics (pointer).
+- **Card layout — APPROVED (owner visual approval, 2026-07-08): Option A — spacious
+  "testimonial" card.** Two layouts were prototyped (`prototypes/review-system/`, Surface 2
+  Option A vs Option B); the owner selected **Option A**: a neutral verified-engagement
+  medallion + stars + "Verified engagement" on one row, monospace published date, prominent
+  body. The medallion is a **neutral provenance marker, never author identity** (no author
+  field exists in the frozen public read shape). *Load more* pagination only — no total count
+  rendered (the listing-count question stays open, §9(a)).
 - **Conformance:** published-only · projection-only · zero workspace imports (public
   surface discipline) · no derived statistic · no moderation metadata rendered
   (`moderated_by`/`moderated_at` are not public fields).
@@ -467,6 +478,9 @@ minted by this package — each mints only if adjudicated a genuine gap through 
 | AR-01 §6 matrix + Surface 1 imply an author read of own review's *current* moderation status, but BC-TRUST-5 has no author-scoped read (`get_review`/`list_reviews` are public/`published`-only/authz-none); submit response returns `status=submitted` only | MAJOR | VALID (verified against Doc-4G Part5 §G8.1/§G8.5) | Surface 1 "After submit" + §6 matrix row tightened to the one-time submit-response confirmation; genuine gap surfaced as §9(e) (additive-contract question, no coin) | Review pass → author | FOLDED |
 | AR — Doc-4M-not-review-authority claim (§0.3 note) | OBS | CONFIRMED | verified: Doc-4M_FROZEN_v1.0.md carries no Public Review machine — note stands | Review pass | NO CHANGE |
 | AR — lifecycle string, two-step publish (F4G-PB5-MA2), remove-source-state, `list_reviews` sort-allowlisting, staff-slug, page IDs (P-PUB-13/P-ADM-02/03), universe=151 | OBS | CONFIRMED | all verified verbatim against frozen sources; no defect | Review pass | NO CHANGE |
+| Prototype (all 5 surfaces) — mockup-first Visual Approval gate | — | **APPROVED** | Owner visual approval **2026-07-08** (`prototypes/review-system/`); UX/visual direction confirmed. Design sign-off only — authorizes NO build (backend wave-gated; FE page-IDs Board-only) | owner | APPROVED |
+| Surface 2 card layout — Option A (testimonial) vs Option B (compact feed) | — | **RESOLVED** | Owner selected **Option A — testimonial**; folded into the Surface 2 spec. (Distinct from the still-open §9(d) moderation-queue placement A/B.) | owner | CLOSED |
+| Next gate — FE page-ID + milestone mints | — | IN PROGRESS | Board packet drafted at `governanceReviews/BOARD-PACKET-REVIEW-SYSTEM-FE-MINTS_v1.0.md` (requests the mints; carries the open §9(c)/(d) + Admin-ownership decisions) | package → Board | OPEN (human Board) |
 
 ---
 

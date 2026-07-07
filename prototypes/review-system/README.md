@@ -5,10 +5,14 @@ build gates) · non-authoritative · coins no route, contract, token, page ID, s
 state. On any conflict the **frozen corpus wins** (CLAUDE.md §7, §11).
 
 **Visual approval:** ✅ **GRANTED (owner, 2026-07-08)** — the UX/visual direction for Surfaces 1–5
-is signed off. This is a **design** approval only; it authorizes no production build. The backend
+is signed off. A **Round-3 high-fidelity pass** (light/dark theme toggle, interactive widgets,
+local serving — see *Round 3* below) was added 2026-07-08 and is **awaiting the owner's visual
+sign-off**. This is a **design** approval only; it authorizes no production build. The backend
 stays roadmap-gated (M5 = Wave 3 · M8 moderation = Wave 5; current = Wave 2) and FE page-IDs /
-milestones remain **Board-only** to mint. Open item folded next: Surface 2 card layout — Option A
-(testimonial) vs Option B (compact feed).
+milestones remain **Board-only** to mint. **Surface 2 card layout: Option A (testimonial)
+selected** by the owner — the shipping spec is `docs/product/requirements/review_system_planning_and_design.md`
+Surface 2; Option B stays in this prototype for reference only. Next gate:
+`governanceReviews/BOARD-PACKET-REVIEW-SYSTEM-FE-MINTS_v1.0.md` (FE page-ID + milestone mints).
 
 **Purpose:** a mockup-first **Visual Approval** artifact for stakeholder review **before any
 production code** — the same gate used for the Comparative Statement and Single Product Page
@@ -26,8 +30,15 @@ explaining the concept; **nothing transitions or persists** (Phase-P guardrails)
 
 ## How to review it
 
-Open [`index.html`](./index.html). A dark **prototype toolbar** sits at the top — it is the
-review harness, *not* part of the product. It gives you:
+**It is one self-contained file — view it either way:**
+
+1. **Open the file** — double-click [`index.html`](./index.html); it renders identically from
+   `file://` (zero external requests).
+2. **Serve it** — any static server works, e.g. `npx serve prototypes/review-system` (or
+   `python -m http.server` from this folder), then open the printed URL. Serving gives a clean
+   address bar and shareable deep links.
+
+A dark **prototype toolbar** sits at the top — the review harness, *not* part of the product:
 
 - **Surface switcher** — the five surfaces, each tagged with its lane colour dot
   (● navy = Lane PUB · ● violet = Lane ADM · ● gold = Lane CRM).
@@ -35,11 +46,14 @@ review harness, *not* part of the product. It gives you:
   success / loading / error / view-only / …).
 - **Device switcher** — Desktop (1280) · Mobile (390). The frame reflows through the *same
   markup* via CSS container queries and scales to fit the stage.
+- **Theme toggle** — flips the *product* between **Light** (primary) and **Dark**. It binds to
+  the frozen, first-class `.dark` theme in `app/globals.css` (semantic tokens copied verbatim),
+  scoped to the device frame so the harness chrome is unaffected. Light is the default.
 - **Annotations toggle** — overlays a governance flag on every grounded/proposed/gap region
   with a hover/click note citing what is grounded and what is not.
 
-**Deep links** (share a specific view): `index.html?surface=s3&state=approved&device=mobile`.
-`surface` = `s1…s5`; `state` = the surface's state slug; `device` = `mobile`.
+**Deep links** (share a specific view): `index.html?surface=s3&state=approved&device=mobile&theme=dark`.
+`surface` = `s1…s5`; `state` = the surface's state slug; `device` = `mobile`; `theme` = `dark`.
 
 ---
 
@@ -75,6 +89,33 @@ A refinement pass (no implementation) addressing the Round-1 review notes:
   all disabled under `prefers-reduced-motion`.
 - **Accessibility pass:** star input is a keyboard `radiogroup`; queue header sticky with an
   `sr-only` caption; status by chip text + colour; reduced-motion honoured; focus-visible rings.
+
+---
+
+## Round 3 — high-fidelity pass (2026-07-08)
+
+A production-visual polish pass (still **no implementation**), adding:
+
+- **Light / Dark theme toggle** — the product frame flips between the primary light theme and the
+  frozen, first-class **`.dark`** theme (semantic tokens copied verbatim from `app/globals.css`,
+  scoped to the device frame). Every surface is tuned for **both** themes — badges, lane tags,
+  stars, medallions and skeletons are re-inked for dark contrast (never a naive invert). The
+  review harness keeps its own palette.
+- **Interactive components** the hi-fi brief calls for, added only where they fit and stay
+  governance-safe:
+  - **Search + status filter** on the moderation queue (Surface 3) — client-side and mock; it
+    narrows visible rows to statuses in the frozen set (`submitted` / `approved`) and **derives no
+    statistic**.
+  - **Remove-confirm modal** (Surface 3) — a real dialog for the destructive action, closable by
+    `Esc` / backdrop; confirming fires the same mock toast (**no state transition, nothing
+    persists**).
+  - **Guidelines accordion** (Surface 1) — "What makes a good review?", reinforcing the
+    no-prices / no-contact-details rule.
+- **Local static server** for in-browser review — still one self-contained file.
+
+All Phase-P guardrails hold: filter / search / modal are presentation-only mock behaviour — no
+persistence, no simulated moderation flow, no business-state transitions. The core Surfaces 1–5
+(already approved) are unchanged; this pass adds theme + widgets + serving on top.
 
 ---
 
@@ -137,9 +178,9 @@ Hand-built to the frozen kit's conventions (**not** the real React kit). Tokens 
 classes; all review-harness chrome uses a `pc-` prefix and off-palette colours.
 
 **Chrome (`pc-`)**
-- Prototype toolbar (surface / state / device switchers + annotations toggle + legend),
-  device frame (container-query rig + scale-to-fit), annotation chips + shared tooltip,
-  toast rack (`aria-live`).
+- Prototype toolbar (surface / state / device / **theme** switchers + annotations toggle +
+  legend), device frame (container-query rig + scale-to-fit), annotation chips + shared tooltip,
+  toast rack (`aria-live`), **confirm modal** + **dropdown menu** overlays (scoped inside the frame).
 
 **Kit-convention primitives**
 - `.btn` variants: `primary` (navy gradient), `outline`, `ghost`, `success`, `danger`; sizes `sm`/`lg`/`block`.
@@ -156,6 +197,11 @@ classes; all review-harness chrome uses a `pc-` prefix and off-palette colours.
 - **Engagement banner** (Surface 1 entry), **AdminQueueTable + case-detail split** (Surface 3,
   mirrors the shared `admin-queue-table.tsx`), **CRM ratings card** (Surface 4, activates the
   parked `crm-detail-view.tsx` card), **admin rating + history timeline** (Surface 5).
+
+**Interactive widgets (mock, Round 3)**
+- `.acc` accordion (content disclosure), `.pc-menu` dropdown (status filter), `.q-search`
+  client-side vendor search, `.pc-modal` confirm dialog (destructive Remove). All behaviour is
+  presentation-only — client-side filtering, `Esc`/backdrop dismissal; nothing persists.
 
 **App-shell chrome (three distinct lane contexts)**
 - Buyer/admin **workspace shell** (navy rail + topbar + breadcrumb) and public **site shell**
@@ -207,6 +253,9 @@ Container-query driven (`@container page`) on the device frame — one breakpoin
 - Contrast pairs use the frozen light-theme inks (dark text on tinted status chips; navy on
   white; muted `#5f6f86` tuned for AA on gray surfaces).
 - `prefers-reduced-motion` is respected by keeping motion to short, non-essential transitions.
+- **Both themes are first-class:** dark re-inks status / badge / star colours for contrast (not a
+  naive invert). The confirm modal closes on `Esc` / backdrop; dropdown menus close on
+  outside-click / `Esc`; the theme toggle is a labelled `aria-pressed` control.
 
 ---
 
