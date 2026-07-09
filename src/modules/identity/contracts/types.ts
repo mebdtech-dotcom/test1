@@ -315,7 +315,7 @@ export type DelegationRefreshPort = (input: {
 }) => Promise<void>;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// §C5/§C6 — Organization · Membership · User lifecycle (W2-IDN-5). The state-machine value sets + the two
+// §C4/§C5/§C6 — User · Organization · Membership lifecycle (W2-IDN-5). The state-machine value sets + the two
 // System-timer surfaces. The transition matrices themselves live in the domain state machines (the single
 // lifecycle authority, Doc-2 §5.1/§5.2); the pure predicates are re-exported on `services.ts`. Value-set
 // literals below are bound by pointer to the realized enums (Doc-6C §3.1/§3.2/§3.3), never re-authored.

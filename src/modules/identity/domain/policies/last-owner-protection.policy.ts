@@ -1,9 +1,9 @@
 // M1 domain (PRIVATE) — the Last-Owner-Protection + Ownership-Succession guards (service-layer). PURE
 // decision functions over already-resolved facts (no I/O, no governance-signal read) — the repository resolves
 // the owner facts (`resolveOwnerRemovalFacts`), this module DECIDES. The W2-IDN-6.2 wired commands
-// (`remove_member`, `set_membership_status` suspend, `transfer_ownership`, `close_user_account`) consult these
+// (`remove_member`, `set_membership_status` suspend, `transfer_ownership`, `deactivate_own_account`) consult these
 // before any Owner-disabling write; they are the BUSINESS-stage guard behind the `identity_org_last_owner_block`
-// / `identity_user_last_owner_block` register codes (Doc-4C §C5/§C6/§C7).
+// / `identity_user_last_owner_block` register codes (Doc-4C §C4/§C5/§C6).
 //
 // Reference-never-restate. The rule is frozen in Master System Architecture §5.5 + Doc-2 §5.1 guards (bound by
 // VERBATIM transcription, per the WP acceptance criteria):
@@ -52,9 +52,9 @@ export function evaluateLastOwnerProtection(
   return { blocked };
 }
 
-/** The facts a transfer/succession supplies (Doc-4C §C7 `transfer_ownership` / `admin_recover_ownership`). */
+/** The facts a transfer/succession supplies (Doc-4C §C5 `transfer_ownership` / `admin_recover_ownership`). */
 export interface OwnershipSuccessionFacts {
-  /** The nominated new owner holds an ACTIVE membership in the org (Doc-4C §C7 REFERENCE precondition). */
+  /** The nominated new owner holds an ACTIVE membership in the org (Doc-4C §C5 REFERENCE precondition). */
   newOwnerHasActiveMembership: boolean;
   /** The number of active Owners the org would hold AFTER the succession completes (must be ≥ 1). */
   resultingActiveOwnerCount: number;

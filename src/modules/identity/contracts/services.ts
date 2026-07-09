@@ -275,7 +275,7 @@ export const expireDelegationGrants: ExpireDelegationGrants = (deps) =>
   expireDelegationGrantsCommand(deps);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// §C5/§C6 — Organization · Membership · User lifecycle (W2-IDN-5). The two out-of-wire System timers +
+// §C4/§C5/§C6 — User · Organization · Membership lifecycle (W2-IDN-5). The two out-of-wire System timers +
 // the pure lifecycle authority (state machines + guards) re-exported for the app-layer / W2-IDN-6.2 wired
 // commands / other-module consumers. The machines/guards are PURE (own no state, read no DB, touch no
 // governance signal) — Doc-4M's "single lookup surface" for lifecycle, boundary-legal on the contracts face.
@@ -301,7 +301,7 @@ export const activateMembership: ActivateMembership = (input, deps) =>
   activateMembershipCommand(input, deps);
 
 // The pure lifecycle authority (state machines) — the SINGLE source of legal-edge truth (Doc-2 §5.1/§5.2 +
-// Doc-4C §C5). Re-exported so the W2-IDN-6.2 wired commands + consuming callers consult the SAME matrix and
+// Doc-4C §C4/§C5/§C6). Re-exported so the W2-IDN-6.2 wired commands + consuming callers consult the SAME matrix and
 // never hand-roll a transition. Domain owns them; this is the boundary-legal public face.
 export {
   canTransitionOrganization,
@@ -342,4 +342,9 @@ export {
 
 // The repository fact-resolver for the Last-Owner guard (the SERVICE-LAYER guard's DB read). Re-exported so
 // W2-IDN-6.2 commands resolve owner facts through the M1 contracts face and hand them to the pure policy.
-export { resolveOwnerRemovalFacts } from "../infrastructure/data/membership-lifecycle.repository";
+// `UnresolvableOwnerRoleError` is the loud fail-closed signal when the seeded Owner role is missing — the
+// guard's prerequisite is corrupt, so the resolver refuses rather than fabricating never-block facts.
+export {
+  resolveOwnerRemovalFacts,
+  UnresolvableOwnerRoleError,
+} from "../infrastructure/data/membership-lifecycle.repository";

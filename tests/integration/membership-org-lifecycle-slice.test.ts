@@ -23,12 +23,13 @@ import {
   TERMINAL_MEMBERSHIP_STATES,
   TERMINAL_ORGANIZATION_STATUSES,
   TERMINAL_USER_STATUSES,
+  UnresolvableOwnerRoleError,
   type MembershipState,
   type OrganizationStatus,
   type UserStatus,
 } from "../../src/modules/identity/contracts";
 
-// W2-IDN-5 — the org + membership + user state machines (Doc-2 §5.1/§5.2 + Doc-4C §C5 authored State Effects),
+// W2-IDN-5 — the org + membership + user state machines (Doc-2 §5.1/§5.2 + Doc-4C §C4/§C5/§C6 authored State Effects),
 // their service-layer guards (Last-Owner Protection, Ownership Succession, only-active-participates), and the
 // two out-of-wire System timers (`activate_membership` `pending → active`; `expire_invitation` `invited →
 // removed`) — every timer mutation an AUDITED, ATOMIC, System-attributed write (the D7 pattern). Proven vs
@@ -218,10 +219,10 @@ describe("W2-IDN-5 org/membership/user lifecycle machines, guards + System timer
     expect(canTransitionMembership("invited", "active")).toBe(false);
   });
 
-  // ── User state machine (Doc-4C §C5 authored State Effects) — full matrix ─────────────────────
+  // ── User state machine (Doc-4C §C4 authored State Effects) — full matrix ─────────────────────
   it("USER machine: every legal edge true, every illegal edge false; `soft_deleted` terminal (no restore)", () => {
     const states: UserStatus[] = ["active", "suspended", "soft_deleted"];
-    // Doc-4C §C5 authored edges (4): active⇄suspended, active|suspended→soft_deleted.
+    // Doc-4C §C4 authored edges (4): active⇄suspended, active|suspended→soft_deleted.
     const legal = new Set([
       "active>suspended",
       "suspended>active",
@@ -322,6 +323,34 @@ describe("W2-IDN-5 org/membership/user lifecycle machines, guards + System timer
     facts = await resolveOwnerRemovalFacts(ORG_ACTIVE, nonOwner.id);
     expect(facts.targetIsActiveOwner).toBe(false);
     expect(evaluateLastOwnerProtection(facts).blocked).toBe(false);
+  });
+
+  // ── Guard: Last-Owner resolver fail-CLOSED on a corrupt prerequisite (RV-0150 F2) ────────────
+  it("GUARD last-owner (repo) fail-closed: an unresolvable seeded Owner role THROWS (never fabricates never-block facts)", async () => {
+    // A real sole active Owner so the ONLY thing that can make the resolver misbehave is the missing role seed.
+    const owner = await seedMembership({
+      organizationId: ORG_ACTIVE,
+      roleId: ownerRoleId,
+      state: "active",
+    });
+    // Soft-delete the seeded Owner system-bundle role INSIDE a transaction, resolve within the SAME tx, and let
+    // the throw roll the deletion back (the global migration seed is never persisted away). If someone restores
+    // the old silent `{ targetIsActiveOwner: false, otherActiveOwnerCount: 0 }` never-block return, the callback
+    // RESOLVES (no throw) and this `.rejects` assertion FAILS — the discriminator is the loud throw on a corrupt
+    // guard prerequisite, which on a lockout surface must never fail open (Master Architecture §5.5).
+    await expect(
+      prisma.$transaction(async (tx) => {
+        await tx.role.updateMany({
+          where: { name: "Owner", organizationId: null, isSystemBundle: true, deletedAt: null },
+          data: { deletedAt: FIXED_NOW },
+        });
+        return resolveOwnerRemovalFacts(ORG_ACTIVE, owner.id, tx);
+      }),
+    ).rejects.toThrow(UnresolvableOwnerRoleError);
+
+    // The rollback restored the seed — the resolver works again (sole Owner → block), proving no persistent harm.
+    const facts = await resolveOwnerRemovalFacts(ORG_ACTIVE, owner.id);
+    expect(evaluateLastOwnerProtection(facts).blocked).toBe(true);
   });
 
   // ── System timer: expire_invitation (invited → removed) ──────────────────────────────────────

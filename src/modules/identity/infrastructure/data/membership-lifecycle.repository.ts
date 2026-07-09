@@ -18,6 +18,24 @@ import type { LastOwnerProtectionFacts } from "../../domain/policies/last-owner-
  *  `organization_id IS NULL`, `is_system_bundle = true`. Bound by its FROZEN seed identity, never coined. */
 const OWNER_SYSTEM_BUNDLE_ROLE_NAME = "Owner" as const;
 
+/**
+ * Thrown when the seeded Owner system-bundle role cannot be resolved while computing Last-Owner-Protection
+ * facts. The role is migration-seeded and always present (IDN-1); its absence is an IMPOSSIBLE state that
+ * corrupts the guard's prerequisite. We surface it loudly (the `durationToMs` idiom) rather than fabricate
+ * "no owner" facts — fabricating them would fail OPEN on a lockout surface (Master Architecture §5.5:
+ * "Organizations must never become ownerless"). The owning command lets this abort the mutation.
+ */
+export class UnresolvableOwnerRoleError extends Error {
+  constructor() {
+    super(
+      `Last-Owner-Protection prerequisite unresolvable: the seeded Owner system-bundle role ` +
+        `(name='${OWNER_SYSTEM_BUNDLE_ROLE_NAME}', organization_id IS NULL, is_system_bundle=true) ` +
+        `was not found (IDN-1 seed missing/corrupted).`,
+    );
+    this.name = "UnresolvableOwnerRoleError";
+  }
+}
+
 /** The audited membership field set (Doc-2 §10.2) — the `old_value`/`new_value` audit shape. */
 export interface MembershipFieldSet {
   state: MembershipState;
@@ -169,11 +187,12 @@ export async function transitionMembershipState(
 
 /**
  * Resolve the Last-Owner-Protection facts for a proposed Owner-disabling mutation on `targetMembershipId` in
- * `orgId` (Doc-4C §C6/§C7 BUSINESS gate; Master Architecture §5.5). "Owner" = an ACTIVE membership bound to
+ * `orgId` (Doc-4C §C5/§C6 BUSINESS gate; Master Architecture §5.5). "Owner" = an ACTIVE membership bound to
  * the seeded Owner system-bundle role. Returns `targetIsActiveOwner` + the count of OTHER active Owners
- * (excluding the target). When the Owner system-bundle role is unresolvable, fail closed: `targetIsActiveOwner
- * = false`, `otherActiveOwnerCount = 0` (the policy then never blocks on a phantom owner). The W2-IDN-6.2
- * commands call this, hand the facts to `evaluateLastOwnerProtection`, and enforce the verdict.
+ * (excluding the target). When the Owner system-bundle role is unresolvable, fail CLOSED by throwing
+ * `UnresolvableOwnerRoleError` — NEVER fabricate never-block facts, which would let the sole real Owner be
+ * disabled (fail-open on a lockout surface). The W2-IDN-6.2 commands call this, hand the facts to
+ * `evaluateLastOwnerProtection`, and enforce the verdict (an unresolvable prerequisite aborts the mutation).
  */
 export async function resolveOwnerRemovalFacts(
   orgId: string,
@@ -190,7 +209,7 @@ export async function resolveOwnerRemovalFacts(
     select: { id: true },
   });
   if (ownerRole === null) {
-    return { targetIsActiveOwner: false, otherActiveOwnerCount: 0 };
+    throw new UnresolvableOwnerRoleError();
   }
 
   const target = await db.membership.findFirst({
