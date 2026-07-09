@@ -17,8 +17,10 @@ import { uuidv7 } from "../../src/shared/ids";
 //
 // Flag fixtures: `core.feature_flags` is mutable configuration (SD=NO; DELETE permitted for admin
 // ops — Doc-6B Appendix A CHK-6-030), so fixtures use a fresh run-scoped key prefix and are
-// deleted in afterAll. Superuser test connection bypasses the platform-staff RLS backstop — the
-// same posture every existing M0 suite runs under (RLS is defense-in-depth, not the model).
+// deleted in the FILE-scoped afterAll below (RV-0143: sweeps by the stable `test.w2core1.` base
+// prefix, so rows leaked by earlier runs are removed too). Superuser test connection bypasses the
+// platform-staff RLS backstop — the same posture every existing M0 suite runs under (RLS is
+// defense-in-depth, not the model).
 
 /** The Doc-4A §18.2 reference-form prefix (namespace pointer, not a POLICY value). */
 const REF = "core.system_configuration.";
@@ -45,8 +47,19 @@ const REGISTERED_CORE_KEYS = [
   "core.flag_change_dedup_window",
 ] as const;
 
-/** Run-scoped flag-key prefix so parallel/re-runs never collide; cleaned up in afterAll. */
-const FLAG_PREFIX = `test.w2core1.${uuidv7()}.`;
+/** Stable fixture base prefix — the file-scoped afterAll sweeps `core.feature_flags` by THIS. */
+const FLAG_BASE_PREFIX = "test.w2core1.";
+
+/** Run-scoped flag-key prefix so parallel/re-runs never collide; swept by the file-scoped afterAll. */
+const FLAG_PREFIX = `${FLAG_BASE_PREFIX}${uuidv7()}.`;
+
+// FILE-scoped so it fires after BOTH suites — the flag fixtures are seeded in the second describe,
+// and a suite-scoped afterAll in the first describe provably ran before any fixture existed
+// (RV-0143 MINOR). Deleting by the stable base prefix also sweeps previously leaked fixture rows.
+afterAll(async () => {
+  await prisma.featureFlag.deleteMany({ where: { flagKey: { startsWith: FLAG_BASE_PREFIX } } });
+  await prisma.$disconnect();
+});
 
 async function seedFlag(
   name: string,
@@ -66,11 +79,6 @@ async function seedFlag(
 }
 
 describe("W2-CORE-1 core.config_value_query.v1 (Doc-4B §B8 / Doc-6B §3.4)", () => {
-  afterAll(async () => {
-    await prisma.featureFlag.deleteMany({ where: { flagKey: { startsWith: FLAG_PREFIX } } });
-    await prisma.$disconnect();
-  });
-
   it("resolves all 18 registered core.* POLICY keys, each equal to its seeded row (value + value_type)", async () => {
     for (const registeredKey of REGISTERED_CORE_KEYS) {
       const row = await prisma.systemConfiguration.findUnique({

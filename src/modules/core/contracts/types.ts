@@ -91,6 +91,11 @@ export type CoreServiceErrorCode =
 /**
  * Typed contract error carrying a Doc-4B error code. Part of the cross-module surface so
  * callers can discriminate on `code` (codes bound by pointer; message is diagnostic only).
+ *
+ * CONVENTION NOTE (RV-0143 NIT, raised by Team-4): typed contract errors live in `contracts/` —
+ * a typed error envelope (stable code + diagnostic message, ZERO domain logic) is public contract
+ * surface, not a domain value-object (REPOSITORY_STRUCTURE §3; Doc-4A error-code discipline).
+ * Convention-setting for later modules: copy this shape deliberately rather than re-deciding.
  */
 export class CoreServiceError extends Error {
   readonly code: CoreServiceErrorCode;
