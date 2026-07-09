@@ -4,5 +4,7 @@
 
 export { allocateHumanReference } from "./data/human-reference.service";
 export { appendAuditRecord } from "./data/audit-record.service";
+export { configValueQuery } from "./data/system-configuration.service";
+export { featureFlagEvaluate } from "./data/feature-flag.service";
 export { drainOutbox } from "./events/drain-outbox.service";
 export type { DrainOutboxOptions, DrainOutboxResult } from "./events/drain-outbox.service";

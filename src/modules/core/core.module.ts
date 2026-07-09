@@ -4,10 +4,18 @@
 // never the infrastructure directly.
 
 import type { CoreServices } from "./contracts/services";
-import { allocateHumanReference, appendAuditRecord, drainOutbox } from "./infrastructure";
+import {
+  allocateHumanReference,
+  appendAuditRecord,
+  configValueQuery,
+  drainOutbox,
+  featureFlagEvaluate,
+} from "./infrastructure";
 
 export const coreServices: CoreServices = {
   allocateHumanReference,
   appendAuditRecord,
   drainOutbox: (input) => drainOutbox(input),
+  configValueQuery,
+  featureFlagEvaluate,
 };

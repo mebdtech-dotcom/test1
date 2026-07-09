@@ -11,15 +11,21 @@
 import {
   allocateHumanReference as allocateHumanReferenceImpl,
   appendAuditRecord as appendAuditRecordImpl,
+  configValueQuery as configValueQueryImpl,
   drainOutbox as drainOutboxImpl,
+  featureFlagEvaluate as featureFlagEvaluateImpl,
 } from "../infrastructure";
 import type {
   AllocateHumanReferenceInput,
   AllocateHumanReferenceResult,
   AppendAuditRecordInput,
   AppendAuditRecordResult,
+  ConfigValueQueryInput,
+  ConfigValueQueryResult,
   DrainOutboxInput,
   DrainOutboxResult,
+  FeatureFlagEvaluateInput,
+  FeatureFlagEvaluateResult,
 } from "./types";
 
 /**
@@ -63,11 +69,37 @@ export type AppendAuditRecord = (
  */
 export type DrainOutbox = (input?: DrainOutboxInput) => Promise<DrainOutboxResult>;
 
+/**
+ * `core.config_value_query.v1` (Doc-4B §B8 — internal-service, 21.3 Query).
+ * Resolves a POLICY value by key at runtime (Doc-4A §18: owning engines read POLICY values via
+ * M0, never literals). Key format `core.system_configuration.<domain>.<key_name>` (§18.2); the
+ * key MUST be registered in Doc-3 §12.2 (by pointer). Read-only: no audit, no event. Participates
+ * in the caller's transaction when an executor is supplied.
+ */
+export type ConfigValueQuery = (
+  input: ConfigValueQueryInput,
+  executor?: CoreServiceExecutor,
+) => Promise<ConfigValueQueryResult>;
+
+/**
+ * `core.feature_flag_evaluate.v1` (Doc-4B §B9 — internal-service, 21.3 Query).
+ * Resolves a flag state for a scope at runtime. FIREWALLED (Doc-6B §3.5 / Doc-4B §B9): flag
+ * evaluation MAY gate feature visibility / rollout ONLY — it MUST NOT gate trust, verification,
+ * eligibility, routing fairness, or matching confidence. Unknown `flag_key` resolves disabled
+ * (fail-safe — Doc-4B §B9 V8); output is the resolved boolean only. Read-only: no audit, no event.
+ */
+export type FeatureFlagEvaluate = (
+  input: FeatureFlagEvaluateInput,
+  executor?: CoreServiceExecutor,
+) => Promise<FeatureFlagEvaluateResult>;
+
 /** The M0 callable service surface exposed to other modules (contracts-only). */
 export interface CoreServices {
   allocateHumanReference: AllocateHumanReference;
   appendAuditRecord: AppendAuditRecord;
   drainOutbox: DrainOutbox;
+  configValueQuery: ConfigValueQuery;
+  featureFlagEvaluate: FeatureFlagEvaluate;
 }
 
 // ── Concrete contract facades (WP-1.4 — closes the WP-1.3 deferred MINOR) ─────────────────────
@@ -105,3 +137,22 @@ export const appendAuditRecord: AppendAuditRecord = appendAuditRecordImpl;
  * facade pattern). Emitter-agnostic + idempotent + forward-only; coins no event (R-a / ESC-W1-OUTBOX).
  */
 export const drainOutbox: DrainOutbox = (input) => drainOutboxImpl(input);
+
+/**
+ * Concrete `core.config_value_query.v1` (Doc-4B §B8), bound to the M0 infrastructure adapter
+ * (W2-CORE-1). The runtime POLICY read every module uses instead of literals or its own `core`
+ * schema access (Doc-4A §18.2; One Module, One Owner). Consumed cross-module via
+ * `@/modules/core/contracts` (the contracts→infrastructure binding is same-module-legal — the
+ * canonical DDD facade pattern). Coins nothing: keys are Doc-3 §12.2-registered, values live only
+ * in `core.system_configuration` (Doc-6B §3.4).
+ */
+export const configValueQuery: ConfigValueQuery = configValueQueryImpl;
+
+/**
+ * Concrete `core.feature_flag_evaluate.v1` (Doc-4B §B9), bound to the M0 infrastructure adapter
+ * (W2-CORE-1). FIREWALLED (Doc-6B §3.5): gates feature visibility / rollout ONLY — never trust,
+ * verification, eligibility, routing fairness, or matching confidence; unknown flags resolve
+ * disabled (fail-safe). Discloses exactly the resolved boolean — nothing broader. Consumed
+ * cross-module via `@/modules/core/contracts` (contracts-only surface). Coins nothing.
+ */
+export const featureFlagEvaluate: FeatureFlagEvaluate = featureFlagEvaluateImpl;
