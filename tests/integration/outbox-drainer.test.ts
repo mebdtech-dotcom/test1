@@ -135,11 +135,26 @@ describe("WP-1.8 M0 outbox dispatcher/drainer (pending → dispatched)", () => {
     expect((await readStatus(id))!.status).toBe("dispatched");
   });
 
-  it("archival leg (opt-in) advances dispatched → archived; idempotent", async () => {
+  it("archival leg (opt-in) is RETENTION-bounded: a fresh dispatched row is NOT archived; a row past retention IS; idempotent", async () => {
     const id = await seedPendingFixture();
 
-    await drainOutbox(); // pending → dispatched
+    await drainOutbox(); // pending → dispatched (dispatched_at = now)
     expect((await readStatus(id))!.status).toBe("dispatched");
+
+    // A JUST-dispatched row is inside the retention window (core.outbox_archive_retention) → NOT
+    // archived (W2-CORE-2 hardening: archival is retention-bounded per Doc-4B §B6, not unconditional).
+    await drainOutbox({ archive: true });
+    expect((await readStatus(id))!.status).toBe("dispatched");
+
+    // Backdate dispatched_at well past any plausible retention window (the exact bound is POLICY-owned;
+    // dispatched_at is not a payload/identity column, so this staff-context raw update is permitted).
+    await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.is_platform_staff', 'true', true)`;
+      await tx.$executeRawUnsafe(
+        `UPDATE core.outbox_events SET dispatched_at = now() - interval '400 days' WHERE id = $1::uuid`,
+        id,
+      );
+    });
 
     const archived = await drainOutbox({ archive: true }); // distinct archival leg
     expect(archived.archived).toBeGreaterThanOrEqual(1);

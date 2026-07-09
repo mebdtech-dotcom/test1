@@ -181,3 +181,54 @@ export interface DrainOutboxResult {
   /** `pending` rows skipped because `attempts >= core.outbox_dispatch_max_attempts` (left for DLQ). */
   skippedMaxAttempts: number;
 }
+
+// ── W2-CORE-2 — the two Doc-4B §B6 outbox Phase-2 worker contracts ────────────────────────────
+// `core.phase2_dispatch_outbox_events.v1` (dispatch + retry/backoff + dead-letter park +
+// reconciliation) and `core.phase2_archive_dispatched_events.v1` (retention-bounded archival).
+// Mechanical counters only — no domain meaning; M0 TRANSPORTS envelopes and authors no event
+// (§B6 Events-Produced: none). POLICY bounds come from `core.config_value_query.v1` (never literals).
+
+/** Input to `core.phase2_dispatch_outbox_events.v1` (Doc-4B §B6). */
+export interface OutboxDispatchInput {
+  /** Cap on `pending` rows scanned for advancement this pass (a poll batch). Bounded default. */
+  batchSize?: number;
+}
+
+/**
+ * Result of one `core.phase2_dispatch_outbox_events.v1` pass (Doc-4B §B6 — mechanical counters).
+ * The dead-letter / reconciliation counts are the ops-telemetry alert surface (§B6: "never silently
+ * drop"); parked rows are RETAINED in `pending` (attempts at max), never deleted.
+ */
+export interface OutboxDispatchResult {
+  /** Rows advanced `pending → dispatched` this pass (the status-transition dedup guard). */
+  dispatched: number;
+  /**
+   * `pending` rows at `attempts >= core.outbox_dispatch_max_attempts` — parked (dead-lettered) per
+   * `core.outbox_dlq_policy`, retained not dropped (Doc-4B §B6 dead-letter rule). The alert count.
+   */
+  deadLettered: number;
+  /** `pending` rows not yet re-attempt-eligible this pass under `core.outbox_dispatch_backoff`. */
+  skippedBackoff: number;
+  /**
+   * `pending` rows stuck beyond the expected dispatch latency (attempts in `[1, max)`) that the
+   * reconciliation sweep flagged (Doc-4B §B6 reconciliation — re-enqueued by the next tick / alerted).
+   */
+  reconciledStuck: number;
+  /** The governing `core.outbox_dlq_policy` value this run applied (by pointer; e.g. `park_and_alert`). */
+  dlqPolicy: string;
+}
+
+/** Input to `core.phase2_archive_dispatched_events.v1` (Doc-4B §B6). */
+export interface OutboxArchiveInput {
+  /** Cap on `dispatched` rows scanned for archival this pass (a poll batch). Bounded default. */
+  batchSize?: number;
+}
+
+/** Result of one `core.phase2_archive_dispatched_events.v1` pass (Doc-4B §B6 — mechanical counter). */
+export interface OutboxArchiveResult {
+  /**
+   * Rows advanced `dispatched → archived` this pass — only those with `dispatched_at` older than
+   * `core.outbox_archive_retention` (the retention-bounded distinct archival leg).
+   */
+  archived: number;
+}

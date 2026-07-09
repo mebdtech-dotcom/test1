@@ -11,7 +11,9 @@
 import {
   allocateHumanReference as allocateHumanReferenceImpl,
   appendAuditRecord as appendAuditRecordImpl,
+  archiveDispatchedEvents as archiveDispatchedEventsImpl,
   configValueQuery as configValueQueryImpl,
+  dispatchOutboxEvents as dispatchOutboxEventsImpl,
   drainOutbox as drainOutboxImpl,
   featureFlagEvaluate as featureFlagEvaluateImpl,
 } from "../infrastructure";
@@ -26,6 +28,10 @@ import type {
   DrainOutboxResult,
   FeatureFlagEvaluateInput,
   FeatureFlagEvaluateResult,
+  OutboxArchiveInput,
+  OutboxArchiveResult,
+  OutboxDispatchInput,
+  OutboxDispatchResult,
 } from "./types";
 
 /**
@@ -70,6 +76,22 @@ export type AppendAuditRecord = (
 export type DrainOutbox = (input?: DrainOutboxInput) => Promise<DrainOutboxResult>;
 
 /**
+ * `core.phase2_dispatch_outbox_events.v1` (Doc-4B §B6 — System/Phase-2 worker). Advances re-attempt-
+ * eligible `core.outbox_events` `pending → dispatched`, with retry+backoff and dead-letter park (both
+ * POLICY-bounded via `core.config_value_query.v1`), plus the reconciliation sweep. TRANSPORT ONLY:
+ * coins NO domain event (§B6 Events-Produced: none). Dispatch mechanics only — the [D-5] BOARD-PENDING
+ * audit-granularity leg is not built. Invoked by the Inngest outbox job (`inngest/functions`).
+ */
+export type DispatchOutboxEvents = (input?: OutboxDispatchInput) => Promise<OutboxDispatchResult>;
+
+/**
+ * `core.phase2_archive_dispatched_events.v1` (Doc-4B §B6 — System/Phase-2 worker). Advances
+ * `core.outbox_events` `dispatched → archived` for rows past `core.outbox_archive_retention` (POLICY,
+ * via `core.config_value_query.v1`) — the distinct, retention-bounded archival leg. Coins no event.
+ */
+export type ArchiveDispatchedEvents = (input?: OutboxArchiveInput) => Promise<OutboxArchiveResult>;
+
+/**
  * `core.config_value_query.v1` (Doc-4B §B8 — internal-service, 21.3 Query).
  * Resolves a POLICY value by key at runtime (Doc-4A §18: owning engines read POLICY values via
  * M0, never literals). Key format `core.system_configuration.<domain>.<key_name>` (§18.2); the
@@ -98,6 +120,8 @@ export interface CoreServices {
   allocateHumanReference: AllocateHumanReference;
   appendAuditRecord: AppendAuditRecord;
   drainOutbox: DrainOutbox;
+  dispatchOutboxEvents: DispatchOutboxEvents;
+  archiveDispatchedEvents: ArchiveDispatchedEvents;
   configValueQuery: ConfigValueQuery;
   featureFlagEvaluate: FeatureFlagEvaluate;
 }
@@ -137,6 +161,24 @@ export const appendAuditRecord: AppendAuditRecord = appendAuditRecordImpl;
  * facade pattern). Emitter-agnostic + idempotent + forward-only; coins no event (R-a / ESC-W1-OUTBOX).
  */
 export const drainOutbox: DrainOutbox = (input) => drainOutboxImpl(input);
+
+/**
+ * Concrete `core.phase2_dispatch_outbox_events.v1` (Doc-4B §B6), bound to the M0 infrastructure adapter
+ * (W2-CORE-2). The Inngest outbox job consumes this via `@/modules/core/contracts` (contracts-only
+ * cross-module access; the contracts→infrastructure binding is same-module-legal — the canonical DDD
+ * facade pattern). Emitter-agnostic + idempotent + forward-only; POLICY-bounded; coins no event. The
+ * [D-5] audit-granularity leg is BOARD-PENDING and intentionally NOT wired here.
+ */
+export const dispatchOutboxEvents: DispatchOutboxEvents = (input) =>
+  dispatchOutboxEventsImpl(input);
+
+/**
+ * Concrete `core.phase2_archive_dispatched_events.v1` (Doc-4B §B6), bound to the M0 infrastructure
+ * adapter (W2-CORE-2). The distinct retention-bounded archival worker; consumed by the Inngest outbox
+ * job via `@/modules/core/contracts` (same-module facade pattern). Idempotent; forward-only; no event.
+ */
+export const archiveDispatchedEvents: ArchiveDispatchedEvents = (input) =>
+  archiveDispatchedEventsImpl(input);
 
 /**
  * Concrete `core.config_value_query.v1` (Doc-4B §B8), bound to the M0 infrastructure adapter

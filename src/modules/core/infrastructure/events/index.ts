@@ -3,5 +3,5 @@
 // public contract surface (`@/modules/core/contracts`), never by importing infrastructure
 // (REPOSITORY_STRUCTURE §3/§7).
 
-export { drainOutbox } from "./drain-outbox.service";
+export { archiveDispatchedEvents, dispatchOutboxEvents, drainOutbox } from "./drain-outbox.service";
 export type { DrainOutboxOptions, DrainOutboxResult } from "./drain-outbox.service";
