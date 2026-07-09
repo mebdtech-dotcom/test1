@@ -95,9 +95,9 @@ classes; the siblings should each get their own verbatim adjudication on their o
 
 | Field | Value |
 |---|---|
-| Ruling | *(pending)* |
-| Date | *(pending)* |
-| Notes | *(pending)* |
+| Ruling | **Option A — APPROVED** (see DECISION RECORD below; Annex A executed verbatim) |
+| Date | 2026-07-09 (ruled + executed) · **re-confirmed by the owner 2026-07-10**: "Approved. Apply the Doc-4M index correction patch. No semantic changes; editorial/index correction only." |
+| Notes | Editorial/index-only condition verified at execution (zero semantic change · zero new state names · zero ownership change · subordination restated) and re-verified 2026-07-10 by proposal-vs-executed diff: correction tables byte-identical, only banner/authorization/footer differ. Sibling Delegation-Grant erratum ruled + executed as `Doc-4M_Patch_v1.0.2` (2026-07-10, post-close note below) |
 
 ---
 *Prepared 2026-07-09 by the AI Engineering Orchestrator under WP-GOV-A (Board-approved P1,
