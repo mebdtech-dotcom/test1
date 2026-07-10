@@ -204,3 +204,20 @@ byte-identical at HEAD. Gates green.
 Board ①②③ (see Key dates) · vocabulary pass F6+N1 (deferred, non-gating) · future-watch F8 /
 OBS-3 / OBS-Δ1/Δ2 · Team-8 lesson: smoke tests must PRESENCE-assert the advertised behavior,
 not only error-absence (F-B1 escaped Dev and Review-A on an absence-only probe).
+
+### Board rulings executed (owner, 2026-07-10)
+
+1. **① RATIFIED** — the `design_philosophy.md` v1.1 §2.6 precedence amendment stands:
+   `motion_standard.md` is the single source of truth for all motion timing, easing, and
+   animated-property rules (ratification stamped in the amendment note + the standard's header).
+2. **② APPROVED & EXECUTED** — framer-motion officially recorded as an approved frontend
+   dependency: root `CLAUDE.md` **additive stack patch v1.1 → v1.2** (§2 Frontend row +
+   status-line patch note) · `README.md` · `project_details.md` ·
+   `.claude/agents/ivendorz-implementer.md` stack tables updated. The frozen
+   `generatedDocs/` corpus untouched (Red-Flag rule; the living mirrors carry the entry).
+3. **③ EXCLUDED from WP-MOTION-1** — the pre-existing prod-build static-export abort
+   (RV-0140 class, `useSearchParams` no-Suspense) stays on its separate existing track
+   (execution-board Board agenda; EPERM sibling under
+   `project-management/wi-prod-build-eperm.md`). Nothing folded here.
+
+**WP-MOTION-1 APPROVED FOR CLOSURE by the owner; push to origin authorized and executed.**

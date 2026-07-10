@@ -55,7 +55,7 @@ module can be added without core redesign.
 
 | Concern | Technology |
 |---------|-----------|
-| Frontend | Next.js 15 App Router + React + Tailwind + shadcn/ui |
+| Frontend | Next.js 15 App Router + React + Tailwind + shadcn/ui + Framer Motion |
 | Backend | Next.js route handlers + server actions (TypeScript) |
 | Database | Supabase PostgreSQL (one schema per module) |
 | ORM | Prisma |

@@ -1,11 +1,14 @@
 # CLAUDE.md — iVendorz
 
-**Status:** Governance Constitution — **FROZEN v1.1** (`governance-frozen-v1`; base freeze
-2026-06-27, additive editorial patch v1.1 2026-07-09). Patch v1.1 is **editorial only** — verbosity
-and duplication cut; no rule added, removed, or reworded; §10's directory tree & module-shape block
-now defer to `REPOSITORY_STRUCTURE.md` rather than restate it. Governance/ownership model is
-ratified; changes require an additive patch + version bump. **Non-authoritative under the frozen
-corpus** — on any conflict the frozen doc in `generatedDocs/` wins and this file is patched to match.
+**Status:** Governance Constitution — **FROZEN v1.2** (`governance-frozen-v1`; base freeze
+2026-06-27, additive editorial patch v1.1 2026-07-09, additive stack patch v1.2 2026-07-10).
+Patch v1.1 is **editorial only** — verbosity and duplication cut; no rule added, removed, or
+reworded; §10's directory tree & module-shape block now defer to `REPOSITORY_STRUCTURE.md` rather
+than restate it. Patch v1.2 is **additive only** — Framer Motion added to the §2 Frontend stack
+row (owner-approved 2026-07-10, WP-MOTION-1 · RV-0154 F7); no rule changed. Governance/ownership
+model is ratified; changes require an additive patch + version bump. **Non-authoritative under the
+frozen corpus** — on any conflict the frozen doc in `generatedDocs/` wins and this file is patched
+to match.
 
 > **Repository Governance Constitution + guardrails for AI agents.** Owns the permanent,
 > repo-wide rules: authority order (§7), AI behavior (§8), Review & Findings Governance (§13),
@@ -35,7 +38,7 @@ Blend: 40% B2B marketplace · 30% RFQ→quote→award procurement · 20% ERP-lit
 
 | Concern | Tech |
 |---|---|
-| Frontend | Next.js 15 App Router + React + Tailwind + shadcn/ui |
+| Frontend | Next.js 15 App Router + React + Tailwind + shadcn/ui + Framer Motion (motion standard: `docs/frontend/design-system/motion_standard.md`) |
 | Backend | Next.js route handlers + server actions (TypeScript) |
 | Database / ORM | Supabase PostgreSQL (one schema per module) · Prisma |
 | Auth / Storage / Realtime | Supabase (auth = authentication only) |

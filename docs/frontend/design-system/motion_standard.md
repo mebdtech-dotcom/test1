@@ -5,7 +5,8 @@ team and agent** touching frontend code. Non-authoritative under the frozen corp
 design authority stays with Doc-7. This document governs *how things move* and is the **single
 source of truth for motion timing, easing, and animated-property rules**: it supersedes
 `design_philosophy.md` §2.6 wherever they conflict (recorded in that document's v1.1 amendment
-note; RV-0154 F1).
+note; RV-0154 F1, **Board-ratified 2026-07-10**). Framer Motion is an approved frontend stack
+dependency (CLAUDE.md §2, additive patch v1.2).
 
 ---
 

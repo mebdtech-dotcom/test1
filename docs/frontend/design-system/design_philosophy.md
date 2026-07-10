@@ -356,7 +356,8 @@ companion**: in light mode mainly by shadow + subtle border; in dark mode mainly
 
 ### 2.6 Motion & Animation
 
-> **AMENDMENT v1.1 (2026-07-10, owner-directed WP-MOTION-1 · RV-0154 F1):**
+> **AMENDMENT v1.1 (2026-07-10, owner-directed WP-MOTION-1 · RV-0154 F1 — Board-ratified
+> 2026-07-10):**
 > [`motion_standard.md`](motion_standard.md) is now the **single source of truth for motion
 > timing, easing, and animated-property rules**; on any conflict with this section, the Motion
 > Standard wins. Superseded rows/values below (kept for the record — do **not** apply to new
