@@ -11,12 +11,18 @@
 // additive registers the key; report-carried).
 //
 // TRANSACTION & RLS CONTEXT (frozen mechanism — Doc-6C §6.2a / §2.1; the WP-1.3 provisioning
-// precedent): the org INSERT cannot satisfy the tenant `WITH CHECK (org = active_org …)` — the org
-// does not exist yet — so this command runs inside the COMPOSITION-OWNED transaction whose
-// `app.user_id` + `app.is_platform_staff = 'true'` GUCs realize the frozen provisioning/bootstrap
-// leg (transaction-local; a MECHANISM, not attribution — the audit row is attributed to the acting
-// USER). Once the org id is minted, `app.active_org` is set so the founding-membership INSERT and
-// the audit `WITH CHECK` are met by their PRIMARY tenant legs.
+// precedent, `provision-identity.command.ts`): this command runs inside the COMPOSITION-OWNED
+// transaction whose `app.user_id` + `app.is_platform_staff = 'true'` GUCs realize the frozen
+// provisioning/bootstrap leg (transaction-local; a MECHANISM, not attribution — the audit row is
+// attributed to the acting USER). The staff GUC exists for the PRE-MINT window: before the org id
+// is minted, no tenant `app.active_org` can name the new org, and `identity.organizations` itself
+// authors no tenant INSERT leg (Doc-6C §6.2a — INSERT-at-provisioning is the System/staff leg), so
+// the org-row INSERT and the §B.6 replay/claim rows admit only via the staff backstop. Once the
+// org id IS minted, this command sets `app.active_org` to it TRANSACTION-LOCAL (RV-0155 F1 — the
+// exact WP-1.3 step), so the founding-membership INSERT is admitted by its PRIMARY tenant leg
+// (`memberships_insert` WITH CHECK `org = active_org`) and the audit row by ADR-021's tenant leg
+// (`organization_id = app.active_org AND actor_id = app.user_id AND actor_type = 'user'`) — the
+// staff GUC is no longer load-bearing after the mint; attribution stays User throughout.
 //
 // ATOMIC (§C5 §B.6): the `ORG-…` human-ref allocation (M0 contract service, INJECTED by type),
 // the org row, the founding Owner membership, and the audit row all share the ONE transaction —
@@ -30,6 +36,7 @@
 
 import type { AllocateHumanReference, AppendAuditRecord } from "@/modules/core/contracts";
 import { prisma, type DbExecutor } from "../../../../shared/db";
+import { uuidv7 } from "../../../../shared/ids";
 import {
   findLivePersonalOrgForUser,
   insertOrganizationWithFoundingOwner,
@@ -177,8 +184,19 @@ export async function createOrganizationCommand(
     db,
   );
   const ownerRole = await findOwnerSystemBundleRole(db); // fail-closed if the seed is corrupt.
+
+  // POST-MINT ORG GUC (RV-0155 F1 — the exact WP-1.3 provisioning step): pin `app.active_org` to
+  // the just-minted org id TRANSACTION-LOCAL so the founding-membership INSERT and the audit row
+  // are admitted by their PRIMARY tenant legs (`memberships_insert` WITH CHECK / ADR-021's
+  // `org = active_org AND actor = user_id AND actor_type = 'user'`) — the staff GUC stops being
+  // load-bearing here (it covered only the pre-mint window; see header). Parameterized, never
+  // interpolated; discarded at commit/rollback (no context bleed).
+  const organizationId = uuidv7(); // M0 ID generator — never a raw UUID in app code.
+  await db.$executeRaw`SELECT set_config('app.active_org', ${organizationId}::text, true)`;
+
   const created = await insertOrganizationWithFoundingOwner(
     {
+      organizationId,
       creatorUserId: ctx.userId,
       ownerRoleId: ownerRole.id,
       humanRef,

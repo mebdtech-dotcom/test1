@@ -169,3 +169,40 @@ Before execution, the assignee confirms:
 □ Every cited section has been re-read verbatim. ✅ (three packet paraphrases checked against verbatim text; one dissolved — the guarded-set four-name list, §8 call 1)
 □ No draft document is treated as authority. ✅ (playbook/tracker consulted as living docs, bound upward)
 □ Any uncertainty results in Flag-and-Halt. ✅ (none triggered; the near-misses — deferred fields, creatable-membership leg — resolved fail-closed WITHIN frozen text, logged §8)
+
+---
+
+## RV-0155 fix-forward amendment (additive — originals above untouched)
+
+**Patch:** RV-0155 F1 (preferred remedy) + F2 + N1 + O1, one checkpoint. Delta files: `src/modules/identity/application/commands/create-organization.command.ts` · `src/modules/identity/infrastructure/data/organization-lifecycle.repository.ts` · `src/modules/identity/infrastructure/data/membership-lifecycle.repository.ts` · `src/server/identity/organization-admin.route-handler.ts` · `tests/integration/organization-wire-slice.test.ts` · this report.
+
+### F1 — post-mint `app.active_org` GUC (small behavior change; T6-relevant)
+
+**Design note (ADR-021 re-read verbatim before wiring).** ADR-021's write-admission legs for `core.audit_records` INSERT: the TENANT leg — `organization_id = app.active_org` **AND** `actor_id = app.user_id` **AND** `actor_type = 'user'` — **OR** the STAFF leg (`app.is_platform_staff IS TRUE`; "the System / staff / drainer / admin / **bootstrap** leg"). As shipped at `aec1562`, the whole create transaction rode the staff leg and the command header falsely claimed a post-mint org GUC (the F-B1 untruthful-comment class on a T6-pre-flagged surface). Remedy applied EXACTLY per the WP-1.3 precedent (`provision-identity.command.ts` — mint id → `set_config('app.active_org', <id>, true)` → insert): the command now mints `organizationId` (M0 UUIDv7, moved from the repository to the command so the GUC precedes the inserts), pins `app.active_org` to it TRANSACTION-LOCAL, and the repository takes the pre-minted id. Effect: the founding-membership INSERT is admitted by its PRIMARY tenant leg (`memberships_insert` WITH CHECK `organization_id = app.active_org`) and the audit row by ADR-021's tenant leg — the staff GUC stops being load-bearing post-mint. **Why the staff GUC remains for the pre-mint window only:** before the id exists no tenant `active_org` can name the new org, and `identity.organizations` authors no tenant INSERT policy (Doc-6C §6.2a — INSERT-at-provisioning is the System/staff leg; migration `identity_init` carries only `organizations_member_visible` SELECT + `organizations_write` UPDATE), so the org-row INSERT and the §B.6 replay/claim reads-writes admit only via the staff backstop; it is set once, transaction-local, per the precedent (WP-1.3 likewise never unsets it). Attribution unchanged: User, never System (the GUC is a MECHANISM — ADR-021 "not a privilege elevation"). **Discriminating pin added:** new slice test "CREATE post-mint org GUC (RV-0155 F1 pin)" drives the contracts facade on a manual bootstrap transaction and asserts `current_setting('app.active_org', true)` = the returned org id AFTER the command returns, plus founding-row/audit-row attribution — deleting the post-mint `set_config` turns it red. Command header + repository docstring rewritten truthful.
+
+### F2 — required-field dedup deps on the admin composition
+
+`organization-admin.route-handler.ts` `idempotencyKey?: WireIdempotencyKey` → `idempotencyKey: WireIdempotencyKey` (the RV-0153 OBS-2 REQUIRED-field shape). Wire behavior unchanged (both routes always passed the parsed header); seam contract corrected. **§8 call 16 correction (additive):** call 16's claim "REQUIRED-field `idempotencyKey` deps on every NEW composition" was INACCURATE as shipped — the admin composition carried the 6.1 optional shape (`?`). True as of this patch: all four new 6.2 composition deps types (`create` · tenant trio · restore · admin pair) bind the required-field shape; only the pre-existing 6.1 retro-fit handlers keep `?`.
+
+### N1 — judgment call 21 (previously un-logged; raised by RV-0155, logged FOR adjudication)
+
+21. **Transfer approver-conditional realization:** `approver_membership_id : uuid : optional : where org workflow requires an approver` (§C5 PassB:271) is realized as VALIDATED-WHEN-SUPPLIED (must resolve to a live ACTIVE membership of the org — REFERENCE `identity_membership_not_found` otherwise; recorded in the audit per §5.5 "approver identity"). The "where org workflow requires an approver" CONDITIONAL is **unenforced**: no §C5 validation-matrix leg names a workflow-approval check, and the frozen `organization_workflow_settings` fields (Doc-2 §10.2: `rfq_approval_mode`, `approval_chain_jsonb`, …) define RFQ approval chains, not ownership-transfer approval — there is no frozen predicate to enforce. Fail-open risk: none (absence of an approver is the frozen `optional`); the conditional re-arms when a workflow-approval realization lands (6.7/6.8 adjacency). Future-watch carry emitted below.
+
+### O1 — recovery-resolver premise sentence
+
+`resolveOwnershipRecoveryFacts` docstring now names the empty-lock-set premise: FOR UPDATE over zero rows locks nothing; safety is then carried by the Last-Owner INVARIANT (every reachable LIVE org retains ≥ 1 active-state Owner membership ROW — a disabled owner ACCOUNT leaves its row `active` and in the lock set, which is why the orphaned-org recovery race still serializes); a future command that empties a live org's active-Owner ROW set (the 6.3 owner-membership suspend/remove class) breaks the premise for concurrent recoveries → Flag-and-Halt / extend the lock strategy first. Appended to the 6.3 packet carry per the disposition.
+
+### §12 carries — amendment rows
+
+| Target | Obligation | Class |
+|---|---|---|
+| **W2-IDN-6.3 packet §1** (extends the existing row) | O1 premise: an owner-membership suspend/remove realization that can empty a live org's active-Owner ROW set breaks the recovery lock's non-empty-set premise — extend the lock strategy (or F&H) before shipping | binding packet carry |
+| **Future-watch** | N1: transfer's "where org workflow requires an approver" conditional unenforced (no frozen predicate exists) — re-arm at workflow-approval realization (6.7/6.8 adjacency) | future-watch |
+
+### §11 readiness — amendment
+
+F1 is a **behavior change on a T6-pre-flagged surface** (the bootstrap GUC window): Team-6 review of the patched SHA should include the narrowed-GUC design (pre-mint staff window → post-mint tenant legs; ADR-021 legs cited above). Next gate: Review-A delta re-check on the two files → B ∥ T6 at the patched SHA (per the RV-0155 disposition).
+
+### Suite / gates at the patch
+
+Slice 16/16 (was 15 — +1 F1 pin) · delegation 18/18 · full suite **320 tests / 27 files** vs the RV-0155 review baseline **319/27** (delta = +1, the F1 pin; zero regressions) · tsc green · WP-surface ESLint/Prettier green.

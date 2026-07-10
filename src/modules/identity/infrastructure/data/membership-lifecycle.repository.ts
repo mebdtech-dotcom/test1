@@ -311,6 +311,19 @@ export interface OwnershipRecoveryFacts {
  * Owner and fails the "no active Owner can act" precondition — never a double recovery). The owning
  * command MUST pass its OWN `tx` and decide via the pure §5.5 policies inside that SAME transaction.
  * An unresolvable Owner role fails CLOSED (`UnresolvableOwnerRoleError`).
+ *
+ * PREMISE (RV-0155 O1 — named for every future consumer, esp. the 6.3 `remove_member` /
+ * `set_membership_status` builder): the FOR-UPDATE serialization presumes a NON-EMPTY lock set —
+ * `SELECT … FOR UPDATE` over ZERO rows locks nothing, so two concurrent mutations on an org whose
+ * active-Owner ROW set is empty would not block each other on this statement. Safety today is
+ * carried by the Last-Owner INVARIANT itself: every reachable LIVE org retains ≥ 1 active-state
+ * Owner membership ROW (creation mints the founding Owner; the §5.5-guarded departure can remove
+ * only a NON-sole owner's row, leaving ≥ 1 behind; a disabled owner ACCOUNT leaves its membership
+ * row `active` and therefore IN the lock set — the orphaned-org recovery case still locks; the
+ * org-delete cascade touches only an already-soft-deleted org). A future command that empties the
+ * active-Owner ROW set of a LIVE org (e.g. a 6.3 owner-membership suspend/remove realization)
+ * breaks this premise for CONCURRENT recoveries — Flag-and-Halt / extend the lock strategy first,
+ * never ship it unguarded.
  */
 export async function resolveOwnershipRecoveryFacts(
   orgId: string,

@@ -74,8 +74,9 @@ export interface OrganizationAdminHandlerDeps {
   ensureProvisioned: typeof ensureProvisioned;
   /** The server-side staff-principal resolution port (default: the DC-3 FAIL-CLOSED resolver). */
   resolveStaffContext?: ResolveStaffContext;
-  /** The wire `Idempotency-Key` (tri-state — `command-dedup.ts`). Routes always pass string|null. */
-  idempotencyKey?: WireIdempotencyKey;
+  /** The wire `Idempotency-Key` (tri-state — `command-dedup.ts`; the REQUIRED-field deps shape,
+   *  RV-0153 OBS-2 / RV-0155 F2). Routes always pass string|null; `undefined` = off-wire caller. */
+  idempotencyKey: WireIdempotencyKey;
   /** Caller IP for the audit (Doc-2 §9; redaction-aware). Optional. */
   ipAddress?: string | null;
   /** Caller user-agent for the audit (Doc-2 §9; redaction-aware). Optional. */

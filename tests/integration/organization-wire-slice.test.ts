@@ -5,7 +5,11 @@ import { uuidv7 } from "../../src/shared/ids";
 import { concurrencyEtag } from "../../src/shared/http";
 import type { ensureProvisioned } from "../../src/server/auth";
 import { withActiveOrgContext, type ResolveStaffContext } from "../../src/server/context";
-import { updateOrganizationProfile } from "../../src/modules/identity/contracts";
+import {
+  createOrganization,
+  updateOrganizationProfile,
+} from "../../src/modules/identity/contracts";
+import { allocateHumanReference, appendAuditRecord } from "../../src/modules/core/contracts";
 import {
   handleAdminRecoverOwnership,
   handleCreateOrganization,
@@ -360,6 +364,46 @@ describe("W2-IDN-6.2 §C5 organization wired surface — 8C + 8E (real PostgreSQ
     createdOrgIds.push(orgId);
     expect(await prisma.organization.count({ where: { createdBy: caller.id } })).toBe(1);
     expect(await orgAudits(orgId)).toHaveLength(1);
+  });
+
+  it("CREATE post-mint org GUC (RV-0155 F1 pin): the command sets app.active_org to the minted org id TRANSACTION-LOCAL (the WP-1.3 step) — founding INSERT + audit then admit via their PRIMARY tenant legs (ADR-021), the staff GUC covering only the pre-mint window", async () => {
+    const caller = await freshUser();
+    // Drive the CONTRACTS FACADE on a manual bootstrap transaction (the composition's exact GUC
+    // preamble) and read the GUC back AFTER the command returns — removing the command's post-mint
+    // `set_config('app.active_org', …)` turns this red (the discriminating narrowing pin).
+    const ran = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.user_id', ${caller.id}::text, true)`;
+      await tx.$executeRaw`SELECT set_config('app.is_platform_staff', 'true', true)`;
+      const outcome = await createOrganization(
+        { name: "GUC Pin Ltd" },
+        { userId: caller.id },
+        { appendAuditRecord, allocateHumanReference },
+        tx,
+      );
+      const guc = await tx.$queryRaw<
+        Array<{ v: string | null }>
+      >`SELECT current_setting('app.active_org', true) AS v`;
+      return { outcome, activeOrgGuc: guc[0]?.v ?? null };
+    });
+
+    expect(ran.outcome.ok).toBe(true);
+    if (!ran.outcome.ok) return;
+    const orgId = ran.outcome.result.organizationId;
+    createdOrgIds.push(orgId);
+    // The GUC is pinned to the MINTED org id inside the same transaction (WP-1.3 precedent) — so
+    // the founding-membership INSERT (`memberships_insert` WITH CHECK org = active_org) and the
+    // audit row (ADR-021 tenant leg: org = active_org ∧ actor = user_id ∧ actor_type 'user')
+    // admitted via their PRIMARY tenant legs, not the staff backstop alone.
+    expect(ran.activeOrgGuc).toBe(orgId);
+    const founding = await prisma.membership.findUniqueOrThrow({
+      where: { id: ran.outcome.result.ownerMembershipId },
+    });
+    expect(founding.organizationId).toBe(orgId);
+    const audits = await orgAudits(orgId);
+    expect(audits).toHaveLength(1);
+    expect(audits[0]!.organizationId).toBe(orgId); // = the GUC value → the ADR-021 tenant leg holds.
+    expect(audits[0]!.actorId).toBe(caller.id);
+    expect(audits[0]!.actorType).toBe("user"); // attribution unchanged — User, never System.
   });
 
   // ════ B. `update_organization_profile` — PATCH /identity/organizations/{id} (If-Match) ════

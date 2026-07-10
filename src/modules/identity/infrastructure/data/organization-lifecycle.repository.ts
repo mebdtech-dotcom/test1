@@ -143,11 +143,18 @@ export function deriveOrgSlugFromHumanRef(humanRef: string): string {
 /**
  * Insert the organization row + the founding Owner membership IN THE CALLER'S TRANSACTION
  * (Doc-4C §C5: "founding `memberships` Owner row created in the same transaction"; Doc-2 §5.1
- * `→ active`). The caller has already allocated `humanRef` via the M0 contract service on the SAME
- * executor (atomic — "no second ref on replay") and resolved the seeded Owner role.
+ * `→ active`). The caller has already: allocated `humanRef` via the M0 contract service on the
+ * SAME executor (atomic — "no second ref on replay"), resolved the seeded Owner role, MINTED
+ * `organizationId` (M0 UUIDv7), and set `app.active_org` to it TRANSACTION-LOCAL (RV-0155 F1 —
+ * the WP-1.3 post-mint GUC precedent, `provision-identity.command.ts`), so the founding-membership
+ * INSERT is admitted by its PRIMARY tenant leg (`memberships_insert` WITH CHECK
+ * `org = active_org`) and the audit row by the ADR-021 tenant leg (`org = active_org AND
+ * actor = user_id AND actor_type = 'user'`) — never the staff backstop alone.
  */
 export async function insertOrganizationWithFoundingOwner(
   params: {
+    /** Minted by the COMMAND (M0 UUIDv7) — `app.active_org` is already pinned to it (see above). */
+    organizationId: string;
     creatorUserId: string;
     ownerRoleId: string;
     humanRef: string;
@@ -156,7 +163,7 @@ export async function insertOrganizationWithFoundingOwner(
   },
   db: DbExecutor = prisma,
 ): Promise<{ organizationId: string; ownerMembershipId: string; orgStatus: "active" }> {
-  const organizationId = uuidv7(); // M0 ID generator — never a raw UUID in app code.
+  const { organizationId } = params;
   await db.organization.create({
     data: {
       id: organizationId,
