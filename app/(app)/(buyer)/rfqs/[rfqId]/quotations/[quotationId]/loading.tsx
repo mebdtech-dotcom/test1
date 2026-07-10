@@ -5,7 +5,7 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerQuotationDetailLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Skeleton className="mb-4 h-4 w-56" />
       <div className="mb-6 flex items-center justify-between border-b border-border pb-4">
         <div className="flex flex-col gap-2">
@@ -43,6 +43,6 @@ export default function BuyerQuotationDetailLoading() {
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }

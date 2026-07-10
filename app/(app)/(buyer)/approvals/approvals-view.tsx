@@ -77,7 +77,7 @@ export function ApprovalsView({ data }: { data: ApprovalsData | null }) {
   const columns = approvalColumns(Boolean(data?.canApproveRfq));
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <PageHeader
         title="Approvals"
         description="Review and decide RFQs awaiting your organization's internal approval."
@@ -130,6 +130,6 @@ export function ApprovalsView({ data }: { data: ApprovalsData | null }) {
           follows your organization&rsquo;s configured approval chain.
         </p>
       </div>
-    </div>
+    </>
   );
 }

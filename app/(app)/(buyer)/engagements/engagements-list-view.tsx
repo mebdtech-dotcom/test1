@@ -89,7 +89,7 @@ export function EngagementsListView({ data }: { data: EngagementListData | null 
   const active = data?.activeStatus;
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <PageHeader
         title="Engagements"
         description="Track your organization's awarded engagements through delivery to completion."
@@ -144,6 +144,6 @@ export function EngagementsListView({ data }: { data: EngagementListData | null 
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }

@@ -6,7 +6,7 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerTradeInvoiceLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Skeleton className="mb-4 h-4 w-56" />
       <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
         <Skeleton className="h-8 w-40" />
@@ -33,6 +33,6 @@ export default function BuyerTradeInvoiceLoading() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

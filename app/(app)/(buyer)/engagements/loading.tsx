@@ -6,7 +6,7 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerEngagementsLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <div className="mb-4 border-b border-border pb-4">
         <Skeleton className="h-8 w-44" />
         <Skeleton className="mt-2 h-4 w-80" />
@@ -26,6 +26,6 @@ export default function BuyerEngagementsLoading() {
           ))}
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

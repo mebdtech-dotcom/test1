@@ -4,13 +4,13 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerRfqRoutingLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Skeleton className="mb-4 h-4 w-64" />
       <Skeleton className="mb-6 h-8 w-64" />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Skeleton className="h-48 w-full rounded-md" />
         <Skeleton className="h-48 w-full rounded-md lg:col-span-2" />
       </div>
-    </div>
+    </>
   );
 }

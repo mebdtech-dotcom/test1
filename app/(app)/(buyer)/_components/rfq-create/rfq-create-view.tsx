@@ -35,7 +35,7 @@ import type { RfqCreateData } from "./rfq-form-models";
 /** Phase 8 — success page (presentation only; no RFQ is actually created this milestone). */
 function SubmittedState() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Card>
         <CardContent className="flex flex-col items-center gap-3 p-10 text-center">
           <CheckCircle2 aria-hidden className="size-10 text-iv-success-base" />
@@ -54,7 +54,7 @@ function SubmittedState() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }
 
@@ -69,7 +69,7 @@ export function RfqCreateView({ data }: { data: RfqCreateData }) {
   const submitting = submission === "submitting";
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       {/* Owner directive 2026-07-07: crumb points back to the Buyer Dashboard (was "RFQs"). */}
       <Breadcrumbs
         items={[{ label: "Dashboard", href: "/dashboard" }, { label: "New RFQ" }]}
@@ -112,7 +112,7 @@ export function RfqCreateView({ data }: { data: RfqCreateData }) {
 
       {/* Single-column stacked section cards — the Review column is retired; Review now surfaces as a
           floating preview from the Submit action below (see SubmitPreview). */}
-      <div className="mx-auto flex max-w-[var(--iv-content-max)] flex-col gap-4 pb-8">
+      <div className="flex flex-col gap-4 pb-8">
         <RequirementSection form={form} />
         <TechnicalSection form={form} />
         <TitledCard title="Attachments">
@@ -128,6 +128,6 @@ export function RfqCreateView({ data }: { data: RfqCreateData }) {
       {/* Phase 8 — submit action. Save Draft is a disabled placeholder; Submit opens a floating
           Review preview (Edit / Confirm) rather than submitting directly — still presentation-only. */}
       <SubmitPreview form={form} submitting={submitting} />
-    </div>
+    </>
   );
 }

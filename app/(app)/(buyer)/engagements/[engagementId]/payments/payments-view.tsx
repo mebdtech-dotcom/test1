@@ -95,7 +95,7 @@ export function PaymentsView({ data }: { data: PaymentsData }) {
   const columns = paymentColumns(Boolean(data.canApprovePayment));
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "Engagements", href: "/engagements" },
@@ -177,6 +177,6 @@ export function PaymentsView({ data }: { data: PaymentsData }) {
           connect in the integration phase.
         </p>
       </div>
-    </div>
+    </>
   );
 }

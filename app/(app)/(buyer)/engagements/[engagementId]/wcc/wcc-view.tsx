@@ -35,7 +35,7 @@ export function WccView({ data }: { data: WccData }) {
   ];
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "Engagements", href: "/engagements" },
@@ -88,6 +88,6 @@ export function WccView({ data }: { data: WccData }) {
           This certificate is shared only between your organization and the vendor.
         </p>
       </div>
-    </div>
+    </>
   );
 }

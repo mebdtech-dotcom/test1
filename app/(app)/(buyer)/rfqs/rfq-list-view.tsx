@@ -86,7 +86,7 @@ export function RfqListView({
   const isEmpty = items.length === 0;
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       {/* Description second sentence = privacy subtext (trust_adoption_ladder §5.3). Wording is
           VENDOR-SCOPED (Review-A RA-F1): an absolute "only your org + invited vendors" claim would
           deny the frozen moderation stage / staff visibility — never overpromise past the corpus. */}
@@ -132,6 +132,6 @@ export function RfqListView({
           />
         </div>
       )}
-    </div>
+    </>
   );
 }

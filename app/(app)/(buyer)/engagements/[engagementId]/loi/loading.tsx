@@ -7,7 +7,7 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerLetterOfIntentLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Skeleton className="mb-4 h-4 w-64" />
       <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
         <Skeleton className="h-8 w-48" />
@@ -34,6 +34,6 @@ export default function BuyerLetterOfIntentLoading() {
         </Card>
         <Skeleton className="h-14 w-full rounded-md" />
       </div>
-    </div>
+    </>
   );
 }

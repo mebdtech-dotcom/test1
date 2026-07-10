@@ -42,7 +42,7 @@ export function LetterOfIntentView({ data }: { data: LetterOfIntentData }) {
   ];
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "Engagements", href: "/engagements" },
@@ -94,6 +94,6 @@ export function LetterOfIntentView({ data }: { data: LetterOfIntentData }) {
           This letter of intent is shared only between your organization and the awarded vendor.
         </p>
       </div>
-    </div>
+    </>
   );
 }

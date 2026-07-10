@@ -34,7 +34,7 @@ import {
 /** Not-found ≡ genuine absence (byte-identical; Inv #11 / GI-12). Breadcrumb shows only the `RFQs` ancestor. */
 function NotFoundState() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
       {/* FZ-02: the in-view genuine-absence branch still needs a page heading; kept sr-only so the
           visual stays the minimal EmptyState card (its title renders as a <p>, not a heading). */}
@@ -50,7 +50,7 @@ function NotFoundState() {
         }
         className="py-16"
       />
-    </div>
+    </>
   );
 }
 
@@ -59,7 +59,7 @@ export function ComparisonView({ data }: { data: ComparisonData | null }) {
     return <NotFoundState />;
   }
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "RFQs", href: "/rfqs" },
@@ -89,6 +89,6 @@ export function ComparisonView({ data }: { data: ComparisonData | null }) {
           <ComparisonTable suppliers={data.suppliers} />
         </div>
       )}
-    </div>
+    </>
   );
 }

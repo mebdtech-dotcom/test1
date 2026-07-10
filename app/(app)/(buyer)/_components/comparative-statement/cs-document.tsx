@@ -38,7 +38,7 @@ const ITEMS_PER_PAGE = 16;
 /** Not-found ≡ genuine absence (byte-identical; Inv #11 / GI-12). Breadcrumb shows only the `RFQs` ancestor. */
 function NotFoundState() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
       <h1 className="sr-only">Comparative statement not found</h1>
       <EmptyState
@@ -52,7 +52,7 @@ function NotFoundState() {
         }
         className="py-16"
       />
-    </div>
+    </>
   );
 }
 

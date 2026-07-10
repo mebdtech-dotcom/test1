@@ -86,7 +86,7 @@ export function CrmListView({ data }: { data: CrmListData | null }) {
   const active = data?.activeLinkStatus;
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <PageHeader
         title="Vendor CRM"
         description="Your organization's private vendor list — visible only to your team."
@@ -136,6 +136,6 @@ export function CrmListView({ data }: { data: CrmListData | null }) {
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }

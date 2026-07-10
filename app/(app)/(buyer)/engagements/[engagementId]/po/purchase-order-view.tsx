@@ -40,7 +40,7 @@ export function PurchaseOrderView({ data }: { data: PurchaseOrderData }) {
   ];
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "Engagements", href: "/engagements" },
@@ -126,6 +126,6 @@ export function PurchaseOrderView({ data }: { data: PurchaseOrderData }) {
           This purchase order is shared only between your organization and the awarded vendor.
         </p>
       </div>
-    </div>
+    </>
   );
 }

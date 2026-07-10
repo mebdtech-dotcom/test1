@@ -11,7 +11,7 @@ import { Breadcrumbs } from "../../../_components/shell";
 
 export default function CrmDetailNotFound() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs items={[{ label: "Vendor CRM", href: "/crm" }]} className="mb-4" />
       {/* A standalone not-found page still needs a page heading; kept sr-only so the visual stays the
           minimal genuine-absence card (EmptyState renders its title as a <p>, not a heading). */}
@@ -27,6 +27,6 @@ export default function CrmDetailNotFound() {
         }
         className="py-16"
       />
-    </div>
+    </>
   );
 }

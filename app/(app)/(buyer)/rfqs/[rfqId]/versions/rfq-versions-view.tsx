@@ -227,7 +227,7 @@ function NotFoundState() {
   // Not-found ≡ genuine absence (byte-identical; Inv #11 / GI-12). The breadcrumb shows only the parent
   // list (never a leaf ref that would imply the RFQ exists).
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs items={[{ label: "RFQs", href: "/rfqs" }]} className="mb-4" />
       {/* FZ-02: the in-view genuine-absence branch still needs a page heading; kept sr-only so the
           visual stays the minimal EmptyState card (its title renders as a <p>, not a heading). */}
@@ -243,7 +243,7 @@ function NotFoundState() {
         }
         className="py-16"
       />
-    </div>
+    </>
   );
 }
 
@@ -273,7 +273,7 @@ export function RfqVersionsView({
   const previous = ordered.find((v) => v.versionNo === selected.versionNo - 1);
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "RFQs", href: "/rfqs" },
@@ -305,6 +305,6 @@ export function RfqVersionsView({
           <CompareCard selected={selected} previous={previous} className="lg:col-span-2" />
         </div>
       )}
-    </div>
+    </>
   );
 }

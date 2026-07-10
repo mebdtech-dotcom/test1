@@ -42,7 +42,7 @@ export function TradeInvoiceView({ data }: { data: TradeInvoiceData }) {
   const canDispute = data.canRecordPayments && DISPUTABLE.has(data.status);
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs
         items={[
           { label: "Engagements", href: "/engagements" },
@@ -129,6 +129,6 @@ export function TradeInvoiceView({ data }: { data: TradeInvoiceData }) {
           This trade invoice is shared only between your organization and the vendor.
         </p>
       </div>
-    </div>
+    </>
   );
 }

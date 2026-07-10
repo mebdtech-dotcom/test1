@@ -28,7 +28,7 @@ export function DiscoverView({ data }: { data: DiscoverData | null }) {
   const isEmpty = items.length === 0;
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <PageHeader
         title="Discover vendors"
         description="Search verified industrial vendors by capability, category and location."
@@ -66,6 +66,6 @@ export function DiscoverView({ data }: { data: DiscoverData | null }) {
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }

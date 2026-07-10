@@ -298,7 +298,7 @@ export function DocumentsHubView({ data }: { data: DocumentsHubData }) {
   );
 
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <PageHeader
         title="Documents"
         description="Every procurement document in one place — from RFQ to payment. Rows link to the owning record; nothing is duplicated."
@@ -555,6 +555,6 @@ export function DocumentsHubView({ data }: { data: DocumentsHubData }) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

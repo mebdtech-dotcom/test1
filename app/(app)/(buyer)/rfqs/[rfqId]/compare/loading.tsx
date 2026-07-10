@@ -5,7 +5,7 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerComparisonLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Skeleton className="mb-4 h-4 w-56" />
       <div className="mb-6 border-b border-border pb-4">
         <Skeleton className="h-7 w-56" />
@@ -22,6 +22,6 @@ export default function BuyerComparisonLoading() {
           ))}
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

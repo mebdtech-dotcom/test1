@@ -4,7 +4,7 @@ import { Skeleton } from "@/frontend/primitives/skeleton";
 
 export default function BuyerCloseLostLoading() {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Skeleton className="mb-4 h-4 w-48" />
       <Skeleton className="mb-6 h-8 w-56" />
       <div className="flex max-w-2xl flex-col gap-5">
@@ -13,6 +13,6 @@ export default function BuyerCloseLostLoading() {
         <Skeleton className="h-24 w-full rounded-md" />
         <Skeleton className="h-9 w-40 self-end rounded-md" />
       </div>
-    </div>
+    </>
   );
 }

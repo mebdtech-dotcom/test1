@@ -29,7 +29,7 @@ export function ImplementationPendingView({
   icon,
 }: ImplementationPendingViewProps) {
   return (
-    <div className="mx-auto max-w-[var(--iv-content-max)] p-4 sm:p-6 lg:px-8">
+    <>
       <Breadcrumbs items={breadcrumb} className="mb-4" />
       <PageHeader title={title} description={description} />
       <EmptyState
@@ -38,6 +38,6 @@ export function ImplementationPendingView({
         description="This page is reserved in the navigation but not yet built — the underlying read/write contract for this surface isn't in the frozen corpus yet. It will be populated in a future milestone."
         className="py-16"
       />
-    </div>
+    </>
   );
 }
