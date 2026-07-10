@@ -79,8 +79,9 @@ export type DrainOutbox = (input?: DrainOutboxInput) => Promise<DrainOutboxResul
  * `core.phase2_dispatch_outbox_events.v1` (Doc-4B §B6 — System/Phase-2 worker). Advances re-attempt-
  * eligible `core.outbox_events` `pending → dispatched`, with retry+backoff and dead-letter park (both
  * POLICY-bounded via `core.config_value_query.v1`), plus the reconciliation sweep. TRANSPORT ONLY:
- * coins NO domain event (§B6 Events-Produced: none). Dispatch mechanics only — the [D-5] BOARD-PENDING
- * audit-granularity leg is not built. Invoked by the Inngest outbox job (`inngest/functions`).
+ * coins NO domain event (§B6 Events-Produced: none). Appends ONE System-attributed audit record per
+ * run that advanced ≥ 1 row (the realized [D-5] run/batch audit leg — Doc-4B_OutboxAuditToken_Patch_v1.0,
+ * Board-approved 2026-07-10). Invoked by the Inngest outbox job (`inngest/functions`).
  */
 export type DispatchOutboxEvents = (input?: OutboxDispatchInput) => Promise<OutboxDispatchResult>;
 
@@ -167,7 +168,8 @@ export const drainOutbox: DrainOutbox = (input) => drainOutboxImpl(input);
  * (W2-CORE-2). The Inngest outbox job consumes this via `@/modules/core/contracts` (contracts-only
  * cross-module access; the contracts→infrastructure binding is same-module-legal — the canonical DDD
  * facade pattern). Emitter-agnostic + idempotent + forward-only; POLICY-bounded; coins no event. The
- * [D-5] audit-granularity leg is BOARD-PENDING and intentionally NOT wired here.
+ * [D-5] run/batch audit leg is realized (one System audit record per advancing run —
+ * Doc-4B_OutboxAuditToken_Patch_v1.0, Board-approved 2026-07-10).
  */
 export const dispatchOutboxEvents: DispatchOutboxEvents = (input) =>
   dispatchOutboxEventsImpl(input);

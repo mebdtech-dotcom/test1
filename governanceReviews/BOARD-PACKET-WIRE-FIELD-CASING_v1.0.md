@@ -5,7 +5,7 @@
 | **Class** | Flag-and-Halt escalation (CLAUDE.md §11) — frozen-corpus vs ratified-house-shape conflict; program-level (all wired modules), raised on the identity surface |
 | **Raised by** | Review-A at RV-0153 (W2-IDN-6.5), F1 [MAJOR], 2026-07-10 — an un-logged, un-litigated divergence class (grep of the review log + governance records: zero prior adjudications of wire casing) |
 | **Decides** | Human Architecture Board (owner). Doc-5A is rank-0 frozen; only an additive patch with human approval can alter it (§7/§8) |
-| **Status** | OPEN — both delivered surfaces stand as-built pending the ruling; nothing else is blocked |
+| **Status** | ✅ **RESOLVED 2026-07-10 — owner ruled Option B** (ratify the deviation). Instrument: `generatedDocs/Doc-5A_Patch_v1.0.1.md` (Authority-Map-registered); Review-A PASS 0/0/0/0/1 (`Doc-5A_Patch_v1.0.1_REVIEW-A.md`). RV-0153 F1 dissolved; W2-IDN-6.5 closed; `ESC-WIRE-FIELD-CASING` closed in `esc_registry.md`. Zero code change (delivered surfaces conformant by definition). |
 
 ## 1. The conflict (both sources, verbatim)
 

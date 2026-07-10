@@ -109,20 +109,32 @@ async function readRow(
 }
 
 /**
- * Poll (yielding via setImmediate, no fixed sleep) until some backend is blocked waiting on a lock —
- * i.e. the dispatch worker's per-row advance queued behind the CAS-test lock holder. Fails loud (never
- * vacuously) if nothing blocks within the bound, so a worker that never reached the contended row
- * surfaces as an error rather than a silent pass.
+ * Poll (yielding via setImmediate, no fixed sleep) until some backend is blocked SPECIFICALLY BY
+ * `blockerPid` — i.e. the dispatch worker's per-row advance is queued behind THIS racer's row lock.
+ *
+ * WI-CAS-FLAKE root-cause fix (RV-0146 OBS-1 — "waitUntilAnyBackendBlocked bounded-poll throw under
+ * load"): the prior barrier had two races. (1) It matched ANY blocked backend platform-wide
+ * (`cardinality(pg_blocking_pids(pid)) > 0`), so an unrelated backend blocked elsewhere on the shared
+ * server (another suite/session under load) could satisfy it and release the lock BEFORE the worker
+ * was queued on OUR row. Scoping to the racer's backend PID cures this: the racer holds ONLY our
+ * fixture row's `FOR UPDATE` lock, so any backend it blocks is provably blocked on OUR row. (2) The
+ * bound was a fixed 500-iteration count that can EXHAUST before a load-slowed worker reaches its
+ * advance (the observed intermittent throw); a generous WALL-CLOCK deadline removes that false-throw
+ * while still failing loud (never vacuously) if the worker genuinely never contends.
  */
-async function waitUntilAnyBackendBlocked(): Promise<void> {
-  for (let i = 0; i < 500; i += 1) {
+async function waitUntilBlockedBy(blockerPid: number): Promise<void> {
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
     const rows = await prisma.$queryRawUnsafe<Array<{ blocked: number }>>(
-      `SELECT count(*)::int AS blocked FROM pg_stat_activity WHERE cardinality(pg_blocking_pids(pid)) > 0`,
+      `SELECT count(*)::int AS blocked FROM pg_stat_activity WHERE $1::int = ANY(pg_blocking_pids(pid))`,
+      blockerPid,
     );
     if ((rows[0]?.blocked ?? 0) > 0) return;
     await new Promise((resolve) => setImmediate(resolve));
   }
-  throw new Error("dispatch worker never blocked on the row lock (CAS race not reproduced)");
+  throw new Error(
+    `dispatch worker never blocked on the racer-held row lock (blocker pid ${blockerPid}) within 15s (CAS race not reproduced)`,
+  );
 }
 
 async function seededNumber(key: string): Promise<number> {
@@ -263,6 +275,14 @@ describe("W2-CORE-2 core.phase2_dispatch_outbox_events.v1 — retry/backoff + de
     const lockReleased = new Promise<void>((resolve) => {
       releaseLock = resolve;
     });
+    // The racer resolves this with its backend PID the instant it PROVABLY HOLDS the row lock. Two
+    // determinism roles: the worker is started only AFTER the lock is held (removes the racer-acquire-
+    // vs-worker-start race), and the PID scopes the block barrier to THIS racer (removes the shared-
+    // server false-positive) — see `waitUntilBlockedBy`.
+    let markRacerHoldingLock!: (pid: number) => void;
+    const racerHoldsLock = new Promise<number>((resolve) => {
+      markRacerHoldingLock = resolve;
+    });
 
     const racer = prisma.$transaction(
       async (tx) => {
@@ -272,6 +292,12 @@ describe("W2-CORE-2 core.phase2_dispatch_outbox_events.v1 — retry/backoff + de
           `SELECT id FROM core.outbox_events WHERE id = $1::uuid FOR UPDATE`,
           id,
         );
+        // Signal the row lock is held (this backend now owns ONLY our fixture row's lock) + expose the
+        // backend PID the barrier scopes to.
+        const pidRows = await tx.$queryRawUnsafe<Array<{ pid: number }>>(
+          `SELECT pg_backend_pid()::int AS pid`,
+        );
+        markRacerHoldingLock(pidRows[0]!.pid);
         await lockReleased;
         // Racer wins: advance to dispatched with its OWN dispatched_at + a single attempt bump, then
         // COMMIT (callback return) — releasing the lock the worker's advance is queued behind.
@@ -284,8 +310,9 @@ describe("W2-CORE-2 core.phase2_dispatch_outbox_events.v1 — retry/backoff + de
       { timeout: 20_000, maxWait: 15_000 },
     );
 
+    const racerPid = await racerHoldsLock; // lock provably held BEFORE the worker starts (no acquire race)
     const worker = dispatchOutboxEvents();
-    await waitUntilAnyBackendBlocked(); // no fixed sleep — poll until the worker is blocked on the lock
+    await waitUntilBlockedBy(racerPid); // no fixed sleep — poll until the worker is blocked BY the racer
     releaseLock();
     await Promise.all([racer, worker]);
 
@@ -314,5 +341,116 @@ describe("W2-CORE-2 core.phase2_archive_dispatched_events.v1 — retention-bound
     expect((await readRow(id))!.status).toBe("archived");
     await archiveDispatchedEvents();
     expect((await readRow(id))!.status).toBe("archived"); // terminal — unchanged
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// W2-CORE-4 — the [D-5] outbox audit leg (RUN/BATCH granularity). Doc-4B_OutboxAuditToken_Patch_v1.0
+// (PROPOSED) + BOARD-DECISION-D5-OUTBOX-AUDIT_v1.1: each §B6 worker appends ONE System-attributed
+// immutable audit record per run that ADVANCED ≥ 1 row (Leg 3 dispatch success + Leg 5 archive; Leg 2
+// folded into the advance; Legs 1+4 carried, never written). Verified vs real Postgres.
+//
+// Token/entity strings are hardcoded expectations here — a TEST oracle asserting the frozen
+// serialization. The "named-constant, never a literal" rule (Board 2026-06-30) governs PRODUCTION code;
+// and eslint-plugin-boundaries forbids a test importing the M0 domain constant (a module internal —
+// tests reach only module-contracts/shared). Delta-counting scopes each assertion to its own run
+// (append-only `core.audit_records`; tests within a file run sequentially).
+const DISPATCH_RUN_ACTION = "outbox_events_dispatched" as const;
+const DISPATCH_RUN_ENTITY = "outbox_dispatch_run" as const;
+const ARCHIVE_RUN_ACTION = "outbox_events_archived" as const;
+const ARCHIVE_RUN_ENTITY = "outbox_archive_run" as const;
+
+async function countAudit(action: string): Promise<number> {
+  return prisma.auditRecord.count({ where: { action } });
+}
+
+async function latestAudit(action: string) {
+  return prisma.auditRecord.findFirst({ where: { action }, orderBy: { auditId: "desc" } });
+}
+
+describe("W2-CORE-4 [D-5] outbox audit leg — run/batch granularity (Doc-4B §B6 · Doc-4B_OutboxAuditToken_Patch_v1.0)", () => {
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  it("DISPATCH RUN: a pass that advances MULTIPLE rows appends EXACTLY ONE System-attributed run-level audit record (one-per-run, NOT one-per-event)", async () => {
+    // Seed TWO fresh advanceable rows so the run provably advances ≥ 2 — this is what deterministically
+    // distinguishes one-per-RUN from a one-per-EVENT regression (Review-B MINOR): a per-event impl would
+    // write ≥ 2 records here, a per-run impl exactly 1.
+    await seedPending();
+    await seedPending();
+
+    const before = await countAudit(DISPATCH_RUN_ACTION);
+    const result = await dispatchOutboxEvents();
+    const after = await countAudit(DISPATCH_RUN_ACTION);
+
+    expect(result.dispatched).toBeGreaterThanOrEqual(2); // ≥ 2 rows advanced this run…
+    expect(after - before).toBe(1); // …yet EXACTLY one run-level record (one-per-run, not per-event)
+
+    const row = await latestAudit(DISPATCH_RUN_ACTION);
+    expect(row).not.toBeNull();
+    expect(row!.actorType).toBe("system"); // System-attributed (§B6 Actor: System)
+    expect(row!.actorId).toBeNull();
+    expect(row!.organizationId).toBeNull(); // platform-scoped; no active-org
+    expect(row!.entityType).toBe(DISPATCH_RUN_ENTITY); // the RUN is the audited unit, not a row
+    expect(typeof row!.entityId).toBe("string"); // a fresh per-run UUIDv7 correlation id
+    expect((row!.newValue as { dispatched: number }).dispatched).toBe(result.dispatched);
+  });
+
+  it("NOISE RULE: a fully-drained dispatch pass (0 advances) writes NO audit record even when dead-letter telemetry fires", async () => {
+    // A parked (dead-letter) row keeps deadLettered ≥ 1; it never advances (attempts ≥ max), so once the
+    // advanceable backlog is drained the next pass advances 0 while telemetry still fires — the exact
+    // "telemetry ≠ business audit" case (§B6/§17.1). Deterministic; no reliance on take:0 semantics.
+    const maxAttempts = await seededNumber(MAX_ATTEMPTS_KEY);
+    await seedPending({ attempts: maxAttempts, updatedAgoMs: 10 * 60_000 }); // parked, counts to DLQ
+
+    let guard = 0;
+    while ((await dispatchOutboxEvents()).dispatched > 0) {
+      if (++guard > 50) throw new Error("dispatch backlog did not drain within 50 passes");
+    }
+
+    const before = await countAudit(DISPATCH_RUN_ACTION);
+    const result = await dispatchOutboxEvents(); // a genuinely zero-advance pass
+    const after = await countAudit(DISPATCH_RUN_ACTION);
+
+    expect(result.dispatched).toBe(0);
+    expect(result.deadLettered).toBeGreaterThanOrEqual(1); // telemetry present…
+    expect(after - before).toBe(0); // …but NO audit record (noise rule)
+  });
+
+  it("ARCHIVE RUN: a pass that archives MULTIPLE rows appends EXACTLY ONE System-attributed run-level audit record (one-per-run, NOT one-per-event)", async () => {
+    // Two retention-elapsed dispatched rows so the run provably archives ≥ 2 — the one-per-run vs
+    // one-per-event distinguisher (Review-B MINOR).
+    await seedDispatched(400 * 86_400_000);
+    await seedDispatched(400 * 86_400_000);
+
+    const before = await countAudit(ARCHIVE_RUN_ACTION);
+    const result = await archiveDispatchedEvents();
+    const after = await countAudit(ARCHIVE_RUN_ACTION);
+
+    expect(result.archived).toBeGreaterThanOrEqual(2); // ≥ 2 rows archived this run…
+    expect(after - before).toBe(1); // …yet EXACTLY one run-level record (one-per-run, not per-event)
+
+    const row = await latestAudit(ARCHIVE_RUN_ACTION);
+    expect(row).not.toBeNull();
+    expect(row!.actorType).toBe("system");
+    expect(row!.actorId).toBeNull();
+    expect(row!.organizationId).toBeNull();
+    expect(row!.entityType).toBe(ARCHIVE_RUN_ENTITY);
+    expect((row!.newValue as { archived: number }).archived).toBe(result.archived);
+  });
+
+  it("ARCHIVE NOISE RULE: a fully-drained archive pass (0 archived) writes NO audit record", async () => {
+    let guard = 0;
+    while ((await archiveDispatchedEvents()).archived > 0) {
+      if (++guard > 50) throw new Error("archive backlog did not drain within 50 passes");
+    }
+
+    const before = await countAudit(ARCHIVE_RUN_ACTION);
+    const result = await archiveDispatchedEvents();
+    const after = await countAudit(ARCHIVE_RUN_ACTION);
+
+    expect(result.archived).toBe(0);
+    expect(after - before).toBe(0);
   });
 });

@@ -4,11 +4,16 @@
 //   • `core.phase2_dispatch_outbox_events.v1`   — `pending → dispatched`, with retry+backoff,
 //                                                 dead-letter park, and the reconciliation sweep.
 //   • `core.phase2_archive_dispatched_events.v1`— `dispatched → archived`, retention-bounded.
-// Both are DISPATCH MECHANICS ONLY. Per the [D-5] BOARD-PENDING gate (Doc-4B §B6), the audit-
-// granularity leg of these workers is NOT built here — these functions make NO `core.append_audit_
-// record.v1` call of any granularity; that leg lands with the D-5 ruling. The forward-only status
-// trigger (`core.outbox_status_forward_only`, Doc-6B §4.1) enforces the legal transition at the DB;
-// this code only advances rows along it. M0 reads/writes its OWN `core` schema (One Module, One Owner).
+// DISPATCH MECHANICS + the [D-5] audit leg. The mechanics are unchanged (byte-for-byte); on top, each
+// worker appends ONE System-attributed immutable audit record per run that ADVANCED ≥ 1 row — per-run/
+// batch granularity (Doc-4B_OutboxAuditToken_Patch_v1.0 / BOARD-DECISION-D5-OUTBOX-AUDIT_v1.1, realizing
+// [D-5] Legs 3 (dispatch success) + 5 (archive); Leg 2 folds into the advance; Legs 1 (created) + 4
+// (dead-letter park) are CARRIED, not written). The audit is `core.append_audit_record.v1` on the
+// worker's OWN transaction (atomic with the advances — D7 rule 5: an append failure rolls the advances
+// back). An empty pass (0 advances) writes NO record (noise rule); dead-letter/reconciliation counts are
+// §B6/§17.1 operational telemetry, never audited. The forward-only status trigger
+// (`core.outbox_status_forward_only`, Doc-6B §4.1) enforces the legal transition at the DB; this code
+// only advances rows along it. M0 reads/writes its OWN `core` schema (One Module, One Owner).
 //
 // TRANSPORT, NEVER AUTHOR (§B6 Events-Produced: none): the dispatcher DELIVERS existing outbox
 // envelopes; it coins NO domain event (Doc-2 §8 / Doc-4J catalog / Doc-4L flow untouched). The
@@ -26,12 +31,22 @@
 // `core.config_value_query.v1` (Doc-4B §B8) — see `outbox-policy.ts`. No bound is hardcoded.
 
 import { prisma } from "../../../../shared/db";
+import { uuidv7 } from "../../../../shared/ids";
 import type {
   OutboxArchiveInput,
   OutboxArchiveResult,
   OutboxDispatchInput,
   OutboxDispatchResult,
 } from "../../contracts/types";
+// Same-module infra wiring (events/ → data/), the outbox-policy → system-configuration precedent: the
+// M0 audit-append impl is imported DIRECTLY (not via `../../contracts`) to avoid the
+// contracts→infrastructure→contracts import cycle. Still `core.append_audit_record.v1` — the one append.
+import { appendAuditRecord } from "../data/audit-record.service";
+import {
+  OUTBOX_ARCHIVE_RUN_ENTITY_TYPE,
+  OUTBOX_DISPATCH_RUN_ENTITY_TYPE,
+  OutboxAuditAction,
+} from "../../domain/audit-actions";
 import {
   isBackoffElapsed,
   readOutboxArchiveRetentionMs,
@@ -142,6 +157,30 @@ export async function dispatchOutboxEvents(
       }
     }
 
+    // [D-5] audit leg — run/batch granularity (Doc-4B_OutboxAuditToken_Patch_v1.0 / BOARD-DECISION-D5-
+    // OUTBOX-AUDIT_v1.1). ONE System-attributed immutable audit record per dispatch run that ADVANCED
+    // ≥ 1 row (`pending → dispatched`, the §B6 Mutation-Scope; Leg 2 folded into this advance), on THIS
+    // worker's own tx so it is atomic with the advances (D7 rule 5 — an append failure rolls the
+    // advances back; a committed run carries its audit). Noise rule: an empty pass writes NO record, and
+    // `deadLettered`/`reconciledStuck` are §B6/§17.1 telemetry, NOT a business audit action — never
+    // audited. `entity_id` is a fresh per-run UUIDv7 correlation id (the audited unit is the run, not a
+    // row); the platform-staff GUC set above admits the System `audit_records_context_append` leg.
+    if (dispatched >= 1) {
+      await appendAuditRecord(
+        {
+          actorType: "system",
+          actorId: null,
+          organizationId: null,
+          entityType: OUTBOX_DISPATCH_RUN_ENTITY_TYPE,
+          entityId: uuidv7(),
+          action: OutboxAuditAction.DISPATCHED,
+          oldValue: null,
+          newValue: { dispatched, batchSize },
+        },
+        tx,
+      );
+    }
+
     return { dispatched, deadLettered, skippedBackoff, reconciledStuck, dlqPolicy };
   });
 }
@@ -183,6 +222,26 @@ export async function archiveDispatchedEvents(
       if (advanced.count === 1) {
         archived += 1;
       }
+    }
+
+    // [D-5] audit leg — run/batch granularity (Doc-4B_OutboxAuditToken_Patch_v1.0 / BOARD-DECISION-D5-
+    // OUTBOX-AUDIT_v1.1). ONE System-attributed immutable audit record per archival run that ADVANCED
+    // ≥ 1 row (`dispatched → archived`, the §B6 Mutation-Scope), atomic on this worker's own tx (D7 rule
+    // 5). Empty pass → NO record (noise rule). Same posture as the dispatch leg above.
+    if (archived >= 1) {
+      await appendAuditRecord(
+        {
+          actorType: "system",
+          actorId: null,
+          organizationId: null,
+          entityType: OUTBOX_ARCHIVE_RUN_ENTITY_TYPE,
+          entityId: uuidv7(),
+          action: OutboxAuditAction.ARCHIVED,
+          oldValue: null,
+          newValue: { archived, batchSize },
+        },
+        tx,
+      );
     }
 
     return { archived };

@@ -42,7 +42,7 @@ describe("W2-CORE-3 — core.audit_records: audit_records_archive_set_once (Doc-
       await tx.$executeRawUnsafe(
         `INSERT INTO "core"."audit_records"
            (audit_id, actor_id, actor_type, organization_id, entity_type, entity_id, action, event_time)
-         VALUES ($1::uuid, NULL, 'system'::"core"."ActorType", NULL, 'core_cr4_fixture', $2::uuid, 'cr4.archive_set_once.seed', now())`,
+         VALUES ($1::uuid, NULL, 'system'::"core"."ActorType", NULL, 'test.w2core3.cr4_fixture', $2::uuid, 'test.w2core3.archive_set_once_seed', now())`,
         AUDIT_ID,
         ENTITY_ID,
       );
@@ -200,8 +200,11 @@ describe("W2-CORE-3 — core.outbox_events: outbox_events_status_forward_only (D
   // BLOCKS an illegal backward transition (dispatched → pending)"; the legal forward edges
   // pending→dispatched and dispatched→archived are exercised continuously by the dispatch/archive
   // service suites (`outbox-dispatch-hardening.test.ts`, `outbox-drainer.test.ts`,
-  // `outbox-write-plus-emit-atomicity.test.ts`). This block adds the two edges those suites do not
-  // exercise: same-state idempotent UPDATE, and an illegal FORWARD skip (pending → archived).
+  // `outbox-write-plus-emit-atomicity.test.ts`). This block adds the four edges those suites do not
+  // exercise: two same-state idempotent UPDATEs (pending→pending carrying a non-status column change,
+  // and dispatched→dispatched), an illegal FORWARD skip (pending → archived), and an illegal BACKWARD
+  // transition archived → dispatched — a DISTINCT edge from the drainer's cited dispatched → pending
+  // (RV-0145 NIT-1: the prior "two edges" wording undercounted this block's own coverage).
 
   afterAll(async () => {
     await prisma.$disconnect();

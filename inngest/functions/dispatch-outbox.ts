@@ -21,10 +21,12 @@ import { inngest } from "../client";
 // event (Doc-2 §8 / Doc-4J / Doc-4L untouched). EMITTER-AGNOSTIC (R-a / ESC-W1-OUTBOX): it drains
 // whatever `pending` rows exist — test-seeded now, real write-plus-emit rows in Wave 2 — identically.
 //
-// The [D-5] outbox-audit-granularity leg is BOARD-PENDING and is NOT wired here (dispatch mechanics
-// only). The dead-letter (`deadLettered`) and reconciliation (`reconciledStuck`) counts returned by
-// the dispatch step are the ops-telemetry alert surface (§B6 "never silently drop") — surfaced via the
-// durable step output; parked rows are retained, never dropped.
+// The [D-5] outbox-audit leg is realized in the M0 workers this job invokes: each advancing run (≥ 1
+// row) appends ONE System-attributed audit record (run/batch granularity — Doc-4B_OutboxAuditToken_
+// Patch_v1.0, Board-approved 2026-07-10). The dead-letter (`deadLettered`) and reconciliation
+// (`reconciledStuck`) counts returned by the dispatch step are the ops-telemetry alert surface (§B6
+// "never silently drop") — surfaced via the durable step output, NOT audited; parked rows are retained,
+// never dropped.
 //
 // Triggers:
 //   - a cron tick (steady-state polling of the outbox), and
