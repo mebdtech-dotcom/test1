@@ -829,6 +829,163 @@ export interface AdminRecoverOwnershipResult {
 export type AdminRecoverOwnershipOutcome =
   { ok: true; result: AdminRecoverOwnershipResult } | { ok: false; error: OrganizationError };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// §C6 — Membership WIRED write surface (W2-IDN-6.3). The five Doc-5C §5.1 membership contracts:
+//   `invite_member.v1`          POST /identity/memberships · 201+Location            · User (active-org)
+//   `accept_invitation.v1`      POST …/{id}/accept_invitation · 200                  · User (invitee; PRE-membership — no org context)
+//   `set_membership_status.v1`  POST …/{id}/set_membership_status · 200              · User (active-org; §5.5-guarded SUSPEND leg — RV-0150 lock)
+//   `remove_member.v1`          POST …/{id}/remove_member · 200                      · User (active-org; §5.5-guarded — RV-0150 lock)
+//   `revoke_invitation.v1`      POST …/{id}/revoke_invitation · 200                  · User (active-org; NOT guarded — no §C6 §5.5 stage)
+// The target membership id is the PATH `{id}` (Doc-5C §5.1 named-command addressing; the 6.1/6.2
+// precedent). `updated_at` carriage is PER-CONTRACT (the RV-0153 call-1 lesson): NO §C6 contract
+// declares `Concurrency: optimistic` and NO §C6 register authors a CONFLICT code — so there is NO
+// If-Match on this surface; `updated_at` is the frozen request-BODY field (required on
+// set/remove/revoke, OPTIONAL on accept), a stale arrival view is the in-register VALIDATION 400
+// (the ratified §C9/restore posture) and a LOSING concurrent write is the register's
+// `identity_membership_state_invalid` (STATE → 409 carrying the current token — the 6.5
+// losing-write ETag leg, call-13 discipline). Field names/semantics owned by Doc-4C §C6 (verbatim);
+// bound by pointer, never re-authored. Events: none ([DC-1] — the invite notification fan-out has
+// NO §8 emitter and stays UNBUILT).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Error outcome of a §C6 membership command (Doc-4C §C6 error registers; classes per Doc-5A §6.2). */
+export interface MembershipError {
+  /** Doc-5A §6.2 class → HTTP status (VALIDATION→400 · AUTHORIZATION→403 · NOT_FOUND→404 ·
+   *  STATE→409 · CONFLICT→409 · REFERENCE→422 · BUSINESS→422). Only classes the §C6 registers
+   *  author are raised. */
+  errorClass:
+    "VALIDATION" | "AUTHORIZATION" | "NOT_FOUND" | "STATE" | "CONFLICT" | "REFERENCE" | "BUSINESS";
+  /** The Doc-4C §C6 `identity_membership_*` / `identity_role_not_found` /
+   *  `identity_org_last_owner_block` register code (frozen; never coined here). */
+  errorCode: string;
+  /** Human-safe, non-leaking message. */
+  message: string;
+  /**
+   * The membership row's CURRENT `updated_at` token — populated ONLY on the LOSING-WRITE leg (the
+   * CAS lost a race on a legal edge) so the wire mapper emits the Doc-5A §9.5 `ETag` current-token
+   * header (§9.6 re-read-retry). NEVER populated on a machine-illegal-edge STATE rejection (the
+   * call-13 leg discipline — a token there is a false retry signal).
+   */
+  currentUpdatedAt?: Date;
+}
+
+/** Input to `identity.invite_member.v1` (Doc-4C §C6 PassB:348). The inviting org is the
+ *  SERVER-RESOLVED active org (Invariant #5) and is NOT part of this input. */
+export interface InviteMemberInput {
+  /** `email : string(email) : required : invitee identifier (auth-managed; not an identity PII
+   *  store beyond Doc-2 §3.2)` — format-validated here (DC-4); resolved against the live
+   *  `identity.users` email (fail-closed when no live account exists). */
+  email: string;
+  /** `role_id : uuid : required : REF → identity.roles (same org)` — same-tenant OR a platform
+   *  system bundle (the seeded composition rows memberships already reference). */
+  roleId: string;
+  /** `department : string : optional` (bounded [realization convention] — face-exported). */
+  department?: string;
+}
+
+/** Result of a successful `invite_member` (§C6 response: membership_id · state (= invited) ·
+ *  reference_id). */
+export interface InviteMemberResult {
+  membershipId: string;
+  state: "invited";
+}
+
+/** Outcome of `identity.invite_member.v1`. */
+export type InviteMemberOutcome =
+  { ok: true; result: InviteMemberResult } | { ok: false; error: MembershipError };
+
+/** Input to `identity.accept_invitation.v1` (Doc-4C §C6 PassB:363) — realized on the frozen
+ *  alternative leg "(or `membership_id` + identity match)": the path `{id}` + the authenticated
+ *  invitee. No invitation-token column exists in the frozen Doc-6C §3.3 schema, so the token leg
+ *  is unrealizable; the id+identity leg is frozen-sanctioned verbatim. */
+export interface AcceptInvitationInput {
+  /** The path `{id}` — the invitation (= `invited` membership) being accepted. */
+  targetMembershipId: string;
+  /** `updated_at : timestamp : optional` — when supplied, a stale value is the in-register
+   *  VALIDATION 400 (the §C9 posture); absent = no check (frozen OPTIONAL). */
+  updatedAt?: Date;
+}
+
+/** Result of a successful `accept_invitation` (§C6 response: state = pending). */
+export interface AcceptInvitationResult {
+  membershipId: string;
+  state: "pending";
+}
+
+/** Outcome of `identity.accept_invitation.v1`. */
+export type AcceptInvitationOutcome =
+  { ok: true; result: AcceptInvitationResult } | { ok: false; error: MembershipError };
+
+/** Input to `identity.set_membership_status.v1` (Doc-4C §C6 PassB:391) — suspend/reinstate.
+ *  The SUSPEND leg is §5.5-guarded (PassB:393 "cannot suspend the sole active Owner"). */
+export interface SetMembershipStatusInput {
+  /** The path `{id}` (the frozen `membership_id : uuid : required`). */
+  targetMembershipId: string;
+  /** `target_status : enum(suspended|active) : required` (Doc-2 §5.2 `active ⇄ suspended`). */
+  targetStatus: "suspended" | "active";
+  /** `reason : string : optional` — recorded in the audit when supplied (bounded convention). */
+  reason?: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field (no optimistic declaration; no §C6
+   *  CONFLICT code): stale arrival → VALIDATION 400; losing write → STATE 409 + `ETag`. */
+  updatedAt: Date;
+}
+
+/** Result of a successful `set_membership_status` (§C6 response: membership_id · state ·
+ *  updated_at · reference_id). */
+export interface SetMembershipStatusResult {
+  membershipId: string;
+  state: "suspended" | "active";
+  updatedAt: Date;
+}
+
+/** Outcome of `identity.set_membership_status.v1`. */
+export type SetMembershipStatusOutcome =
+  { ok: true; result: SetMembershipStatusResult } | { ok: false; error: MembershipError };
+
+/** Input to `identity.remove_member.v1` (Doc-4C §C6 PassB:405) — `active|suspended → removed`
+ *  (terminal). §5.5-GUARDED (PassB:407 "Last Owner Protection, §5.5" — the RV-0150 lock). */
+export interface RemoveMemberInput {
+  /** The path `{id}` (the frozen `membership_id : uuid : required`). */
+  targetMembershipId: string;
+  /** `reason : string : optional` — recorded in the audit when supplied (bounded convention). */
+  reason?: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field (stale → 400; losing write →
+   *  STATE 409 + `ETag`). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `remove_member` (§C6 response: state = removed; NO updated_at). */
+export interface RemoveMemberResult {
+  membershipId: string;
+  state: "removed";
+}
+
+/** Outcome of `identity.remove_member.v1`. */
+export type RemoveMemberOutcome =
+  { ok: true; result: RemoveMemberResult } | { ok: false; error: MembershipError };
+
+/** Input to `identity.revoke_invitation.v1` (Doc-4C §C6 PassB:419) — `invited → removed`
+ *  (terminal). NOT §5.5-guarded (the frozen §C6 revoke register authors NO last-owner code — an
+ *  `invited` row is never in the active-Owner set). */
+export interface RevokeInvitationInput {
+  /** The path `{id}` (`membership_id : uuid : required : the invited (not yet accepted)
+   *  membership`). */
+  targetMembershipId: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field (stale → 400; losing write →
+   *  STATE 409 + `ETag`). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `revoke_invitation` (§C6 response: state = removed; NO updated_at). */
+export interface RevokeInvitationResult {
+  membershipId: string;
+  state: "removed";
+}
+
+/** Outcome of `identity.revoke_invitation.v1`. */
+export type RevokeInvitationOutcome =
+  { ok: true; result: RevokeInvitationResult } | { ok: false; error: MembershipError };
+
 /**
  * Input to lazy first-login identity provisioning (WP-1.3) — the authenticated Supabase subject.
  *

@@ -73,34 +73,57 @@ export type DelegationGrantAuditActionToken =
   (typeof DelegationGrantAuditAction)[keyof typeof DelegationGrantAuditAction];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Membership lifecycle audit actions (W2-IDN-5). BUSINESS actions live in Doc-2 §9 "Organization" domain
-// ("create, membership invite/accept/suspend/remove, …") — so, like the delegation tokens, NO Doc-2 §9 patch
-// is authored; these tokens bind BY POINTER to the existing §9 actions. The token STRINGS are the Doc-4C-class
-// serialization; a future rename touches Doc-4C + this constant, never Doc-2. Imported as NAMED CONSTANTS —
-// never a hardcoded literal (Board ruling 2026-06-30). Only the two System-timer edges realized this WP append
-// audit rows; the remaining membership edges (invite/accept/suspend/reinstate/remove) are W2-IDN-6.2's wired
-// commands and bind their own tokens then.
+// Membership lifecycle audit actions (W2-IDN-5 System timers + W2-IDN-6.3 wired §C6 commands).
+// BUSINESS actions live in Doc-2 §9 "Organization" domain ("create, membership
+// invite/accept/suspend/remove, …") — so, like the delegation tokens, NO Doc-2 §9 patch is authored;
+// these tokens bind BY POINTER to the existing §9 actions. The token STRINGS are the Doc-4C-class
+// serialization; a future rename touches Doc-4C + this constant, never Doc-2. Imported as NAMED
+// CONSTANTS — never a hardcoded literal (Board ruling 2026-06-30).
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** The audit `entity_type` for `identity.memberships` rows (Doc-4C §C6 Mutation-Scope `identity.memberships`). */
 export const MEMBERSHIP_ENTITY_TYPE = "membership" as const;
 
 /**
- * Canonical membership audit actions realized this WP (the two System-timer edges only):
+ * Canonical membership audit actions:
+ *   INVITED   → `→ invited` (`invite_member`, W2-IDN-6.3). Bound to the ENUMERATED Doc-2 §9
+ *               "Organization" action "membership invite" (Doc-4C §C6 invite Audit, PassB:354:
+ *               'Domain Organization "membership invite" (§9)'). Attribution: User.
+ *   ACCEPTED  → `invited → pending` (`accept_invitation`, W2-IDN-6.3). Bound to the ENUMERATED §9
+ *               action "membership accept" (Doc-4C §C6 accept Audit, PassB:369: 'Domain Organization
+ *               "membership accept" (§9)'). Attribution: User (the invitee).
  *   ACTIVATED → `pending → active` (`activate_membership`). Bound BY POINTER via **`[ESC-IDN-AUDIT]`** —
  *               Doc-4C §C6 `activate_membership` Audit: "Domain Organization (membership activation, §9) by
  *               pointer — `[ESC-IDN-AUDIT]` (no enumerated 'membership activate' action)". Attribution System
  *               (§17.3). NOT a newly-invented business action — a bound-by-pointer serialization of the §9
  *               "membership …/accept" activation family.
- *   REMOVED   → `invited → removed` via expire (`expire_invitation`). Bound to the ENUMERATED Doc-2 §9
- *               "Organization" action "membership … remove" (Doc-4C §C6 `expire_invitation` Audit: "Domain
- *               Organization 'membership remove' (§9) by pointer"). Attribution System (§17.3).
- * Distinct tokens so the immutable ledger records what actually happened (activate ≠ remove).
+ *   SUSPENDED / REINSTATED → `active ⇄ suspended` (`set_membership_status`, W2-IDN-6.3). Bound to the
+ *               ENUMERATED §9 action "membership suspend" — the frozen declaration (Doc-4C §C6
+ *               PassB:397) AUTHORS the coverage: 'the suspend action records either direction
+ *               (reinstate inverse-leg covered-by-suspend, per Patch v1.0.1 PA-02)'. ONE §9 business
+ *               action; two SERIALIZATION tokens so the immutable ledger records what actually
+ *               happened — the ratified `delegation_grant_reinstated` covered-by-suspend precedent
+ *               (RV-0150 Adjudication 2 class; no business action invented). Attribution: User.
+ *   REMOVED   → `→ removed` — the ENUMERATED §9 action "membership remove", shared BY FROZEN
+ *               DECLARATION across its three legs: `expire_invitation` (PassB:439, System),
+ *               `remove_member` (PassB:411, User) and `revoke_invitation` (PassB:425, User) all
+ *               declare 'Domain Organization "membership remove" (§9)'. ONE token; the audited
+ *               old/new field sets discriminate the leg (old state invited = revoke/expire;
+ *               active|suspended = remove) and attribution discriminates System vs User.
+ * Distinct tokens only where the ledger needs them; nothing coined.
  */
 export const MembershipAuditAction = {
+  /** §9 "membership invite" (enumerated); the `invite_member` `→ invited` leg (User). */
+  INVITED: "membership_invited",
+  /** §9 "membership accept" (enumerated); the `accept_invitation` `invited → pending` leg (User). */
+  ACCEPTED: "membership_accepted",
   /** `[ESC-IDN-AUDIT]` — bound by pointer to §9 membership activation family (System attribution). */
   ACTIVATED: "membership_activated",
-  /** Bound to §9 "membership remove" (enumerated); the `expire_invitation` `invited → removed` leg. */
+  /** §9 "membership suspend" (enumerated); the `active → suspended` leg (User). */
+  SUSPENDED: "membership_suspended",
+  /** §9 "membership suspend" — reinstate covered-by-suspend (PassB:397 / PA-02); `suspended → active` (User). */
+  REINSTATED: "membership_reinstated",
+  /** §9 "membership remove" (enumerated); the `→ removed` legs (expire=System · remove/revoke=User). */
   REMOVED: "membership_removed",
 } as const;
 

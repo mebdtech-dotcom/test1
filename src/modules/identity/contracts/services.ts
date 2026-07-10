@@ -121,6 +121,28 @@ import {
   type AdminRecoverOwnershipContext,
   type AdminRecoverOwnershipDeps,
 } from "../application/commands/admin-recover-ownership.command";
+import {
+  INVITE_DEPARTMENT_MAX_LENGTH,
+  INVITE_EMAIL_MAX_LENGTH,
+  inviteMemberCommand,
+  MANAGE_USERS_SLUG,
+  validateInviteMemberInput,
+  type InviteMemberContext,
+  type InviteMemberDeps,
+} from "../application/commands/invite-member.command";
+import {
+  acceptInvitationCommand,
+  type AcceptInvitationContext,
+  type AcceptInvitationDeps,
+} from "../application/commands/accept-invitation.command";
+import {
+  MEMBERSHIP_REASON_MAX_LENGTH,
+  removeMemberCommand,
+  revokeInvitationCommand,
+  setMembershipStatusCommand,
+  type MembershipLifecycleContext,
+  type MembershipLifecycleDeps,
+} from "../application/commands/membership-lifecycle.command";
 import { getBuyerProfile as getBuyerProfileQuery } from "../application/queries/get-buyer-profile.query";
 import {
   upsertBuyerProfileCommand,
@@ -135,6 +157,8 @@ import {
   type CheckPermissionDeps,
 } from "../application/queries/check-permission.query";
 import type {
+  AcceptInvitationInput,
+  AcceptInvitationOutcome,
   ActivateMembershipInput,
   ActivateMembershipResult,
   AdminRecoverOwnershipInput,
@@ -152,6 +176,8 @@ import type {
   DelegationGrantLifecycleOutcome,
   ExpireDelegationGrantsResult,
   ExpireInvitationsResult,
+  InviteMemberInput,
+  InviteMemberOutcome,
   GetBuyerProfileResult,
   GetDelegationGrantResult,
   GetMembershipResult,
@@ -162,8 +188,14 @@ import type {
   ProvisionIdentityInput,
   ProvisionIdentityResult,
   ReinstateDelegationGrantInput,
+  RemoveMemberInput,
+  RemoveMemberOutcome,
   RestoreOrganizationInput,
   RestoreOrganizationOutcome,
+  RevokeInvitationInput,
+  RevokeInvitationOutcome,
+  SetMembershipStatusInput,
+  SetMembershipStatusOutcome,
   SetOrganizationStatusInput,
   SetOrganizationStatusOutcome,
   SetUserAccountStatusInput,
@@ -776,6 +808,129 @@ export {
   orgNotFoundCollapse,
   organizationErrorResponse,
 } from "../api/organization.handler";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §C6 — Membership WIRED write surface (W2-IDN-6.3). The five Doc-5C §5.1 membership contracts on
+// their frozen routes (rows 12–16). Every mutation is an AUDITED, ATOMIC write (D7): the M0
+// `appendAuditRecord` is INJECTED by contract TYPE. Membership lifecycle edges are consumed from
+// the IDN-5 `membership.state-machine.ts` (single authority — never rebuilt); the two System
+// timers (`activate_membership` · `expire_invitation`) own their `pending → active` /
+// `invited → removed`(expire) edges and are COMPOSED WITH, never duplicated.
+//
+// THE §5.5-GUARDED SET (frozen-derived — Doc-4C §C6 verbatim): `remove_member` (PassB:407) + the
+// `set_membership_status` SUSPEND leg (PassB:393). Each guarded leg honors the RV-0150 T6-F1
+// serialization contract: it passes its OWN transaction to the FOR-UPDATE fact resolver
+// (`resolveOwnerRemovalFacts`) and applies the guarded write in that SAME transaction. The
+// RV-0155 O1 empty-lock-set premise HOLDS for this surface: both guarded legs BLOCK the
+// sole-active-Owner mutation, so no §C6 command can empty a live org's active-Owner row set.
+// `revoke_invitation` / `accept_invitation` / `invite_member` carry NO frozen §5.5 stage.
+//
+// Zero §8 events ([DC-1] — the invite notification fan-out has NO emitter and stays UNBUILT).
+// Context/deps shapes re-exported for the composition edge (contracts-only).
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+  InviteMemberContext,
+  InviteMemberDeps,
+  AcceptInvitationContext,
+  AcceptInvitationDeps,
+  MembershipLifecycleContext,
+  MembershipLifecycleDeps,
+};
+
+// The realized wire bounds ([realization convention]s — face-exported so compositions and tests
+// bind the SAME values, RV-0152 NIT-B3 symmetry) + the frozen Doc-2 §7 slug binding
+// (`can_manage_users` — §C6 PassB:342, a catalog token by pointer) + the exported SYNTAX validator
+// (composition-edge category ordering, the create-organization precedent).
+export {
+  INVITE_DEPARTMENT_MAX_LENGTH,
+  INVITE_EMAIL_MAX_LENGTH,
+  MANAGE_USERS_SLUG,
+  validateInviteMemberInput,
+};
+export { MEMBERSHIP_REASON_MAX_LENGTH };
+
+/** The `invite_member`-specific §B.6 dedup window (Doc-3 v1.9 key #3
+ *  `identity.membership_invite_dedup_window` — REGISTERED name verbatim; reference form per
+ *  Doc-4A §18.2; UNSEEDED until W2-IDN-7 — read, never a literal). Every other §C6 mutation uses
+ *  the generic `COMMAND_DEDUP_WINDOW_KEY` (Doc-4C §C6 per-contract Idempotency declarations). */
+export const MEMBERSHIP_INVITE_DEDUP_WINDOW_KEY =
+  "core.system_configuration.identity.membership_invite_dedup_window" as const;
+
+/** `identity.invite_member.v1` (Doc-4C §C6; Doc-5C §5.1 row 12 — `POST /identity/memberships` ·
+ *  201 + Location). `→ invited` (Doc-2 §5.2); `can_manage_users`; active-org scope; the §B.6
+ *  CREATE claim leg lives at the composition (RV-0153 F2). MUST run INSIDE `withActiveOrgContext`. */
+export type InviteMember = (
+  input: InviteMemberInput,
+  ctx: InviteMemberContext,
+  deps: InviteMemberDeps,
+  db?: DbExecutor,
+) => Promise<InviteMemberOutcome>;
+export const inviteMember: InviteMember = (input, ctx, deps, db) =>
+  inviteMemberCommand(input, ctx, deps, db);
+
+/** `identity.accept_invitation.v1` (Doc-4C §C6; Doc-5C §5.1 row 13 — named POST command).
+ *  `invited → pending` on the frozen identity-match leg (path `{id}` + authenticated invitee);
+ *  PRE-membership (no active-org context — the composition owns the §6.2a transaction; audit stays
+ *  USER-attributed). Activation to `active` is the SEPARATE IDN-5 System step — never here. */
+export type AcceptInvitation = (
+  input: AcceptInvitationInput,
+  ctx: AcceptInvitationContext,
+  deps: AcceptInvitationDeps,
+  db?: DbExecutor,
+) => Promise<AcceptInvitationOutcome>;
+export const acceptInvitation: AcceptInvitation = (input, ctx, deps, db) =>
+  acceptInvitationCommand(input, ctx, deps, db);
+
+/** `identity.set_membership_status.v1` (Doc-4C §C6; Doc-5C §5.1 row 14 — named POST command).
+ *  `active ⇄ suspended` on the IDN-5 machine; the SUSPEND leg is §5.5-GUARDED (RV-0150 lock on its
+ *  OWN transaction). MUST run INSIDE `withActiveOrgContext` (that tx IS the lock tx). */
+export type SetMembershipStatus = (
+  input: SetMembershipStatusInput,
+  ctx: MembershipLifecycleContext,
+  deps: MembershipLifecycleDeps,
+  db?: DbExecutor,
+) => Promise<SetMembershipStatusOutcome>;
+export const setMembershipStatus: SetMembershipStatus = (input, ctx, deps, db) =>
+  setMembershipStatusCommand(input, ctx, deps, db);
+
+/** `identity.remove_member.v1` (Doc-4C §C6; Doc-5C §5.1 row 15 — named POST command).
+ *  `active|suspended → removed` (terminal; audit retained); §5.5-GUARDED (RV-0150 lock on its OWN
+ *  transaction). MUST run INSIDE `withActiveOrgContext` (that tx IS the lock tx). */
+export type RemoveMember = (
+  input: RemoveMemberInput,
+  ctx: MembershipLifecycleContext,
+  deps: MembershipLifecycleDeps,
+  db?: DbExecutor,
+) => Promise<RemoveMemberOutcome>;
+export const removeMember: RemoveMember = (input, ctx, deps, db) =>
+  removeMemberCommand(input, ctx, deps, db);
+
+/** `identity.revoke_invitation.v1` (Doc-4C §C6; Doc-5C §5.1 row 16 — named POST command).
+ *  `invited → removed` (terminal). NOT §5.5-guarded (no frozen §5.5 stage — an invited row is
+ *  never an active Owner). MUST run INSIDE `withActiveOrgContext`. */
+export type RevokeInvitation = (
+  input: RevokeInvitationInput,
+  ctx: MembershipLifecycleContext,
+  deps: MembershipLifecycleDeps,
+  db?: DbExecutor,
+) => Promise<RevokeInvitationOutcome>;
+export const revokeInvitation: RevokeInvitation = (input, ctx, deps, db) =>
+  revokeInvitationCommand(input, ctx, deps, db);
+
+// The M1 WIRE FACES for the §C6 membership commands (outcome → Doc-5A envelope + §6.2 status) —
+// the One-Owner placement; the app-layer composition edge consumes them via
+// `@/modules/identity/contracts` (contracts-only).
+export {
+  mapAcceptInvitation,
+  mapInviteMember,
+  mapRemoveMember,
+  mapRevokeInvitation,
+  mapSetMembershipStatus,
+  membershipErrorResponse,
+  membershipInvalidInput,
+  membershipNotFoundCollapse,
+} from "../api/membership.handler";
 
 // The pure lifecycle authority (state machines) — the SINGLE source of legal-edge truth (Doc-2 §5.1/§5.2 +
 // Doc-4C §C4/§C5/§C6). Re-exported so the W2-IDN-6.2 wired commands + consuming callers consult the SAME matrix and

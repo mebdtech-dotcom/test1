@@ -84,3 +84,16 @@ export {
   handleSetOrganizationStatus,
   type OrganizationAdminHandlerDeps,
 } from "./organization-admin.route-handler";
+
+// W2-IDN-6.3 — the §C6 Membership wired surface (Doc-5C §5.1 rows 12–16, all 5 contracts).
+export {
+  handleInviteMember,
+  handleRemoveMember,
+  handleRevokeInvitation,
+  handleSetMembershipStatus,
+  type MembershipTenantHandlerDeps,
+} from "./membership-tenant.route-handler";
+export {
+  handleAcceptInvitation,
+  type AcceptInvitationHandlerDeps,
+} from "./accept-invitation.route-handler";

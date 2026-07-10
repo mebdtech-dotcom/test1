@@ -9,6 +9,7 @@
 // audit and the POLICY module DECIDES.
 
 import { prisma, type DbExecutor } from "../../../../shared/db";
+import { uuidv7 } from "../../../../shared/ids";
 import type { MembershipState } from "../../domain/state-machines/membership.state-machine";
 import type { OrganizationStatus } from "../../domain/state-machines/organization.state-machine";
 import type { UserStatus } from "../../domain/state-machines/user.state-machine";
@@ -369,4 +370,195 @@ export async function resolveOwnershipRecoveryFacts(
           },
     nomineeUserStatus: nomineeUser === null ? null : (nomineeUser.status as UserStatus),
   };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// W2-IDN-6.3 — the §C6 wired-command legs (Doc-4C §C6; Doc-5C §5.1 rows 12–16). Read/write SQL only;
+// the commands own the frozen validation order, the machine consult, and the audit append.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** A live membership row loaded for a §C6 command (SCOPE + concurrency + state inputs). */
+export interface MembershipRow {
+  id: string;
+  organizationId: string;
+  state: MembershipState;
+  /** The row's `updated_at` (the caller's stale-view check + the losing-write ETag re-read). */
+  updatedAt: Date;
+  fieldSet: MembershipFieldSet;
+}
+
+function toMembershipRow(row: {
+  id: string;
+  organizationId: string;
+  state: string;
+  updatedAt: Date;
+  userId: string;
+  roleId: string;
+  department: string | null;
+}): MembershipRow {
+  return {
+    id: row.id,
+    organizationId: row.organizationId,
+    state: row.state as MembershipState,
+    updatedAt: row.updatedAt,
+    fieldSet: fieldSetOf({ ...row, state: row.state as MembershipState }),
+  };
+}
+
+const MEMBERSHIP_ROW_SELECT = {
+  id: true,
+  organizationId: true,
+  state: true,
+  updatedAt: true,
+  userId: true,
+  roleId: true,
+  department: true,
+} as const;
+
+/** The tenant SCOPE load (set_membership_status / remove_member / revoke_invitation): the live
+ *  membership `{id}` INSIDE `orgId` (the caller's server-resolved active org). `null` = absent OR
+ *  foreign — the caller collapses both to the byte-identical `NOT_FOUND` (§B.4 SCOPE / §7.5). */
+export async function findMembershipInOrg(
+  membershipId: string,
+  orgId: string,
+  db: DbExecutor = prisma,
+): Promise<MembershipRow | null> {
+  const row = await db.membership.findFirst({
+    where: { id: membershipId, organizationId: orgId, deletedAt: null },
+    select: MEMBERSHIP_ROW_SELECT,
+  });
+  return row === null ? null : toMembershipRow(row);
+}
+
+/** The invitee SCOPE load (`accept_invitation` — the frozen "membership_id + identity match" leg,
+ *  Doc-4C §C6 PassB:363): the live membership `{id}` BOUND TO the authenticated caller. `null` =
+ *  absent OR someone else's invitation — byte-identical `NOT_FOUND` collapse (PassB:366 "wrong/
+ *  foreign invitation collapses"). */
+export async function findMembershipForInvitee(
+  membershipId: string,
+  inviteeUserId: string,
+  db: DbExecutor = prisma,
+): Promise<MembershipRow | null> {
+  const row = await db.membership.findFirst({
+    where: { id: membershipId, userId: inviteeUserId, deletedAt: null },
+    select: MEMBERSHIP_ROW_SELECT,
+  });
+  return row === null ? null : toMembershipRow(row);
+}
+
+/** Resolve the invitee's live `identity.users` row by email (`invite_member` — the frozen
+ *  `email : invitee identifier (auth-managed)` resolution; Doc-2 §10.2 `email UNIQUE WHERE
+ *  deleted_at IS NULL`). `null` = no live account for that email (the command fails CLOSED). */
+export async function findLiveUserIdByEmail(
+  email: string,
+  db: DbExecutor = prisma,
+): Promise<{ userId: string } | null> {
+  const row = await db.user.findFirst({
+    where: { email, deletedAt: null },
+    select: { id: true },
+  });
+  return row === null ? null : { userId: row.id };
+}
+
+/** The `invite_member` role REFERENCE (§B.9 "role_id same-tenant existence"): a live role owned by
+ *  `orgId` OR a platform system bundle (`organization_id IS NULL AND is_system_bundle` — the seeded
+ *  Owner/Director/Manager/Officer composition rows memberships already reference, Doc-6C §5.2).
+ *  A foreign org's role resolves `null` — same code as nonexistent (no cross-tenant role, §C6). */
+export async function findInvitableRole(
+  roleId: string,
+  orgId: string,
+  db: DbExecutor = prisma,
+): Promise<{ roleId: string } | null> {
+  const row = await db.role.findFirst({
+    where: {
+      id: roleId,
+      deletedAt: null,
+      OR: [{ organizationId: orgId }, { organizationId: null, isSystemBundle: true }],
+    },
+    select: { id: true },
+  });
+  return row === null ? null : { roleId: row.id };
+}
+
+/** The `invite_member` BUSINESS probe: the (user × org) LIVE membership row, any state (the
+ *  Doc-2 §10.2 `UNIQUE(user_id, organization_id) WHERE deleted_at IS NULL` subject). */
+export async function findLiveMembershipForUserInOrg(
+  userId: string,
+  orgId: string,
+  db: DbExecutor = prisma,
+): Promise<{ membershipId: string; state: MembershipState } | null> {
+  const row = await db.membership.findFirst({
+    where: { userId, organizationId: orgId, deletedAt: null },
+    select: { id: true, state: true },
+  });
+  return row === null ? null : { membershipId: row.id, state: row.state as MembershipState };
+}
+
+/**
+ * Tombstone a LIVE `removed` membership row so a re-invite can mint the frozen "NEW membership"
+ * (Doc-4C §C6 PassB:413 "re-invite creates a new membership" against the Doc-2 §10.2 partial-unique
+ * live index). MARKER TUPLE ONLY — the `removed` state is terminal and stays byte-untouched (the
+ * 6.2 org-cascade marker precedent); audit rows are retained (Doc-2 §10.2). Compare-and-set on
+ * `state = 'removed'` + live: a row that moved/vanished matches zero rows (`false`).
+ */
+export async function tombstoneRemovedMembership(
+  params: { membershipId: string; actorUserId: string; reason: string },
+  db: DbExecutor = prisma,
+): Promise<boolean> {
+  const written = await db.membership.updateMany({
+    where: { id: params.membershipId, state: "removed", deletedAt: null },
+    data: {
+      deletedAt: new Date(),
+      deletedBy: params.actorUserId,
+      deleteReason: params.reason,
+    },
+  });
+  return written.count === 1;
+}
+
+/** Insert the `→ invited` membership row (`invite_member` State Effects — Doc-2 §5.2 `→ invited`;
+ *  Mutation-Scope `identity.memberships` ONLY). Throws Prisma P2002 on the partial-unique-live
+ *  index when a concurrent invite won the (user × org) row — the command maps it to the frozen
+ *  `identity_membership_already_exists` CONFLICT. */
+export async function insertInvitedMembership(
+  params: {
+    organizationId: string;
+    userId: string;
+    roleId: string;
+    department: string | null;
+    actorUserId: string;
+  },
+  db: DbExecutor = prisma,
+): Promise<{ membershipId: string; fieldSet: MembershipFieldSet }> {
+  const membershipId = uuidv7(); // M0 ID generator — never a raw UUID in app code.
+  const row = await db.membership.create({
+    data: {
+      id: membershipId,
+      organizationId: params.organizationId,
+      userId: params.userId,
+      roleId: params.roleId,
+      state: "invited",
+      department: params.department,
+      createdBy: params.actorUserId,
+      updatedBy: params.actorUserId,
+    },
+    select: { state: true, userId: true, roleId: true, department: true },
+  });
+  return {
+    membershipId,
+    fieldSet: fieldSetOf({ ...row, state: row.state as MembershipState }),
+  };
+}
+
+/** Re-read a membership's CURRENT `updated_at` (the Doc-5A §9.5 current-token carriage on a
+ *  losing-write leg — the 6.5 lost-CAS re-read precedent). `null` when the row is gone. */
+export async function readMembershipUpdatedAt(
+  membershipId: string,
+  db: DbExecutor = prisma,
+): Promise<Date | null> {
+  const row = await db.membership.findFirst({
+    where: { id: membershipId },
+    select: { updatedAt: true },
+  });
+  return row === null ? null : row.updatedAt;
 }
