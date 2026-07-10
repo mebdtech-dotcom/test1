@@ -37,7 +37,8 @@ export interface DelegationGrantRow {
   fieldSet: DelegationGrantFieldSet;
 }
 
-/** A grant the System sweep found lapsed (`active`, `valid_to <= now`) — the teardown-seam inputs too. */
+/** A grant the System sweep found lapsed (`active` OR `suspended`, `valid_to <= now` —
+ *  `Doc-2_Patch_v1.0.7` rule 1: the sweep covers BOTH states) — the teardown-seam inputs too. */
 export interface ExpirableDelegationGrantRow {
   id: string;
   controllingOrganizationId: string;

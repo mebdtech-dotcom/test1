@@ -588,6 +588,247 @@ export interface ExpireInvitationsResult {
   expired: number;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// §C5 — Organization WIRED write surface (W2-IDN-6.2). The seven Doc-5C §4.1 organization contracts:
+//   `create_organization.v1`         POST /identity/organizations · 201+Location      · User (bootstrap — no org context)
+//   `update_organization_profile.v1` PATCH /identity/organizations/{id} · 200         · User (active-org; If-Match — the ONE §C5 `Concurrency: optimistic`)
+//   `transfer_ownership.v1`          POST …/{id}/transfer_ownership · 200             · User (Owner; §5.5-guarded — RV-0150 lock)
+//   `soft_delete_organization.v1`    DELETE /identity/organizations/{id} · 200        · User (Owner; DC-1 cascade out-of-wire)
+//   `restore_organization.v1`        POST …/{id}/restore_organization · 200           · User (Owner) / Admin
+//   `set_organization_status.v1`     POST …/{id}/set_organization_status · 200        · Admin (no org context)
+//   `admin_recover_ownership.v1`     POST …/{id}/admin_recover_ownership · 200        · Admin (§5.5-guarded — RV-0150 lock)
+// The target org id is the PATH `{id}` (Doc-5C §4.1 input placement — the §C5 `organization_id`
+// request field realized as the path segment; the 6.1 `user_id` precedent). `updated_at` carriage
+// is PER-CONTRACT (the RV-0153 call-1 lesson — never a blanket): If-Match ONLY on the contract
+// declaring `Concurrency: optimistic` (update_organization_profile, PassB:262); every other §C5
+// mutation carries it as the frozen REQUIRED request-body field. Field names/semantics owned by
+// Doc-4C §C5 (verbatim); bound by pointer, never re-authored. Events: none ([DC-1]).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Error outcome of a §C5 organization command (Doc-4C §C5 error registers; classes per Doc-5A §6.2). */
+export interface OrganizationError {
+  /** Doc-5A §6.2 class → HTTP status (VALIDATION→400 · AUTHORIZATION→403 · NOT_FOUND→404 ·
+   *  STATE→409 · CONFLICT→409 · REFERENCE→422 · BUSINESS→422). Only classes the §C5 registers
+   *  author are raised (QUOTA is register-authored on create but unreachable while no per-user
+   *  org-count POLICY key is registered — Doc-3 v1.9 §5). */
+  errorClass:
+    | "VALIDATION"
+    | "AUTHORIZATION"
+    | "NOT_FOUND"
+    | "STATE"
+    | "CONFLICT"
+    | "REFERENCE"
+    | "BUSINESS"
+    | "QUOTA";
+  /** The Doc-4C §C5 `identity_org_*` / `identity_membership_not_found` / `identity_user_not_found`
+   *  register code (frozen; never coined here). */
+  errorCode: string;
+  /** Human-safe, non-leaking message. */
+  message: string;
+  /**
+   * The org row's CURRENT `updated_at` concurrency token — populated ONLY on the Doc-5A §9.5
+   * stale-precondition / §9.4 losing-concurrent-write legs so the wire mapper emits the `ETag`
+   * response header (§9.6 re-read-retry). NEVER populated on a machine-illegal-edge STATE
+   * rejection (the RV-0152 call-13 leg discipline — a token there is a false retry signal).
+   */
+  currentUpdatedAt?: Date;
+}
+
+/**
+ * Input to `identity.create_organization.v1` (Doc-4C §C5 PassB:239–243). Bootstrap — the creator
+ * becomes Owner; NO active-org context (Doc-5C §2.2 row 5 "N (bootstrap)").
+ *
+ * FAIL-CLOSED deferred fields (the `approval_settings`/`ESC-IDN-PREF-KEYS` posture, logged in the
+ * report): `org_type` (no Doc-2 §10.2 organizations column/enum exists), `address`/`contact_info`
+ * (Address/ContactInfo VOs with no realized column) — a SUPPLIED value is VALIDATION-rejected until
+ * an additive Doc-2/Doc-6C patch realizes the columns; they are deliberately NOT on this input.
+ */
+export interface CreateOrganizationInput {
+  /** `name : string : required : org legal/display name; length-bounded`. */
+  name: string;
+  /** `is_personal_org : boolean : optional : default false; server-set on Solo Trader auto-create
+   *  (Architecture §5.2), not client-trusted` — a client-asserted `true` is NEVER honored: it maps
+   *  to the frozen duplicate-personal-org guard (`identity_org_personal_exists`) when the caller's
+   *  personal org exists, and is VALIDATION-rejected otherwise (server-set means server-set). */
+  isPersonalOrg?: boolean;
+}
+
+/** Result of a successful `create_organization` (§C5 response: organization_id · human_ref ·
+ *  org_status (= active) · owner_membership_id). */
+export interface CreateOrganizationResult {
+  organizationId: string;
+  /** `ORG-…` via the M0 `core.allocate_human_reference.v1` contract (display-only, never authz). */
+  humanRef: string;
+  orgStatus: "active";
+  ownerMembershipId: string;
+}
+
+/** Outcome of `identity.create_organization.v1`. */
+export type CreateOrganizationOutcome =
+  { ok: true; result: CreateOrganizationResult } | { ok: false; error: OrganizationError };
+
+/**
+ * Input to `identity.update_organization_profile.v1` (Doc-4C §C5 PassB:257). The target org is the
+ * path `{id}`, server-checked against the ACTIVE org (mismatch collapses — §6.6 NOT_FOUND).
+ * `address`/`contact_info`/`brand_assets_ref` are FAIL-CLOSED deferred (no realized column — see
+ * `CreateOrganizationInput`); only `name` is realizable today.
+ */
+export interface UpdateOrganizationProfileInput {
+  /** The path `{id}` (Doc-5A §5.4); SYNTAX-validated (uuid) then checked against the active org. */
+  targetOrganizationId: string;
+  /** `name : string : optional : bounded`. Absent = unchanged (Doc-4A §9.2 update semantics). */
+  name?: string;
+  /** `updated_at : timestamp : required` — the §C5 `Concurrency: optimistic` token, from `If-Match`
+   *  (Doc-5C §4.3 — the ONE §C5 contract declaring optimistic concurrency, PassB:262). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `update_organization_profile` (§C5 response). */
+export interface UpdateOrganizationProfileResult {
+  organizationId: string;
+  /** The resulting `updated_at` (the new optimistic-concurrency token). */
+  updatedAt: Date;
+}
+
+/** Outcome of `identity.update_organization_profile.v1`. */
+export type UpdateOrganizationProfileOutcome =
+  { ok: true; result: UpdateOrganizationProfileResult } | { ok: false; error: OrganizationError };
+
+/**
+ * Input to `identity.transfer_ownership.v1` (Doc-4C §C5 PassB:271) — the §5.5-guarded succession
+ * command (RV-0150 serialization contract). The target org is the path `{id}` = the active org.
+ */
+export interface TransferOwnershipInput {
+  /** The path `{id}`; checked against the active org (mismatch collapses — §6.6 NOT_FOUND). */
+  targetOrganizationId: string;
+  /** `new_owner_user_id : uuid : required : must hold an active membership in the org`. */
+  newOwnerUserId: string;
+  /** `reason_code : string : required : structured succession reason (Architecture §5.5)`. */
+  reasonCode: string;
+  /** `approver_membership_id : uuid : optional : where org workflow requires an approver` — when
+   *  supplied it MUST resolve to a live membership of the org (§B.4 SCOPE "org owns both
+   *  memberships") and is recorded in the audit (§5.5 "approver identity"). */
+  approverMembershipId?: string;
+  /** `updated_at : timestamp : required` — REQUIRED request-body field (§C5 declares NO
+   *  `Concurrency: optimistic` here — the RV-0153 call-1 discipline); a stale/losing token maps to
+   *  the register's `identity_org_update_conflict` (CONFLICT → 409 + `ETag`). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `transfer_ownership` (§C5 response). */
+export interface TransferOwnershipResult {
+  organizationId: string;
+  newOwnerMembershipId: string;
+  /** The org aggregate's new concurrency token (§C5 `updated_at : always`). */
+  updatedAt: Date;
+}
+
+/** Outcome of `identity.transfer_ownership.v1`. */
+export type TransferOwnershipOutcome =
+  { ok: true; result: TransferOwnershipResult } | { ok: false; error: OrganizationError };
+
+/** Input to `identity.soft_delete_organization.v1` (Doc-4C §C5 PassB:285). DELETE item (ADR-012);
+ *  the target org is the path `{id}` = the active org. Cascade: in-module memberships ONLY
+ *  (cross-module legs BLOCKED — [DC-1]). */
+export interface SoftDeleteOrganizationInput {
+  /** The path `{id}`; checked against the active org (mismatch collapses — §6.6 NOT_FOUND). */
+  targetOrganizationId: string;
+  /** `confirmation : boolean : required` — must be literally `true`. */
+  confirmation: boolean;
+  /** `reason : string : required` — recorded as the org row's `delete_reason` + in the audit. */
+  reason: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field (no optimistic declaration);
+   *  stale/losing → `identity_org_update_conflict` (CONFLICT → 409 + `ETag`). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `soft_delete_organization` (§C5 response: org_status = soft_deleted). */
+export interface SoftDeleteOrganizationResult {
+  organizationId: string;
+  orgStatus: "soft_deleted";
+}
+
+/** Outcome of `identity.soft_delete_organization.v1`. */
+export type SoftDeleteOrganizationOutcome =
+  { ok: true; result: SoftDeleteOrganizationResult } | { ok: false; error: OrganizationError };
+
+/** Input to `identity.restore_organization.v1` (Doc-4C §C5 PassB:300). The `organization_id : uuid :
+ *  required` request field is the path `{id}` (Doc-5C §4.1 placement). Dual-leg actor: User (Owner)
+ *  self-restore or Admin (no org context — §5.6). */
+export interface RestoreOrganizationInput {
+  /** The path `{id}` (the frozen `organization_id` field). */
+  targetOrganizationId: string;
+  /** `reason : string : optional` — recorded in the audit when supplied. */
+  reason?: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field. The §C5 restore register authors NO
+   *  CONFLICT code, so a stale token is the in-register VALIDATION 400 (the ratified §C9 posture,
+   *  RV-0153 call-1); a LOSING concurrent restore is the register's `identity_org_state_invalid`
+   *  (STATE → 409, carrying the current token — the 6.5 losing-write leg discipline). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `restore_organization` (§C5 response: org_status = active +
+ *  `slug_regenerated : boolean : always` — the §5.1 restore-conflict rule). */
+export interface RestoreOrganizationResult {
+  organizationId: string;
+  orgStatus: "active";
+  slugRegenerated: boolean;
+}
+
+/** Outcome of `identity.restore_organization.v1`. */
+export type RestoreOrganizationOutcome =
+  { ok: true; result: RestoreOrganizationResult } | { ok: false; error: OrganizationError };
+
+/** Input to `identity.set_organization_status.v1` (Doc-4C §C5 PassB:314) — Admin platform
+ *  governance (21.6; NO org context, §5.6). The `organization_id` field is the path `{id}`. */
+export interface SetOrganizationStatusInput {
+  /** The target org (`organization_id : uuid : required` — the path `{id}`). */
+  targetOrganizationId: string;
+  /** `target_status : enum(suspended|active) : required` (the §5.1 `active ⇄ suspended` edges). */
+  targetStatus: "suspended" | "active";
+  /** `reason : string : required` — recorded in the audit (BUSINESS "reason recorded"). */
+  reason: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field (no optimistic declaration);
+   *  stale/losing → the register's `identity_org_status_conflict` (CONFLICT → 409 + `ETag`). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `set_organization_status` (§C5 response). */
+export interface SetOrganizationStatusResult {
+  organizationId: string;
+  orgStatus: OrganizationStatusValue;
+  updatedAt: Date;
+}
+
+/** Outcome of `identity.set_organization_status.v1`. */
+export type SetOrganizationStatusOutcome =
+  { ok: true; result: SetOrganizationStatusResult } | { ok: false; error: OrganizationError };
+
+/** Input to `identity.admin_recover_ownership.v1` (Doc-4C §C5 PassB:328) — Admin orphaned-ownership
+ *  recovery (21.6; NO org context; §5.5-guarded — RV-0150 lock). The `organization_id` field is the
+ *  path `{id}`. */
+export interface AdminRecoverOwnershipInput {
+  /** The target org (`organization_id : uuid : required` — the path `{id}`). */
+  targetOrganizationId: string;
+  /** `new_owner_user_id : uuid : required` (§B.9 REFERENCE: exists; membership creatable/active). */
+  newOwnerUserId: string;
+  /** `reason_code : string : required : recovery justification (Architecture §5.5)`. */
+  reasonCode: string;
+  /** `updated_at : timestamp : required` — REQUIRED body field. The recovery register authors NO
+   *  CONFLICT/STATE code, so a stale token is the in-register VALIDATION 400 (the §C9 posture). */
+  updatedAt: Date;
+}
+
+/** Result of a successful `admin_recover_ownership` (§C5 response — no `updated_at`). */
+export interface AdminRecoverOwnershipResult {
+  organizationId: string;
+  newOwnerMembershipId: string;
+}
+
+/** Outcome of `identity.admin_recover_ownership.v1`. */
+export type AdminRecoverOwnershipOutcome =
+  { ok: true; result: AdminRecoverOwnershipResult } | { ok: false; error: OrganizationError };
+
 /**
  * Input to lazy first-login identity provisioning (WP-1.3) — the authenticated Supabase subject.
  *

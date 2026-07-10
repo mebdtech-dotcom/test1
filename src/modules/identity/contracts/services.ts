@@ -73,6 +73,54 @@ import {
   type SetUserAccountStatusContext,
   type SetUserAccountStatusDeps,
 } from "../application/commands/set-user-account-status.command";
+import {
+  createOrganizationCommand,
+  ORG_NAME_MAX_LENGTH,
+  validateCreateOrganizationInput,
+  type CreateOrganizationContext,
+  type CreateOrganizationDeferredFields,
+  type CreateOrganizationDeps,
+} from "../application/commands/create-organization.command";
+import {
+  updateOrganizationProfileCommand,
+  type UpdateOrganizationProfileContext,
+  type UpdateOrganizationProfileDeferredFields,
+  type UpdateOrganizationProfileDeps,
+} from "../application/commands/update-organization-profile.command";
+import {
+  SUCCESSION_REASON_MAX_LENGTH,
+  TRANSFER_OWNERSHIP_SLUG,
+  transferOwnershipCommand,
+  type TransferOwnershipContext,
+  type TransferOwnershipDeps,
+} from "../application/commands/transfer-ownership.command";
+import {
+  DELETE_ORGANIZATION_SLUG,
+  DELETE_REASON_MAX_LENGTH,
+  softDeleteOrganizationCommand,
+  type SoftDeleteOrganizationContext,
+  type SoftDeleteOrganizationDeps,
+} from "../application/commands/soft-delete-organization.command";
+import {
+  restoreOrganizationCommand,
+  type RestoreOrganizationContext,
+  type RestoreOrganizationDeps,
+} from "../application/commands/restore-organization.command";
+import {
+  ORG_ADMIN_REASON_MAX_LENGTH,
+  SET_ORGANIZATION_STATUS_SLUG,
+  setOrganizationStatusCommand,
+  validateSetOrganizationStatusInput,
+  type SetOrganizationStatusContext,
+  type SetOrganizationStatusDeps,
+} from "../application/commands/set-organization-status.command";
+import {
+  ADMIN_RECOVER_OWNERSHIP_SLUG,
+  adminRecoverOwnershipCommand,
+  validateAdminRecoverOwnershipInput,
+  type AdminRecoverOwnershipContext,
+  type AdminRecoverOwnershipDeps,
+} from "../application/commands/admin-recover-ownership.command";
 import { getBuyerProfile as getBuyerProfileQuery } from "../application/queries/get-buyer-profile.query";
 import {
   upsertBuyerProfileCommand,
@@ -89,11 +137,15 @@ import {
 import type {
   ActivateMembershipInput,
   ActivateMembershipResult,
+  AdminRecoverOwnershipInput,
+  AdminRecoverOwnershipOutcome,
   CheckPermissionInput,
   CheckPermissionResult,
   CommandDedupScope,
   CreateDelegationGrantInput,
   CreateDelegationGrantOutcome,
+  CreateOrganizationInput,
+  CreateOrganizationOutcome,
   DeactivateOwnAccountInput,
   DeactivateOwnAccountOutcome,
   DelegationGrantLifecycleInput,
@@ -110,9 +162,19 @@ import type {
   ProvisionIdentityInput,
   ProvisionIdentityResult,
   ReinstateDelegationGrantInput,
+  RestoreOrganizationInput,
+  RestoreOrganizationOutcome,
+  SetOrganizationStatusInput,
+  SetOrganizationStatusOutcome,
   SetUserAccountStatusInput,
   SetUserAccountStatusOutcome,
+  SoftDeleteOrganizationInput,
+  SoftDeleteOrganizationOutcome,
   StoredCommandResponse,
+  TransferOwnershipInput,
+  TransferOwnershipOutcome,
+  UpdateOrganizationProfileInput,
+  UpdateOrganizationProfileOutcome,
   UpdateUser2faSettingsInput,
   UpdateUser2faSettingsOutcome,
   UpdateUserProfileInput,
@@ -561,6 +623,160 @@ export {
   forbiddenSetUserAccountStatus,
 } from "../api/set-user-account-status.handler";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// §C5 — Organization WIRED write surface (W2-IDN-6.2). The seven Doc-5C §4.1 organization contracts
+// on their frozen routes (rows 5–11). Every mutation is an AUDITED, ATOMIC write (D7): the M0
+// `appendAuditRecord` — and, on create, `allocateHumanReference` — are INJECTED by contract TYPE.
+// The org lifecycle edges are consumed from the IDN-5 `organization.state-machine.ts` (single
+// authority — never rebuilt). The §5.5-GUARDED commands (`transfer_ownership` ·
+// `admin_recover_ownership` — the frozen-text-derived guarded set) honor the RV-0150 T6-F1
+// serialization contract: each passes its OWN transaction to the FOR-UPDATE fact resolver
+// (`resolveOwnerRemovalFacts` / `resolveOwnershipRecoveryFacts`) and applies the guarded write in
+// that SAME transaction. Zero §8 events ([DC-1]); the soft-delete/status cross-module cascade
+// stays OUT-OF-WIRE (Doc-5C §7.4). Context/deps shapes re-exported for the composition edge.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type {
+  CreateOrganizationContext,
+  CreateOrganizationDeferredFields,
+  CreateOrganizationDeps,
+  UpdateOrganizationProfileContext,
+  UpdateOrganizationProfileDeps,
+  UpdateOrganizationProfileDeferredFields,
+  TransferOwnershipContext,
+  TransferOwnershipDeps,
+  SoftDeleteOrganizationContext,
+  SoftDeleteOrganizationDeps,
+  RestoreOrganizationContext,
+  RestoreOrganizationDeps,
+  SetOrganizationStatusContext,
+  SetOrganizationStatusDeps,
+  AdminRecoverOwnershipContext,
+  AdminRecoverOwnershipDeps,
+};
+
+// The realized wire bounds ([realization convention]s — face-exported so compositions and tests
+// bind the SAME values, RV-0152 NIT-B3 symmetry) + the frozen slug bindings (Doc-2 §7 catalog
+// tokens by pointer — `can_transfer_ownership` / `can_delete_organization` / the DC-3 interim
+// `staff_super_admin` pair) + the exported SYNTAX validators (composition-edge category ordering).
+export { ORG_NAME_MAX_LENGTH, validateCreateOrganizationInput };
+export { SUCCESSION_REASON_MAX_LENGTH, TRANSFER_OWNERSHIP_SLUG };
+export { DELETE_ORGANIZATION_SLUG, DELETE_REASON_MAX_LENGTH };
+export {
+  ORG_ADMIN_REASON_MAX_LENGTH,
+  SET_ORGANIZATION_STATUS_SLUG,
+  validateSetOrganizationStatusInput,
+};
+export { ADMIN_RECOVER_OWNERSHIP_SLUG, validateAdminRecoverOwnershipInput };
+
+/** `identity.create_organization.v1` (Doc-4C §C5; Doc-5C §4.1 row 5 — `POST /identity/organizations`
+ *  · 201 + Location). Bootstrap create: org + founding Owner membership + `ORG-…` human_ref (M0)
+ *  atomically; audited with the ENUMERATED §9 "create". MUST run inside the composition-owned
+ *  Doc-6C §6.2a bootstrap transaction (the WP-1.3 provisioning mechanism; attribution stays User). */
+export type CreateOrganization = (
+  input: CreateOrganizationInput,
+  ctx: CreateOrganizationContext,
+  deps: CreateOrganizationDeps,
+  db?: DbExecutor,
+) => Promise<CreateOrganizationOutcome>;
+export const createOrganization: CreateOrganization = (input, ctx, deps, db) =>
+  createOrganizationCommand(input, ctx, deps, db);
+
+/** `identity.update_organization_profile.v1` (Doc-4C §C5; Doc-5C §4.1 row 6 — `PATCH
+ *  /identity/organizations/{id}`). Attribute edit only (never a §5.1 transition). The ONE §C5
+ *  contract declaring `Concurrency: optimistic` — the token rides `If-Match`; stale → CONFLICT +
+ *  `ETag`. AUTHZ = the `[ESC-IDN-SLUG]` interim Owner/Director authority (the D7 precedent).
+ *  Audited (`[ESC-IDN-AUDIT]` org-profile-change pointer). MUST run INSIDE `withActiveOrgContext`. */
+export type UpdateOrganizationProfile = (
+  input: UpdateOrganizationProfileInput,
+  ctx: UpdateOrganizationProfileContext,
+  deps: UpdateOrganizationProfileDeps,
+  db?: DbExecutor,
+) => Promise<UpdateOrganizationProfileOutcome>;
+export const updateOrganizationProfile: UpdateOrganizationProfile = (input, ctx, deps, db) =>
+  updateOrganizationProfileCommand(input, ctx, deps, db);
+
+/** `identity.transfer_ownership.v1` (Doc-4C §C5; Doc-5C §4.1 row 7 — named POST command). The §5.5
+ *  succession command — GUARDED (RV-0150): resolves the Owner facts under the FOR-UPDATE lock on
+ *  ITS OWN transaction and reassigns the Owner role in that same transaction. `can_transfer_
+ *  ownership` via the wired authorization root; NEVER delegable. Audited with the ENUMERATED §9
+ *  "ownership change/succession". MUST run INSIDE `withActiveOrgContext` (that tx IS the lock tx). */
+export type TransferOwnership = (
+  input: TransferOwnershipInput,
+  ctx: TransferOwnershipContext,
+  deps: TransferOwnershipDeps,
+  db?: DbExecutor,
+) => Promise<TransferOwnershipOutcome>;
+export const transferOwnership: TransferOwnership = (input, ctx, deps, db) =>
+  transferOwnershipCommand(input, ctx, deps, db);
+
+/** `identity.soft_delete_organization.v1` (Doc-4C §C5; Doc-5C §4.1 row 8 — ADR-012 `DELETE` item).
+ *  Doc-2 §5.1 `active|suspended → soft_deleted` on the IDN-5 machine + the IN-MODULE membership
+ *  cascade (marker tuple). Cross-module legs BLOCKED ([DC-1] — Doc-5C §7.4; nothing authored).
+ *  Audited with the ENUMERATED §9 "soft delete/restore". MUST run INSIDE `withActiveOrgContext`. */
+export type SoftDeleteOrganization = (
+  input: SoftDeleteOrganizationInput,
+  ctx: SoftDeleteOrganizationContext,
+  deps: SoftDeleteOrganizationDeps,
+  db?: DbExecutor,
+) => Promise<SoftDeleteOrganizationOutcome>;
+export const softDeleteOrganization: SoftDeleteOrganization = (input, ctx, deps, db) =>
+  softDeleteOrganizationCommand(input, ctx, deps, db);
+
+/** `identity.restore_organization.v1` (Doc-4C §C5; Doc-5C §4.1 row 9 — named POST command). Doc-2
+ *  §5.1 `soft_deleted → active` + the slug restore-conflict rule + the marker-scoped membership
+ *  un-cascade. Dual-leg actor (Owner self-restore / Admin). MUST run inside the composition-owned
+ *  Doc-6C §6.2a transaction (a soft-deleted org has no resolvable active-org context). */
+export type RestoreOrganization = (
+  input: RestoreOrganizationInput,
+  ctx: RestoreOrganizationContext,
+  deps: RestoreOrganizationDeps,
+  db?: DbExecutor,
+) => Promise<RestoreOrganizationOutcome>;
+export const restoreOrganization: RestoreOrganization = (input, ctx, deps, db) =>
+  restoreOrganizationCommand(input, ctx, deps, db);
+
+/** `identity.set_organization_status.v1` (Doc-4C §C5; Doc-5C §4.1 row 10 — named POST command).
+ *  Admin platform governance (21.6; NO org context): Doc-2 §5.1 `active ⇄ suspended` on the IDN-5
+ *  machine. Opens its OWN staff-GUC transaction; ADMIN-attributed audit ([ESC-IDN-AUDIT] pointer). */
+export type SetOrganizationStatus = (
+  input: SetOrganizationStatusInput,
+  ctx: SetOrganizationStatusContext,
+  deps: SetOrganizationStatusDeps,
+) => Promise<SetOrganizationStatusOutcome>;
+export const setOrganizationStatusService: SetOrganizationStatus = (input, ctx, deps) =>
+  setOrganizationStatusCommand(input, ctx, deps);
+
+/** `identity.admin_recover_ownership.v1` (Doc-4C §C5; Doc-5C §4.1 row 11 — named POST command).
+ *  The §5.5 orphaned-ownership recovery — GUARDED (RV-0150): opens its OWN transaction, resolves
+ *  the recovery facts under the SAME FOR-UPDATE lock set, and (re)assigns the Owner in that same
+ *  transaction. ADMIN-attributed audit with reason code + approver identity (ENUMERATED §9
+ *  "ownership change/succession"). */
+export type AdminRecoverOwnership = (
+  input: AdminRecoverOwnershipInput,
+  ctx: AdminRecoverOwnershipContext,
+  deps: AdminRecoverOwnershipDeps,
+) => Promise<AdminRecoverOwnershipOutcome>;
+export const adminRecoverOwnership: AdminRecoverOwnership = (input, ctx, deps) =>
+  adminRecoverOwnershipCommand(input, ctx, deps);
+
+// The M1 WIRE FACES for the §C5 organization commands (outcome → Doc-5A envelope + §6.2 status) —
+// the One-Owner placement (M1 owns how its writes become HTTP); the app-layer composition edge
+// consumes them via `@/modules/identity/contracts` (contracts-only).
+export {
+  forbiddenOrgAdmin,
+  mapAdminRecoverOwnership,
+  mapCreateOrganization,
+  mapRestoreOrganization,
+  mapSetOrganizationStatus,
+  mapSoftDeleteOrganization,
+  mapTransferOwnership,
+  mapUpdateOrganizationProfile,
+  orgInvalidInput,
+  orgNotFoundCollapse,
+  organizationErrorResponse,
+} from "../api/organization.handler";
+
 // The pure lifecycle authority (state machines) — the SINGLE source of legal-edge truth (Doc-2 §5.1/§5.2 +
 // Doc-4C §C4/§C5/§C6). Re-exported so the W2-IDN-6.2 wired commands + consuming callers consult the SAME matrix and
 // never hand-roll a transition. Domain owns them; this is the boundary-legal public face.
@@ -611,7 +827,10 @@ export {
 // concurrent Owner-disabling mutations serialize (the second sees the first's committed write) — a
 // check-then-act cannot race two removals to an ownerless org. `evaluateOwnershipSuccession`'s
 // `resultingActiveOwnerCount` inherits the same class; a transfer MUST resolve it in that same locking tx.
+// `resolveOwnershipRecoveryFacts` (W2-IDN-6.2) is the recovery leg of the SAME contract: it takes
+// the IDENTICAL set-level lock, so transfer/recovery/deactivate all serialize on one lock set.
 export {
   resolveOwnerRemovalFacts,
+  resolveOwnershipRecoveryFacts,
   UnresolvableOwnerRoleError,
 } from "../infrastructure/data/membership-lifecycle.repository";

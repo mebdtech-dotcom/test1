@@ -157,3 +157,64 @@ export const UserAccountAuditAction = {
 
 export type UserAccountAuditActionToken =
   (typeof UserAccountAuditAction)[keyof typeof UserAccountAuditAction];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Organization audit actions (W2-IDN-6.2 — the §C5 wired organization commands). Doc-2 §9 enumerates
+// the "Organization" domain: "create, membership invite/accept/suspend/remove, role/permission change,
+// ownership change/succession, workflow settings change, subscription change, soft delete/restore" —
+// so FIVE of the seven §C5 actions bind to ENUMERATED §9 business actions; the org-profile change and
+// the admin suspend/reinstate pair are Doc-4C-authored interim pointers on the frozen `[ESC-IDN-AUDIT]`
+// channel (§C5 PassB:263/:320 author them per contract). NOTHING is invented: token STRINGS are the
+// Doc-4C-class serialization (a rename touches Doc-4C + this constant, never Doc-2). Named CONSTANTS —
+// never literals (Board ruling 2026-06-30).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The audit `entity_type` for `identity.organizations` rows (Doc-4C §C5 Mutation-Scope
+ *  `identity.organizations`). */
+export const ORGANIZATION_ENTITY_TYPE = "organization" as const;
+
+/**
+ * Canonical organization audit actions (the seven audited §C5 commands):
+ *   CREATED     → `create_organization` — the ENUMERATED §9 Organization action "create"
+ *                 (Doc-4C §C5: 'Domain Organization "create" (§9)'). Attribution: User.
+ *   PROFILE_UPDATED → `update_organization_profile` — `[ESC-IDN-AUDIT]` (Doc-4C §C5 PassB:263:
+ *                 "Domain Organization (org-profile change) by pointer — [ESC-IDN-AUDIT] (no
+ *                 enumerated §9 org-profile-change action)"). Nearest §9 family: the Organization
+ *                 domain row. Attribution: User.
+ *   OWNERSHIP_TRANSFERRED → `transfer_ownership` — the ENUMERATED §9 Organization action
+ *                 "ownership change/succession" (Doc-4C §C5 PassB:277). Attribution: User (Owner).
+ *   SOFT_DELETED / RESTORED → `soft_delete_organization` / `restore_organization` — the ENUMERATED
+ *                 §9 Organization action "soft delete/restore" (Doc-4C §C5 PassB:291/:306). Two
+ *                 distinct tokens so the immutable ledger records what actually happened
+ *                 (the delegation/user-account precedent). Attribution: User (Owner) / Admin.
+ *   SUSPENDED / REINSTATED → `set_organization_status` — `[ESC-IDN-AUDIT]` (Doc-4C §C5 PassB:320
+ *                 AUTHORS the pointer: 'Domain Organization + Platform ("Super Admin access
+ *                 (flagged)", §9) by pointer — [ESC-IDN-AUDIT] (org suspend/reinstate not
+ *                 separately enumerated)'). Attribution: Admin.
+ *   OWNERSHIP_RECOVERED → `admin_recover_ownership` — the ENUMERATED §9 Organization action
+ *                 "ownership change/succession" (Doc-4C §C5 PassB:334; distinct token from the User
+ *                 transfer so the ledger records the RECOVERY path — Master Architecture §5.5:
+ *                 "Every recovery action requires an audit record, a reason code, and an approver
+ *                 identity"). Attribution: Admin.
+ */
+export const OrganizationAuditAction = {
+  /** §9 Organization "create" (enumerated). */
+  CREATED: "organization_created",
+  /** `[ESC-IDN-AUDIT]` — §C5-authored pointer; nearest §9 Organization-domain family. */
+  PROFILE_UPDATED: "organization_profile_updated",
+  /** §9 Organization "ownership change/succession" (enumerated; the User transfer leg). */
+  OWNERSHIP_TRANSFERRED: "organization_ownership_transferred",
+  /** §9 Organization "soft delete/restore" (enumerated; the soft-delete leg). */
+  SOFT_DELETED: "organization_soft_deleted",
+  /** §9 Organization "soft delete/restore" (enumerated; the restore leg). */
+  RESTORED: "organization_restored",
+  /** `[ESC-IDN-AUDIT]` — §9 Domain Organization + Platform pointer authored in §C5 (Admin). */
+  SUSPENDED: "organization_suspended",
+  /** `[ESC-IDN-AUDIT]` — §9 Domain Organization + Platform pointer authored in §C5 (Admin). */
+  REINSTATED: "organization_reinstated",
+  /** §9 Organization "ownership change/succession" (enumerated; the Admin recovery leg). */
+  OWNERSHIP_RECOVERED: "organization_ownership_recovered",
+} as const;
+
+export type OrganizationAuditActionToken =
+  (typeof OrganizationAuditAction)[keyof typeof OrganizationAuditAction];

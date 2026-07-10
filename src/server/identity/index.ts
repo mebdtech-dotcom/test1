@@ -63,3 +63,24 @@ export {
   wireToStored,
   type WireIdempotencyKey,
 } from "./command-dedup";
+
+// W2-IDN-6.2 — the §C5 Organization wired surface (Doc-5C §4.1 rows 5–11, all 7 contracts).
+export {
+  handleCreateOrganization,
+  type CreateOrganizationHandlerDeps,
+} from "./create-organization.route-handler";
+export {
+  handleSoftDeleteOrganization,
+  handleTransferOwnership,
+  handleUpdateOrganizationProfile,
+  type OrganizationTenantHandlerDeps,
+} from "./organization-tenant.route-handler";
+export {
+  handleRestoreOrganization,
+  type RestoreOrganizationHandlerDeps,
+} from "./restore-organization.route-handler";
+export {
+  handleAdminRecoverOwnership,
+  handleSetOrganizationStatus,
+  type OrganizationAdminHandlerDeps,
+} from "./organization-admin.route-handler";

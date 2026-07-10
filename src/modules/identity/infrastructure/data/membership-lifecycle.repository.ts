@@ -185,6 +185,50 @@ export async function transitionMembershipState(
   };
 }
 
+/** Resolve the seeded Owner system-bundle role (Doc-6C §5.2 migration seed) or throw the loud
+ *  fail-closed `UnresolvableOwnerRoleError` (never fabricate never-block facts — see class doc).
+ *  Shared by every §5.5 fact resolver AND the W2-IDN-6.2 ownership commands (transfer/recovery need
+ *  the role id for the Owner (re)assignment write itself). */
+export async function findOwnerSystemBundleRole(db: DbExecutor = prisma): Promise<{ id: string }> {
+  const ownerRole = await db.role.findFirst({
+    where: {
+      name: OWNER_SYSTEM_BUNDLE_ROLE_NAME,
+      organizationId: null,
+      isSystemBundle: true,
+      deletedAt: null,
+    },
+    select: { id: true },
+  });
+  if (ownerRole === null) {
+    throw new UnresolvableOwnerRoleError();
+  }
+  return ownerRole;
+}
+
+/**
+ * The RV-0150 T6-F1 SET-LEVEL LOCK — `SELECT … FOR UPDATE` over the org's ACTIVE Owner membership
+ * rows, inside the caller-supplied transaction. ONE statement shared by every §5.5 fact resolver
+ * (removal, transfer succession, admin recovery) so ALL Owner-disabling/Owner-assigning mutations on
+ * one org serialize on the SAME lock set. A no-op outside an interactive transaction — callers MUST
+ * pass their OWN `tx` (the documented serialization contract). Same-schema, module-own table; the
+ * only raw statements in this repo; values bound as params, never interpolated.
+ */
+async function lockActiveOwnerRows(
+  orgId: string,
+  ownerRoleId: string,
+  db: DbExecutor,
+): Promise<void> {
+  await db.$queryRaw`
+    SELECT id
+    FROM identity.memberships
+    WHERE organization_id = ${orgId}::uuid
+      AND role_id = ${ownerRoleId}::uuid
+      AND state = 'active'
+      AND deleted_at IS NULL
+    FOR UPDATE
+  `;
+}
+
 /**
  * Resolve the Last-Owner-Protection facts for a proposed Owner-disabling mutation on `targetMembershipId` in
  * `orgId` (Doc-4C §C5/§C6 BUSINESS gate; Master Architecture §5.5). "Owner" = an ACTIVE membership bound to
@@ -208,34 +252,15 @@ export async function resolveOwnerRemovalFacts(
   targetMembershipId: string,
   db: DbExecutor = prisma,
 ): Promise<LastOwnerProtectionFacts> {
-  const ownerRole = await db.role.findFirst({
-    where: {
-      name: OWNER_SYSTEM_BUNDLE_ROLE_NAME,
-      organizationId: null,
-      isSystemBundle: true,
-      deletedAt: null,
-    },
-    select: { id: true },
-  });
-  if (ownerRole === null) {
-    throw new UnresolvableOwnerRoleError();
-  }
+  const ownerRole = await findOwnerSystemBundleRole(db);
 
   // SERIALIZATION (RV-0150 T6-F1) — lock the org's active-Owner membership rows FOR UPDATE inside the
   // caller-supplied transaction BEFORE counting. Without this, two concurrent Owner-disabling mutations on
   // the same org each read `otherActiveOwnerCount = 1` and both proceed → ownerless org; distinct target rows
   // defeat per-row compare-and-set, so a SET-level lock on the org's active Owners is what serializes them
   // (the second tx blocks here until the first commits, then observes the committed removal). Same-schema,
-  // module-own table — the sole raw statement in this repo; values bound as params, never interpolated.
-  await db.$queryRaw`
-    SELECT id
-    FROM identity.memberships
-    WHERE organization_id = ${orgId}::uuid
-      AND role_id = ${ownerRole.id}::uuid
-      AND state = 'active'
-      AND deleted_at IS NULL
-    FOR UPDATE
-  `;
+  // module-own table; values bound as params, never interpolated.
+  await lockActiveOwnerRows(orgId, ownerRole.id, db);
 
   const target = await db.membership.findFirst({
     where: {
@@ -259,4 +284,76 @@ export async function resolveOwnerRemovalFacts(
   });
 
   return { targetIsActiveOwner: target !== null, otherActiveOwnerCount };
+}
+
+/** The facts `admin_recover_ownership` resolves under the RV-0150 lock (Doc-4C §C5 BUSINESS:
+ *  "recovery only where no active Owner can act, §5.5; result satisfies Last Owner Protection"). */
+export interface OwnershipRecoveryFacts {
+  /** ACTIVE Owner memberships whose bound USER is itself `active` (an Owner who "can act" — §5.5:
+   *  succession applies when "an owner account becomes disabled, deleted, or suspended"). */
+  actingActiveOwnerCount: number;
+  /** The Owner system-bundle role id (for the recovery (re)assignment write). */
+  ownerRoleId: string;
+  /** The nominee's live membership in the org, when one exists (`null` ⇒ none — the frozen
+   *  "membership creatable" REFERENCE leg applies). */
+  nomineeMembership: { membershipId: string; state: MembershipState } | null;
+  /** The nominee user's lifecycle status; `null` ⇒ no live `identity.users` row (REFERENCE failure). */
+  nomineeUserStatus: UserStatus | null;
+}
+
+/**
+ * Resolve the `admin_recover_ownership` facts (Doc-4C §C5; Master Architecture §5.5 succession).
+ *
+ * SERIALIZATION CONTRACT (RV-0150 T6-F1 — the recovery leg): takes the SAME set-level FOR-UPDATE lock
+ * on the org's active-Owner rows as `resolveOwnerRemovalFacts`, inside the caller-supplied
+ * transaction, so a recovery serializes against every concurrent Owner-disabling/Owner-assigning
+ * mutation on the org (two racing recoveries: the second blocks, re-reads, sees the first's committed
+ * Owner and fails the "no active Owner can act" precondition — never a double recovery). The owning
+ * command MUST pass its OWN `tx` and decide via the pure §5.5 policies inside that SAME transaction.
+ * An unresolvable Owner role fails CLOSED (`UnresolvableOwnerRoleError`).
+ */
+export async function resolveOwnershipRecoveryFacts(
+  orgId: string,
+  newOwnerUserId: string,
+  db: DbExecutor = prisma,
+): Promise<OwnershipRecoveryFacts> {
+  const ownerRole = await findOwnerSystemBundleRole(db);
+
+  // The RV-0150 lock — same statement, same lock set as the removal/transfer resolvers.
+  await lockActiveOwnerRows(orgId, ownerRole.id, db);
+
+  // Owners who CAN ACT: active Owner membership × active user (§5.5 — a suspended/departed owner
+  // cannot act; a departed owner's membership is already `removed` by the deactivate command).
+  const actingActiveOwnerCount = await db.membership.count({
+    where: {
+      organizationId: orgId,
+      roleId: ownerRole.id,
+      state: "active",
+      deletedAt: null,
+      user: { status: "active", deletedAt: null },
+    },
+  });
+
+  const nomineeUser = await db.user.findFirst({
+    where: { id: newOwnerUserId, deletedAt: null },
+    select: { status: true },
+  });
+
+  const nomineeMembership = await db.membership.findFirst({
+    where: { userId: newOwnerUserId, organizationId: orgId, deletedAt: null },
+    select: { id: true, state: true },
+  });
+
+  return {
+    actingActiveOwnerCount,
+    ownerRoleId: ownerRole.id,
+    nomineeMembership:
+      nomineeMembership === null
+        ? null
+        : {
+            membershipId: nomineeMembership.id,
+            state: nomineeMembership.state as MembershipState,
+          },
+    nomineeUserStatus: nomineeUser === null ? null : (nomineeUser.status as UserStatus),
+  };
 }

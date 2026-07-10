@@ -514,12 +514,16 @@ describe("W2-IDN-6.5 §C9 delegation wired surface + §B.6 replay store — 8C (
     );
     expect(stale.headers?.ETag).toBeUndefined(); // the token rides 409s only (§9.5)
 
-    // Absent/unparseable updated_at (a required §C9 body field) → SYNTAX 400.
+    // Absent/unparseable updated_at (a required §C9 body field) → SYNTAX 400, with the EXACT
+    // call-19 message text pinned (RV-0153 NIT-4 fold — previously status-level only).
     const noToken = await handleSuspendDelegationGrant(
       { delegationGrantId: active.id, updatedAt: new Date(Number.NaN) },
       lifecycleDeps(CTRL_AUTH, `iv-k-${uuidv7()}`),
     );
     expect(noToken.status).toBe(400);
+    expect((noToken.body as { error: { message: string } }).error.message).toBe(
+      "updated_at is required.",
+    );
 
     // Non-party caller probing a REAL grant vs a RANDOM id: byte-identical 404 (modulo the
     // per-response reference_id — platform-assigned per request, Doc-4A §22.1).
@@ -553,6 +557,47 @@ describe("W2-IDN-6.5 §C9 delegation wired surface + §B.6 replay store — 8C (
     expect((rep.body as { error: { error_code: string } }).error.error_code).toBe(
       "identity_delegation_forbidden",
     );
+  });
+
+  // RV-0153 NIT-4 fold — the REVOKE face's own register rows (previously shared-path inference
+  // only): each frozen §C9 error leg exercised THROUGH the revoke wire face (PassB:621 register).
+  it.each([
+    {
+      leg: "invalid_input (malformed id → 400)",
+      run: () =>
+        handleRevokeDelegationGrant(
+          { delegationGrantId: "not-a-uuid", updatedAt: new Date() },
+          lifecycleDeps(CTRL_AUTH, `iv-k-${uuidv7()}`),
+        ),
+      status: 400,
+      code: "identity_delegation_invalid_input",
+    },
+    {
+      leg: "forbidden (representative party may read, not revoke → 403)",
+      run: async () => {
+        const g = await seedGrant({ status: "active", validFrom: PAST_FROM, validTo: FUTURE });
+        return handleRevokeDelegationGrant(
+          { delegationGrantId: g.id, updatedAt: g.updatedAt },
+          lifecycleDeps(REP_AUTH, `iv-k-${uuidv7()}`),
+        );
+      },
+      status: 403,
+      code: "identity_delegation_forbidden",
+    },
+    {
+      leg: "not_found (nonexistent id → 404 collapse)",
+      run: () =>
+        handleRevokeDelegationGrant(
+          { delegationGrantId: "01920000-0000-7000-8000-0000000d65ed", updatedAt: new Date() },
+          lifecycleDeps(CTRL_AUTH, `iv-k-${uuidv7()}`),
+        ),
+      status: 404,
+      code: "identity_delegation_not_found",
+    },
+  ])("REVOKE face register leg: $leg", async ({ run, status, code }) => {
+    const res = await run();
+    expect(res.status).toBe(status);
+    expect((res.body as { error: { error_code: string } }).error.error_code).toBe(code);
   });
 
   it("§9.5 ETag leg discipline (call-13, mapper-level): a losing-write STATE 409 carrying the current token emits ETag; a machine-illegal STATE 409 without one emits none", () => {
@@ -786,8 +831,10 @@ describe("W2-IDN-6.5 §C9 delegation wired surface + §B.6 replay store — 8C (
       });
       expect(row.contractId).toBe("identity.update_user_2fa_settings.v1");
       expect(row.organizationId).toBeNull(); // self-op scope — org-less
-      await prisma.commandDedup.deleteMany({ where: { actorUserId: userId } });
     } finally {
+      // RV-0153 NIT-3 fold: the dedup cleanup rides `finally` (a failed assertion above must not
+      // orphan the stored row into later runs — the prior-session-orphan class).
+      await prisma.commandDedup.deleteMany({ where: { actorUserId: userId } });
       await prisma.membership.deleteMany({ where: { userId } });
       await prisma.user.deleteMany({ where: { id: userId } });
     }

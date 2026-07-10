@@ -1,9 +1,14 @@
 // M1 domain (PRIVATE) — the `delegation_grant_status` transition matrix (DR-6-STATE, service-layer).
-// This is the SINGLE authority for which delegation-grant lifecycle edges are legal; the application
-// commands and the System expiry worker consult it and NEVER hand-roll a transition. A paraphrased
-// machine is the repository's cardinal sin — so the legal edge set below is transcribed VERBATIM from
-// Doc-2 §5.10 AS PATCHED by `Doc-2_Patch_v1.0.7` (PATCH-D2-06 — on §5.10 boundary questions the patch
-// governs; bound by pointer, not redefined):
+// This is the SINGLE authority for which delegation-grant lifecycle EDGES are legal; the application
+// commands and the System expiry worker consult it for edge legality and never re-derive the edge
+// SET. (Scope note — RV-0153 NIT-2 fold: "the single authority" governs the STATUS-EDGE matrix
+// only. Edge-adjacent BUSINESS boundaries are the owning command's to enforce over their frozen
+// sources — e.g. the reinstate command MUST additionally pin the `Doc-2_Patch_v1.0.7` rule-3
+// window-open guard, which this matrix deliberately does not encode. Consulting the matrix does not
+// discharge those command-level guards.) A paraphrased machine is the repository's cardinal sin —
+// so the legal edge set below is transcribed VERBATIM from Doc-2 §5.10 AS PATCHED by
+// `Doc-2_Patch_v1.0.7` (PATCH-D2-06 — on §5.10 boundary questions the patch governs; bound by
+// pointer, not redefined):
 //
 //   draft ──grant [granted_by must hold authority in controlling org]──▶ active
 //   active ──suspend──▶ suspended ──reinstate [only while valid_to has NOT passed]──▶ active
