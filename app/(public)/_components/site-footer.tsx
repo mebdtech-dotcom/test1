@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Separator } from "@/frontend/primitives/separator";
 import { BrandLogo } from "@/frontend/brand";
+import { Container } from "@/frontend/components/container";
 
 const COLUMNS = [
   { title: "Marketplace", links: ["Browse categories", "Find vendors", "Search products"] }, // *
@@ -15,7 +16,9 @@ const COLUMNS = [
 export function SiteFooter() {
   return (
     <footer className="mt-auto border-t border-border bg-card">
-      <div className="mx-auto w-full max-w-[var(--iv-page-max)] px-4 py-12 sm:px-6">
+      {/* Shares the page-content Container — footer columns align to the body grid. The full-bleed
+          bg-card band stays on the <footer> element itself. */}
+      <Container className="py-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {COLUMNS.map((col) => (
             <div key={col.title}>
@@ -43,7 +46,7 @@ export function SiteFooter() {
           </div>
           <p>Made in Bangladesh · BDT</p>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 }

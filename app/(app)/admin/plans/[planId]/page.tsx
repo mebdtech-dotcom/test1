@@ -19,6 +19,7 @@ import { PageHeader } from "../../../_components/shell";
 import { DashboardSection } from "../../../_components/vendor/dashboard/dashboard-section";
 import { DescriptionList } from "../../../_components/vendor/shared/description-list";
 import { PresentationFormNote } from "../../../_components/vendor/shared/presentation-form-note";
+import { ADMIN_SELECT_CLASS } from "../../../_components/admin/form-control-classes";
 import {
   getPlan,
   getPlanDetail,
@@ -26,9 +27,6 @@ import {
 } from "../../../_components/admin/plans/plans-seed";
 
 const LIST = "/admin/plans";
-
-const SELECT_CLASS =
-  "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-iv-ink-strong shadow-iv-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50";
 
 export async function generateMetadata({
   params,
@@ -85,7 +83,7 @@ export default async function PlanEditorPage({ params }: { params: Promise<{ pla
                 <select
                   id="plan-cycle"
                   name="billing_cycle"
-                  className={SELECT_CLASS}
+                  className={ADMIN_SELECT_CLASS}
                   defaultValue={plan.billingCycle}
                   disabled
                 >
@@ -120,7 +118,7 @@ export default async function PlanEditorPage({ params }: { params: Promise<{ pla
                 <select
                   id="plan-visibility"
                   name="is_active"
-                  className={SELECT_CLASS}
+                  className={ADMIN_SELECT_CLASS}
                   defaultValue={plan.isVisible ? "true" : "false"}
                   disabled
                 >

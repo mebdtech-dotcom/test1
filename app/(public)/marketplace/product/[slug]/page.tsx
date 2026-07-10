@@ -13,6 +13,7 @@ import {
 import { productHref, parseProductSlugParam } from "../../../_components/product-url";
 import { vendorHref } from "../../../_components/vendor-url";
 import { VendorVerifiedBadge } from "../../../_components/microsite/vendor-verified-badge";
+import { Container } from "@/frontend/components/container";
 
 // P-PUB-11 Product Detail (FE-PUB-05 · ADR-025 + Doc-4D v1.0.3 / Doc-5D v1.0.1, folded 2026-07-03,
 // RV-0130). The real standalone anonymous product page — the prior interim never had one ("there is
@@ -83,7 +84,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const breadcrumb = detail.primaryCategoryPath;
 
   return (
-    <div className="mx-auto flex w-full max-w-[var(--iv-content-max)] flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <Container className="flex flex-col gap-6 py-8">
       <nav
         aria-label="Breadcrumb"
         className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground"
@@ -187,6 +188,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           description="Datasheets, drawings, and standards documents appear here when the supplier publishes them."
         />
       </section>
-    </div>
+    </Container>
   );
 }

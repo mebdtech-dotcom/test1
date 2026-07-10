@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Card } from "@/frontend/primitives/card";
 import { Button } from "@/frontend/primitives/button";
+import { Container } from "@/frontend/components/container";
 
 // Public About route (`/about`) — P-PUB-02 (Doc-7D Public surface · T-STATIC · TB-NONE;
 // screen_specifications §P-PUB-02, journey J-GST-01). A pure SERVER COMPONENT mounted in the Doc-7C
@@ -90,7 +91,7 @@ export default function AboutPage() {
 
       {/* What we do. */}
       <section className="bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-14 sm:px-6 lg:px-8">
+        <Container className="py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
               What iVendorz is
@@ -111,12 +112,12 @@ export default function AboutPage() {
               </Card>
             ))}
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* How we're different. */}
       <section className="border-t border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-14 sm:px-6 lg:px-8">
+        <Container className="py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
               What we stand on
@@ -137,12 +138,12 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Closing CTA. */}
       <section className="border-t border-border bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 text-center sm:px-6 lg:px-8">
+        <Container className="py-16 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
             Built for Bangladeshi industry
           </h2>
@@ -159,7 +160,7 @@ export default function AboutPage() {
               <Link href="/marketplace">Explore the marketplace</Link>
             </Button>
           </div>
-        </div>
+        </Container>
       </section>
     </>
   );

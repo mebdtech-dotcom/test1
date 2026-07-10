@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ClipboardList, Route, FileSpreadsheet, FileCheck, Truck } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
+import { Container } from "@/frontend/components/container";
 
 // Public "How it works" route (`/how-it-works`) — P-PUB-03 (Doc-7D Public surface · T-STATIC · TB-NONE;
 // screen_specifications §P-PUB-02..06, journey J-GST-01; realizes landing_page_spec SEC-PROCESS §8). A
@@ -66,7 +67,7 @@ export default function HowItWorksPage() {
 
       {/* Governed flow — ordered-list stepper. */}
       <section className="bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 sm:px-6 lg:px-8">
+        <Container className="py-16">
           <ol className="grid grid-cols-1 gap-8 md:grid-cols-5 md:gap-4">
             {STEPS.map(({ icon: Icon, title, body }, i) => (
               <li
@@ -90,12 +91,12 @@ export default function HowItWorksPage() {
             a better position, and iVendorz never ranks vendors or recommends a winner. The award is
             always your explicit decision.
           </p>
-        </div>
+        </Container>
       </section>
 
       {/* Closing CTA. */}
       <section className="border-t border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 text-center sm:px-6 lg:px-8">
+        <Container className="py-16 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
             Start your first RFQ
           </h2>
@@ -112,7 +113,7 @@ export default function HowItWorksPage() {
               <Link href="/marketplace">Explore the marketplace</Link>
             </Button>
           </div>
-        </div>
+        </Container>
       </section>
     </>
   );

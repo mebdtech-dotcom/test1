@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
+import { Container } from "@/frontend/components/container";
 import { CommandCenter } from "./command-center";
 
 // Landing Hero — SEC-HERO (landing_page_spec.md §3 · Doc-7D Public surface). PURE SERVER COMPONENT:
@@ -26,7 +27,7 @@ export function Hero() {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-[var(--iv-content-max)] px-4 pt-20 sm:px-6 sm:pt-24">
+      <Container className="relative pt-20 sm:pt-24">
         <div className="mx-auto max-w-3xl text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-iv-ink-heading sm:text-5xl">
             The Industrial Procurement HUB for Bangladesh
@@ -50,7 +51,7 @@ export function Hero() {
         <div className="mt-12 pb-16 sm:mt-14 sm:pb-20">
           <CommandCenter />
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

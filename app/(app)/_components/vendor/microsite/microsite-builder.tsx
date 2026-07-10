@@ -9,11 +9,9 @@ import { EmptyState } from "@/frontend/components/empty-state";
 import { FormField } from "@/frontend/components/form-field";
 import { PresentationContextBanner } from "./presentation-context-banner";
 import { MicrositeStatusChip, VisibilityChip } from "./status-chips";
-import { PresentationFormNote } from "../shared";
+import { PresentationFormNote, VENDOR_SELECT_CLASS } from "../shared";
 import type { LayoutTemplate, MicrositeSectionView, MicrositeView } from "./types";
 
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 const LAYOUTS: LayoutTemplate[] = ["A", "B", "C", "D", "E"];
 
 export interface MicrositeBuilderProps {
@@ -45,7 +43,7 @@ export function MicrositeBuilder({ microsite, sections }: MicrositeBuilderProps)
               id="layout-template"
               name="layout_template"
               defaultValue={microsite?.layout_template ?? ""}
-              className={SELECT_CLASS}
+              className={VENDOR_SELECT_CLASS}
             >
               <option value="">Select a template…</option>
               {LAYOUTS.map((layout) => (

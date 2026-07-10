@@ -13,14 +13,12 @@ import { FormField } from "@/frontend/components/form-field";
 import { PageHeader } from "../../../_components/shell";
 import { DashboardSection } from "../../../_components/vendor/dashboard/dashboard-section";
 import { PresentationFormNote } from "../../../_components/vendor/shared/presentation-form-note";
+import { ADMIN_SELECT_CLASS } from "../../../_components/admin/form-control-classes";
 import { IMPORT_TYPE_LABEL } from "../../../_components/admin/imports/imports-seed";
 
 export const metadata: Metadata = { title: "New import job · Admin" };
 
 const LIST = "/admin/imports";
-
-const SELECT_CLASS =
-  "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-iv-ink-strong shadow-iv-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50";
 
 // Frozen `job_type` enum (Doc-4J:247) — the only two import kinds.
 const JOB_TYPES = ["categories", "vendor_seed"] as const;
@@ -58,7 +56,7 @@ export default function NewImportJobPage() {
               <select
                 id="import-type"
                 name="job_type"
-                className={SELECT_CLASS}
+                className={ADMIN_SELECT_CLASS}
                 defaultValue="categories"
               >
                 {JOB_TYPES.map((t) => (

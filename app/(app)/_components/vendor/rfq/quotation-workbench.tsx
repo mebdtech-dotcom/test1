@@ -68,6 +68,7 @@ import { QuotationAttachments } from "./quotation-attachments";
 import { QuotationDocument, type QuotationDocumentModel } from "./quotation-document";
 import { QuotationSubmitPanel } from "./quotation-submit-panel";
 import type { FileRefView, PriceBreakdownLine, QuotaView, RfqSnapshotView } from "./types";
+import { vendorTextareaClass } from "../shared";
 
 /* ── Interim vocabularies (registered intake, see header) ─────────────────────────────────────── */
 
@@ -77,8 +78,7 @@ const SUPPORTED_CURRENCIES = ["BDT", "USD", "EUR", "GBP", "CNY"] as const;
 const NATIVE_CONTROL_CLASS =
   "h-9 rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
-const TEXTAREA_CLASS =
-  "min-h-[96px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const TEXTAREA_CLASS = vendorTextareaClass("min-h-[96px]");
 
 /** One client-local item row. `original` is the buyer's RFQ copy — always retained (ESC-QTN-AMEND). */
 interface ItemRow {

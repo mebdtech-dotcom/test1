@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Search, Inbox, Grid3x3, Store, BadgeCheck, FileText } from "lucide-react";
 import { Card } from "@/frontend/primitives/card";
 import { Button } from "@/frontend/primitives/button";
+import { Container } from "@/frontend/components/container";
 
 // Public "For Vendors" segment route (`/for-vendors`) — P-PUB-06 (Doc-7D Public surface · T-STATIC ·
 // TB-NONE; screen_specifications §P-PUB-02..06, journey J-GST-01). A pure SERVER COMPONENT mounted in the
@@ -90,7 +91,7 @@ export default function ForVendorsPage() {
 
       {/* Value props. */}
       <section className="bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-14 sm:px-6 lg:px-8">
+        <Container className="py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
               Built for suppliers
@@ -110,12 +111,12 @@ export default function ForVendorsPage() {
               </Card>
             ))}
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Closing CTA. */}
       <section className="border-t border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 text-center sm:px-6 lg:px-8">
+        <Container className="py-16 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
             Ready to be found?
           </h2>
@@ -132,7 +133,7 @@ export default function ForVendorsPage() {
               <Link href="/how-it-works">See how it works</Link>
             </Button>
           </div>
-        </div>
+        </Container>
       </section>
     </>
   );

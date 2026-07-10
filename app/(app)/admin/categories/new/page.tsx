@@ -15,16 +15,12 @@ import { FormField } from "@/frontend/components/form-field";
 import { PageHeader } from "../../../_components/shell";
 import { DashboardSection } from "../../../_components/vendor/dashboard/dashboard-section";
 import { PresentationFormNote } from "../../../_components/vendor/shared/presentation-form-note";
+import { ADMIN_SELECT_CLASS } from "../../../_components/admin/form-control-classes";
 import { CATEGORIES } from "../../../_components/admin/categories/categories-seed";
 
 export const metadata: Metadata = { title: "New category · Admin" };
 
 const LIST = "/admin/categories";
-
-// Native <select> styled to match the kit Input (there is no kit Select primitive; the buyer's is
-// surface-scoped, so an Admin page must not import it — this keeps the surfaces decoupled).
-const SELECT_CLASS =
-  "flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-iv-ink-strong shadow-iv-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50";
 
 // A retired node cannot parent a new category — offer only live (draft/active) nodes as parents.
 const PARENT_OPTIONS = CATEGORIES.filter((c) => c.status !== "retired");
@@ -81,7 +77,7 @@ export default function NewCategoryPage() {
               <select
                 id="category-parent"
                 name="parent_id"
-                className={SELECT_CLASS}
+                className={ADMIN_SELECT_CLASS}
                 defaultValue=""
               >
                 <option value="">None (root category)</option>
@@ -99,7 +95,12 @@ export default function NewCategoryPage() {
               required
               description="Depth in the taxonomy tree (1 = root … 4 = deepest)."
             >
-              <select id="category-level" name="level" className={SELECT_CLASS} defaultValue="1">
+              <select
+                id="category-level"
+                name="level"
+                className={ADMIN_SELECT_CLASS}
+                defaultValue="1"
+              >
                 {[1, 2, 3, 4].map((n) => (
                   <option key={n} value={n}>
                     {n}

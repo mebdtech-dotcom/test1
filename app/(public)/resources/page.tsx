@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookOpen, ArrowRight } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
 import { EmptyState } from "@/frontend/components/empty-state";
+import { Container } from "@/frontend/components/container";
 
 // Public Resources route (`/resources`) — P-PUB-23 (Doc-7D Public surface · T-STATIC · TB-NONE;
 // screen_specifications §P-PUB-23). A pure SERVER COMPONENT mounted in the Doc-7C `(public)` shell,
@@ -39,7 +40,7 @@ export default function ResourcesPage() {
 
       {/* Coming soon. */}
       <section className="bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 sm:px-6 lg:px-8">
+        <Container className="py-16">
           <EmptyState
             icon={<BookOpen aria-hidden="true" />}
             title="Resources are coming soon"
@@ -57,7 +58,7 @@ export default function ResourcesPage() {
               </div>
             }
           />
-        </div>
+        </Container>
       </section>
     </>
   );

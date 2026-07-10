@@ -7,6 +7,7 @@
 import { useEffect } from "react";
 import { Button } from "@/frontend/primitives/button";
 import { ErrorState } from "@/frontend/components/error-state";
+import { Container } from "@/frontend/components/container";
 
 export default function PublicError({
   error,
@@ -20,7 +21,7 @@ export default function PublicError({
   }, [error]);
 
   return (
-    <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 sm:px-6 lg:px-8">
+    <Container className="py-16">
       <ErrorState
         errorClass="INTERNAL"
         message="An unexpected error occurred while loading this page."
@@ -31,6 +32,6 @@ export default function PublicError({
           </Button>
         }
       />
-    </div>
+    </Container>
   );
 }

@@ -9,15 +9,12 @@ import { Button } from "@/frontend/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/card";
 import { FormField } from "@/frontend/components/form-field";
 import { MatchingContextBanner } from "./matching-context-banner";
-import { PresentationFormNote } from "../shared";
+import { PresentationFormNote, VENDOR_SELECT_CLASS } from "../shared";
 import { TierChip } from "./tier-chip";
 import { TierHistoryList } from "./tier-history-list";
 import type { FinancialTier, TierHistoryEntry, VendorProfileView } from "./types";
 
 const TIERS: FinancialTier[] = ["A", "B", "C", "D", "E"];
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export interface FinancialTierPanelProps {
   profile?: VendorProfileView;
@@ -66,7 +63,7 @@ export function FinancialTierPanel({
                 id="declared-tier"
                 name="tier"
                 defaultValue={profile?.declared_tier ?? ""}
-                className={SELECT_CLASS}
+                className={VENDOR_SELECT_CLASS}
               >
                 <option value="">Select tier…</option>
                 {TIERS.map((tier) => (

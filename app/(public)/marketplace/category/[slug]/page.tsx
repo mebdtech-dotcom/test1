@@ -18,6 +18,7 @@ import {
 } from "../../../_components/discovery/seed";
 import { productHref } from "../../../_components/product-url";
 import { vendorHref } from "../../../_components/vendor-url";
+import { Container } from "@/frontend/components/container";
 import { CategorySidebarTree } from "./category-sidebar-tree";
 
 // P-PUB-08 Category page (Doc-7D Public surface · FE-PUB-04; FE-PUB-09 **Category Landing
@@ -109,7 +110,7 @@ export default async function CategoryPage({
   const rootSlug = trail[0]?.slug;
 
   return (
-    <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-8 sm:px-6 lg:px-8">
+    <Container className="py-8">
       <header className="mb-6">
         <p className="text-sm text-muted-foreground">
           <Link href="/marketplace" className="rounded-sm hover:text-foreground hover:underline">
@@ -221,6 +222,6 @@ export default async function CategoryPage({
           ) : null}
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

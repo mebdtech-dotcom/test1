@@ -14,6 +14,7 @@ import { productHref } from "../_components/product-url";
 import { vendorHref } from "../_components/vendor-url";
 import { Skeleton } from "@/frontend/primitives/skeleton";
 import { Button } from "@/frontend/primitives/button";
+import { Container } from "@/frontend/components/container";
 import { cn } from "@/frontend/lib/cn";
 
 // P-PUB-10 Search Experience (Doc-7D Public surface · landing_page_spec §2 · M2.3). PRESENTATION &
@@ -202,7 +203,7 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-8 sm:px-6 lg:px-8">
+    <Container className="py-8">
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-iv-ink-heading sm:text-4xl">
           {q ? (
@@ -273,6 +274,6 @@ export default async function SearchPage({
           </section>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

@@ -10,3 +10,4 @@ export {
   type DescriptionListProps,
   type DescriptionItem,
 } from "./description-list";
+export { VENDOR_SELECT_CLASS, vendorTextareaClass } from "./form-control-classes";

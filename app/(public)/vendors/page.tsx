@@ -4,6 +4,7 @@ import { VendorCard } from "@/frontend/components/vendor-card";
 import { ResultsGrid } from "@/frontend/components/results-grid";
 import { PaginationControl } from "@/frontend/components/pagination-control";
 import { SearchBar } from "@/frontend/components/search-bar";
+import { Container } from "@/frontend/components/container";
 import { VENDORS, VENDOR_FACETS } from "../_components/discovery/seed";
 import { vendorHref } from "../_components/vendor-url";
 
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function VendorsPage() {
   return (
-    <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-8 sm:px-6 lg:px-8">
+    <Container className="py-8">
       <header className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight text-iv-ink-heading sm:text-4xl">
           Vendor directory
@@ -63,6 +64,6 @@ export default function VendorsPage() {
           </ResultsGrid>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }

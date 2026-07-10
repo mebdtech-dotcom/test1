@@ -8,12 +8,9 @@ import { Input } from "@/frontend/primitives/input";
 import { FormField } from "@/frontend/components/form-field";
 import { CapabilityMatrix } from "@/frontend/components/capability-matrix";
 import { MatchingContextBanner } from "./matching-context-banner";
-import { PresentationFormNote } from "../shared";
+import { PresentationFormNote, VENDOR_SELECT_CLASS } from "../shared";
 import { VerifiedMarker } from "./verified-marker";
 import type { CapacityProfileView, VendorProfileView } from "./types";
-
-const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export interface CapabilitiesCapacityFormProps {
   profile?: VendorProfileView;
@@ -36,7 +33,7 @@ export function CapabilitiesCapacityForm({ profile, capacity }: CapabilitiesCapa
           id="vendor-type-preset"
           name="vendor_type_preset"
           defaultValue={profile?.vendor_type_preset ?? ""}
-          className={SELECT_CLASS}
+          className={VENDOR_SELECT_CLASS}
         >
           <option value="">Select a type…</option>
           <option value="manufacturer">Manufacturer</option>

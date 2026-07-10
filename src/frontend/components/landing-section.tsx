@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "../primitives/button";
+import { Container } from "./container";
 
 export interface LandingSectionProps {
   /** Section element id (also seeds the heading id) — e.g. "sec-suppliers". */
@@ -47,7 +48,7 @@ export function LandingSection({
 
   return (
     <section id={id} aria-labelledby={headingId} className="border-b border-border py-12 sm:py-16">
-      <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 sm:px-6">
+      <Container>
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <div className="max-w-2xl">
             <h2 id={headingId} className="text-2xl font-bold tracking-tight text-iv-ink-heading">
@@ -60,7 +61,7 @@ export function LandingSection({
           {headerAction}
         </div>
         {children}
-      </div>
+      </Container>
     </section>
   );
 }

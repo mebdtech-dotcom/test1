@@ -11,6 +11,7 @@ import type { CategoryNodeData } from "@/frontend/navigation";
 import { FEATURED_CATEGORIES } from "../_components/discovery/seed";
 import { SupplierShowcase } from "../_components/landing/supplier-showcase";
 import { PopularProducts } from "../_components/landing/popular-products";
+import { Container } from "@/frontend/components/container";
 import { CategoriesExplorer } from "./categories-explorer";
 
 // P-PUB-07 Categories index (Doc-7D Public surface · landing_page_spec §4; FE-PUB-02 delta;
@@ -72,7 +73,7 @@ export default function CategoriesPage() {
   return (
     <>
       <section className="border-b border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-10 sm:px-6 lg:px-8 sm:py-12">
+        <Container className="py-10 sm:py-12">
           <h1 className="text-3xl font-bold tracking-tight text-iv-ink-heading sm:text-4xl">
             Browse by category
           </h1>
@@ -82,7 +83,7 @@ export default function CategoriesPage() {
           <div className="mt-5 max-w-2xl">
             <SearchBar action="/search" />
           </div>
-        </div>
+        </Container>
       </section>
 
       <LandingSection

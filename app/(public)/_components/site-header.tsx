@@ -22,6 +22,7 @@ import { ChevronDown, FilePlus2, Menu } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
 import { BrandLogo } from "@/frontend/brand";
 import { SearchBar } from "@/frontend/components/search-bar";
+import { Container } from "@/frontend/components/container";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -74,8 +75,9 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-[var(--iv-z-sticky)] border-b border-border bg-background">
-      {/* Row 1 — logo · catalog search · auth entry */}
-      <div className="mx-auto flex h-16 w-full max-w-[var(--iv-page-max)] items-center gap-4 px-4 sm:px-6">
+      {/* Row 1 — logo · catalog search · auth entry. Shares the page-content Container so the
+          chrome aligns to the same grid as body content (one max-width across header/body/footer). */}
+      <Container className="flex h-16 items-center gap-4">
         <Link
           href="/"
           className="inline-flex shrink-0 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -182,11 +184,11 @@ export function SiteHeader() {
             </SheetContent>
           </Sheet>
         </div>
-      </div>
+      </Container>
 
       {/* Row 2 — Categories · Suppliers · More · Sell on iVendorz · Help Center · Request for Quotation */}
       <div className="hidden border-t border-border md:block">
-        <div className="mx-auto flex h-11 w-full max-w-[var(--iv-page-max)] items-center gap-1 px-4 sm:px-6">
+        <Container className="flex h-11 items-center gap-1">
           <Explorer />
           <nav className="flex items-center gap-1" aria-label="Primary">
             <Button asChild variant="ghost" size="sm" className="hover:text-iv-ink-heading">
@@ -230,7 +232,7 @@ export function SiteHeader() {
               </Link>
             </Button>
           </div>
-        </div>
+        </Container>
       </div>
     </header>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SearchBar } from "@/frontend/components/search-bar";
+import { Container } from "@/frontend/components/container";
 import { FeaturedCategories } from "../_components/landing/featured-categories";
 import { SupplierShowcase } from "../_components/landing/supplier-showcase";
 import { PopularProducts } from "../_components/landing/popular-products";
@@ -18,7 +19,7 @@ export default function MarketplacePage() {
   return (
     <>
       <section className="border-b border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-10 sm:px-6 lg:px-8 sm:py-12">
+        <Container className="py-10 sm:py-12">
           <h1 className="text-3xl font-bold tracking-tight text-iv-ink-heading sm:text-4xl">
             Marketplace
           </h1>
@@ -28,7 +29,7 @@ export default function MarketplacePage() {
           <div className="mt-5 max-w-2xl">
             <SearchBar action="/search" />
           </div>
-        </div>
+        </Container>
       </section>
 
       <FeaturedCategories />

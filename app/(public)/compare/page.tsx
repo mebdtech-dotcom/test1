@@ -5,6 +5,7 @@ import { EmptyState } from "@/frontend/components/empty-state";
 import { VendorVerifiedBadge } from "../_components/microsite/vendor-verified-badge";
 import { VENDORS } from "../_components/discovery/seed";
 import { vendorHref } from "../_components/vendor-url";
+import { Container } from "@/frontend/components/container";
 import { cn } from "@/frontend/lib/cn";
 
 // Public Compare route (`/compare`) — P-PUB-20 (Doc-7D Public surface · T-DETAILS; screen_specifications
@@ -85,7 +86,7 @@ export default async function ComparePage({
     <>
       {/* Intro. */}
       <section className="border-b border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-12 sm:px-6 lg:px-8 sm:py-14">
+        <Container className="py-12 sm:py-14">
           <h1 className="text-3xl font-extrabold tracking-tight text-iv-ink-heading sm:text-4xl">
             Compare vendors
           </h1>
@@ -93,11 +94,11 @@ export default async function ComparePage({
             Put suppliers side by side to weigh them yourself. This is a neutral discovery aid —
             iVendorz doesn’t rank vendors, recommend a winner, or score them here.
           </p>
-        </div>
+        </Container>
       </section>
 
       <section className="bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-10 sm:px-6 lg:px-8">
+        <Container className="py-10">
           {selected.length === 0 ? (
             <EmptyState
               title="Add items to compare"
@@ -235,7 +236,7 @@ export default async function ComparePage({
               winner — awarding happens inside a governed RFQ, on your explicit decision.
             </p>
           </div>
-        </div>
+        </Container>
       </section>
     </>
   );

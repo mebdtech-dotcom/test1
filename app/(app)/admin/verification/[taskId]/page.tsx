@@ -18,6 +18,7 @@ import { PageHeader } from "../../../_components/shell";
 import { DashboardSection } from "../../../_components/vendor/dashboard/dashboard-section";
 import { DescriptionList } from "../../../_components/vendor/shared/description-list";
 import { PresentationFormNote } from "../../../_components/vendor/shared/presentation-form-note";
+import { ADMIN_REASON_CLASS } from "../../../_components/admin/form-control-classes";
 import {
   getVerificationTask,
   getVerificationDetail,
@@ -37,9 +38,6 @@ const DECISIONS: VerificationDecision[] = [
   "request_info",
   "reject",
 ];
-
-const REASON_CLASS =
-  "flex min-h-[5rem] w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-iv-ink-strong shadow-iv-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50";
 
 export async function generateMetadata({
   params,
@@ -149,7 +147,7 @@ export default async function VerificationDetailPage({
                 <textarea
                   id="verification-reason"
                   name="reason"
-                  className={REASON_CLASS}
+                  className={ADMIN_REASON_CLASS}
                   placeholder="Record the basis for this decision…"
                   disabled
                 />

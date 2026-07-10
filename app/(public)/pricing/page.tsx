@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";
 import { PricingPlans } from "./pricing-plans";
+import { Container } from "@/frontend/components/container";
 
 // Public pricing route (`/pricing`) — P-PUB-04 (Doc-7D Public surface · T-STATIC · TB-NONE;
 // screen_specifications §P-PUB-04, journey J-GST-01). A SERVER COMPONENT mounted in the Doc-7C
@@ -23,7 +24,7 @@ export default function PricingPage() {
     <>
       {/* Marketing header. */}
       <section className="border-b border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 text-center sm:px-6 lg:px-8 sm:py-20">
+        <Container className="py-16 text-center sm:py-20">
           <h1 className="text-4xl font-extrabold tracking-tight text-iv-ink-heading sm:text-5xl">
             Simple, transparent pricing
           </h1>
@@ -31,24 +32,24 @@ export default function PricingPage() {
             Pick the plan that fits your procurement team. Every plan runs the full RFQ-to-award
             workflow — plans only set your platform features and quotas.
           </p>
-        </div>
+        </Container>
       </section>
 
       {/* Plans. */}
       <section className="bg-muted/30">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-14 sm:px-6 lg:px-8">
+        <Container className="py-14">
           <PricingPlans />
 
           <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
             Plans set your platform features and quotas. They never affect RFQ matching, routing, or
             awards — sourcing is governed the same way on every plan.
           </p>
-        </div>
+        </Container>
       </section>
 
       {/* Closing CTA → sign-up. */}
       <section className="border-t border-border bg-background">
-        <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-16 text-center sm:px-6 lg:px-8">
+        <Container className="py-16 text-center">
           <h2 className="text-2xl font-bold tracking-tight text-iv-ink-heading sm:text-3xl">
             Ready to source with confidence?
           </h2>
@@ -65,7 +66,7 @@ export default function PricingPage() {
               <Link href="/marketplace">Explore the marketplace</Link>
             </Button>
           </div>
-        </div>
+        </Container>
       </section>
     </>
   );

@@ -11,6 +11,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@/frontend/primitives/button";
+import { Container } from "@/frontend/components/container";
 import { VendorBreadcrumb } from "./vendor-breadcrumb";
 import { VendorMicrositeHeader } from "./vendor-microsite-header";
 import { VendorMicrositeNavigation } from "./vendor-microsite-navigation";
@@ -27,7 +28,7 @@ export interface VendorMicrositeLayoutProps {
 
 export function VendorMicrositeLayout({ profile, authHref, children }: VendorMicrositeLayoutProps) {
   return (
-    <div className="mx-auto w-full max-w-[var(--iv-content-max)] px-4 py-8 pb-24 sm:px-6 lg:px-8 sm:pb-8">
+    <Container className="py-8 pb-24 sm:pb-8">
       <VendorBreadcrumb name={profile.name} />
       <div className="mt-4">
         <VendorMicrositeHeader profile={profile} authHref={authHref} />
@@ -42,6 +43,6 @@ export function VendorMicrositeLayout({ profile, authHref, children }: VendorMic
           <Link href={authHref}>Request quote</Link>
         </Button>
       </div>
-    </div>
+    </Container>
   );
 }

@@ -3,6 +3,7 @@
 // DEFERRED app components (demand-driven — build when a surface first needs one):
 //   data-table (cursor-paginated; arrives with the `table` primitive).
 
+export * from "./container";
 export * from "./empty-state";
 export * from "./error-state";
 export * from "./not-found";

@@ -8,11 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/primitives/
 import { FileLink } from "@/frontend/components/file-link";
 import { FormField } from "@/frontend/components/form-field";
 import { MatchingContextBanner } from "../company/matching-context-banner";
-import { PresentationFormNote } from "../shared";
+import { PresentationFormNote, vendorTextareaClass } from "../shared";
 import type { ProductView } from "./types";
 
-const TEXTAREA_CLASS =
-  "min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const TEXTAREA_CLASS = vendorTextareaClass("min-h-[100px]");
 
 export interface ProductContentFormProps {
   product?: ProductView;

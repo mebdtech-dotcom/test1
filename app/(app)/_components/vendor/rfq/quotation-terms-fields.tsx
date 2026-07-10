@@ -7,10 +7,9 @@
 // added as its own field. Uncontrolled; native textarea interim ([ESC-7B-TEXTAREA]); disabled in the
 // presentation phase. RSC-friendly.
 import { FormField } from "@/frontend/components/form-field";
-import { PresentationFormNote } from "../shared";
+import { PresentationFormNote, vendorTextareaClass } from "../shared";
 
-const TEXTAREA_CLASS =
-  "min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60";
+const TEXTAREA_CLASS = vendorTextareaClass("min-h-[120px]", { disabled: true });
 
 export type QuotationTermSection = "delivery" | "warranty" | "compliance";
 

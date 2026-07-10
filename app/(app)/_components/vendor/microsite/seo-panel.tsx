@@ -10,11 +10,10 @@ import { FileLink } from "@/frontend/components/file-link";
 import { FormField } from "@/frontend/components/form-field";
 import { PresentationContextBanner } from "./presentation-context-banner";
 import { VisibilityChip } from "./status-chips";
-import { PresentationFormNote } from "../shared";
+import { PresentationFormNote, vendorTextareaClass } from "../shared";
 import type { SeoSettingsView } from "./types";
 
-const TEXTAREA_CLASS =
-  "min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+const TEXTAREA_CLASS = vendorTextareaClass("min-h-[80px]");
 
 export interface SeoPanelProps {
   seo?: SeoSettingsView;
