@@ -1144,9 +1144,11 @@ export {
 // context contracts on their frozen routes: the active-org SWITCHER (a side-effect-free CONTEXT SELECTOR
 // — no state, no audit, no event, no §B.6 store; idempotent BY NATURE, Doc-4C §C8 PassB:537–539) + two
 // SELF reads (`get_active_context`, `list_my_organizations`), UNAUDITED (§17.1). The switch's §C8 BUSINESS
-// precondition "org not suspended" (PassB:535; RV-0150 OBS-B1) and the downstream CONTEXT resolution
-// (`src/server/context/resolveActiveOrg`, Doc-5C §3.6 position 2 — UPSTREAM of §C3 AUTHZ) bind the SAME
-// domain predicate `organizationParticipatesInAccessFormula` (already re-exported on the contracts face).
+// precondition "org not suspended" (PassB:535; RV-0150 OBS-B1) is the SOLE live enforcement point of
+// org-not-suspended — the switch reads the live org row via `organizationParticipatesInAccessFormula`. The
+// general context resolution (`src/server/context/resolveActiveOrg`) is MEMBERSHIP-ONLY (Doc-5C §3.3) and
+// does NOT gate org_status (a blanket gate would break §C5 soft_delete over a §5.1 suspended source —
+// `[ESC-IDN-CTX-SUSPENDED-DOWNSTREAM]`).
 // Zero §8 events ([DC-1]).
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1167,7 +1169,8 @@ export const switchActiveOrganization: SwitchActiveOrganization = (input, ctx, d
 /** `identity.get_active_context.v1` (Doc-4C §C8; Doc-5C §6.1 row 30 — `GET /identity/active_context`
  *  · `200`). Projects the caller's OWN active context (org id + membership {state, role_id} +
  *  effective_permission_summary from `check_permission` resolution). Invoke inside `withActiveOrg`
- *  (the org-status-aware resolution); `found: false` ⇒ the `404` no-context collapse. Unaudited. */
+ *  (MEMBERSHIP-ONLY resolution, Doc-5C §3.3 — org_status NOT gated); `found: false` ⇒ the `404`
+ *  no-context collapse. Unaudited. */
 export type GetActiveContext = (
   ctx: { userId: string; activeOrgId: string },
   db?: DbExecutor,
@@ -1186,9 +1189,10 @@ export const listMyOrganizations: ListMyOrganizations = (input, ctx, db) =>
   listMyOrganizationsQuery(input, ctx, db);
 
 // (The org-half participation predicate `organizationParticipatesInAccessFormula` — Doc-4C §C8 "org not
-// suspended"; Doc-2 §5.1 — is ALREADY re-exported on the contracts face above; the app-edge CONTEXT
-// resolution seam `src/server/context/resolveActiveOrg` binds the SAME rule the switch enforces, RV-0150
-// OBS-B1: one predicate, two live enforcement points.)
+// suspended"; Doc-2 §5.1 — is ALREADY re-exported on the contracts face above. Its SOLE live enforcement
+// point is the `switch` BUSINESS check; the app-edge `resolveActiveOrg` seam is MEMBERSHIP-ONLY (Doc-5C
+// §3.3) and does NOT bind it — a blanket downstream gate would break §C5 soft_delete over a §5.1 suspended
+// source; `[ESC-IDN-CTX-SUSPENDED-DOWNSTREAM]`.)
 
 // The M1 WIRE FACES for the §C8 context surface (outcome → Doc-5A envelope + §6.2 status) — the One-Owner
 // placement (M1 owns how its reads/command become HTTP); consumed by the app-layer edge (contracts-only).

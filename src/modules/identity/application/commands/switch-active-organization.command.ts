@@ -16,11 +16,14 @@
 // THE §C8 BUSINESS PRECONDITION (RV-0150 OBS-B1). The switch's Validation Matrix (PassB:535):
 //   SYNTAX (uuid) → CONTEXT (authenticated user) → AUTHZ (caller holds ACTIVE membership in target, §6.1)
 //   → SCOPE (membership active; NOT_FOUND collapse if not a member) → BUSINESS (org not suspended).
-// The org-half is enforced HERE via the SAME domain predicate the downstream context resolution binds
-// (`organizationParticipatesInAccessFormula`, `src/server/context/resolveActiveOrg`) — one policy, two live
-// enforcement points (not a per-command shadow). Only an `active` org may become active context; a
-// `suspended` org rejects (BUSINESS `state_invalid`); a soft-deleted org (its cascade tombstones the
-// memberships) collapses to the same NOT_FOUND as a non-member (non-disclosure).
+// The org-half is enforced HERE — the switch (§C8 BUSINESS) is the SOLE live enforcement point of
+// org-not-suspended. It reads the live org row and applies the domain predicate
+// `organizationParticipatesInAccessFormula` (the frozen §C8 BUSINESS check over live state, not a shadow).
+// The GENERAL context resolution (`src/server/context/resolveActiveOrg`) is MEMBERSHIP-ONLY (Doc-5C §3.3)
+// and DELIBERATELY does NOT gate org_status — a blanket downstream gate would break §C5
+// `soft_delete_organization` over a §5.1 `active|suspended → soft_deleted` source (`[ESC-IDN-CTX-SUSPENDED-DOWNSTREAM]`).
+// Only an `active` org may become active context; a `suspended` org rejects (BUSINESS `state_invalid`); a
+// soft-deleted org (its cascade tombstones the memberships) collapses to NOT_FOUND (non-disclosure).
 
 import { prisma, type DbExecutor } from "../../../../shared/db";
 import { findActiveMembership } from "../../infrastructure/data/authz.repository";

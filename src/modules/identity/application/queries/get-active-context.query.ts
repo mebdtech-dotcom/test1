@@ -4,9 +4,10 @@
 // (§17.1); no events; reads NO governance signal (firewall default).
 //
 // The `ctx` is the SERVER-VALIDATED active context (`src/server/context` `resolveActiveOrg` — from a
-// confirmed ACTIVE membership in an ACTIVE org; RV-0150 OBS-B1: a suspended org never resolves, so this
-// query is NEVER reached for one — the `404` no-active-context collapse is surfaced upstream). The client
-// never supplies the org (Invariant #5).
+// confirmed ACTIVE membership; Doc-5C §3.3 makes the general predicate MEMBERSHIP-ONLY, so a suspended org
+// CAN be the resolved context here — this is REQUIRED for §C5 `soft_delete_organization` over a §5.1
+// suspended source; org-not-suspended is the `switch` BUSINESS check, not this read). The client never
+// supplies the org (Invariant #5). Residual: `[ESC-IDN-CTX-SUSPENDED-DOWNSTREAM]` (Board completeness).
 
 import { prisma, type DbExecutor } from "../../../../shared/db";
 import {

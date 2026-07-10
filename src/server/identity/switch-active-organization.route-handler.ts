@@ -12,8 +12,9 @@
 //
 // Composition: session → 401 · SYNTAX (mandatory Idempotency-Key; `organization_id` uuid) → 400 · provision
 // · resolveSelfUser (the principal — never a client actor) · switch command (reads only) · wire map. The
-// switch's own BUSINESS check ("org not suspended") binds the SAME `organizationParticipatesInAccessFormula`
-// predicate the downstream `resolveActiveOrg` gate enforces (RV-0150 OBS-B1 — one policy, two live points).
+// switch's BUSINESS check ("org not suspended", §C8) is the SOLE live enforcement point of org-not-suspended
+// (`organizationParticipatesInAccessFormula` over the live org row); `resolveActiveOrg` is membership-only
+// (Doc-5C §3.3) and does NOT gate org_status — the open `[ESC-IDN-CTX-SUSPENDED-DOWNSTREAM]` (RV-0150 OBS-B1).
 
 import { ensureProvisioned, type AuthSession } from "@/server/auth";
 import { resolveSelfUser } from "@/server/context";

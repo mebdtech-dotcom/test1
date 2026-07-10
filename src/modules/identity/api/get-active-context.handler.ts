@@ -1,9 +1,10 @@
 // M1 api (PRIVATE) — the HTTP wire mapping for `identity.get_active_context.v1`
 // (Doc-4C §C8 → `GET /identity/active_context` → `200`; Doc-5C §6.1 row 30). Pure (no I/O).
 //
-// Non-disclosure: a resolved-but-absent context and the fail-closed `null` (no active context — incl. the
-// RV-0150 OBS-B1 suspended-org case, which never resolves) map to ONE `404` (`identity_context_not_found`,
-// §C8 PassB:549). The projection is the caller's OWN context only (PassB:550 "never another user's").
+// Non-disclosure: a resolved-but-absent context and the fail-closed `null` (no active MEMBERSHIP context —
+// Doc-5C §3.3 membership-only; NOT an org_status check, so a suspended org can still resolve — the `switch`
+// gates org-not-suspended) map to ONE `404` (`identity_context_not_found`, §C8 PassB:549). The projection
+// is the caller's OWN context only (PassB:550 "never another user's").
 
 import { errorResponse, successResponse, type WireResponse } from "@/shared/http";
 import type { ActiveContextView, GetActiveContextResult } from "@/modules/identity/contracts";
