@@ -104,3 +104,21 @@ export {
   BUNDLE_WRITE_INVALID_INPUT,
   BUNDLE_WRITE_FORBIDDEN,
 } from "../application/commands/_catalog-write";
+
+// ── BC-BILL-2 SUBSCRIPTIONS (W3-BILL-4) — purchase (org-scoped write) + get_subscription (org-self read). ──
+
+export {
+  purchaseSubscriptionCommand as purchaseSubscription,
+  validatePurchaseSubscriptionInput,
+} from "../application/commands/purchase-subscription.command";
+export type {
+  PurchaseSubscriptionContext,
+  PurchaseSubscriptionDeps,
+} from "../application/commands/purchase-subscription.command";
+export { getSubscription } from "../application/queries/get-subscription.query";
+export {
+  mapPurchaseSubscription,
+  mapGetSubscription,
+  SUBSCRIPTION_INVALID_INPUT,
+  SUBSCRIPTION_FORBIDDEN,
+} from "../api/subscription.handler";

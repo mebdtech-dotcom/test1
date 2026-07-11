@@ -114,6 +114,12 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   await prisma.$executeRawUnsafe(
     `GRANT SELECT, INSERT, UPDATE ON billing.plans, billing.entitlements, billing.plan_entitlements TO ${RESTRICTED_RLS_ROLE}`,
   );
+  // W3-BILL-4 — BC-BILL-2 subscriptions: SELECT proves the `subscriptions_tenant` RLS scopes reads to the
+  // org (tenant isolation). The `core.write_outbox_event` SECURITY DEFINER function needs only PUBLIC
+  // EXECUTE (default) + core USAGE (granted above) — a tenant role invokes it without an outbox_events grant.
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT ON billing.subscriptions, billing.subscription_events TO ${RESTRICTED_RLS_ROLE}`,
+  );
 }
 
 /**

@@ -496,6 +496,7 @@ model Plan {
   deleteReason String?      @map("delete_reason")
 
   planEntitlements PlanEntitlement[]
+  subscriptions    Subscription[]
 
   @@map("plans")
   @@schema("billing")
@@ -548,8 +549,69 @@ enum BillingCycle {
 enum EntitlementType {
   boolean
   numeric
-  enum_    @map("enum")
+  enum_   @map("enum")
 
   @@map("entitlement_type")
+  @@schema("billing")
+}
+
+// §3.2 — billing.subscriptions (Doc-6I §3.2.1 / Doc-2 §10.8 + §5.7) — org-tenant; one active per org
+// (partial-unique WHERE state='active'; raw-SQL in the migration). W3-BILL-4.
+model Subscription {
+  id             String            @id @db.Uuid
+  organizationId String            @map("organization_id") @db.Uuid
+  planId         String            @map("plan_id") @db.Uuid
+  state          SubscriptionState @default(pending_payment)
+  periodStart    DateTime?         @map("period_start") @db.Timestamptz
+  periodEnd      DateTime?         @map("period_end") @db.Timestamptz
+  autoRenew      Boolean           @default(true) @map("auto_renew")
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy      String?           @map("created_by") @db.Uuid
+  updatedBy      String?           @map("updated_by") @db.Uuid
+  deletedAt      DateTime?         @map("deleted_at") @db.Timestamptz
+  deletedBy      String?           @map("deleted_by") @db.Uuid
+  deleteReason   String?           @map("delete_reason")
+
+  plan   Plan                @relation(fields: [planId], references: [id], map: "subscriptions_plan_fk")
+  events SubscriptionEvent[]
+
+  @@map("subscriptions")
+  @@schema("billing")
+}
+
+// §3.2.2 — billing.subscription_events (Doc-6I §3.2.2 / Doc-2 §10.8) — append-only (immutability trigger
+// in the migration); NO soft-delete, NO updated_at.
+model SubscriptionEvent {
+  id             String                @id @db.Uuid
+  subscriptionId String                @map("subscription_id") @db.Uuid
+  eventType      SubscriptionEventType @map("event_type")
+  occurredAt     DateTime              @default(now()) @map("occurred_at") @db.Timestamptz
+  payloadJsonb   Json?                 @map("payload_jsonb") @db.JsonB
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  createdBy      String?               @map("created_by") @db.Uuid
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], map: "subscription_events_subscription_fk")
+
+  @@map("subscription_events")
+  @@schema("billing")
+}
+
+enum SubscriptionState {
+  pending_payment
+  active
+  expired
+
+  @@map("subscription_state")
+  @@schema("billing")
+}
+
+enum SubscriptionEventType {
+  purchase
+  renew
+  expire
+  cancel
+
+  @@map("subscription_event_type")
   @@schema("billing")
 }

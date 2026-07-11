@@ -10,16 +10,19 @@ import {
   createEntitlement,
   createPlan,
   getPlan,
+  getSubscription,
   listPlans,
+  purchaseSubscription,
   retirePlan,
   updateEntitlement,
   updatePlan,
 } from "./contracts/services";
 
-/** The M7 read surface realized so far (both authenticated Platform-Public catalog reads). */
+/** The M7 read surface realized so far (Platform-Public catalog reads + the org-self subscription read). */
 export const billingQueries = {
   getPlan,
   listPlans,
+  getSubscription,
 };
 
 /** The M7 write surface realized so far (W3-BILL-2 plan lifecycle + W3-BILL-3 entitlement/bundle — the
@@ -32,4 +35,5 @@ export const billingCommands = {
   createEntitlement,
   updateEntitlement,
   bundlePlanEntitlement,
+  purchaseSubscription,
 };

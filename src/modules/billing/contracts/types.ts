@@ -271,3 +271,46 @@ export interface BundlePlanEntitlementResult {
 
 export type BundlePlanEntitlementOutcome =
   { ok: true; result: BundlePlanEntitlementResult } | { ok: false; error: PlanWriteError };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BC-BILL-2 SUBSCRIPTIONS (W3-BILL-4) — `purchase_subscription` (Doc-4I §HB-2.1) + `get_subscription`
+// (Doc-4I §HB-2.5) per Doc-5I §5. ORG-SCOPED (Users Act, Orgs Own): the actor is a User with
+// `can_manage_billing` (Owner), the write runs in the server-validated active-org context (never a
+// client org id — Invariant #5). `purchase` emits `SubscriptionPurchased` (Doc-2 §8, at creation) via
+// the M0 outbox. The failure shape reuses `PlanWriteError` (STATE = one-active-per-org; REFERENCE = plan
+// not active).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Subscription lifecycle status (Doc-2 §5.7 — the stored `subscriptions.state`). */
+export type SubscriptionStatus = "pending_payment" | "active" | "expired";
+
+/** `purchase_subscription` input (Doc-4I §HB-2.1 — `plan_id`; optional `auto_renew` default true). */
+export interface PurchaseSubscriptionInput {
+  planId: string;
+  autoRenew?: boolean;
+}
+
+/** `purchase_subscription` success (Doc-4I §HB-2.1 / Doc-5I §5 — `{ subscription_id, status, plan_id }`;
+ *  `status` is `pending_payment` at creation). */
+export interface PurchaseSubscriptionResult {
+  subscriptionId: string;
+  status: SubscriptionStatus;
+  planId: string;
+}
+
+export type PurchaseSubscriptionOutcome =
+  { ok: true; result: PurchaseSubscriptionResult } | { ok: false; error: PlanWriteError };
+
+/** The org's subscription head (Doc-4I §HB-2.5 output). `period_*` are ISO-8601 strings (nullable). */
+export interface SubscriptionView {
+  subscriptionId: string;
+  planId: string;
+  status: SubscriptionStatus;
+  periodStart: string | null;
+  periodEnd: string | null;
+  autoRenew: boolean;
+}
+
+/** `get_subscription` result — the org's current subscription, or none (Doc-4I §HB-2.5). */
+export type GetSubscriptionResult =
+  { found: true; subscription: SubscriptionView } | { found: false };

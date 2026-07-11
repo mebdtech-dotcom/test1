@@ -56,3 +56,17 @@ export const PlanEntitlementAuditAction = {
   /** A plan↔entitlement bundle upserted (§HB-1.2). */
   BUNDLED: "plan_entitlement_bundled",
 } as const;
+
+// ── W3-BILL-4 — BC-BILL-2 subscription audit (Doc-4I §HB-2.1 §9). UNLIKE the catalog writes, subscription
+//    purchase IS ENUMERATED in Doc-2 §9 Financial ("subscription purchase/renewal/cancel") — so these
+//    bind BY POINTER to that enumerated family, NO [ESC-BILL-AUDIT]. Attribution is USER (caller-driven,
+//    §HB-2.1) — org-scoped, `organization_id` = the Controlling Org (not null, unlike the catalog writes). ──
+
+/** The audit `entity_type` for a `billing.subscriptions` mutation (Doc-4I §HB-2.1 §9 `entity_type=subscriptions`). */
+export const SUBSCRIPTION_ENTITY_TYPE = "subscriptions" as const;
+
+/** Subscription audit actions — bound BY POINTER to the ENUMERATED Doc-2 §9 Financial "subscription purchase". */
+export const SubscriptionAuditAction = {
+  /** §9 Financial "subscription purchase" — a subscription created at `pending_payment` (§HB-2.1). */
+  PURCHASED: "subscription_purchased",
+} as const;

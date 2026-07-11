@@ -16,6 +16,7 @@ import {
   dispatchOutboxEvents as dispatchOutboxEventsImpl,
   drainOutbox as drainOutboxImpl,
   featureFlagEvaluate as featureFlagEvaluateImpl,
+  writeOutboxEvent as writeOutboxEventImpl,
 } from "../infrastructure";
 import type {
   AllocateHumanReferenceInput,
@@ -32,6 +33,8 @@ import type {
   OutboxArchiveResult,
   OutboxDispatchInput,
   OutboxDispatchResult,
+  WriteOutboxEventInput,
+  WriteOutboxEventResult,
 } from "./types";
 
 /**
@@ -42,6 +45,9 @@ import type {
  */
 export interface CoreServiceExecutor {
   $queryRawUnsafe<T = unknown>(query: string, ...values: unknown[]): Promise<T>;
+  /** For a value-less primitive (e.g. the `RETURNS void` `core.write_outbox_event` function) — runs the
+   *  statement without deserializing a result set. Both the shared client and a tx client satisfy it. */
+  $executeRawUnsafe(query: string, ...values: unknown[]): Promise<number>;
 }
 
 /**
@@ -65,6 +71,18 @@ export type AppendAuditRecord = (
   input: AppendAuditRecordInput,
   executor?: CoreServiceExecutor,
 ) => Promise<AppendAuditRecordResult>;
+
+/**
+ * `core.write_outbox_event.v1` (Doc-4B §16).
+ * Writes exactly one `pending` row to `core.outbox_events` inside the caller's transaction (atomic with
+ * the business write — §16.2). The SECURITY DEFINER function bypasses the direct-table platform-staff
+ * RLS so a tenant-context emitter can write it. Structural insert only — the OWNING module owns
+ * `eventName` validity (§16.4/§16.6), thin-payload (§16.5), and Privacy-Review (§16.3).
+ */
+export type WriteOutboxEvent = (
+  input: WriteOutboxEventInput,
+  executor?: CoreServiceExecutor,
+) => Promise<WriteOutboxEventResult>;
 
 /**
  * `core` transactional-outbox drainer (Doc-8B §7.2; Doc-6B §3.2). Drains `core.outbox_events`
@@ -120,6 +138,7 @@ export type FeatureFlagEvaluate = (
 export interface CoreServices {
   allocateHumanReference: AllocateHumanReference;
   appendAuditRecord: AppendAuditRecord;
+  writeOutboxEvent: WriteOutboxEvent;
   drainOutbox: DrainOutbox;
   dispatchOutboxEvents: DispatchOutboxEvents;
   archiveDispatchedEvents: ArchiveDispatchedEvents;
@@ -154,6 +173,15 @@ export const allocateHumanReference: AllocateHumanReference = allocateHumanRefer
  * (the `audit_id` is app-minted); coins nothing.
  */
 export const appendAuditRecord: AppendAuditRecord = appendAuditRecordImpl;
+
+/**
+ * Concrete `core.write_outbox_event.v1` (Doc-4B §16), bound to the M0 infrastructure adapter (the
+ * SECURITY DEFINER `core.write_outbox_event` function — the `allocate_human_ref` precedent). Writes one
+ * `pending` outbox row atomic with the caller's business write (§16.2); consumed cross-module via
+ * `@/modules/core/contracts` (contracts-only; the contracts→infrastructure binding is same-module-legal).
+ * Coins nothing: `event_name` must exist in Doc-2 §8 and is the owning module's responsibility (§16.4/§16.6).
+ */
+export const writeOutboxEvent: WriteOutboxEvent = writeOutboxEventImpl;
 
 /**
  * Concrete `core` outbox drainer (Doc-8B §7.2 / Doc-6B §3.2), bound to the M0 infrastructure adapter.
