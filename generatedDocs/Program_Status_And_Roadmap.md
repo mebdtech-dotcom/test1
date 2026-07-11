@@ -12,18 +12,21 @@
 > Baseline records: `Wave{0,1,2}_Baseline_Report_v1.0.md`; governance records:
 > `governanceReviews/Wave-{0,1,2}_Integration_Audit_and_Exit_Gate_v1.0.md`. The gated build sequence is
 > `Build_Roadmap_v1.0.md` — **Wave 3 (Independent Domains, M2/M5/M6/M7 parallel) is IN PROGRESS.**
-> **`W3-MKT-1` (M2 pilot slice — `marketplace.resolve_vendor_slug.v1` + `get_public_vendor_profile.v1`,
-> wiring `app/(public)/vendors/[slug]/` off its mock) built + reviewed 2026-07-11, committed to
-> branch `wave/3-marketplace` (Review-A + Review-B + Team-6 all ran; 412/412 suite green;
-> `BLOCKER=MAJOR=MINOR=0` in the merged path once the two owner-ruled carried ESCs below are
-> excluded). **Not merged to `main`** (owner ruling: Wave 3 isn't complete — M5/M6/M7 haven't
-> started; the wave branch merges to `main` at Wave 3's full exit gate, mirroring Wave 2, not
-> per-WP).** Resolved `[ESC-MKT-SLUG-RESOLVE]` via `Doc-4D_VendorSlugResolve_Patch_v1.0.4` +
-> `Doc-5D_VendorSlugResolve_Patch_v1.0.2` (folded 2026-07-11); carried non-blocking from the security
-> pass: `[ESC-MKT-HUMANREF-ENUM]` (sequential `human_ref` enumeration, program-wide, pre-existing) +
-> `[ESC-MKT-RATELIMIT-ENFORCE]` (zero enforced rate limiting, program-wide, pre-existing since
-> `get_public_product_detail.v1`) — both `esc_registry.md`. Detail:
-> `docs/backend/backend_build_plan.md` §5 `W3-MKT-1`. M5/M6/M7 not started.
+> **M2 slices built + reviewed 2026-07-11, committed to branch `wave/3-marketplace` (each ran
+> Review-A + Review-B + Team-6; `BLOCKER=MAJOR=MINOR=0` in the merged path once the owner-ruled
+> carried ESCs are excluded; 430/430 suite green). NOT merged to `main`** (owner ruling: Wave 3
+> isn't complete — M5/M6/M7 haven't started; the wave branch merges to `main` at Wave 3's full exit
+> gate, mirroring Wave 2, not per-WP):
+> — **`W3-MKT-1`** (`resolve_vendor_slug.v1` + `get_public_vendor_profile.v1`, wiring
+> `app/(public)/vendors/[slug]/` off its mock); resolved `[ESC-MKT-SLUG-RESOLVE]` via
+> `Doc-4D_VendorSlugResolve_Patch_v1.0.4` + `Doc-5D_VendorSlugResolve_Patch_v1.0.2`.
+> — **`W3-MKT-2`** (`list_vendor_directory.v1`, wiring the Vendor Directory + Search "Vendors" tab
+> off their mock); resolved `[ESC-MKT-VENDORDIR-PROJECTION]` + `[ESC-MKT-VENDORDIR-SLUGFIELD]` via
+> `Doc-5D_VendorDirectoryProjection_Patch_v1.0.3` + `Doc-5D_VendorDirectorySlugField_Patch_v1.0.4`.
+> Carried non-blocking from the security passes: `[ESC-MKT-HUMANREF-ENUM]` (sequential `human_ref`
+> enumeration, program-wide) + `[ESC-MKT-RATELIMIT-ENFORCE]` (zero enforced rate limiting,
+> program-wide, pre-existing since `get_public_product_detail.v1`) — both `esc_registry.md`. Detail:
+> `docs/backend/backend_build_plan.md` §5 `W3-MKT-1`/`W3-MKT-2`. M5/M6/M7 not started.
 > (Owner-deferred external: Supabase PRODUCTION migrations — the deploy pipeline runs `next build` +
 > `prisma generate` only; `prisma migrate deploy` against prod Supabase is a separate owner step.)
 
@@ -168,7 +171,7 @@ Next:
    - **Wave 0 — Repository Bootstrap: DELIVERED 2026-06-27** (baseline tag `wave0-complete`, merge `b1c70fd`; Exit Gate GREEN 5/5 — skeleton compiles · 10 schemas migrate clean · harness runs · CI merge-gate active · all WP tags). Records: `Wave0_Baseline_Report_v1.0.md` · `governanceReviews/Wave-0_Integration_Audit_and_Exit_Gate_v1.0.md`. Open external/admin items: GitHub remote + branch-protection/required-checks; Supabase project + secrets (Wave 1).
    - **Wave 1 — Foundation (Walking Skeleton, `Build_Roadmap` §3): DELIVERED 2026-06-28** (baseline tag `wave1-complete`, merge `3345b00`; Integration Audit GREEN 14/14; Exit Gate GREEN on all in-wave clauses — one end-to-end slice: login → atomic lazy-provision → server-validated active-org RLS context → wired `get_buyer_profile.v1` → Doc-7E Account screen; `CHK-8-024` adversarially proven; synthetic outbox observer). Records: `Wave1_Baseline_Report_v1.0.md` · `governanceReviews/Wave-1_Integration_Audit_and_Exit_Gate_v1.0.md`. **WP-1.9 (deploy + CI-green-on-`main`) — RESOLVED at Wave-2 delivery 2026-07-11:** `origin` remote push + branch-protection/required-checks + Vercel Production deploy + CI-green-on-`main` all live (PR #2 / `2e42ed5`); only Supabase PRODUCTION migrations remain (owner-deferred). Deferred non-blocking ESCs: `ESC-W1-USER-PROVISION` · `ESC-W1-CONTEXT-RESOLVE` · `ESC-W1-AUTH-401` · `ESC-IDN-BUYERPROFILE-CODE`.
    - **Wave 2 — Core Platform (M0 → M1, full module builds; `Build_Roadmap` § Wave 2): DELIVERED to `origin/main` 2026-07-11** (PR #2, GitHub merge-commit `2e42ed5`; Integration Audit GREEN 14/14 — `governanceReviews/Wave-2_Integration_Audit_and_Exit_Gate_v1.0.md`; Exit Gate GREEN). **M0 closed** (CORE-1…4; `[D-5]` outbox audit = run/batch, RV-0161 A+T6+B; `Doc-4B_OutboxAuditToken_Patch_v1.0`). **M1 closed** (IDN-1…7; `M1-MODULE-CLOSE_v1.0`). **Branch-protection CI ALL GREEN on the remote** (Verify incl. real ubuntu `next build` · Vitest 386/33 · Playwright E2E+a11y); admin-merged (solo repo cannot self-approve the 1 required review; `enforce_admins=false`). **Vercel Production deploy live** (`2e42ed5`). CI caught 3 defects local audits structurally cannot (Windows `next build` EPERMs pre-prerender; local suite is Vitest not Playwright), all fixed pre-merge: **W2X-F1** (prettier 3.8.5 reformat), **W2X-F2** `faa75df` (shell `useSearchParams`→`<Suspense>` static-prerender fix), **W2X-F3** `70175a4` (home smoke assertion realigned to the Doc-7D landing hero). Records: `Wave2_Baseline_Report_v1.0.md`. **PARKED (owner-deferred 2026-07-11): Supabase PRODUCTION migrations** — `prisma migrate deploy` against the prod Supabase conn-string is a separate owner step (not run by `next build`/`prisma generate`).
-   - **Wave 3 — Independent Domains (M2 · M5 · M6 · M7, parallel; `Build_Roadmap` § Wave 3): IN PROGRESS (current phase).** Public/Marketplace FE (Doc-7D) is built here once each module's Doc-5 surface is wired. **`W3-MKT-1` (M2 pilot slice) built + reviewed 2026-07-11, committed to `wave/3-marketplace`** — `marketplace.resolve_vendor_slug.v1` + `get_public_vendor_profile.v1` realized (schema, repositories, queries, wire handlers, `app/api/marketplace/*` routes), `app/(public)/vendors/[slug]/` rewired off its mock, 26 integration tests green (412/412 suite-wide, no regressions). Review-A + Review-B + Team-6 complete; `BLOCKER=MAJOR=MINOR=0` in the merged path (two program-wide security findings carried non-blocking as `[ESC-MKT-HUMANREF-ENUM]`/`[ESC-MKT-RATELIMIT-ENFORCE]`, owner-ruled). **Not merged to `main`** — Wave 3 isn't complete (M5/M6/M7 not started); wave branch merges at full Wave-3 exit, not per-WP. Detail: `docs/backend/backend_build_plan.md` §5 `W3-MKT-1`.
+   - **Wave 3 — Independent Domains (M2 · M5 · M6 · M7, parallel; `Build_Roadmap` § Wave 3): IN PROGRESS (current phase).** Public/Marketplace FE (Doc-7D) is built here once each module's Doc-5 surface is wired. **Two M2 slices built + reviewed 2026-07-11, committed to `wave/3-marketplace`** (each: Review-A + Review-B + Team-6 complete, `BLOCKER=MAJOR=MINOR=0` in the merged path, 430/430 suite-wide, no regressions): **`W3-MKT-1`** — `resolve_vendor_slug.v1` + `get_public_vendor_profile.v1`, `app/(public)/vendors/[slug]/` rewired off its mock; **`W3-MKT-2`** — `list_vendor_directory.v1` (keyset cursor pagination + filters), the Vendor Directory + Search "Vendors" tab rewired off their mock. Two program-wide security findings carried non-blocking (`[ESC-MKT-HUMANREF-ENUM]`/`[ESC-MKT-RATELIMIT-ENFORCE]`, owner-ruled). **Not merged to `main`** — Wave 3 isn't complete (M5/M6/M7 not started); wave branch merges at full Wave-3 exit, not per-WP. Detail: `docs/backend/backend_build_plan.md` §5 `W3-MKT-1`/`W3-MKT-2`.
 
 *(Corpus tidy DONE: `Doc-5K_SERIES_FROZEN_v1.0` manifest added for peer-parity; `Doc-3 …v1.8_AI` registers the `ai.*` keys and clears `[ESC-AI-POLICY]`. All 10 modules now have a `SERIES_FROZEN` (or `Content_v1.0_FROZEN`) manifest + a cleared POLICY gate.)*
 

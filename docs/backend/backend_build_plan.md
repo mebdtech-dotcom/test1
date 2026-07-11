@@ -250,6 +250,59 @@ above; `[ESC-MKT-SUBDOMAIN-MIGRATE]` (the M8-mediated slug-migration write, stil
 M2-specific, Board disposition needed); `[ESC-MKT-RATELIMIT-ENFORCE]` (zero enforced rate limiting
 on any Marketplace public read — program-wide, pre-existing since `get_public_product_detail.v1`).
 
+#### `W3-MKT-2` — Public vendor directory: `list_vendor_directory.v1`
+- **Objective:** realize the frozen paginated public vendor-directory read (Doc-4D BC-MKT-6 row
+  63) and wire the two FE surfaces that rendered it from mock — the Vendor Directory
+  (`app/(public)/vendors/page.tsx`) and the Search "Vendors" tab (`app/(public)/search/page.tsx`).
+- **Frozen authority:** Doc-4D PassB Discovery (the `list_vendor_directory` contract) · Doc-5A §8
+  (cursor pagination — cursor-only, filter/sort grammar, `page_info`, §8.7 exclusion-consistency) ·
+  `Doc-3_Policy_Key_Registration_Patch_v1.2_Marketplace` (`marketplace.list_page_size_max`, start
+  100) · **`Doc-5D_VendorDirectoryProjection_Patch_v1.0.3` (PATCH-5D-VLD-01)** + **`Doc-5D_VendorDirectorySlugField_Patch_v1.0.4` (PATCH-5D-VDS-01)** — field-level realization
+  (list-item shape, filter typing, pagination) + the additive `slug` output field; folded
+  2026-07-11, resolve `[ESC-MKT-VENDORDIR-PROJECTION]` / `[ESC-MKT-VENDORDIR-SLUGFIELD]`.
+- **Inputs:** the `W3-MKT-1` schema (`vendor_profiles` + `category_assignments`) and the shared
+  `vendor-visibility.policy.ts` — reused, not rebuilt.
+- **Outputs:** `vendor-directory.repository.ts` (keyset `(name,id)`, fetch-N+1-trim,
+  filter/pagination) + shared `vendor-profile-projection.ts` (extracted base select/mapper, reused
+  by the `W3-MKT-1` profile repo too); `list-vendor-directory.query.ts` (opaque cursor codec,
+  page_size bound); facade/handler/route-handler + `GET /marketplace/vendor_directory`;
+  `cursor-pagination-nav.tsx` (URL cursor-breadcrumb backward nav) + the two rewired FE pages; a
+  **second additive index migration** (`20260711120000_marketplace_directory_indexes` — partial
+  `(name,id)` keyset index + composite geography index; forward-only, does not touch the first
+  slice's migration).
+- **Acceptance / Doc-8:** 8C (contract/API — list-item shape, filter typing, pagination envelope) ·
+  8D (schema + the new indexes + public/anonymous RLS) · 8E (Invariant #1 flags · Invariant #11
+  non-disclosure — an over-filtered result matching only a hidden vendor collapses to `items: []`,
+  byte-identical to a genuinely-empty match; §8.7 exclusion-consistency across page boundaries).
+- **Required tests:** `tests/integration/list-vendor-directory-slice.test.ts` (18 — pagination
+  no-gap/no-overlap incl. the same-name/out-of-order-id keyset-tiebreak case added at review, each
+  filter individually + combined, exclusion-consistency straddling banned/suspended/soft-deleted
+  rows, page_size boundary/over-max/malformed, RLS positive/negative) — green against real Postgres
+  (430/430 full suite, no regressions, 2026-07-11).
+- **Review outcome (`Wave_Template_v1.0`, 2026-07-11):** Review-A + Review-B + Team-6, three
+  independent fresh-context passes. Review-A: 0 BLOCKER · 0 MAJOR · 1 MINOR (a CORPUS_INDEX
+  parenthetical omission — fixed) · 1 NIT · 3 OBS. Review-B: 1 MAJOR (the FE "Previous" button was
+  broken for shared/bookmarked deep links — fixed with a URL cursor-breadcrumb trail) · 2 MINOR
+  (an illusory keyset test that couldn't catch the naive-AND regression — fixed with a same-name
+  fixture; repo duplication — factored into the shared projection module). Team-6: 0 BLOCKER · 0
+  MAJOR · 1 MINOR (missing `(name,id)`/geography index — fixed, owned by this slice since it
+  introduces the keyset pattern) · 1 OBS. All code-fixable findings applied; re-verified green
+  (430/430). The two prior program-wide security ESCs (`[ESC-MKT-HUMANREF-ENUM]`/
+  `[ESC-MKT-RATELIMIT-ENFORCE]`) are unchanged in kind — Team-6 noted the directory raises the
+  practical impact of the rate-limit gap (higher-yield scraping target) but does NOT worsen the
+  human_ref gap (it never exposes hidden-vendor existence or ref gaps).
+- **Done:** read-only shape-exception (no `domain/` state, no audit, no `§8` event) ·
+  tsc/eslint/prettier clean · BLOCKER=MAJOR=MINOR=0 in the merged path · zero regressions.
+- **Build owner:** `ivendorz-implementer` agent, 2026-07-11, branch `wave/3-marketplace`. Committed
+  to `wave/3-marketplace` — NOT merged to `main` (same wave-exit-gate disposition as `W3-MKT-1`).
+
+**Still deferred after `W3-MKT-2` (the split-brain is now smaller but not gone):** the vendor
+microsite's own `generateMetadata` + products/showcase sections still render from the seed (the
+directory listing and search-tab listing are now real; the per-vendor microsite content reads —
+products, projects, microsite sections — remain a later slice). `search_catalog.v1` (real
+free-text search) also remains unbuilt — the Search page's Vendors tab shows an honest "search
+isn't live yet, showing the full directory" disclosure when a `?q=` is present.
+
 ---
 
 ## 6. Per-WP execution lifecycle (Wave_Template_v1.0, binding)

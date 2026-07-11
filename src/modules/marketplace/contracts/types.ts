@@ -76,8 +76,7 @@ export interface PublicVendorProfileView {
  * indistinguishable; never leaks which). UNCHANGED by the 2026-07-11 DTO-conformance fix.
  */
 export type GetPublicVendorProfileResult =
-  | { found: true; profile: PublicVendorProfileView }
-  | { found: false };
+  { found: true; profile: PublicVendorProfileView } | { found: false };
 
 /**
  * The application-level outcome of the `get_public_vendor_profile` query: the frozen found/not-found
@@ -89,8 +88,7 @@ export type GetPublicVendorProfileResult =
  * branch (the wire `result` shape is byte-identical to the frozen contract on every success).
  */
 export type GetPublicVendorProfileOutcome =
-  | GetPublicVendorProfileResult
-  | { found: false; invalidInput: true };
+  GetPublicVendorProfileResult | { found: false; invalidInput: true };
 
 /**
  * Lookup key for `get_public_vendor_profile` — EXACTLY ONE of `vendorProfileId` (UUIDv7) or `humanRef`
@@ -101,6 +99,94 @@ export interface GetPublicVendorProfileKey {
   vendorProfileId?: string;
   humanRef?: string;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// `marketplace.list_vendor_directory.v1` (Doc-4D_Content_v1.0_PassB_Discovery.md §D6 BC-MKT-6, row
+// "list_vendor_directory"; field-level realization
+// Doc-5D_VendorDirectoryProjection_Patch_v1.0.3 / PATCH-5D-VLD-01). Paginated public directory read —
+// anonymous, no org/tenant context. Pagination per the already-fully-specified `Doc-5A_Content_v1.0_Pass5.md`
+// §8 (cursor-only, opaque, POLICY-bound `page_size`, `page_info: { next_cursor, has_more }`, §8.7
+// exclusion-consistency). Sort is server-fixed to `name` ascending with an `id` tiebreaker for a total
+// order (PATCH-5D-VLD-01 §3) — this contract accepts NO client `sort` parameter (no `field:dir` sort
+// grammar is exposed).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The 4-flag capability names (Invariant #1), wire-cased — the ONLY legal `filters.capability` values. */
+export type CapabilityFilterFlag = "can_supply" | "can_service" | "can_fabricate" | "can_consult";
+
+/**
+ * `list_vendor_directory`'s `filters` object (Doc-5D PATCH-5D-VLD-01 §2 — typed identically to the
+ * `search_catalog` sibling on the same Doc-4D line). Each field independently optional; an undeclared
+ * filter field is a `marketplace_discovery_invalid_input` VALIDATION error (reused, not coined).
+ * `vendor_type_preset` is carried, not realized here (Doc-5D §2 — not coined by this patch).
+ */
+export interface ListVendorDirectoryFilters {
+  categoryId?: string;
+  country?: string;
+  division?: string;
+  district?: string;
+  industrialZone?: string;
+  /** ONE capability flag name per filter call (Doc-5D §2) — a vendor matches iff that single flag is `true`. */
+  capability?: CapabilityFilterFlag;
+}
+
+/** Request shape for `list_vendor_directory` (Doc-4D §D6 line 21; Doc-5A §8 cursor/page_size grammar). */
+export interface ListVendorDirectoryRequest {
+  filters?: ListVendorDirectoryFilters;
+  cursor?: string;
+  pageSize?: number;
+}
+
+/**
+ * A single `marketplace.list_vendor_directory.v1` list item (Doc-5D PATCH-5D-VLD-01 §1 + the
+ * PATCH-5D-VDS-01 amendment below). Reuses `PublicVendorProfileView` VERBATIM for every pinned
+ * business field (`vendorProfileId`, `humanRef`, `name`, `capabilityFlags`, `geography`,
+ * `categories`) — "same DTO, no duplication," per the patch's explicit instruction.
+ * `PublicVendorProfileView` itself is UNCHANGED (`get_public_vendor_profile.v1`'s own wire shape is
+ * untouched).
+ *
+ * `slug` (Doc-5D_VendorDirectorySlugField_Patch_v1.0.4 / PATCH-5D-VDS-01, owner-ruled 2026-07-11,
+ * resolves `[ESC-MKT-VENDORDIR-SLUGFIELD]`): one additive OUTPUT field beyond
+ * PATCH-5D-VLD-01 §1's original 6-field table. Unlike `get_public_vendor_profile.v1` — where the
+ * caller already supplies the slug as the incoming URL segment (see
+ * `app/(public)/vendors/[slug]/get-vendor.ts`'s `toVendorProfileVM`, "`slug` is carried through from
+ * the CALLER … the frozen projection itself carries no slug field") — a LIST has no per-row
+ * caller-known slug, and no other contract supplies one in reverse: `resolve_vendor_slug.v1` resolves
+ * slug→id only, and its scope guard (PATCH-4D-VSR-01) governs slug as an **input** — it does not
+ * restrict slug as a response field on another contract. Without it the Vendor Directory
+ * (`app/(public)/vendors/page.tsx`) and Search "Vendors" tab (`app/(public)/search/page.tsx`) cards
+ * could not construct a working `vendorHref()` target (ADR-024 Decision 6 —
+ * `app/(public)/_components/vendor-url.ts` is the one permitted vendor-URL builder). Not a
+ * non-disclosure concern (§7.5 covers claim/ban/blacklist/financial facts; a listed vendor's slug is,
+ * by construction, already its own live public URL segment). `get_public_vendor_profile.v1`'s own
+ * DTO and `resolve_vendor_slug.v1`'s scope guard are both unchanged by this amendment.
+ */
+export interface VendorDirectoryListItem extends PublicVendorProfileView {
+  slug: string;
+}
+
+/** Doc-5A §8.6 page_info (camelCase wire realization — Doc-5A v1.0.1 Option B; `total_count` omitted
+ *  per Doc-5D PATCH-5D-VLD-01 §3, optional per §8.6). */
+export interface ListVendorDirectoryPageInfo {
+  nextCursor?: string;
+  hasMore: boolean;
+}
+
+/** Result of `list_vendor_directory` — the Doc-5A §8.6 list shape (items + page_info). */
+export interface ListVendorDirectoryResult {
+  items: VendorDirectoryListItem[];
+  pageInfo: ListVendorDirectoryPageInfo;
+}
+
+/**
+ * The application-level outcome: the frozen list result PLUS the pre-SCOPE SYNTAX validation-failure
+ * leg (an undeclared filter field, a malformed `category_id`/`capability`/`cursor`, or an out-of-bound
+ * `page_size` — Doc-5A §8.3/§8.4/§8.5; Doc-4D §D6 Validation Matrix: SYNTAX before SCOPE). The wire
+ * mapper (`api/list-vendor-directory.handler.ts`) turns `invalidInput` into the
+ * `marketplace_discovery_invalid_input` VALIDATION error; the success leg is byte-identical to
+ * `ListVendorDirectoryResult` on the wire.
+ */
+export type ListVendorDirectoryOutcome = ListVendorDirectoryResult | { invalidInput: true };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // `marketplace.resolve_vendor_slug.v1` (Doc-4D_VendorSlugResolve_Patch_v1.0.4 / PATCH-4D-VSR-01;

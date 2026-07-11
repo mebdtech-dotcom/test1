@@ -491,6 +491,13 @@ model VendorProfile {
   slugHistory         VendorSlugHistory[]
 
   @@unique([humanRef], map: "vendor_profiles_human_ref_uq")
+  // Directory read (`marketplace.list_vendor_directory.v1`) indexes — W3-MKT-2
+  // (20260711120000_marketplace_directory_indexes). The geography-drill-down composite below IS
+  // Prisma-expressible and declared here. The (name, id) keyset-sort index is PARTIAL
+  // (WHERE visibility='public' AND deleted_at IS NULL) and therefore NOT Prisma-expressible — it lives
+  // in that migration's raw SQL only, the same split used for vendor_profiles_public_idx / the partial
+  // uniques (a partial index is invisible to Prisma's schema diff, so no drift).
+  @@index([country, division, district, industrialZone], map: "vendor_profiles_directory_geo_idx")
   @@map("vendor_profiles")
   @@schema("marketplace")
 }

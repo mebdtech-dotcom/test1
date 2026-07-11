@@ -13,9 +13,12 @@
 import type { DbExecutor } from "@/shared/db";
 import { resolveVendorSlug as resolveVendorSlugQuery } from "../application/queries/resolve-vendor-slug.query";
 import { getPublicVendorProfile as getPublicVendorProfileQuery } from "../application/queries/get-public-vendor-profile.query";
+import { listVendorDirectory as listVendorDirectoryQuery } from "../application/queries/list-vendor-directory.query";
 import type {
   GetPublicVendorProfileKey,
   GetPublicVendorProfileOutcome,
+  ListVendorDirectoryOutcome,
+  ListVendorDirectoryRequest,
   ResolveVendorSlugKey,
   ResolveVendorSlugOutcome,
 } from "./types";
@@ -47,8 +50,23 @@ export type GetPublicVendorProfile = (
 export const getPublicVendorProfile: GetPublicVendorProfile = (key, db) =>
   getPublicVendorProfileQuery(key, db);
 
-// The M2 WIRE FACES for both reads (outcome → Doc-5A envelope + §6.2 status) — the One-Owner
+/**
+ * `marketplace.list_vendor_directory.v1` (Doc-4D_Content_v1.0_PassB_Discovery.md §D6 line 21 /
+ * Doc-5D_VendorDirectoryProjection_Patch_v1.0.3) — the PUBLIC, contracts-only face over the private M2
+ * paginated directory read. Anonymous (public actor) — no active-org context.
+ */
+export type ListVendorDirectory = (
+  request: ListVendorDirectoryRequest,
+  db?: DbExecutor,
+) => Promise<ListVendorDirectoryOutcome>;
+
+/** Concrete `marketplace.list_vendor_directory.v1` facade (M2 contracts → M2 application query). */
+export const listVendorDirectory: ListVendorDirectory = (request, db) =>
+  listVendorDirectoryQuery(request, db);
+
+// The M2 WIRE FACES for all three reads (outcome → Doc-5A envelope + §6.2 status) — the One-Owner
 // placement (M2 owns how its reads become HTTP); the app-layer composition edge (`src/server/marketplace`)
 // consumes them via `@/modules/marketplace/contracts` (contracts-only).
 export { mapResolveVendorSlug } from "../api/resolve-vendor-slug.handler";
 export { mapGetPublicVendorProfile } from "../api/get-public-vendor-profile.handler";
+export { mapListVendorDirectory } from "../api/list-vendor-directory.handler";

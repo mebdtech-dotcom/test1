@@ -5,3 +5,8 @@
 export { handleResolveVendorSlug } from "./resolve-vendor-slug.route-handler";
 export { handleGetPublicVendorProfile } from "./get-public-vendor-profile.route-handler";
 export { resolvePublicVendor, type ResolvePublicVendorOutcome } from "./resolve-public-vendor";
+export {
+  handleListVendorDirectory,
+  type ListVendorDirectoryWireInput,
+} from "./list-vendor-directory.route-handler";
+export { listPublicVendorDirectory } from "./list-public-vendor-directory";
