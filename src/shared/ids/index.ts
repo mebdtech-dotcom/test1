@@ -37,3 +37,7 @@ export function uuidv7(): string {
     `${hex.slice(16, 20)}-${hex.slice(20, 32)}`
   );
 }
+
+/** Canonical UUID syntax matcher (any version) — the platform-wide SYNTAX gate for a machine id on an
+ *  API surface (Doc-4A §9). Format only (a well-formed UUID string); never a UUIDv7-version assertion. */
+export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

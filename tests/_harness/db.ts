@@ -102,6 +102,13 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   await prisma.$executeRawUnsafe(
     `GRANT SELECT, INSERT ON core.audit_records, core.audit_records_default TO ${RESTRICTED_RLS_ROLE}`,
   );
+  // W3-BILL-1 — the M7 plan-catalog public-projection RLS conformance gate (`plans` public-read leg
+  // `deleted_at IS NULL` — retired/soft-deleted hidden from non-staff; fully-public `entitlements` /
+  // `plan_entitlements` catalog). SELECT-only: this pilot slice is read-only (no write-path RLS to prove).
+  await prisma.$executeRawUnsafe(`GRANT USAGE ON SCHEMA billing TO ${RESTRICTED_RLS_ROLE}`);
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT ON billing.plans, billing.entitlements, billing.plan_entitlements TO ${RESTRICTED_RLS_ROLE}`,
+  );
 }
 
 /**
