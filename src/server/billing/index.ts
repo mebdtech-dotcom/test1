@@ -8,3 +8,12 @@ export {
   type ListPlansWireInput,
   type ListPlansHandlerDeps,
 } from "./list-plans.route-handler";
+
+// BC-BILL-1 Admin plan-catalog writes (W3-BILL-2) — staff-gated audited POST compositions.
+export {
+  handleCreatePlan,
+  handleActivatePlan,
+  handleUpdatePlan,
+  handleRetirePlan,
+  type CatalogWriteHandlerDeps,
+} from "./plan-catalog-write.route-handler";

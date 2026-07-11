@@ -134,3 +134,80 @@ export interface ListPlansResult {
  * success leg is byte-identical to `ListPlansResult`.
  */
 export type ListPlansOutcome = ListPlansResult | { invalidInput: true };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BC-BILL-1 Admin PLAN-CATALOG WRITES (W3-BILL-2) — `create_plan` / `activate_plan` / `update_plan` /
+// `retire_plan` (Doc-4I §HB-1.1 + §HB-1.1a ActivatePlan patch / Doc-5I §4). Platform-staff (Admin, §5.6)
+// audited writes — no org/tenant scope, no §8 event. Authority = `[ESC-BILL-SLUG]` (platform-staff basis;
+// no slug coined). Audit = `[ESC-BILL-AUDIT]` (Admin-attributed; §9 Platform "service-role sensitive
+// operations" by pointer). Concurrency = `expected_status` (Doc-4A §14 — the derived-status assertion,
+// Model B), NOT an `updated_at` ETag.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The Doc-4A §12 error classes a BC-BILL-1 catalog write can raise (module-outcome shape). */
+export type PlanWriteErrorClass =
+  "VALIDATION" | "AUTHORIZATION" | "STATE" | "CONFLICT" | "REFERENCE" | "DEPENDENCY" | "SYSTEM";
+
+/** A BC-BILL-1 catalog-write failure (the in-process outcome; the handler maps it to the §6.2 status). */
+export interface PlanWriteError {
+  errorClass: PlanWriteErrorClass;
+  errorCode: string;
+  message: string;
+}
+
+/** `create_plan` input (Doc-4I §HB-1.1 create — verbatim; `is_active` is NOT accepted: create always
+ *  mints a `draft`, i.e. `is_active=false`, under Model B). */
+export interface CreatePlanInput {
+  name: string;
+  billingCycle: BillingCycle;
+  /** Doc-2 §10.8 `numeric` money — accepted as a decimal string (precision-safe). */
+  price: string;
+  currency: string;
+}
+
+/** `create_plan` success (Doc-4I §HB-1.1 minimal output; `status` is always `draft`). */
+export interface CreatePlanResult {
+  planId: string;
+  status: PlanStatus;
+}
+
+export type CreatePlanOutcome =
+  { ok: true; result: CreatePlanResult } | { ok: false; error: PlanWriteError };
+
+/** The shared minimal lifecycle output (Doc-5I §4 — `{ plan_id, status }`). */
+export interface PlanLifecycleResult {
+  planId: string;
+  status: PlanStatus;
+}
+
+/** `activate_plan` input (Doc-4I §HB-1.1a — `expected_status` must be `draft`). */
+export interface ActivatePlanInput {
+  planId: string;
+  expectedStatus: "draft";
+}
+
+export type ActivatePlanOutcome =
+  { ok: true; result: PlanLifecycleResult } | { ok: false; error: PlanWriteError };
+
+/** `update_plan` input (Doc-4I §HB-1.1 — marketing-config mutation; NOT `is_active`, NOT a status edge).
+ *  `expected_status` ∈ {`draft`,`active`} (a `retired` plan is terminal — rejected `STATE`). */
+export interface UpdatePlanInput {
+  planId: string;
+  expectedStatus: "draft" | "active";
+  name?: string;
+  billingCycle?: BillingCycle;
+  price?: string;
+  currency?: string;
+}
+
+export type UpdatePlanOutcome =
+  { ok: true; result: PlanLifecycleResult } | { ok: false; error: PlanWriteError };
+
+/** `retire_plan` input (Doc-4I §HB-1.1 — `active|draft → retired`; `expected_status` ∈ {`draft`,`active`}). */
+export interface RetirePlanInput {
+  planId: string;
+  expectedStatus: "draft" | "active";
+}
+
+export type RetirePlanOutcome =
+  { ok: true; result: PlanLifecycleResult } | { ok: false; error: PlanWriteError };

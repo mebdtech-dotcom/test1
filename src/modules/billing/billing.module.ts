@@ -4,10 +4,25 @@
 // Plans & Entitlements schema (Doc-6I §3.1). Other modules consume `billingQueries`, never the
 // application/infrastructure layers directly.
 
-import { getPlan, listPlans } from "./contracts/services";
+import {
+  activatePlan,
+  createPlan,
+  getPlan,
+  listPlans,
+  retirePlan,
+  updatePlan,
+} from "./contracts/services";
 
 /** The M7 read surface realized so far (both authenticated Platform-Public catalog reads). */
 export const billingQueries = {
   getPlan,
   listPlans,
+};
+
+/** The M7 write surface realized so far (W3-BILL-2 — the BC-BILL-1 Admin plan-catalog lifecycle writes). */
+export const billingCommands = {
+  createPlan,
+  activatePlan,
+  updatePlan,
+  retirePlan,
 };

@@ -7,8 +7,9 @@
 // BOUNDARY (REPOSITORY_STRUCTURE §9): imports `src/server/*` only.
 
 import { NextResponse } from "next/server";
-import { resolveSupabaseSession } from "@/server/auth";
-import { handleListPlans } from "@/server/billing";
+import { ensureProvisioned, resolveSupabaseSession } from "@/server/auth";
+import { handleCreatePlan, handleListPlans } from "@/server/billing";
+import type { CreatePlanInput } from "@/modules/billing/contracts";
 
 const FILTER_PARAM = /^filter\[(.+)\]$/;
 
@@ -41,4 +42,51 @@ export async function GET(request: Request): Promise<NextResponse> {
   const headers: Record<string, string> = { "Cache-Control": "no-store" };
   if (status === 401) headers["WWW-Authenticate"] = "Bearer";
   return NextResponse.json(body, { status, headers });
+}
+
+/** Snake_case wire body for `create_plan` (Doc-4I §HB-1.1 / Doc-5I §4). */
+interface CreatePlanBody {
+  name?: unknown;
+  billing_cycle?: unknown;
+  price?: unknown;
+  currency?: unknown;
+}
+
+/** Map the wire body → the typed input. `price` is accepted as a string OR number (coerced to a decimal
+ *  string); all field-level SYNTAX is (re-)validated in the composition/command (single source). */
+function toCreatePlanInput(body: CreatePlanBody): CreatePlanInput {
+  return {
+    name: typeof body.name === "string" ? body.name : (body.name as string),
+    billingCycle: body.billing_cycle as CreatePlanInput["billingCycle"],
+    price: typeof body.price === "number" ? String(body.price) : (body.price as string),
+    currency: body.currency as string,
+  };
+}
+
+/**
+ * `POST /billing/plans` — `billing.create_plan.v1` (Doc-5I §4 → `201` + `Location`). Admin (platform-staff)
+ * audited write; the composition core owns the session→401 gate, SYNTAX, the staff gate, and the audit.
+ */
+export async function POST(request: Request): Promise<NextResponse> {
+  let body: CreatePlanBody;
+  try {
+    body = (await request.json()) as CreatePlanBody;
+  } catch {
+    body = {};
+  }
+
+  const {
+    status,
+    body: responseBody,
+    headers: wireHeaders,
+  } = await handleCreatePlan(toCreatePlanInput(body), {
+    resolveSession: resolveSupabaseSession,
+    ensureProvisioned,
+    ipAddress: request.headers.get("x-forwarded-for"),
+    userAgent: request.headers.get("user-agent"),
+  });
+
+  const headers: Record<string, string> = { "Cache-Control": "no-store", ...(wireHeaders ?? {}) };
+  if (status === 401) headers["WWW-Authenticate"] = "Bearer";
+  return NextResponse.json(responseBody, { status, headers });
 }

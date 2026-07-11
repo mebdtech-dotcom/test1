@@ -37,3 +37,39 @@ export const listPlans: ListPlans = (request, db) => listPlansQuery(request, db)
 // them via `@/modules/billing/contracts` (contracts-only).
 export { mapGetPlan } from "../api/get-plan.handler";
 export { mapListPlans } from "../api/list-plans.handler";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BC-BILL-1 Admin PLAN-CATALOG WRITES (W3-BILL-2) — the command facades + SYNTAX validators + wire faces.
+// Admin (platform-staff) audited writes; the `src/server/billing` composition supplies the server-resolved
+// `AdminCatalogContext` (from `resolveStaffContext`) + the M0 `appendAuditRecord` dep, and runs SYNTAX
+// (the exported validators) BEFORE the staff gate (Doc-4A §11.2 fixed order). Cross-module consumers reach
+// these ONLY through `@/modules/billing/contracts`.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export {
+  createPlanCommand as createPlan,
+  validateCreatePlanInput,
+} from "../application/commands/create-plan.command";
+export {
+  activatePlanCommand as activatePlan,
+  validateActivatePlanInput,
+} from "../application/commands/activate-plan.command";
+export {
+  updatePlanCommand as updatePlan,
+  validateUpdatePlanInput,
+} from "../application/commands/update-plan.command";
+export {
+  retirePlanCommand as retirePlan,
+  validateRetirePlanInput,
+} from "../application/commands/retire-plan.command";
+
+export type { AdminCatalogContext, AdminCatalogDeps } from "../application/commands/_catalog-write";
+
+export {
+  mapCreatePlan,
+  mapActivatePlan,
+  mapUpdatePlan,
+  mapRetirePlan,
+  planWriteInvalidInput,
+  planWriteForbidden,
+} from "../api/plan-catalog-write.handler";
