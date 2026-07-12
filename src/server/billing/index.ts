@@ -37,10 +37,12 @@ export {
 // BC-BILL-3 usage & quota (W3-BILL-6) — org-self usage read (enforce_quota/record_usage are out-of-wire).
 export { handleGetUsage, type UsageHandlerDeps } from "./usage.route-handler";
 
-// BC-BILL-4 lead credits (W3-BILL-7 reads pilot) — org-self balance + transaction reads.
+// BC-BILL-4 lead credits (W3-BILL-7 reads + W3-BILL-13 credit/debit writes) — org-self.
 export {
   handleGetLeadBalance,
   handleListLeadTransactions,
+  handleCreditLeadAccount,
+  handleDebitLeadAccount,
   type LeadCreditHandlerDeps,
 } from "./lead-credit.route-handler";
 

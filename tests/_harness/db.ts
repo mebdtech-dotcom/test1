@@ -133,10 +133,14 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   await prisma.$executeRawUnsafe(
     `GRANT SELECT, INSERT ON billing.usage_ledger TO ${RESTRICTED_RLS_ROLE}`,
   );
-  // W3-BILL-7 — BC-BILL-4 lead credits: SELECT proves the `lead_credit_*_tenant` RLS scopes reads to the
-  // org (account head + the parent-anchored transactions ledger). Writes (credit/debit) land next slice.
+  // W3-BILL-7/13 — BC-BILL-4 lead credits: SELECT proves the `lead_credit_*_tenant` RLS scopes reads to the
+  // org (account head + the parent-anchored transactions ledger). W3-BILL-13 adds INSERT/UPDATE on the
+  // account + INSERT on the ledger so the credit/debit write-fence is provable fail-closed.
   await prisma.$executeRawUnsafe(
-    `GRANT SELECT ON billing.lead_credit_accounts, billing.lead_credit_transactions TO ${RESTRICTED_RLS_ROLE}`,
+    `GRANT SELECT, INSERT, UPDATE ON billing.lead_credit_accounts TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT ON billing.lead_credit_transactions TO ${RESTRICTED_RLS_ROLE}`,
   );
   // W3-BILL-8 — BC-BILL-5 platform invoicing: SELECT proves `platform_invoices_tenant` (debtor-org reads)
   // and `platform_payments_read` (org reads payments VIA the parent invoice). W3-BILL-9 adds INSERT/UPDATE

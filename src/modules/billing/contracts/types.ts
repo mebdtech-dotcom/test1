@@ -837,3 +837,38 @@ export interface AdvanceReferralResult {
 
 export type AdvanceReferralOutcome =
   { ok: true; result: AdvanceReferralResult } | { ok: false; error: RewardWriteError };
+
+// ── BC-BILL-4 LEAD-CREDIT WRITES (W3-BILL-13) — credit_lead_account / debit_lead_account (§HB-4.1).
+//    Actor-branched (User leg wired, System in-process). `direction` is fixed by the contract slug.
+//    amount/balance = lead CREDITS (numbers), never money (Doc-6I §3.4 / BL-CR7). ──
+
+/** The Doc-4A §12 error classes a BC-BILL-4 write can raise (org-owned → NOT_FOUND collapse). */
+export type LeadCreditWriteErrorClass =
+  "VALIDATION" | "AUTHORIZATION" | "NOT_FOUND" | "REFERENCE" | "BUSINESS" | "DEPENDENCY" | "SYSTEM";
+
+/** A BC-BILL-4 write failure (the in-process outcome; the handler maps it to the §6.2 status). */
+export interface LeadCreditWriteError {
+  errorClass: LeadCreditWriteErrorClass;
+  errorCode: string;
+  message: string;
+}
+
+/** `credit_lead_account` / `debit_lead_account` input (Doc-4I §HB-4.1). `direction` + `organization_id` are
+ *  server-set via the ctx (the slug fixes credit vs debit). `source_invoice_id` is a credit-only link. */
+export interface LeadCreditMovementInput {
+  amount: number;
+  /** Credit-only: links the credit to a BC-BILL-5 platform invoice (Doc-4I §HB-4.1). */
+  sourceInvoiceId?: string;
+}
+
+/** Lead-credit movement success (Doc-4I §HB-4.1 — `{ transaction_id, organization_id, direction, amount, balance }`). */
+export interface LeadCreditMovementResult {
+  transactionId: string;
+  organizationId: string;
+  direction: LeadCreditDirection;
+  amount: number;
+  balance: number;
+}
+
+export type LeadCreditMovementOutcome =
+  { ok: true; result: LeadCreditMovementResult } | { ok: false; error: LeadCreditWriteError };

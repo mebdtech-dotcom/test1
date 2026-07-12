@@ -127,3 +127,16 @@ export const ReferralAuditAction = {
   /** A referral advanced (pending→qualified→rewarded) — §HB-6.2 advance. */
   ADVANCED: "referral_advanced",
 } as const;
+
+// ── W3-BILL-13 — BC-BILL-4 lead-credit writes (Doc-4I §HB-4.1 §9). Lead-credit movement is NOT separately
+//    enumerated in Doc-2 §9 → `[ESC-BILL-AUDIT]` (nearest §9 by pointer; no action invented). Attribution
+//    User (org purchase/debit) OR System (shortfall/consumption); org-scoped. ──
+
+/** The audit `entity_type` for a `billing.lead_credit_transactions` mutation (Doc-4I §HB-4.1 §9). */
+export const LEAD_CREDIT_TRANSACTION_ENTITY_TYPE = "lead_credit_transactions" as const;
+
+/** Lead-credit-movement audit action ([ESC-BILL-AUDIT] — nearest §9 by pointer). */
+export const LeadCreditAuditAction = {
+  /** A lead-credit movement (credit or debit) — §HB-4.1. */
+  MOVED: "lead_credit_movement",
+} as const;

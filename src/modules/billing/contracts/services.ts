@@ -168,6 +168,25 @@ export {
   LEAD_VIEW_FORBIDDEN,
 } from "../api/lead-credit.handler";
 
+// ── BC-BILL-4 LEAD-CREDIT WRITES (W3-BILL-13) — credit_lead_account / debit_lead_account (actor-branched;
+//    the User leg wired, the System leg in-process). One command; the composition fixes `direction`. ──
+
+export {
+  leadCreditMovementCommand as leadCreditMovement,
+  validateLeadCreditMovementInput,
+} from "../application/commands/lead-credit-movement.command";
+export type {
+  LeadCreditMovementContext,
+  LeadCreditMovementDeps,
+} from "../application/commands/lead-credit-movement.command";
+export {
+  mapLeadCreditMovement,
+  leadWriteInvalidInput,
+  leadWriteForbidden,
+  LEAD_WRITE_INVALID_INPUT,
+  LEAD_WRITE_FORBIDDEN,
+} from "../api/lead-credit.handler";
+
 // ── BC-BILL-5 PLATFORM INVOICING (W3-BILL-8 reads pilot) — get_platform_invoice + list_platform_invoices
 //    (org-self debtor reads). The issue/update writes + record_payment land in the next slice. ──
 

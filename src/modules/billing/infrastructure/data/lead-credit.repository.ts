@@ -9,6 +9,7 @@
 // account head carries the System-maintained running total.
 
 import { prisma, type DbExecutor } from "../../../../shared/db";
+import { uuidv7 } from "../../../../shared/ids";
 
 /** Coerce a Prisma `Decimal` (credits — not money) to a JS number; `null` → 0. */
 function toNum(value: { toString(): string } | null): number {
@@ -68,4 +69,102 @@ export async function findLeadTransactionsPage(
     sourceInvoiceId: r.sourceInvoiceId,
     occurredAt: r.createdAt,
   }));
+}
+
+// ── W3-BILL-13 — BC-BILL-4 WRITES: credit_lead_account / debit_lead_account (§HB-4.1). ──
+
+/** The org's live lead-credit account head (`{ id, balance }`), or `null` when none exists yet. */
+export async function findLiveLeadCreditAccount(
+  organizationId: string,
+  db: DbExecutor,
+): Promise<{ id: string; balance: number } | null> {
+  const row = await db.leadCreditAccount.findFirst({
+    where: { organizationId, deletedAt: null },
+    select: { id: true, balance: true },
+  });
+  return row === null ? null : { id: row.id, balance: toNum(row.balance) };
+}
+
+/** Create the org's lead-credit account head at balance 0 (created on first movement — Doc-4I §HB-4.1). */
+export async function createLeadCreditAccount(
+  organizationId: string,
+  actorUserId: string | null,
+  db: DbExecutor,
+): Promise<string> {
+  const id = uuidv7();
+  await db.leadCreditAccount.create({
+    data: {
+      id,
+      organizationId,
+      balance: 0,
+      ...(actorUserId !== null ? { createdBy: actorUserId, updatedBy: actorUserId } : {}),
+    },
+  });
+  return id;
+}
+
+/** CREDIT the balance head (atomic increment); returns the new balance. */
+export async function creditLeadBalance(
+  accountId: string,
+  amount: number,
+  actorUserId: string | null,
+  db: DbExecutor,
+): Promise<number> {
+  const row = await db.leadCreditAccount.update({
+    where: { id: accountId },
+    data: {
+      balance: { increment: amount },
+      ...(actorUserId !== null ? { updatedBy: actorUserId } : {}),
+    },
+    select: { balance: true },
+  });
+  return toNum(row.balance);
+}
+
+/** DEBIT the balance head only while `balance >= amount` (atomic conditional decrement — no overdraft).
+ *  Returns the new balance, or `null` when insufficient (the command maps `null` → BUSINESS). */
+export async function debitLeadBalance(
+  accountId: string,
+  amount: number,
+  actorUserId: string | null,
+  db: DbExecutor,
+): Promise<number | null> {
+  const res = await db.leadCreditAccount.updateMany({
+    where: { id: accountId, balance: { gte: amount } },
+    data: {
+      balance: { decrement: amount },
+      ...(actorUserId !== null ? { updatedBy: actorUserId } : {}),
+    },
+  });
+  if (res.count === 0) return null; // insufficient balance
+  const row = await db.leadCreditAccount.findUnique({
+    where: { id: accountId },
+    select: { balance: true },
+  });
+  return row === null ? null : toNum(row.balance);
+}
+
+/** Append one `lead_credit_transactions` row (append-only). Returns the minted id. */
+export async function insertLeadCreditTransaction(
+  input: {
+    accountId: string;
+    txnType: "credit" | "debit";
+    amount: number;
+    sourceInvoiceId?: string;
+    actorUserId: string | null;
+  },
+  db: DbExecutor,
+): Promise<string> {
+  const id = uuidv7();
+  await db.leadCreditTransaction.create({
+    data: {
+      id,
+      leadCreditAccountId: input.accountId,
+      txnType: input.txnType,
+      amount: input.amount,
+      ...(input.sourceInvoiceId !== undefined ? { sourceInvoiceId: input.sourceInvoiceId } : {}),
+      ...(input.actorUserId !== null ? { createdBy: input.actorUserId } : {}),
+    },
+  });
+  return id;
 }
