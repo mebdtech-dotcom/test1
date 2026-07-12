@@ -152,17 +152,23 @@ describe("billing.get_subscription.v1 (query) — Doc-4I §HB-2.5", () => {
 });
 
 describe("core.write_outbox_event.v1 (M0) + subscriptions RLS backstop (Doc-8B §5)", () => {
-  it("a non-staff tenant context can emit via the SECURITY DEFINER function (bypasses outbox RLS)", async () => {
-    const ran = await asRestrictedRole({ activeOrg: uuidv7() }, async (tx) => {
-      await tx.$executeRawUnsafe(
-        "SELECT core.write_outbox_event($1::uuid, 'SubscriptionPurchased', 1, $2::uuid, $3::jsonb)",
-        uuidv7(),
-        uuidv7(),
-        JSON.stringify({ subscription_id: uuidv7() }),
-      );
-      return "ok";
-    });
-    expect(ran).toBe("ok"); // no RLS rejection — the tenant-context emit is admitted
+  it("outbox RLS backstop: a non-staff tenant CANNOT write core.outbox_events directly (no SD; the real emit uses the privileged app connection — [ESC-CORE-OUTBOX-MECH] Option A)", async () => {
+    // Option A (owner-ruled 2026-07-12) withdrew the SECURITY DEFINER `core.write_outbox_event`
+    // function. The canonical primitive is a non-`RETURNING` insert on the CALLER's executor; in the
+    // app path it runs on the privileged (RLS-bypassing) connection — proven by the purchase_subscription
+    // flow tests above. Here we assert the defense-in-depth backstop: a non-staff NOBYPASSRLS tenant
+    // context is REJECTED writing the outbox directly (`core.outbox_events` stays staff-only).
+    await expect(
+      asRestrictedRole({ activeOrg: uuidv7() }, async (tx) => {
+        await tx.$executeRawUnsafe(
+          `INSERT INTO core.outbox_events (id, aggregate_id, event_name, event_version, payload_jsonb, status, attempts)
+           VALUES ($1::uuid, $2::uuid, 'SubscriptionPurchased', 1, $3::jsonb, 'pending', 0)`,
+          uuidv7(),
+          uuidv7(),
+          JSON.stringify({ subscription_id: uuidv7() }),
+        );
+      }),
+    ).rejects.toThrow();
   });
 
   it("subscriptions_tenant RLS scopes a non-staff role to its OWN org", async () => {
