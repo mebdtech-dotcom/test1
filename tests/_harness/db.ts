@@ -109,6 +109,7 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   await prisma.$executeRawUnsafe(`GRANT USAGE ON SCHEMA marketplace TO ${RESTRICTED_RLS_ROLE}`);
   await prisma.$executeRawUnsafe(
     `GRANT SELECT ON marketplace.vendor_profiles, marketplace.vendor_slug_history, marketplace.categories, marketplace.category_assignments TO ${RESTRICTED_RLS_ROLE}`,
+  );
   // W3-COMM-1 — the M6 support-ticket RLS conformance gate (`support_tickets_party` org+staff;
   // `ticket_messages_party` via-parent + append-only). Full CRUD on `support_tickets` (proving the party
   // policy's WITH CHECK admits/rejects + tenant-isolated reads); SELECT/INSERT/UPDATE/DELETE on
@@ -123,6 +124,7 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   // SELECT/INSERT so a WITH-CHECK/USING probe reaches the policy (not a bare permission-denied).
   await prisma.$executeRawUnsafe(
     `GRANT SELECT, INSERT ON communication.command_dedup TO ${RESTRICTED_RLS_ROLE}`,
+  );
   // W3-BILL-1 — the M7 plan-catalog public-projection RLS conformance gate (`plans` public-read leg
   // `deleted_at IS NULL` — retired/soft-deleted hidden from non-staff; fully-public `entitlements` /
   // `plan_entitlements` catalog). W3-BILL-2 adds INSERT/UPDATE on `billing.plans` so the write-path gate

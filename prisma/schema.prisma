@@ -1060,6 +1060,8 @@ model AdminRating {
   // singleton is app-enforced (advisory-xact-lock) — the frozen §3.5.1 DDL has NO UNIQUE(vendor_profile_id).
   @@map("admin_ratings")
   @@schema("trust")
+}
+
 // M6 — Communication (`communication`) — Doc-6H (FROZEN) — W3-COMM-1 BC-COMM-4 Support Communications.
 //
 // The Support Ticket aggregate (Doc-2 §10.7): support_tickets (org + staff; status; SD) +
@@ -1140,6 +1142,8 @@ model CommunicationCommandDedup {
 
   @@map("command_dedup")
   @@schema("communication")
+}
+
 // M7 — Monetization / Billing (`billing`) — Doc-6I (FROZEN)
 //
 // W3-BILL-1 [Wave-3 M7 pilot slice] realizes the Plans & Entitlements grouping

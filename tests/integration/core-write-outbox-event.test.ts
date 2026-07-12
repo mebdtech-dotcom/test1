@@ -35,11 +35,9 @@ afterAll(async () => {
 describe("W3-TRUST-3 (Part A) — core.write_outbox_event.v1 (Doc-4B §B10)", () => {
   it("writes exactly ONE pending row with event_name/version/aggregate_id/payload on the caller's tx", async () => {
     const aggregateId = uuidv7();
-    let outboxEventId = "";
-
     await prisma.$transaction(async (tx) => {
       await tx.$executeRaw`SELECT set_config('app.is_platform_staff', 'true', true)`;
-      const res = await writeOutboxEvent(
+      await writeOutboxEvent(
         {
           eventName: FIXTURE_EVENT_NAME,
           eventVersion: 1,
@@ -48,13 +46,14 @@ describe("W3-TRUST-3 (Part A) — core.write_outbox_event.v1 (Doc-4B §B10)", ()
         },
         tx,
       );
-      outboxEventId = res.outboxEventId;
     });
 
     const rows = await prisma.outboxEvent.findMany({ where: { aggregateId } });
     expect(rows).toHaveLength(1);
     const row = rows[0]!;
-    expect(row.id).toBe(outboxEventId);
+    // `id` is app-minted (UUIDv7) and NOT returned — the frozen contract declares Response: none
+    // ([ESC-CORE-OUTBOX-MECH] Option A). Assert the persisted row's id SHAPE, not return equality.
+    expect(row.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
     expect(row.eventName).toBe(FIXTURE_EVENT_NAME);
     expect(row.eventVersion).toBe(1);
     expect(row.aggregateId).toBe(aggregateId);
