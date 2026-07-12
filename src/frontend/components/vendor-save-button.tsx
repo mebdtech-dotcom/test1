@@ -41,11 +41,9 @@ export function VendorSaveButton({
         className,
       )}
     >
-      <Link
-        href={href}
-        aria-pressed={saved}
-        aria-label={saved ? `Saved — ${vendorName}` : `Save ${vendorName}`}
-      >
+      {/* NOTE: this renders an <a> (Button asChild → Link). `aria-pressed` is invalid on a link role
+          (axe `aria-allowed-attr`, critical) — the saved/unsaved state is conveyed by the label instead. */}
+      <Link href={href} aria-label={saved ? `Saved — ${vendorName}` : `Save ${vendorName}`}>
         {/* SAVED fills the pin with currentColor (= primary); UNSAVED is the outline pin. */}
         <Pin aria-hidden="true" className={cn(saved && "fill-current")} />
       </Link>

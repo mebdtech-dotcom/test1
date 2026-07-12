@@ -271,7 +271,7 @@
     --iv-fg-strong: #14213d; /* crisp ink — mockup `--ink` (input text, key values) */
     --iv-fg: #4a5568; /* body — mockup `--text` */
     --iv-fg-secondary: #4a5568; /* secondary — mockup doesn't split this from body text */
-    --iv-fg-muted: #7a8699; /* meta / disabled — mockup `--muted` */
+    --iv-fg-muted: #5f6a7a; /* meta / disabled — mockup `--muted`, darkened to clear WCAG-AA 4.5:1 on white for small text (was #7a8699 = 3.68:1, axe-flagged) */
     --iv-fg-heading: #1a2b52; /* H1 · section titles — mockup `--heading` (dark navy ink) */
     --iv-fg-heading-strong: #101f40; /* footer titles · link hover — deeper navy emphasis (brand-900) */
     --iv-fg-inverse: #ffffff; /* ink on brand / dark fills */
