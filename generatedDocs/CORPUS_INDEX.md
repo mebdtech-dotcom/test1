@@ -270,16 +270,20 @@ review/patch/audit trail is grouped by category.
 
 ---
 
-## 5e. Implementation Planning & Build (Implementation — **current phase: Wave 2 — Core Platform (M0 → M1)**)
+## 5e. Implementation Planning & Build (Implementation — **current phase: Wave 3 — Independent Domains (M2/M5/M6/M7) — INTEGRATED · exit gate GREEN**)
 
 > The bridge from the frozen corpus to application code. **Non-authoritative**; decomposes
 > only — coins no architecture/API/schema/UI/event/permission/route/module/state/contract.
 > The corpus's declared phase sequence is **Development Decomposition → Build Roadmap →
 > Implementation (Code)**; both planning artifacts are produced and the build is underway.
-> **Waves 0–1 are DELIVERED** to `main`: Wave 0 Repository Bootstrap (2026-06-27; `wave0-complete`;
-> `Wave0_Baseline_Report_v1.0.md`) + **Wave 1 Foundation / Walking Skeleton** (2026-06-28;
-> `wave1-complete`, merge `3345b00`; `Wave1_Baseline_Report_v1.0.md`). **Current phase: Wave 2 — Core
-> Platform** (full M0 → M1 module builds, `Build_Roadmap_v1.0.md` § Wave 2).
+> **Waves 0–2 are DELIVERED** to `main`: Wave 0 Repository Bootstrap (2026-06-27; `wave0-complete`) +
+> Wave 1 Foundation / Walking Skeleton (2026-06-28; `wave1-complete`, merge `3345b00`) + **Wave 2 Core
+> Platform (full M0 + M1)** (2026-07-11; PR #2 → `origin/main` `2e42ed5`; CI all-green; Vercel prod live).
+> **Current phase: Wave 3 — Independent Domains (M2/M5/M6/M7 parallel) — ALL FOUR INTEGRATED + EXIT GATE
+> GREEN** (2026-07-12) on `wave/3-integration` (`tsc`/Prisma/migrations clean · vitest 806/806; the
+> `[ESC-CORE-OUTBOX-MECH]` outbox conflict resolved Option A). **Awaiting owner-gated merge to `main`**
+> (CI runs the authoritative `next build` + Playwright on the PR) + Supabase prod migrations. Records:
+> `governanceReviews/Wave-3_Integration_Audit_and_Exit_Gate_v1.0.md` · `BOARD-PACKET-W3-CORE-OUTBOX-MECHANISM_v1.0.md`.
 
 | File | Purpose |
 |------|---------|
