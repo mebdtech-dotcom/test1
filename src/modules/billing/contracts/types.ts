@@ -179,7 +179,8 @@ export interface CreatePlanResult {
 }
 
 export type CreatePlanOutcome =
-  { ok: true; result: CreatePlanResult } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: CreatePlanResult }
+  | { ok: false; error: PlanWriteError };
 
 /** The shared minimal lifecycle output (Doc-5I §4 — `{ plan_id, status }`). */
 export interface PlanLifecycleResult {
@@ -194,7 +195,8 @@ export interface ActivatePlanInput {
 }
 
 export type ActivatePlanOutcome =
-  { ok: true; result: PlanLifecycleResult } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: PlanLifecycleResult }
+  | { ok: false; error: PlanWriteError };
 
 /** `update_plan` input (Doc-4I §HB-1.1 — marketing-config mutation; NOT `is_active`, NOT a status edge).
  *  `expected_status` ∈ {`draft`,`active`} (a `retired` plan is terminal — rejected `STATE`). */
@@ -208,7 +210,8 @@ export interface UpdatePlanInput {
 }
 
 export type UpdatePlanOutcome =
-  { ok: true; result: PlanLifecycleResult } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: PlanLifecycleResult }
+  | { ok: false; error: PlanWriteError };
 
 /** `retire_plan` input (Doc-4I §HB-1.1 — `active|draft → retired`; `expected_status` ∈ {`draft`,`active`}). */
 export interface RetirePlanInput {
@@ -217,7 +220,8 @@ export interface RetirePlanInput {
 }
 
 export type RetirePlanOutcome =
-  { ok: true; result: PlanLifecycleResult } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: PlanLifecycleResult }
+  | { ok: false; error: PlanWriteError };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BC-BILL-1 ENTITLEMENT-CATALOG + BUNDLE WRITES (W3-BILL-3) — `create_entitlement` / `update_entitlement`
@@ -242,7 +246,8 @@ export interface EntitlementView {
 }
 
 export type CreateEntitlementOutcome =
-  { ok: true; result: EntitlementView } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: EntitlementView }
+  | { ok: false; error: PlanWriteError };
 
 /** `update_entitlement` input (Doc-4I §HB-1.3 — mutate `type`/`default_value`; `slug` is immutable identity).
  *  Both fields optional (omitted = unchanged). No concurrency token in the frozen wire (Doc-5I §4). */
@@ -253,7 +258,8 @@ export interface UpdateEntitlementInput {
 }
 
 export type UpdateEntitlementOutcome =
-  { ok: true; result: EntitlementView } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: EntitlementView }
+  | { ok: false; error: PlanWriteError };
 
 /** `bundle_plan_entitlement` input (Doc-4I §HB-1.2 — PK `plan_id`+`entitlement_id`; `value_jsonb` required). */
 export interface BundlePlanEntitlementInput {
@@ -270,7 +276,8 @@ export interface BundlePlanEntitlementResult {
 }
 
 export type BundlePlanEntitlementOutcome =
-  { ok: true; result: BundlePlanEntitlementResult } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: BundlePlanEntitlementResult }
+  | { ok: false; error: PlanWriteError };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BC-BILL-2 SUBSCRIPTIONS (W3-BILL-4) — `purchase_subscription` (Doc-4I §HB-2.1) + `get_subscription`
@@ -299,7 +306,8 @@ export interface PurchaseSubscriptionResult {
 }
 
 export type PurchaseSubscriptionOutcome =
-  { ok: true; result: PurchaseSubscriptionResult } | { ok: false; error: PlanWriteError };
+  | { ok: true; result: PurchaseSubscriptionResult }
+  | { ok: false; error: PlanWriteError };
 
 /** The org's subscription head (Doc-4I §HB-2.5 output). `period_*` are ISO-8601 strings (nullable). */
 export interface SubscriptionView {
@@ -313,7 +321,8 @@ export interface SubscriptionView {
 
 /** `get_subscription` result — the org's current subscription, or none (Doc-4I §HB-2.5). */
 export type GetSubscriptionResult =
-  { found: true; subscription: SubscriptionView } | { found: false };
+  | { found: true; subscription: SubscriptionView }
+  | { found: false };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BC-BILL-2 COMPLETION (W3-BILL-5) — `cancel_subscription` (Doc-4I §HB-2.2) + `list_subscription_events`
@@ -329,7 +338,13 @@ export type GetSubscriptionResult =
  * the catalog writes (platform-owned) never do. No `REFERENCE`/`BUSINESS` legs on cancel.
  */
 export type SubscriptionWriteErrorClass =
-  "VALIDATION" | "AUTHORIZATION" | "NOT_FOUND" | "STATE" | "CONFLICT" | "DEPENDENCY" | "SYSTEM";
+  | "VALIDATION"
+  | "AUTHORIZATION"
+  | "NOT_FOUND"
+  | "STATE"
+  | "CONFLICT"
+  | "DEPENDENCY"
+  | "SYSTEM";
 
 /** A BC-BILL-2 subscription-command failure (the in-process outcome; the handler maps it to the §6.2 status). */
 export interface SubscriptionWriteError {
@@ -353,7 +368,8 @@ export interface CancelSubscriptionResult {
 }
 
 export type CancelSubscriptionOutcome =
-  { ok: true; result: CancelSubscriptionResult } | { ok: false; error: SubscriptionWriteError };
+  | { ok: true; result: CancelSubscriptionResult }
+  | { ok: false; error: SubscriptionWriteError };
 
 /** One `subscription_events` history item (Doc-4I §HB-2.5 `items` — `{ event_type, occurred_at }` verbatim).
  *  `event_type` is the stored Doc-2 §10.8 domain value (`purchase|renew|expire|cancel`), rendered as-is —
@@ -451,7 +467,8 @@ export interface QuotaDecision {
 
 /** `enforce_quota` outcome — the decision, or a SYNTAX leg. (No wire; the caller surfaces `QUOTA`.) */
 export type EnforceQuotaOutcome =
-  { ok: true; result: QuotaDecision } | { ok: false; errorClass: "VALIDATION" };
+  | { ok: true; result: QuotaDecision }
+  | { ok: false; errorClass: "VALIDATION" };
 
 /** One `get_usage` item (Doc-4I §HB-3.3 `items` — `{ quota_key, amount, period, source }`, camelCased). */
 export interface UsageItem {
@@ -496,7 +513,8 @@ export interface GetUsageResult {
  * active org (never a caller `org_id` — Doc-5I §6.2).
  */
 export type GetUsageOutcome =
-  { ok: true; result: GetUsageResult } | { ok: false; errorClass: "VALIDATION" | "BUSINESS" };
+  | { ok: true; result: GetUsageResult }
+  | { ok: false; errorClass: "VALIDATION" | "BUSINESS" };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BC-BILL-4 LEAD CREDITS (W3-BILL-7 reads pilot) — `get_lead_balance` + `list_lead_transactions`
@@ -548,7 +566,8 @@ export interface ListLeadTransactionsResult {
  * = server-validated active org (never a caller `org_id`).
  */
 export type ListLeadTransactionsOutcome =
-  { ok: true; result: ListLeadTransactionsResult } | { ok: false; errorClass: "VALIDATION" };
+  | { ok: true; result: ListLeadTransactionsResult }
+  | { ok: false; errorClass: "VALIDATION" };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BC-BILL-5 PLATFORM INVOICING (W3-BILL-8 reads pilot) — `get_platform_invoice` + `list_platform_invoices`
@@ -562,7 +581,11 @@ export type PlatformInvoiceStatus = "issued" | "paid" | "overdue" | "void";
 
 /** Platform-invoice purpose (Doc-2 §10.8 `invoice_purpose`). */
 export type PlatformInvoicePurpose =
-  "subscription" | "lead_package" | "advertising" | "microsite" | "service";
+  | "subscription"
+  | "lead_package"
+  | "advertising"
+  | "microsite"
+  | "service";
 
 /** Payment gateway (Doc-2 §10.8 `payment_gateway`). */
 export type PlatformPaymentGateway = "sslcommerz" | "bkash" | "nagad" | "bank";
@@ -595,7 +618,8 @@ export interface PlatformInvoiceView {
  * collapse §3.5). `AUTHORIZATION` (`can_view_billing`) resolves at the composition edge.
  */
 export type GetPlatformInvoiceOutcome =
-  { ok: true; result: PlatformInvoiceView } | { ok: false; errorClass: "VALIDATION" | "NOT_FOUND" };
+  | { ok: true; result: PlatformInvoiceView }
+  | { ok: false; errorClass: "VALIDATION" | "NOT_FOUND" };
 
 /** One `list_platform_invoices` item (Doc-4I §HB-5.4 `items` — no `organization_id`/`payments`). */
 export interface PlatformInvoiceListItem {
@@ -633,7 +657,8 @@ export interface ListPlatformInvoicesResult {
  * composition; org = server-validated active org (never a caller `org_id`).
  */
 export type ListPlatformInvoicesOutcome =
-  { ok: true; result: ListPlatformInvoicesResult } | { ok: false; errorClass: "VALIDATION" };
+  | { ok: true; result: ListPlatformInvoicesResult }
+  | { ok: false; errorClass: "VALIDATION" };
 
 // ── BC-BILL-5 INVOICE WRITES (W3-BILL-9) — issue_platform_invoice (§HB-5.1) + update_invoice_status
 //    (§HB-5.2). Actor-branched (User wired leg + System in-process). `amount` = money string. ──
@@ -676,7 +701,8 @@ export interface IssuePlatformInvoiceResult {
 }
 
 export type IssuePlatformInvoiceOutcome =
-  { ok: true; result: IssuePlatformInvoiceResult } | { ok: false; error: InvoiceWriteError };
+  | { ok: true; result: IssuePlatformInvoiceResult }
+  | { ok: false; error: InvoiceWriteError };
 
 /** `update_invoice_status` input (Doc-4I §HB-5.2). `expected_status ∈ {issued, overdue}` = the CAS assertion. */
 export interface UpdateInvoiceStatusInput {
@@ -692,7 +718,8 @@ export interface UpdateInvoiceStatusResult {
 }
 
 export type UpdateInvoiceStatusOutcome =
-  { ok: true; result: UpdateInvoiceStatusResult } | { ok: false; error: InvoiceWriteError };
+  | { ok: true; result: UpdateInvoiceStatusResult }
+  | { ok: false; error: InvoiceWriteError };
 
 // ── BC-BILL-5 `record_payment` (W3-BILL-10) — OUT-OF-WIRE gateway callback (§HB-5.3 / Doc-5I §10/R8).
 //    System actor; writes/transitions `platform_payments`; on `succeeded` drives the invoice → paid.
@@ -758,7 +785,8 @@ export interface ListReferralsResult {
  * org = server-validated active org (the referrer Controlling Org; never a caller `org_id`).
  */
 export type ListReferralsOutcome =
-  { ok: true; result: ListReferralsResult } | { ok: false; errorClass: "VALIDATION" };
+  | { ok: true; result: ListReferralsResult }
+  | { ok: false; errorClass: "VALIDATION" };
 
 // ── BC-BILL-6 WRITES (W3-BILL-12) — credit_reward (§HB-6.1) + track_referral / advance_referral (§HB-6.2).
 //    Actor-branched (User leg wired, System in-process). points = reward POINTS (numbers). ──
@@ -806,7 +834,8 @@ export interface CreditRewardResult {
 }
 
 export type CreditRewardOutcome =
-  { ok: true; result: CreditRewardResult } | { ok: false; error: RewardWriteError };
+  | { ok: true; result: CreditRewardResult }
+  | { ok: false; error: RewardWriteError };
 
 /** `track_referral` input (Doc-4I §HB-6.2). `referrer_organization_id` = the active org (server-set). */
 export interface TrackReferralInput {
@@ -820,7 +849,8 @@ export interface TrackReferralResult {
 }
 
 export type TrackReferralOutcome =
-  { ok: true; result: TrackReferralResult } | { ok: false; error: RewardWriteError };
+  | { ok: true; result: TrackReferralResult }
+  | { ok: false; error: RewardWriteError };
 
 /** `advance_referral` input (Doc-4I §HB-6.2). `expected_state ∈ {pending, qualified}` = the CAS assertion. */
 export interface AdvanceReferralInput {
@@ -836,7 +866,8 @@ export interface AdvanceReferralResult {
 }
 
 export type AdvanceReferralOutcome =
-  { ok: true; result: AdvanceReferralResult } | { ok: false; error: RewardWriteError };
+  | { ok: true; result: AdvanceReferralResult }
+  | { ok: false; error: RewardWriteError };
 
 // ── BC-BILL-4 LEAD-CREDIT WRITES (W3-BILL-13) — credit_lead_account / debit_lead_account (§HB-4.1).
 //    Actor-branched (User leg wired, System in-process). `direction` is fixed by the contract slug.
@@ -844,7 +875,13 @@ export type AdvanceReferralOutcome =
 
 /** The Doc-4A §12 error classes a BC-BILL-4 write can raise (org-owned → NOT_FOUND collapse). */
 export type LeadCreditWriteErrorClass =
-  "VALIDATION" | "AUTHORIZATION" | "NOT_FOUND" | "REFERENCE" | "BUSINESS" | "DEPENDENCY" | "SYSTEM";
+  | "VALIDATION"
+  | "AUTHORIZATION"
+  | "NOT_FOUND"
+  | "REFERENCE"
+  | "BUSINESS"
+  | "DEPENDENCY"
+  | "SYSTEM";
 
 /** A BC-BILL-4 write failure (the in-process outcome; the handler maps it to the §6.2 status). */
 export interface LeadCreditWriteError {
@@ -871,7 +908,8 @@ export interface LeadCreditMovementResult {
 }
 
 export type LeadCreditMovementOutcome =
-  { ok: true; result: LeadCreditMovementResult } | { ok: false; error: LeadCreditWriteError };
+  | { ok: true; result: LeadCreditMovementResult }
+  | { ok: false; error: LeadCreditWriteError };
 
 // ── BC-BILL-3 `record_usage` (W3-BILL-14) — OUT-OF-WIRE System metering (§HB-3.1 / Doc-5I §10/R1). Appends
 //    a `usage_ledger` row attributed to the Controlling Org. `entitlement_id` is caller-supplied

@@ -76,7 +76,8 @@ export interface PublicVendorProfileView {
  * indistinguishable; never leaks which). UNCHANGED by the 2026-07-11 DTO-conformance fix.
  */
 export type GetPublicVendorProfileResult =
-  { found: true; profile: PublicVendorProfileView } | { found: false };
+  | { found: true; profile: PublicVendorProfileView }
+  | { found: false };
 
 /**
  * The application-level outcome of the `get_public_vendor_profile` query: the frozen found/not-found
@@ -88,7 +89,8 @@ export type GetPublicVendorProfileResult =
  * branch (the wire `result` shape is byte-identical to the frozen contract on every success).
  */
 export type GetPublicVendorProfileOutcome =
-  GetPublicVendorProfileResult | { found: false; invalidInput: true };
+  | GetPublicVendorProfileResult
+  | { found: false; invalidInput: true };
 
 /**
  * Lookup key for `get_public_vendor_profile` — EXACTLY ONE of `vendorProfileId` (UUIDv7) or `humanRef`

@@ -98,7 +98,8 @@ export interface CreateTicketResult {
 
 /** Outcome of `comm.create_ticket.v1`. */
 export type CreateTicketOutcome =
-  { ok: true; result: CreateTicketResult } | { ok: false; error: SupportTicketError };
+  | { ok: true; result: CreateTicketResult }
+  | { ok: false; error: SupportTicketError };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // §HB-4.2 — comm.update_ticket.v1 (User / Admin; status/progress).
@@ -120,7 +121,8 @@ export interface UpdateTicketResult {
 
 /** Outcome of `comm.update_ticket.v1`. */
 export type UpdateTicketOutcome =
-  { ok: true; result: UpdateTicketResult } | { ok: false; error: SupportTicketError };
+  | { ok: true; result: UpdateTicketResult }
+  | { ok: false; error: SupportTicketError };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // §HB-4.3 — comm.add_ticket_message.v1 (User / Admin; append-only).
@@ -145,7 +147,8 @@ export interface AddTicketMessageResult {
 
 /** Outcome of `comm.add_ticket_message.v1`. */
 export type AddTicketMessageOutcome =
-  { ok: true; result: AddTicketMessageResult } | { ok: false; error: SupportTicketError };
+  | { ok: true; result: AddTicketMessageResult }
+  | { ok: false; error: SupportTicketError };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // §HB-4.4 — comm.close_ticket.v1 (User / Admin; `resolved → closed`, terminal).
@@ -165,7 +168,8 @@ export interface CloseTicketResult {
 
 /** Outcome of `comm.close_ticket.v1`. */
 export type CloseTicketOutcome =
-  { ok: true; result: CloseTicketResult } | { ok: false; error: SupportTicketError };
+  | { ok: true; result: CloseTicketResult }
+  | { ok: false; error: SupportTicketError };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // §HB-4.5 — comm.get_ticket.v1 · comm.list_tickets.v1 (User / Admin; reads — unaudited).

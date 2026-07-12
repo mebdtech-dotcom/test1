@@ -24,10 +24,7 @@ import { uuidv7 } from "../../../../shared/ids";
 import type { CoreServiceExecutor, WriteOutboxEvent } from "../../contracts/services";
 import { CoreServiceError, type WriteOutboxEventInput } from "../../contracts/types";
 
-async function write(
-  input: WriteOutboxEventInput,
-  db: DbExecutor,
-): Promise<void> {
+async function write(input: WriteOutboxEventInput, db: DbExecutor): Promise<void> {
   // `id` is minted app-side (UUIDv7) purely for the INSERT; it is NOT returned — the frozen contract
   // declares `Response: none` ([ESC-CORE-OUTBOX-MECH] Option A, owner-ruled 2026-07-12).
   const outboxEventId = uuidv7();
