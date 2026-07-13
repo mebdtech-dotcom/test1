@@ -99,7 +99,7 @@ export function GlobalTrustScoreCard({
         </div>
 
         <Button asChild variant="outline" size="sm" className="w-full">
-          <Link href="/workspace/company">
+          <Link href="/sell/company">
             Increase Score
             <ArrowUpRight aria-hidden className="size-4" />
           </Link>

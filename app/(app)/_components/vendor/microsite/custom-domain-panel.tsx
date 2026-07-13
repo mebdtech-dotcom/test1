@@ -21,7 +21,7 @@ export interface CustomDomainPanelProps {
 
 export function CustomDomainPanel({
   domain,
-  billingHref = "/workspace/billing",
+  billingHref = "/sell/billing",
 }: CustomDomainPanelProps) {
   const entitled = domain?.entitlement === true;
 

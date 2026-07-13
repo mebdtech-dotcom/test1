@@ -54,7 +54,7 @@ export function InvitationResponse({
   quota,
   hasQuotation,
   rfq,
-  basePath = "/workspace",
+  basePath = "/sell",
 }: InvitationResponseProps) {
   const responded =
     invitation?.state === "accepted" ||

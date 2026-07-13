@@ -16,7 +16,7 @@ export interface LeadRfqContextProps {
   basePath?: string;
 }
 
-export function LeadRfqContext({ lead, basePath = "/workspace" }: LeadRfqContextProps) {
+export function LeadRfqContext({ lead, basePath = "/sell" }: LeadRfqContextProps) {
   const rfqId = lead?.rfq_id;
 
   return (

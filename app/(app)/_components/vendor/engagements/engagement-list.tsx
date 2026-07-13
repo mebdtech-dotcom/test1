@@ -19,7 +19,7 @@ export interface EngagementListProps {
   basePath?: string;
 }
 
-export function EngagementList({ engagements, basePath = "/workspace" }: EngagementListProps) {
+export function EngagementList({ engagements, basePath = "/sell" }: EngagementListProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">

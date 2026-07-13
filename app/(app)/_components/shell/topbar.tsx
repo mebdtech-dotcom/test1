@@ -29,7 +29,7 @@ export function Topbar({ vm, orgSwitcherSlot, notificationSlot, userMenuSlot }: 
     <header className="sticky top-0 z-[var(--iv-z-sticky)] flex h-14 items-center gap-2 border-b border-border bg-background px-3 sm:px-4">
       <MobileNav nav={nav} org={identity.activeOrg} organizations={identity.organizations} />
       <Link
-        href="/dashboard"
+        href="/buy/dashboard"
         className="inline-flex items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <BrandMark height={28} />

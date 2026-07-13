@@ -10,7 +10,7 @@
 // engagement document records = M4 BC-OPS-2. UNLIKE the buyer leg's six fixed per-kind routes,
 // the vendor track has no per-kind document sub-routes — the vendor's `EngagementDocuments`
 // doc-kind tabs are enumeration-build-blocked (`ESC-7G-ENG-03`) and live entirely inside the one
-// `/workspace/engagements/[id]` page (see `documents-hub-view.tsx`'s own header for the full
+// `/sell/engagements/[id]` page (see `documents-hub-view.tsx`'s own header for the full
 // disclosure). Trade-invoice pointers = the frozen `TradeInvoiceStatus` set (`../engagements/types`);
 // platform invoices (M7) are a LINK-OUT ONLY (DF-6).
 //
@@ -59,7 +59,7 @@ export interface GeneratedDocumentRow {
   doc_kind: string;
   version_no: number;
   direction: DocumentDirection;
-  /** Opaque source engagement id — links `/workspace/engagements/[id]`. */
+  /** Opaque source engagement id — links `/sell/engagements/[id]`. */
   source_engagement_id?: string;
   /** Source display ref (human ref of the source record) — display label only. */
   source_ref?: string;

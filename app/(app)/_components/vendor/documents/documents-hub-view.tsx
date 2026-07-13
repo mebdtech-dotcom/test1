@@ -59,13 +59,13 @@ import {
   type DocumentsHubView as HubView,
 } from "./documents-hub-view-models";
 
-const BASE = "/workspace";
+const BASE = "/sell";
 
 // UNLIKE the buyer leg (which has six fixed per-kind document routes — P-BUY-21..25 + the LOI
 // face of P-BUY-21, WP-1), the vendor
 // engagement track has NO per-kind sub-routes — `EngagementDocuments`'s doc-kind tabs are
 // enumeration-build-blocked (`ESC-7G-ENG-03`) and live entirely inside the one engagement detail
-// page (`/workspace/engagements/[id]`). Linking to fabricated per-kind routes here would be a real
+// page (`/sell/engagements/[id]`). Linking to fabricated per-kind routes here would be a real
 // dead-link defect (Inv #11) — every per-engagement reference in this hub points at that one real
 // page instead. This is a genuine route-topology difference from the buyer hub, not an omission.
 

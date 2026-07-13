@@ -13,7 +13,7 @@
 //
 // LOI and WCC are frozen kinds deliberately NOT in the strip (the owner's six-stage flow); they
 // stay reachable via the Document Type facet and the per-engagement links. A Server Component;
-// `basePath` keeps it mount-agnostic (buyer `/documents`, vendor `/workspace/documents`).
+// `basePath` keeps it mount-agnostic (buyer `/buy/documents`, vendor `/sell/documents`).
 
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -35,7 +35,7 @@ export type DocumentStageKey = (typeof DOCUMENT_STAGES)[number]["key"];
 export const DOCUMENT_STAGE_KEYS = DOCUMENT_STAGES.map((s) => s.key) as DocumentStageKey[];
 
 export interface LifecycleStripProps {
-  /** The hub route this strip filters (buyer `/documents` · vendor `/workspace/documents`). */
+  /** The hub route this strip filters (buyer `/buy/documents` · vendor `/sell/documents`). */
   basePath: string;
   /** The currently-selected stage FILTER (never a document's business state). */
   activeStage?: DocumentStageKey;

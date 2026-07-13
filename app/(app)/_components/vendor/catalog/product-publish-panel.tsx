@@ -24,7 +24,7 @@ export function ProductPublishPanel({
   status,
   allowance,
   hasActiveCategory,
-  categoriesHref = "/workspace/company/categories",
+  categoriesHref = "/sell/company/categories",
 }: ProductPublishPanelProps) {
   const isPublished = status === "published";
   const blockedNoCategory = hasActiveCategory === false;

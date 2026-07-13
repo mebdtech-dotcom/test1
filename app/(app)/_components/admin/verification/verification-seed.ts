@@ -14,19 +14,11 @@ export type VerificationTaskStatus = "queued" | "in_review" | "decided";
 
 // Frozen `verification_records.verification_type` (Doc-2:795).
 export type VerificationType =
-  | "contact"
-  | "business"
-  | "factory"
-  | "organization"
-  | "tier"
-  | "capacity";
+  "contact" | "business" | "factory" | "organization" | "tier" | "capacity";
 
 // Frozen verification subject refs (Doc-2:180) — what the record is about.
 export type VerificationSubjectType =
-  | "Vendor profile"
-  | "Organization"
-  | "Capacity claim"
-  | "Declared tier";
+  "Vendor profile" | "Organization" | "Capacity claim" | "Declared tier";
 
 export interface VerificationTaskVM {
   id: string;

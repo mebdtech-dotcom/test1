@@ -21,7 +21,7 @@ export function DashboardHeaderCard({ userName, orgName }: { userName: string; o
         </span>
 
         <Link
-          href="/workspace/company/products"
+          href="/sell/company/products"
           className="flex min-w-0 flex-1 items-center gap-2 rounded-md border border-input bg-background px-3 py-1.5 text-sm text-muted-foreground shadow-iv-xs transition-colors hover:bg-accent sm:max-w-xs"
         >
           <Search aria-hidden className="size-4 shrink-0" />
@@ -30,21 +30,21 @@ export function DashboardHeaderCard({ userName, orgName }: { userName: string; o
 
         <div className="ml-auto flex items-center gap-1">
           <Link
-            href="/workspace/notifications"
+            href="/sell/notifications"
             aria-label="Notifications"
             className="inline-flex size-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
           >
             <Bell aria-hidden className="size-5" />
           </Link>
           <Link
-            href="/workspace/inquiries"
+            href="/sell/inquiries"
             aria-label="Buyer inquiries"
             className="inline-flex size-9 items-center justify-center rounded-md text-foreground transition-colors hover:bg-accent"
           >
             <MessageSquare aria-hidden className="size-5" />
           </Link>
           <Link
-            href="/workspace/company"
+            href="/sell/company"
             aria-label="Company profile"
             className="inline-flex size-9 items-center justify-center rounded-full text-foreground transition-colors hover:bg-accent"
           >

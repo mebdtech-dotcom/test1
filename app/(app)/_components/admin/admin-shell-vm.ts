@@ -7,8 +7,8 @@
 // each effect (R5) — the dashboard itself invokes nothing. Reuses only existing NAV_ICONS keys (no shell edit).
 import type { NavItem, NavSection, QuickCreateItem, ShellViewModel } from "../shell";
 
-// Admin console mount segment (Doc-7H · no active-org, no `/dashboard` collision with the buyer group). Kept
-// as a plain neutral segment — the disposable-prefix precedent set by the Vendor Workspace (`/workspace`).
+// Admin console mount segment (Doc-7H · no active-org). A plain top-level segment under `(app)`, outside
+// the shared `(workspace)` Buying/Selling co-mount group (`/buy` + `/sell`, [ESC-7G-A7] A7.2).
 const BASE = "/admin";
 
 /** Admin primary navigation (Doc-7H · page_inventory §8): the 29-page console grouped for the sidebar. */

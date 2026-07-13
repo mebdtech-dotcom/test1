@@ -11,8 +11,8 @@ import type { RfqState } from "@/frontend/components/rfq";
 import type {
   ComparativeStatementData,
   CsLineItem,
-} from "../../../../(buyer)/_components/comparative-statement";
-import type { RfqPipelineStage } from "../../../../(buyer)/_components/view-models";
+} from "../../../../(workspace)/buy/_components/comparative-statement";
+import type { RfqPipelineStage } from "../../../../(workspace)/buy/_components/view-models";
 import type { JourneyBucketCount } from "../../journey";
 import { BUYER_PIPELINE_BUCKETS } from "../../journey";
 import type { RfqWorkflowData } from "../types";

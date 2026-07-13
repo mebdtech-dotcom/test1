@@ -26,7 +26,7 @@ export interface ProductsListProps {
   basePath?: string;
 }
 
-export function ProductsList({ products, allowance, basePath = "/workspace" }: ProductsListProps) {
+export function ProductsList({ products, allowance, basePath = "/sell" }: ProductsListProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">

@@ -19,7 +19,7 @@ export interface RfqQuickActionsProps {
   basePath?: string;
 }
 
-export function RfqQuickActions({ rfqId, basePath = "/workspace" }: RfqQuickActionsProps) {
+export function RfqQuickActions({ rfqId, basePath = "/sell" }: RfqQuickActionsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
       <Button

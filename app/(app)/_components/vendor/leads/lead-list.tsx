@@ -22,7 +22,7 @@ export interface LeadListProps {
   basePath?: string;
 }
 
-export function LeadList({ leads, basePath = "/workspace" }: LeadListProps) {
+export function LeadList({ leads, basePath = "/sell" }: LeadListProps) {
   if (!leads || leads.length === 0) {
     // The single canonical empty copy (fixed per list type — [ESC-7B-EMPTY-LOCK]); also the first-run
     // guidance [m-4]. Byte-identical for excluded ≡ never-matched ≡ zero — asserts nothing about matching.

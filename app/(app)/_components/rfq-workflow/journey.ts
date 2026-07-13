@@ -19,13 +19,7 @@ import type { RfqState, InvitationState, QuotationState } from "@/frontend/compo
  * send one to a contract. Each groups one or more frozen Doc-4M RFQ states for orientation.
  */
 export type RfqJourneyStageKey =
-  | "authoring"
-  | "validation"
-  | "routing"
-  | "quoting"
-  | "evaluation"
-  | "award"
-  | "post_award";
+  "authoring" | "validation" | "routing" | "quoting" | "evaluation" | "award" | "post_award";
 
 /** The acting side a stage chiefly belongs to (display copy only — authorization is server-side). */
 export type JourneyActor = "buyer" | "vendor" | "system" | "buyer_and_vendor";
@@ -67,7 +61,7 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "buyer",
     ownerModule: "M3 — RFQ",
     rfqStates: ["draft", "pending_internal_approval"],
-    buyerHref: (id) => `/rfqs/${id}`,
+    buyerHref: (id) => `/buy/rfqs/${id}`,
   },
   {
     key: "validation",
@@ -77,7 +71,7 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "system",
     ownerModule: "M3 — RFQ",
     rfqStates: ["submitted", "under_review"],
-    buyerHref: (id) => `/rfqs/${id}`,
+    buyerHref: (id) => `/buy/rfqs/${id}`,
   },
   {
     key: "routing",
@@ -87,8 +81,8 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "system",
     ownerModule: "M3 — RFQ",
     rfqStates: ["matching", "vendors_notified"],
-    buyerHref: (id) => `/rfqs/${id}/routing`,
-    vendorHref: (id) => `/workspace/rfqs/${id}`,
+    buyerHref: (id) => `/buy/rfqs/${id}/routing`,
+    vendorHref: (id) => `/sell/rfqs/${id}`,
   },
   {
     key: "quoting",
@@ -98,8 +92,8 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "vendor",
     ownerModule: "M3 — RFQ",
     rfqStates: ["quotations_received"],
-    buyerHref: (id) => `/rfqs/${id}`,
-    vendorHref: (id) => `/workspace/rfqs/${id}/quotation`,
+    buyerHref: (id) => `/buy/rfqs/${id}`,
+    vendorHref: (id) => `/sell/rfqs/${id}/quotation`,
   },
   {
     key: "evaluation",
@@ -109,7 +103,7 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "buyer",
     ownerModule: "M3 — RFQ",
     rfqStates: ["buyer_reviewing"],
-    buyerHref: (id) => `/rfqs/${id}/compare`,
+    buyerHref: (id) => `/buy/rfqs/${id}/compare`,
   },
   {
     key: "award",
@@ -119,7 +113,7 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "buyer",
     ownerModule: "M3 — RFQ",
     rfqStates: ["shortlisted"],
-    buyerHref: (id) => `/rfqs/${id}/award`,
+    buyerHref: (id) => `/buy/rfqs/${id}/award`,
   },
   {
     key: "post_award",
@@ -129,8 +123,8 @@ export const RFQ_JOURNEY: readonly RfqJourneyStage[] = [
     actor: "buyer_and_vendor",
     ownerModule: "M4 — Operations",
     rfqStates: ["closed_won"],
-    buyerHref: () => `/engagements`,
-    vendorHref: () => `/workspace/engagements`,
+    buyerHref: () => `/buy/engagements`,
+    vendorHref: () => `/sell/engagements`,
   },
 ] as const;
 

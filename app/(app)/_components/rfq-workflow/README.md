@@ -44,8 +44,8 @@ frozen mechanics**. Mapping of each proposed stage:
 | Internal approval | `pending_internal_approval` (optional gate; `approve_rfq`) | `/approvals` |
 | Submitted / RFQ Validation / Returned | `submitted → under_review`; moderation pass → `matching`; reject → `draft` (Doc-5E §4.2 patched edge; Admin decides — DE-5) | `/rfqs/[id]` |
 | Published / Matching / Invitations Sent | `matching → vendors_notified`; invitations `draft → selected → [deferred] → delivered` (deferral invisible to the buyer — Doc-3 §4.2) | `/rfqs/[id]/routing` |
-| Invitation Accepted / Declined / Expired | invitation `delivered → accepted \| declined \| expired` (`respond_to_invitation`) | `/workspace/rfqs/[id]` |
-| Preparing Offer / Ask Clarification | quotation `draft`; clarification thread is M6-owned (`manage_clarification` orchestration; Doc-5H thread) — **not a state change** | `/workspace/rfqs/[id]/quotation`, clarifications |
+| Invitation Accepted / Declined / Expired | invitation `delivered → accepted \| declined \| expired` (`respond_to_invitation`) | `/sell/rfqs/[id]` |
+| Preparing Offer / Ask Clarification | quotation `draft`; clarification thread is M6-owned (`manage_clarification` orchestration; Doc-5H thread) — **not a state change** | `/sell/rfqs/[id]/quotation`, clarifications |
 | Quotation Submitted | quotation `draft → submitted` (consumes the Billing quota — DE-7); first submission drives RFQ `vendors_notified → quotations_received` | both legs |
 | Return for Amendment / Vendor Revises | **no `revised`/`amendment` state exists.** The frozen loop is: buyer asks via clarification / `invoke_best_and_final`; vendor runs `revise_quotation` → a **new immutable version**, state unchanged (`submitted`), history preserved (Inv #8) | version timelines |
 | Quotation Locked | **not a state.** Every submitted version is already immutable; window close (`WindowState`, UI-derived) ends revision in practice. Sealed-until-close is a POLICY redaction the server applies (Doc-3 §10.1) | — |
@@ -53,7 +53,7 @@ frozen mechanics**. Mapping of each proposed stage:
 | Technical / Commercial Evaluation | buyer working practice **within** `buyer_reviewing`, over the comparison statement — not distinct states | `/rfqs/[id]/compare` |
 | Internal Approval / Award Recommendation / Winner Selected | `shortlist_quotation` → `shortlisted`; **explicit** `award_rfq` → `closed_won` (quotations `selected` / `not_selected`). Org award-threshold approval is server-enforced (Doc-3 §9.4). **No recommendation exists or may be added (R6)** | `/rfqs/[id]/award` |
 | Reject All / Re-Invite / Cancel | `close_lost_rfq` → `closed_lost`; `reissue_rfq` → a **new** aggregate (source unchanged, Doc-5E §4.6); `cancel_rfq` from any active state (audited reason) | detail actions |
-| LOI / PO / Execution / Delivery / WCC | **M4 territory** via the `RFQClosedWon` → engagement seam (Doc-4M M6-1): engagement document chain `loi/po/challan/wcc` + separate `trade_invoices` / `payment_records` aggregates (record-only — the platform never settles, DF-6) | `/engagements`, `/workspace/engagements` |
+| LOI / PO / Execution / Delivery / WCC | **M4 territory** via the `RFQClosedWon` → engagement seam (Doc-4M M6-1): engagement document chain `loi/po/challan/wcc` + separate `trade_invoices` / `payment_records` aggregates (record-only — the platform never settles, DF-6) | `/engagements`, `/sell/engagements` |
 | RFQ Closed | the RFQ machine is already terminal at `closed_won`; completion lives on the engagement | M4 surfaces |
 
 ### Divergence flags (proposed-lifecycle items with NO frozen backing — not modeled)
@@ -95,7 +95,7 @@ Reads run in Server Components only; the browser never calls a Doc-5 contract an
 
 Buyer: `/rfqs` (list + journey buckets) · `/rfqs/[id]` (+ journey strip) · `…/compare` ·
 `…/award` · `…/versions` · `…/routing` · `…/clarifications` · `…/quotations/[qid]`.
-Vendor: `/workspace/rfqs` (inbox + quota + buckets) · `/workspace/rfqs/[id]` (+ vendor strip) ·
+Vendor: `/sell/rfqs` (inbox + quota + buckets) · `/sell/rfqs/[id]` (+ vendor strip) ·
 `…/quotation` (builder draft).
 
 ### Fixture universe (`adapters/mock/rfq-universe.ts`)

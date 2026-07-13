@@ -26,7 +26,7 @@ export interface FinancialTierPanelProps {
 export function FinancialTierPanel({
   profile,
   history,
-  billingHref = "/workspace/billing",
+  billingHref = "/sell/billing",
 }: FinancialTierPanelProps) {
   return (
     <div className="space-y-6">

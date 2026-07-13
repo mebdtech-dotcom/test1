@@ -81,7 +81,7 @@ function InvitationRow({ item, basePath }: { item: InboxItemView; basePath: stri
   );
 }
 
-export function InvitationInbox({ items, basePath = "/workspace" }: InvitationInboxProps) {
+export function InvitationInbox({ items, basePath = "/sell" }: InvitationInboxProps) {
   if (!items || items.length === 0) {
     // The single canonical empty copy (fixed per list type — [ESC-7B-EMPTY-LOCK]). It asserts NOTHING
     // about this vendor's matching outcome; it is identical for excluded ≡ never-matched ≡ zero.

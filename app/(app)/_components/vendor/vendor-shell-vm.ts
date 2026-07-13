@@ -6,10 +6,10 @@
 // default until that gating is wired. Identity is a NEUTRAL PLACEHOLDER until the Doc-7C context layer
 // is wired (get_active_context, SR3 — PARKED); no client-supplied org is trusted (Inv #5).
 //
-// [ESC-7G-A7] (pending the human Architecture Board): the Hybrid "mount-both" IA and the `(vendor)`
-// route-group name are NOT ratified. To avoid a URL collision with the `(buyer)` group at `/dashboard`,
-// the Vendor Workspace stays on the A7-neutral `/workspace/*` segment — the ONLY thing that changes
-// when A7 is ruled is this `BASE` prefix. This config encodes NO Hybrid co-mount decision.
+// [ESC-7G-A7] RATIFIED (Board 2026-07-12, A7.2 Option 1): the Hybrid "mount-both" co-mount IA and the
+// owner-chosen `/buy` + `/sell` URL topology are approved. Vendor (Selling) pages live under
+// `app/(app)/(workspace)/sell/*`; this config's `BASE` carries the `/sell` prefix. The co-mount itself
+// is composed by the seam (`resolveMountedNavGroups`); this VM is the single-surface vendor fixture.
 //
 // VX-01 (2026-07-03, owner-directed dashboard/nav redesign, verbatim mockup): re-grouped into
 // Dashboard / RFQ Leads / Buyer Inquiries / Profile Performance / Digital Showcase / Business Docs /
@@ -28,8 +28,9 @@
 // group rather than removed — none of FE-VEN-05..14's shipped pages become unreachable.
 import type { NavItem, NavSection, QuickCreateItem, ShellViewModel } from "../shell";
 
-/** Temporary A7-neutral mount segment (see app/(app)/workspace/layout.tsx) — dropped when A7 is ruled. */
-const BASE = "/workspace";
+/** Selling-surface URL prefix ([ESC-7G-A7] A7.2 Board-ratified; owner-chosen `/buy` + `/sell`). Vendor
+ *  pages live under `app/(app)/(workspace)/sell/*`. */
+const BASE = "/sell";
 
 export const VENDOR_NAV: NavSection[] = [
   {

@@ -22,13 +22,16 @@
 // `EngagementHandoffView` pointer.
 
 import type { ComparisonData } from "@/frontend/components/comparison";
-import type { ComparativeStatementData } from "../../../(buyer)/_components/comparative-statement";
-import type { RfqListData, RfqDetailData } from "../../../(buyer)/_components/rfq-view-models";
-import type { RfqPipelineStage } from "../../../(buyer)/_components/view-models";
-import type { RfqVersionHistoryData } from "../../../(buyer)/_components/rfq-version-view-models";
-import type { RoutingInvitationsData } from "../../../(buyer)/_components/routing-view-models";
-import type { AwardData } from "../../../(buyer)/_components/award";
-import type { QuotationDetailData } from "../../../(buyer)/_components/quotation-view-models";
+import type { ComparativeStatementData } from "../../../(workspace)/buy/_components/comparative-statement";
+import type {
+  RfqListData,
+  RfqDetailData,
+} from "../../../(workspace)/buy/_components/rfq-view-models";
+import type { RfqPipelineStage } from "../../../(workspace)/buy/_components/view-models";
+import type { RfqVersionHistoryData } from "../../../(workspace)/buy/_components/rfq-version-view-models";
+import type { RoutingInvitationsData } from "../../../(workspace)/buy/_components/routing-view-models";
+import type { AwardData } from "../../../(workspace)/buy/_components/award";
+import type { QuotationDetailData } from "../../../(workspace)/buy/_components/quotation-view-models";
 import type {
   InboxItemView,
   RfqSnapshotView,

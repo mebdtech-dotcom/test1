@@ -16,11 +16,14 @@
 //  • Amounts are BDT with currency stored per value (multi-currency-ready); ids are opaque; human
 //    refs are display-only (Inv #5).
 
-import type { RfqDetailData, RfqListItem } from "../../../../(buyer)/_components/rfq-view-models";
-import type { RfqVersionHistoryData } from "../../../../(buyer)/_components/rfq-version-view-models";
-import type { RoutingInvitationsData } from "../../../../(buyer)/_components/routing-view-models";
-import type { AwardData } from "../../../../(buyer)/_components/award";
-import type { QuotationDetailData } from "../../../../(buyer)/_components/quotation-view-models";
+import type {
+  RfqDetailData,
+  RfqListItem,
+} from "../../../../(workspace)/buy/_components/rfq-view-models";
+import type { RfqVersionHistoryData } from "../../../../(workspace)/buy/_components/rfq-version-view-models";
+import type { RoutingInvitationsData } from "../../../../(workspace)/buy/_components/routing-view-models";
+import type { AwardData } from "../../../../(workspace)/buy/_components/award";
+import type { QuotationDetailData } from "../../../../(workspace)/buy/_components/quotation-view-models";
 import type { ComparisonData } from "@/frontend/components/comparison";
 import type {
   InboxItemView,
@@ -1115,7 +1118,7 @@ export const VENDOR_RFQ_UNIVERSE: readonly VendorRfqRecord[] = [
       versions: [{ version_no: 1, is_current: true, created_at: "2026-06-12T11:00:00+06:00" }],
     },
     engagement: {
-      href: "/workspace/engagements",
+      href: "/sell/engagements",
       acceptance_deadline_label: "Accept by Jul 20, 2026",
     },
   },

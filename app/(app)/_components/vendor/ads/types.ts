@@ -14,13 +14,7 @@
  *  `active → completed`. `scheduled → active` and `active → completed` are SYSTEM-driven
  *  (`set_advertisement_state.v1` System leg, date/budget-based) — never a vendor action. */
 export type AdStatus =
-  | "draft"
-  | "pending_review"
-  | "scheduled"
-  | "active"
-  | "paused"
-  | "rejected"
-  | "completed";
+  "draft" | "pending_review" | "scheduled" | "active" | "paused" | "rejected" | "completed";
 
 /** Frozen `placement` enum (`create_advertisement.v1` request). */
 export type AdPlacement = "landing" | "bottom" | "search" | "vendor_profile";

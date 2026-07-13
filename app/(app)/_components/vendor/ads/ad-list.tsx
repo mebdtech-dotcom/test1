@@ -17,7 +17,7 @@ export interface AdListProps {
   basePath?: string;
 }
 
-export function AdList({ ads, basePath = "/workspace" }: AdListProps) {
+export function AdList({ ads, basePath = "/sell" }: AdListProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">

@@ -196,7 +196,7 @@ function SidebarInner({ nav, search }: { nav: NavSection[]; search: string }) {
   }, []);
 
   // The RFQ create wizard is a focused, full-width task surface — no primary nav alongside it.
-  if (pathname === "/rfqs/new") return null;
+  if (pathname === "/buy/rfqs/new") return null;
 
   return (
     <div

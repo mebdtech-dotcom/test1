@@ -14,7 +14,7 @@
 import type {
   CsApprovalBlock,
   CsLetterhead,
-} from "../../../../(buyer)/_components/comparative-statement";
+} from "../../../../(workspace)/buy/_components/comparative-statement";
 
 export interface CsFixtureItem {
   description: string;

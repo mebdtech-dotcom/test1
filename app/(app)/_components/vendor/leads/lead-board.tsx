@@ -23,7 +23,7 @@ export interface LeadBoardProps {
   basePath?: string;
 }
 
-export function LeadBoard({ leadsByStage, basePath = "/workspace" }: LeadBoardProps) {
+export function LeadBoard({ leadsByStage, basePath = "/sell" }: LeadBoardProps) {
   return (
     <div className="hidden gap-3 overflow-x-auto md:flex">
       {COLUMNS.map((stage) => {

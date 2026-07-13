@@ -25,7 +25,7 @@ export interface QuotationOutcomePanelProps {
 export function QuotationOutcomePanel({
   state,
   engagement,
-  basePath = "/workspace",
+  basePath = "/sell",
 }: QuotationOutcomePanelProps) {
   if (state !== "selected" && state !== "not_selected" && state !== "expired") return null;
 

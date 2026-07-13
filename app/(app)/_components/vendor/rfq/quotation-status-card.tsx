@@ -31,7 +31,7 @@ export function QuotationStatusCard({
   rfqId,
   quotation,
   engagement,
-  basePath = "/workspace",
+  basePath = "/sell",
 }: QuotationStatusCardProps) {
   if (!quotation) {
     return (

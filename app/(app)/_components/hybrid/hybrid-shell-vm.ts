@@ -18,7 +18,7 @@
 // NOT duplicated under each surface here — they belong to the Account surface (Surface E, reached via
 // the user menu) and the topbar. "Which groups are surface-specific vs shared" is exactly what the A7
 // packet asks the Board; this fixture picks a sensible split to prove the co-mount + no-swap property.
-import { BUYER_NAV, BUYER_QUICK_CREATE } from "../../(buyer)/_components/buyer-nav-model";
+import { BUYER_NAV, BUYER_QUICK_CREATE } from "../../(workspace)/buy/_components/buyer-nav-model";
 import { VENDOR_NAV, VENDOR_QUICK_BAR, VENDOR_QUICK_CREATE } from "../vendor/vendor-shell-vm";
 import { composeNav } from "../shell/hybrid-nav";
 import type {
@@ -92,10 +92,10 @@ const vendorHref = (label: string, fallback: string): string =>
 /** Mobile bottom-bar — a Hybrid thumb-reach SUBSET spanning BOTH surfaces (not a buyer-only or
  *  vendor-only bar). Final Hybrid quick-bar composition is an [ESC-7G-A7] IA question. */
 export const HYBRID_QUICK_BAR: NavItem[] = [
-  { label: "Buying", href: "/dashboard", icon: "dashboard" },
-  { label: "RFQs", href: "/rfqs", icon: "rfqs" },
-  { label: "Selling", href: vendorHref("Home", "/workspace/dashboard"), icon: "showcase" },
-  { label: "Trust", href: vendorHref("Trust", "/workspace/trust"), icon: "trust" },
+  { label: "Buying", href: "/buy/dashboard", icon: "dashboard" },
+  { label: "RFQs", href: "/buy/rfqs", icon: "rfqs" },
+  { label: "Selling", href: vendorHref("Home", "/sell/dashboard"), icon: "showcase" },
+  { label: "Trust", href: vendorHref("Trust", "/sell/trust"), icon: "trust" },
 ];
 
 /** Hybrid `+ Create` — both surfaces' create actions (buyer RFQ + vendor catalog/ad). */
@@ -117,7 +117,7 @@ export const HYBRID_SHELL_VM: ShellViewModel = {
   nav: composeNavFor("hybrid"),
   quickCreate: HYBRID_QUICK_CREATE,
   quickBar: HYBRID_QUICK_BAR,
-  search: { placeholder: "Search RFQs, vendors, products…", href: "/discover" },
+  search: { placeholder: "Search RFQs, vendors, products…", href: "/buy/discover" },
 };
 
 /** Single-surface fixtures — prove participation-derived mounting (buyer-only → no Selling; vendor-

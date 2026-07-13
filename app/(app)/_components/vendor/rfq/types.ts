@@ -28,24 +28,12 @@ export type RfqState =
 
 /** RFQ Invitation lifecycle — frozen Doc-4M / Doc-2 §3.4 (vendor-visible entry state = `delivered`). */
 export type InvitationState =
-  | "draft"
-  | "selected"
-  | "deferred"
-  | "delivered"
-  | "accepted"
-  | "declined"
-  | "expired";
+  "draft" | "selected" | "deferred" | "delivered" | "accepted" | "declined" | "expired";
 
 /** Quotation lifecycle — frozen Doc-4M / Doc-2 §5.5. There is NO `revised` state: revisions are
  *  immutable versions within `submitted` (§6.4). `selected`/`not_selected` reach only from `shortlisted`. */
 export type QuotationState =
-  | "draft"
-  | "submitted"
-  | "withdrawn"
-  | "shortlisted"
-  | "selected"
-  | "not_selected"
-  | "expired";
+  "draft" | "submitted" | "withdrawn" | "shortlisted" | "selected" | "not_selected" | "expired";
 
 /** Vendor capability matrix flags — frozen Invariant 1 (work_nature values; Doc-2 §10.4). */
 export type WorkNature = "supply" | "service" | "fabricate" | "consult";
