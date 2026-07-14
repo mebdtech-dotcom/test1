@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Architecture / governance question
-    url: https://github.com/mebdtech-dotcom/iVendorz/blob/main/generatedDocs/CORPUS_INDEX.md
+    url: https://github.com/ivendorz-phase/ivendorz/blob/main/generatedDocs/CORPUS_INDEX.md
     about: Read the frozen corpus index first — architecture questions are usually already answered there.
   - name: Repository structure question
-    url: https://github.com/mebdtech-dotcom/iVendorz/blob/main/REPOSITORY_STRUCTURE.md
+    url: https://github.com/ivendorz-phase/ivendorz/blob/main/REPOSITORY_STRUCTURE.md
     about: Module layout, DDD shape, and root-file policy.
