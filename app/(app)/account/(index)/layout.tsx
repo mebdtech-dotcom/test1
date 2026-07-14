@@ -1,6 +1,7 @@
-// User profile layout (Surface E · Doc-7E · P-ACC-02) — mounts the CANONICAL Platform Shell for the
-// Account & Identity section, scoped to `/account/profile` (and deeper) ONLY, so it does NOT wrap the
-// sibling `/account` buyer-profile page (P-ACC-14). App Router composition only — no business logic.
+// Buyer profile settings layout (Surface E · Doc-7E · P-ACC-14) — mounts the CANONICAL Platform Shell
+// for the bare `/account` route ONLY. A route group (`(index)`) scopes this layout to the index page
+// so it does NOT wrap the sibling `/account/*` sub-routes (each already mounts its own copy via its own
+// layout.tsx). App Router composition only — no business logic.
 //
 // PRESENTATION ONLY: identity/active-org is presentation SEED (a wired build resolves it server-side via
 // get_active_context, SR3 — PARKED). No client-supplied org id is trusted (Inv #5). The Account nav is
@@ -11,9 +12,9 @@ import { accountShellVm } from "../overview/account-nav-model";
 
 const ACCOUNT_SHELL_VM = accountShellVm([
   { label: "Account", href: "/account/overview" },
-  { label: "Profile" },
+  { label: "Buyer profile" },
 ]);
 
-export default function UserProfileLayout({ children }: { children: ReactNode }) {
+export default function AccountBuyerProfileLayout({ children }: { children: ReactNode }) {
   return <AppShell vm={ACCOUNT_SHELL_VM}>{children}</AppShell>;
 }

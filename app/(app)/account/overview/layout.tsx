@@ -7,19 +7,13 @@
 // org's participation is "hybrid" to exercise BOTH platform-participation facets on the overview
 // (Buyer + Vendor) — distinct from the user's ORG ROLE (Owner); the two dimensions never conflate (Inv #2).
 import type { ReactNode } from "react";
-import { AppShell, type ShellViewModel } from "../../_components/shell";
-import { ACCOUNT_NAV, ACCOUNT_QUICK_BAR } from "./account-nav-model";
+import { AppShell } from "../../_components/shell";
+import { accountShellVm } from "./account-nav-model";
 
-const ACCOUNT_SHELL_VM: ShellViewModel = {
-  identity: {
-    user: { name: "Anisur Rahman", email: "anisur@padmavalve.com.bd" },
-    activeOrg: { id: "active", name: "Padma Valve & Fittings Ltd.", participation: "hybrid" },
-    organizations: [{ id: "active", name: "Padma Valve & Fittings Ltd.", participation: "hybrid" }],
-  },
-  nav: ACCOUNT_NAV,
-  quickBar: ACCOUNT_QUICK_BAR,
-  breadcrumb: [{ label: "Account", href: "/account/overview" }, { label: "Overview" }],
-};
+const ACCOUNT_SHELL_VM = accountShellVm([
+  { label: "Account", href: "/account/overview" },
+  { label: "Overview" },
+]);
 
 export default function AccountOverviewLayout({ children }: { children: ReactNode }) {
   return <AppShell vm={ACCOUNT_SHELL_VM}>{children}</AppShell>;

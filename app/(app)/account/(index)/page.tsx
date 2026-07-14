@@ -21,11 +21,14 @@
 // BOUNDARY (REPOSITORY_STRUCTURE §9): an `app/` file imports `src/server/*` + module `contracts/` +
 // `src/shared/*` + sibling `app/` only — never a module internal, never cross-schema SQL. Here it imports
 // `src/server` (auth + the data face) and a sibling presentational component only.
+//
+// SHELL: mounted in the canonical Platform Shell by the co-located `(index)` layout — the shell owns the
+// `<main>` landmark; this page renders content only (no own `<main>` wrapper).
 
 import { ensureProvisioned, resolveSupabaseSession } from "@/server/auth";
 import { loadActiveOrgBuyerProfile } from "@/server/identity";
-import { AccountView, type AccountViewState } from "./account-view";
-import { AccountBuyerProfileForm } from "./account-buyer-profile-form";
+import { AccountView, type AccountViewState } from "../account-view";
+import { AccountBuyerProfileForm } from "../account-buyer-profile-form";
 
 export const metadata = {
   title: "Account settings — iVendorz",
@@ -57,9 +60,9 @@ export default async function AccountPage() {
   // authenticated callers (create form when absent, edit form when present). The form is a CLIENT island
   // that POSTs to `POST /api/identity/buyer_profiles`; the read view stays a pure server-rendered RSC.
   return (
-    <main>
+    <>
       <AccountView state={state} />
       {outcome.authenticated ? <AccountBuyerProfileForm profile={outcome.profile} /> : null}
-    </main>
+    </>
   );
 }
