@@ -27,7 +27,9 @@ export function QuotaMeter({ quota, className }: QuotaMeterProps) {
         )}
       </p>
       {hasData && quota?.resets_label ? (
-        <p className="text-xs text-muted-foreground">Resets {quota.resets_label}</p>
+        // The label arrives server-formatted WITH its "Resets …" prefix (QuotaView contract) —
+        // render it verbatim, never re-prefix.
+        <p className="text-xs text-muted-foreground">{quota.resets_label}</p>
       ) : null}
       <p className="text-xs text-muted-foreground">
         One unit is used only when you submit a quotation.
