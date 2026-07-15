@@ -162,7 +162,7 @@ modals are added — those are pattern states, not inventory rows.)*
 | P-ACC-09 | Role editor | Settings | `create_role`, `update_role`, `set_role_permissions`, `delete_role` | J-BUY-05 | |
 | P-ACC-10 | Permissions reference | Listing | `list_permissions` | — | Permissions by reference (Invariant #10) |
 | P-ACC-11 | Delegation grants | Listing | `list_delegation_grants`, `get_delegation_grant` | — | |
-| P-ACC-12 | Delegation grant editor | Settings | `create/suspend/revoke_delegation_grant` | — | ⚠ reinstate pending (`ESC-IDN-DELEG-EXPIRY` · `ER`) |
+| P-ACC-12 | Delegation grant editor | Settings | `create/suspend/reinstate/revoke_delegation_grant` | — | Reinstate un-gated 2026-07-15 (`ESC-IDN-DELEG-EXPIRY` ✅ resolved · `ER`); suspended non-expired only |
 | P-ACC-13 | Workflow settings | Settings | `update_workflow_settings` | J-BUY-04 | Approval chain + award threshold |
 | P-ACC-14 | Buyer profile settings | Settings | `upsert_buyer_profile` | J-BUY-04 | |
 | P-ACC-15 | Notification preferences | Settings | M6 prefs (`Doc-5H`) | — | |

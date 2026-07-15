@@ -249,7 +249,7 @@ already updated in the same change.
 | ~~FE-PUB-09 mega menu~~ | ~~taxonomy P1 + `MEGA_MENU_*` package approval~~ **CLEARED 2026-07-03** (owner Board; S: `ESC-7-API-CATNAV` stays open — build-time seed interim) | — |
 | FE-PF-02 brand | official SVGs under `public/brand/` | placeholder-complete kit `BrandLogo` |
 | FE-PUB-11 (P-PUB-25) | `showcase_projects` public read (ESC-class, unwired) + `P-PUB-25` mint / coverage 150→151 at kickoff | design specced (companion §6); `ProjectShowcase` "View details" stays `disabled` until wired |
-| Page-gates inside milestones | P-PUB-09 `ESC-7-API-CATNAV` · P-VND-10 `ESC-7-API/upload` · P-ACC-12 `ESC-IDN-DELEG-EXPIRY` | carve-out rule (WBS) |
+| Page-gates inside milestones | P-PUB-09 `ESC-7-API-CATNAV` · P-VND-10 `ESC-7-API/upload` · ~~P-ACC-12 `ESC-IDN-DELEG-EXPIRY`~~ **UN-GATED 2026-07-15** (handle resolved 2026-07-09; built + committed `ff5d58a`) | carve-out rule (WBS) |
 
 ## Parked register (🅿 — waiting on an owner decision)
 
@@ -274,7 +274,12 @@ already updated in the same change.
 3. ~~**FE-BUY-10 decisions**~~ — **RESOLVED by owner 2026-07-03** (route topology P-BUY-03/04 →
    reuse existing surfaces; favorites scope P-BUY-05 → confirmed product/category, build held on
    the projection gap). Milestone checkpointed, awaiting Review-A.
-4. **P-ACC-12** — `ESC-IDN-DELEG-EXPIRY` (delegation reinstate path).
+4. ~~**P-ACC-12** — `ESC-IDN-DELEG-EXPIRY` (delegation reinstate path).~~ — **CLOSED 2026-07-15.** The
+   handle was already ✅ **RESOLVED 2026-07-09** (owner ruling → `generatedDocs/Doc-2_Patch_v1.0.7.md`,
+   record `governanceReviews/BOARD-DECISION-IDN-DELEG-EXPIRY_v1.0.md`, realized W2-IDN-6.5 `c9e257f` —
+   contract #25 un-gated); this agenda item and the FE ⛔ simply outlived it. Owner ruled **BUILD**
+   2026-07-15 → P-ACC-12 built + committed `ff5d58a`. Reinstate is offered for **suspended non-expired
+   only**; `revoked`/`expired` stay terminal (no resurrection — post-terminal delegation = a NEW grant).
 5. **M2.5 microsite continuation.**
 6. ~~**Taxonomy P1 + mega-menu package approval**~~ — **APPROVED by owner 2026-07-03** (planning
    session, both gates; 3 rounds of owner findings adjudicated; Invariant-#1 binding: vendor

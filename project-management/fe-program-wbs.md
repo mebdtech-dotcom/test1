@@ -208,7 +208,7 @@ into Doc-4A/API-Gov territory ahead of real backend wiring).
 | ID · Title | Bld/Mnt | Owns | Status |
 |---|---|---|---|
 | FE-ACC-01 Auth cluster | T1 | P-AUTH-01..08 | ✅ Complete (P-AUTH-01 🟩 pre-loop; RV-0004..0021) |
-| FE-ACC-02 Account & Identity cluster | T1 | P-ACC-01..22 | ✅ Complete — **P-ACC-12 ⛔** `ESC-IDN-DELEG-EXPIRY` (page-gate carve-out, Board agenda #4); P-ACC-14 🟩 pre-loop |
+| FE-ACC-02 Account & Identity cluster | T1 | P-ACC-01..22 | ✅ Complete — ~~**P-ACC-12 ⛔** `ESC-IDN-DELEG-EXPIRY` (page-gate carve-out, Board agenda #4)~~ **UN-GATED 2026-07-15** (handle ✅ RESOLVED 2026-07-09 → `Doc-2_Patch_v1.0.7`, realized W2-IDN-6.5 `c9e257f`; the ⛔ outlived its cause. Owner ruled BUILD → P-ACC-12 built + committed `ff5d58a`; reinstate leg SANCTIONED by the resolution, not coined); P-ACC-14 🟩 pre-loop |
 | FE-ADM-01 Admin Console | T3 | P-ADM-01..29 | ✅ Complete (RV-0003..0084, all committed) |
 
 ## Dependency graph (real dependencies only)
