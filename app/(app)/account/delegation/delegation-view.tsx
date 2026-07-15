@@ -15,90 +15,18 @@
 //    grant); every state has a chip mapping so a wired list never renders an unmapped status.
 //  • This page is LIST-ONLY (`list_delegation_grants` + open); issuing/suspending/revoking a grant is the
 //    grant editor's job (P-ACC-12) — no mutation action is offered here.
+//
+// The rows/states/labels live in `delegation-seed.ts`, shared with the P-ACC-12 editor (one seed, no drift).
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Search, Share2 } from "lucide-react";
 import { Card } from "@/frontend/primitives/card";
 import { Input } from "@/frontend/primitives/input";
-import { StatusChip, type StatusTone } from "@/frontend/components/status-chip";
+import { StatusChip } from "@/frontend/components/status-chip";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { PaginationControl } from "@/frontend/components/pagination-control";
-
-// Frozen §5.10 delegation-grant states.
-type GrantStatus = "draft" | "active" | "suspended" | "revoked" | "expired";
-
-interface Grant {
-  grantId: string;
-  controllingOrgRef: string; // controlling_organization_id (opaque)
-  representativeOrgRef: string; // representative_organization_id (opaque)
-  vendorProfileRef: string; // vendor_profile_id (opaque)
-  status: GrantStatus;
-  validTo: string; // valid_to (— when not applicable, e.g. draft/revoked)
-}
-
-// Presentation seed — opaque UUID refs exactly as `list_delegation_grants` discloses them (bare ids, no
-// names). The active org appears as controlling on some grants and representative on others
-// (role_filter = any).
-const ACTIVE_ORG = "0192f0a1-7c3d-7e21-a001-0000000000a1";
-const GRANTS: Grant[] = [
-  {
-    grantId: "grant_01",
-    controllingOrgRef: ACTIVE_ORG,
-    representativeOrgRef: "0192f0a1-7c3d-7e21-b002-0000000000b2",
-    vendorProfileRef: "0192f0a1-7c3d-7e21-c101-0000000000c1",
-    status: "active",
-    validTo: "31 Dec 2026",
-  },
-  {
-    grantId: "grant_02",
-    controllingOrgRef: ACTIVE_ORG,
-    representativeOrgRef: "0192f0a1-7c3d-7e21-b003-0000000000b3",
-    vendorProfileRef: "0192f0a1-7c3d-7e21-c102-0000000000c2",
-    status: "suspended",
-    validTo: "30 Sep 2026",
-  },
-  {
-    grantId: "grant_03",
-    controllingOrgRef: "0192f0a1-7c3d-7e21-b004-0000000000b4",
-    representativeOrgRef: ACTIVE_ORG,
-    vendorProfileRef: "0192f0a1-7c3d-7e21-c103-0000000000c3",
-    status: "active",
-    validTo: "15 Aug 2026",
-  },
-  {
-    grantId: "grant_04",
-    controllingOrgRef: ACTIVE_ORG,
-    representativeOrgRef: "0192f0a1-7c3d-7e21-b005-0000000000b5",
-    vendorProfileRef: "0192f0a1-7c3d-7e21-c104-0000000000c4",
-    status: "expired",
-    validTo: "01 Jun 2026",
-  },
-  {
-    grantId: "grant_05",
-    controllingOrgRef: ACTIVE_ORG,
-    representativeOrgRef: "0192f0a1-7c3d-7e21-b006-0000000000b6",
-    vendorProfileRef: "0192f0a1-7c3d-7e21-c105-0000000000c5",
-    status: "revoked",
-    validTo: "—",
-  },
-  {
-    // draft — controller-side, before the grant is issued (Doc-2 §5.10 `draft`).
-    grantId: "grant_06",
-    controllingOrgRef: ACTIVE_ORG,
-    representativeOrgRef: "0192f0a1-7c3d-7e21-b007-0000000000b7",
-    vendorProfileRef: "0192f0a1-7c3d-7e21-c106-0000000000c6",
-    status: "draft",
-    validTo: "—",
-  },
-];
-
-const STATUS_META: Record<GrantStatus, { label: string; tone: StatusTone }> = {
-  draft: { label: "Draft", tone: "info" },
-  active: { label: "Active", tone: "success" },
-  suspended: { label: "Suspended", tone: "warning" },
-  revoked: { label: "Revoked", tone: "danger" },
-  expired: { label: "Expired", tone: "neutral" },
-};
+import { formatDate } from "@/frontend/components/format";
+import { GRANTS, STATUS_META, type GrantStatus } from "./delegation-seed";
 
 const STATUS_OPTIONS: Array<GrantStatus | "all"> = [
   "all",
@@ -232,7 +160,8 @@ export function DelegationView() {
                       />
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                      {g.validTo}
+                      {/* `valid_to` is nullable — an open-ended grant has no expiry to show. */}
+                      {g.validTo === null ? "—" : formatDate(g.validTo)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link
