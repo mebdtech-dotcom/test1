@@ -226,12 +226,57 @@ below is serialized into a submit composition until its channel resolves.
 | **`ESC-IDN-LIST-PAGESIZE`** 🟠 **OPEN (proposed 2026-07-10, W2-IDN-6.5)** | **List-read pagination bounds (page-size default/max for `list_delegation_grants.v1` and future identity list wires) have no registered POLICY key or corpus value** — Doc-3 v1.9 §Notes pre-names exactly this escalation (raised in `governanceReviews/milestones/w2-idn-6.5/COMPLETION-REPORT.md` §8 judgment call 15; independent Review-A re-verification pending at RV-0153) | **Fail-closed per report §8 call 15** — no coined default; bounds enforced conservatively pending registration; nothing dropped silently | Doc-3 POLICY key registration (additive, Board) |
 | **`ESC-IDN-SLUGCOUNT`** ✅ **RESOLVED 2026-07-09 (owner: Option A)** | **Frozen-vs-frozen permission-slug count mismatch (W2-IDN-2 Flag-and-Halt, 2026-07-09):** Doc-2 §7 (base text through the v1.0.5 patch chain) **enumerates 43 distinct slugs (36 tenant + 7 staff)**; Doc-6C §5.1 + Doc-6C Pass-3 CHK-6-062 + `backend_execution_playbook.md` §5 all **assert "45 (38 tenant + 7 staff)"** — none enumerates the 38; all cite Doc-2 §7 as the exhaustive list, which does not substantiate 45. Patch chain v1.0.3/4/5, PATCH-10, and Master Architecture §13 ruled out as sources of the missing 2. Evidence: `governanceReviews/milestones/w2-idn-2/HANDOFF-NOTE.md` §3/§4 + Board packet `governanceReviews/BOARD-PACKET-IDN-SLUGCOUNT_v1.0.md` | **W2-IDN-2 SUSPENDED at `c21c38f`** — zero seed rows written; nothing coined; even the enumerated 43 are NOT seeded until the ruling | **CLOSED — owner ruled Option A** (43 = truth; propagated counting error): `generatedDocs/Doc-6C_Patch_v1.0.1.md` (additive, registered in 00_AUTHORITY_MAP) + playbook/build-plan sync; W2-IDN-2 resumed seeding the enumerated 43; decision record in `governanceReviews/BOARD-PACKET-IDN-SLUGCOUNT_v1.0.md` |
 
+### Buyer PR # Search (owner directive, 2026-07-15)
+
+Source: owner directive 2026-07-15 — "Support RFQ search by Buyer PR # (organization-scoped)", raised
+with the same directive that added the per-line **PR #** column to the New-RFQ item list and propagated
+it to the vendor received copy / offer / revised offer / preview. Rationale recorded by the owner: PR #
+is the **buyer organization's internal Purchase Requisition reference**, and org-scoped lookup by it is
+what makes future ERP integration, audit, and procurement tracking tractable — consistent with
+enterprise procurement practice (SAP / Oracle / Dynamics).
+
+**Owner-directed scope (binding while open).** IN: buyer RFQ list · buyer RFQ details (PR # visible) ·
+buyer procurement history (search/filter) · buyer dashboard search. OUT: vendor search · marketplace
+search · Admin default search (advanced tools only, if ever) · universal search. Reason: a PR # carries
+no business value to a vendor and is not public. **Scope = organization-scoped buyer search only** — a
+buyer finds its own org's RFQs by its own PR #; no other organization and no vendor can search by it.
+
+**Scope subsequently BOARD-RULED 2026-07-15** — the ruling is recorded once, in the handle row below
+(reference-never-restate); it closes the bounded open question this intake raised and is the binding
+implementation direction. The paragraph above stands as the intake record, not as the live scope.
+
+**Display ≠ filterable field.** `pr_number` IS rendered to granted vendors on the RFQ/offer documents
+(same owner directive, 2026-07-15) — that is presentation of buyer-stated requirement content and is
+unaffected by this handle. This handle concerns only whether PR # becomes a **queryable/indexed
+field**, which the exclusions above answer negatively for every non-buyer surface.
+
+**Conforms upward (verified, no instrument needed):** the org-scoping the owner requires is *already*
+the frozen posture — `rfq.list_rfqs.v1` is buyer-org-scoped with **no public RFQ board** (Doc-3 §5.1
+FIXED; Doc-4E PassA §E4 "AI-Agent Notes"; Doc-5E R5), and vendor-side RFQ reads are grant-scoped only.
+The planning baseline agrees (`search_system_planning_and_design.md` v1.0 — G-1 "RFQ search to M3",
+G-7 tenant boundary, and its screen inventory already names buyer RFQ-list search as *"Org-scoped RFQ
+search (ScopedSearchBox, not global)"*). **Nothing below asks to widen visibility** — only to make an
+already-visible, already-org-scoped field queryable.
+
+| Handle | Scope / gap | Interim presentation | Channel |
+|---|---|---|---|
+| **`ESC-BUY-RFQ-PR-SEARCH`** 🟠 **OPEN (owner directive 2026-07-15) · search scope BOARD-RULED 2026-07-15** — the ruling fixes *where* PR # may be searched; the two contract gaps below stay open and still need their named channel | **RFQ lookup by buyer PR # (org-scoped) is not expressible on the frozen surface — two independent gaps.** (1) **No filter allowlist:** `rfq.list_rfqs.v1` (Doc-4E PassA §E4) declares its request as `rfq_id` / filter+pagination (Doc-4A §22.3) and carries **no `Filterable:`/`Sortable:` allowlist**, though the Doc-4A Query template requires one; Doc-4A §D.2 is explicit — *"Filter keys MUST appear in the contract's declared `Filterable:` allowlist"* and *"Text search filters MUST be declared explicitly in the allowlist with their match semantics (exact, prefix, full-text). Implicit text search on any field is prohibited."* So no PR # filter may be coined locally. (2) **No retrievable home:** `prNumber` is **dev-doc capture** serialized into `rfq_versions.content_jsonb`, whose internal schema is dev-doc scope (same class as `ESC-CS-LINEITEMS` / `ESC-QTN-AMEND`) — the corpus declares no `content_jsonb` schema, and M3's frozen realization states the absence **affirmatively**, not incidentally: *"No FTS in M3 (search is M2; matching is service, not FTS)"* (`Doc-6E_Content_v1.0_Pass3.md` §2.5 — FROZEN canonical Doc-6E source per `00_AUTHORITY_MAP.md`; audited as CHK-6-081 "FTS-absence"). So an FTS-over-`content_jsonb` route does not merely *add* an index — it lands against a stated frozen posture, and the Board should weigh it against a non-FTS exact/prefix match on a declared filterable field. **Cleared (no protected-fact conflict):** Doc-4A §D.2:479 bars protected facts from any filter allowlist; a buyer's own PR # is none of the five §7.5 categories (blacklist membership · routing exclusion · Buyer Vendor Status · private CRM data · link facts), and org-scoping keeps it inside the tenant that authored it — so PR # is *eligible* for a `Filterable:` declaration; only the declaration itself is missing. **Search scope — BOARD-RULED 2026-07-15 (binding implementation direction; the bounded open question raised at intake is CLOSED):** PR # is searchable **only within Buyer RFQ scoped search** (e.g. *My RFQs* / the Buyer RFQ List) and is **never exposed through Universal Search**. Implementation consequence to honor when the patch below is authored: because Universal Search is a *router* over the owning module's contract (planning baseline §3 — it owns no index), the exclusion binds the **P-SH-01 surface**, which must not offer or send PR # as a matched field; it is not a second contract, and it does not narrow what `list_rfqs` may declare for buyer-scoped callers. This ruling also **settles the intake's "buyer dashboard search" item**: PR # is supported there only insofar as that surface is buyer-RFQ-scoped — never where the box is a Universal Search entry point. | PR # renders as **display only** (New-RFQ grid, RFQ preview, vendor received copy, offer/revised offer) — no PR #-keyed lookup is offered anywhere. The P-BUY-06 toolbar's search input + Filters button remain **inert placeholders** (`list-toolbar.tsx` — presentation-only; filter binding is the server data layer's job, GI-02/GI-03, PARKED); no result set is fabricated, and an absent PR # match is never implied to mean "no such RFQ" (G-5) | Additive **Doc-4E + Doc-5E** patch declaring the `list_rfqs` `Filterable:` entry + its match semantics (human Board / API-Gov) — **plus** an additive **Doc-2/Doc-6E** patch if a retrievable/indexed home for the dev-doc `content_jsonb` value is required. Scope stays buyer-org-only per the owner directive above |
+
 ### Known non-ESC gaps (recorded, not escalations)
 - **Industry taxonomy** — now tracked as **`ESC-CLASS-INDUSTRY`** above (was: "not modeled"); the
   `Doc-2_IndustryTaxonomy` patch proposal recommends an M2-owned model for Board ratification.
 - **Brand / Standard / Manufacturer taxonomies** remain **not modeled** in the frozen corpus.
   Navigation may *reference* them as wayfinding dimensions but **coins no data model**; introducing any
   is a module-ownership / architecture decision (escalate), not an IA/UX decision. See `IA §5.3`, `GL`.
+- **Search Planning document registration inconsistency** (raised 2026-07-15 alongside
+  `ESC-BUY-RFQ-PR-SEARCH`; **Board-directed 2026-07-15 to be a SEPARATE governance follow-up — explicitly
+  NOT part of that ESC**, and not folded into it). `docs/product/requirements/search_system_planning_and_design.md`
+  self-declares a Board-approved **v1.0 PLANNING FREEZE** yet is absent from `00_AUTHORITY_MAP.md`,
+  `CORPUS_INDEX.md`, and `docs/INDEX.md` (repo-wide, the only file referencing it is itself), and its
+  local `ESC-SRCH-01…07` handles are not folded into this registry — in tension with §0 above ("the one
+  place every escalation is defined"). **Recorded here only so the follow-up is not lost; no disposition
+  implied and nothing resolved locally.** Not an escalation: it concerns document registration/hygiene,
+  not a gap in the frozen wired surface (§0 charter). Awaiting its own governance lane + owner.
 
 ---
 
