@@ -29,14 +29,11 @@
 //     partial queues (R7), plus a clock ("today") and an unbacked all-clear claim. Replaced by static
 //     descriptive copy that asserts no figure.
 //  3. THE 4-UP "DECISION TILES" ROW (Approvals waiting 3 · Quotes to review 2 · Order delayed 1 · RFQs
-//     closing soon 2) IS NOT BUILT — only ONE of its four tiles is backable. `awaitingMyApprovalCount`
-//     is real; "Quotes to review" would be a client-side count of a PARTIAL queue (R7); "Order delayed"
-//     has no backing state at all (the pinned contract-authority engagement set is `open → in_delivery →
-//     completed → closed` — there is no `delayed`, and the Doc-4M divergence is an OPEN carried
-//     Flag-and-Halt, so coining one here is doubly forbidden); "RFQs closing soon" needs a deadline +
-//     time-bucketing field no read projects. A 4-up row with 1 real tile is not the reference's
-//     composition, and filling the other 3 is exactly the invention the ruling forbids. The one backed
-//     tile keeps its two existing, backed homes: the priority banner and the KPI band.
+//     closing soon 2) — its COUNTS are not backable (only `awaitingMyApprovalCount` is real; see
+//     `DecisionTilesRow` below for the per-tile reasoning). **REVISED 2026-07-16:** the row itself is
+//     now BUILT, footprint intact, with true non-numeric content per the owner's ruling — "keep the
+//     band's footprint; fill it with true, non-numeric content". The earlier revision omitted the row
+//     entirely; that was an unapproved substitution and is superseded.
 //  4. "Bills payable · BDT 2.8M · due in 9 days" KPI — no field on `BuyerDashboardKpis` and no wired
 //     read projects a payables aggregate or its ageing. The existing backed "Win rate" tile holds the
 //     slot.
@@ -81,7 +78,10 @@ import {
   ArrowRight,
   BarChart3,
   Bookmark,
+  Briefcase,
+  CheckSquare,
   ClipboardCheck,
+  ClipboardList,
   FileText,
   FolderOpen,
   Plus,
@@ -202,6 +202,88 @@ function ApprovalPriorityBanner({ count }: { count: number }) {
         className="ml-auto size-5 shrink-0 text-iv-amber-700 transition-transform group-hover:translate-x-0.5"
       />
     </Link>
+  );
+}
+
+/**
+ * Decision tiles — the reference's 4-up entry row above the KPI strip, realized under the owner's
+ * 2026-07-16 data/copy directive (`.claude/skills/ivendorz-fe-design/SKILL.md` §Data & Copy Fidelity).
+ *
+ * OWNER RULING (2026-07-16) applied here: "keep the band's footprint; fill it with true, non-numeric
+ * content" — the canonical treatment for an unbacked reference widget. This SUPERSEDES the earlier
+ * decision to omit the row entirely (the omission was an unapproved substitution; that autonomy is
+ * withdrawn).
+ *
+ * WHY NON-NUMERIC. The reference's four tiles carry counts — "Approvals waiting 3 · Quotes to review 2
+ * · Order delayed 1 · RFQs closing soon 2". Only the first is backed (`awaitingMyApprovalCount`), and
+ * it already renders twice on this page (priority banner + KPI tile). The other three cannot be shown
+ * at any value: "Quotes to review" would be a client count over a PARTIAL queue (R7); "Order delayed"
+ * has no backing state at all (the pinned contract-authority set is `open → in_delivery → completed →
+ * closed`, and the Doc-4M divergence is an OPEN carried Flag-and-Halt, so coining `delayed` is doubly
+ * forbidden); "RFQs closing soon" needs a deadline + time-bucketing field no read projects. Rendering
+ * a count on one tile and none on the other three would read as "the rest are zero" — a false claim by
+ * omission. So NO tile carries a figure: the row is navigation into the four buyer queues, and the KPI
+ * band directly below carries every backed number. Footprint kept, fabricated payload dropped.
+ *
+ * Captions describe what each queue HOLDS — they assert no count, no trend and no urgency claim.
+ * Icons are the `NAV_ICONS` choices for these same four destinations (`shell/icons.ts`: approvals =
+ * CheckSquare · quotations = FileText · rfqs = ClipboardList · engagements = Briefcase) so a tile and
+ * its sidebar entry never disagree; they are imported directly here because this is a Server Component
+ * (NAV_ICONS exists to carry icon KEYS across the RSC boundary, which this surface does not cross).
+ */
+const DECISION_TILES: { href: string; label: string; caption: string; icon: ReactNode }[] = [
+  {
+    href: "/buy/approvals",
+    label: "Approvals",
+    caption: "Pending your sign-off",
+    icon: <CheckSquare aria-hidden />,
+  },
+  {
+    href: "/buy/quotations",
+    label: "Quotations",
+    caption: "Compare and award",
+    icon: <FileText aria-hidden />,
+  },
+  {
+    href: "/buy/rfqs",
+    label: "RFQs",
+    caption: "Sourcing in flight",
+    icon: <ClipboardList aria-hidden />,
+  },
+  {
+    href: "/buy/engagements",
+    label: "Engagements",
+    caption: "Post-award delivery",
+    icon: <Briefcase aria-hidden />,
+  },
+];
+
+function DecisionTilesRow() {
+  return (
+    <nav aria-label="Your queues" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {DECISION_TILES.map((tile) => (
+        <Link
+          key={tile.href}
+          href={tile.href}
+          className="group flex min-w-0 items-center gap-3 rounded-lg border border-border bg-card p-4 shadow-iv-xs transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <span
+            aria-hidden
+            className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-iv-navy-50 text-iv-navy-700 [&_svg]:size-5 dark:bg-iv-navy-900/50 dark:text-iv-navy-200"
+          >
+            {tile.icon}
+          </span>
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-semibold text-foreground">{tile.label}</span>
+            <span className="truncate text-xs text-muted-foreground">{tile.caption}</span>
+          </span>
+          <ArrowRight
+            aria-hidden
+            className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+          />
+        </Link>
+      ))}
+    </nav>
   );
 }
 
@@ -338,6 +420,12 @@ export function BuyerDashboardView({
           <ApprovalPriorityBanner count={awaitingApproval} />
         </div>
       ) : null}
+
+      {/* Decision tiles — the reference's 4-up entry row, directly above the KPI strip as it sits
+          there. Static navigation, so it renders unconditionally (it depends on no read). */}
+      <div className="mb-4">
+        <DecisionTilesRow />
+      </div>
 
       {/* KPI band — every VALUE is a contract read; counts non-disclosure-safe (Inv #11). Mobile-first
           single column, 2-up at sm, full 4-up at xl (the reference's KPI strip). `trend` is UI-layer
