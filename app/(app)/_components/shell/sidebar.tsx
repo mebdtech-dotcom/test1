@@ -124,8 +124,12 @@ function NavGroup({
       </button>
       {!collapsed && isOpen && item.children && item.children.length > 0 ? (
         <ul id={panelId} className="flex flex-col gap-0.5">
+          {/* Keyed by label, not href: two leaves in one group MAY share a destination when they are
+              different affordances onto it (`vendor-shell-vm.ts` — "Microsite & Branding" and "View
+              Public Page" both open the page that hosts the microsite's `live_url`). Labels are what
+              distinguish them, which is why the group loop below keys the same way. */}
           {item.children.map((child) => (
-            <li key={child.href}>
+            <li key={child.label}>
               <NavLink
                 item={child}
                 pathname={pathname}
