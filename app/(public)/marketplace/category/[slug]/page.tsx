@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FilterSidebar } from "@/frontend/components/filter-sidebar";
+import { PublicPageHead } from "../../../_components/public-page-head";
 import { VendorCard } from "@/frontend/components/vendor-card";
 import { ProductCard } from "@/frontend/components/product-card";
 import { ResultsGrid } from "@/frontend/components/results-grid";
@@ -110,118 +111,113 @@ export default async function CategoryPage({
   const rootSlug = trail[0]?.slug;
 
   return (
-    <Container className="py-8">
-      <header className="mb-6">
-        <p className="text-sm text-muted-foreground">
-          <Link href="/marketplace" className="rounded-sm hover:text-foreground hover:underline">
-            Marketplace
-          </Link>
-          {" / "}
-          <Link href="/categories" className="rounded-sm hover:text-foreground hover:underline">
-            Categories
-          </Link>
-          {trail.slice(0, -1).map((ancestor) => (
-            <span key={ancestor.id}>
-              {" / "}
-              <Link
-                href={categoryHref(ancestor)}
-                className="rounded-sm hover:text-foreground hover:underline"
-              >
-                {ancestor.name}
-              </Link>
-            </span>
-          ))}
-        </p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-iv-ink-heading sm:text-4xl">
-          {category.name}
-        </h1>
-        <p className="mt-2 max-w-2xl text-iv-ink-secondary">
-          {category.node?.description ?? `Verified suppliers and products in ${category.name}.`}
-        </p>
-        <p className="mt-2 text-xs text-muted-foreground">
+    <>
+      {/* Page head — the reference's shared `.pghead` (`isCategory`). The crumb is this page's OWN
+          resolved ancestor trail (Marketplace › Categories › …ancestors › this category), rendered
+          verbatim — ancestry is never derived in the head. Copy unchanged, including the honest
+          not-yet-wired disclosure, which stays with the listings it qualifies. */}
+      <PublicPageHead
+        eyebrow="Category"
+        crumbs={[
+          { label: "Marketplace", href: "/marketplace" },
+          { label: "Categories", href: "/categories" },
+          ...trail.slice(0, -1).map((ancestor) => ({
+            label: ancestor.name,
+            href: categoryHref(ancestor),
+          })),
+          { label: category.name },
+        ]}
+        title={category.name}
+        description={
+          category.node?.description ?? `Verified suppliers and products in ${category.name}.`
+        }
+      >
+        <p className="text-xs text-white/70">
           Live catalog search is coming soon — showing example listings for this category.
         </p>
-      </header>
+      </PublicPageHead>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <aside className="lg:w-64 lg:shrink-0">
-          <div className="rounded-lg border border-border bg-card p-4 lg:sticky lg:top-20">
-            <FilterSidebar facets={VENDOR_FACETS} label="Filter category results" />
-            {/* FE-PUB-09 Phase 2: route-aware category tree (taxonomy-resolved slugs only). */}
-            {category.node ? <CategorySidebarTree slug={category.node.slug} /> : null}
-          </div>
-        </aside>
+      <Container className="py-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <aside className="lg:w-64 lg:shrink-0">
+            <div className="rounded-lg border border-border bg-card p-4 lg:sticky lg:top-20">
+              <FilterSidebar facets={VENDOR_FACETS} label="Filter category results" />
+              {/* FE-PUB-09 Phase 2: route-aware category tree (taxonomy-resolved slugs only). */}
+              {category.node ? <CategorySidebarTree slug={category.node.slug} /> : null}
+            </div>
+          </aside>
 
-        <div className="min-w-0 flex-1">
-          <nav
-            aria-label="Result type"
-            className="mb-4 inline-flex h-9 items-center justify-center gap-1 rounded-md bg-muted p-1"
-          >
-            {TABS.map((t) => {
-              const active = t.key === activeTab;
-              return (
-                <Link
-                  key={t.key}
-                  href={tabHref(t.key)}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "rounded-sm px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    active
-                      ? "bg-card text-foreground shadow-iv-xs"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {t.label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {activeTab === "vendors" ? (
-            <ResultsGrid
-              count={vendors.length}
-              columnsClassName="grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
-              footer={<PaginationControl hasMore hasPrevious={false} />}
+          <div className="min-w-0 flex-1">
+            <nav
+              aria-label="Result type"
+              className="mb-4 inline-flex h-9 items-center justify-center gap-1 rounded-md bg-muted p-1"
             >
-              {vendors.map((v) => (
-                <VendorCard key={v.slug} vendor={v} href={vendorHref(v.slug)} />
-              ))}
-            </ResultsGrid>
-          ) : (
-            <ResultsGrid
-              count={products.length}
-              columnsClassName="grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
-              footer={<PaginationControl hasMore hasPrevious={false} />}
-            >
-              {products.map((p) => (
-                <ProductCard key={p.id} product={p} href={productHref(p)} />
-              ))}
-            </ResultsGrid>
-          )}
+              {TABS.map((t) => {
+                const active = t.key === activeTab;
+                return (
+                  <Link
+                    key={t.key}
+                    href={tabHref(t.key)}
+                    aria-current={active ? "page" : undefined}
+                    className={cn(
+                      "rounded-sm px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      active
+                        ? "bg-card text-foreground shadow-iv-xs"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {t.label}
+                  </Link>
+                );
+              })}
+            </nav>
 
-          {/* Related Categories rail (ARCH §9.1) — children first, then siblings; DERIVED from
-              the taxonomy, collapses entirely for legacy-only slugs. */}
-          {related.length > 0 ? (
-            <section aria-label="Related categories" className="mt-8">
-              <h2 className="mb-3 text-lg font-semibold tracking-tight text-iv-ink-heading">
-                Related categories
-              </h2>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                {related.map((node) => (
-                  <CategoryCard
-                    key={node.id}
-                    node={node}
-                    href={categoryHref(node)}
-                    rootSlug={rootSlug ?? node.slug}
-                    size="sm"
-                    showDescription={false}
-                  />
+            {activeTab === "vendors" ? (
+              <ResultsGrid
+                count={vendors.length}
+                columnsClassName="grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                footer={<PaginationControl hasMore hasPrevious={false} />}
+              >
+                {vendors.map((v) => (
+                  <VendorCard key={v.slug} vendor={v} href={vendorHref(v.slug)} />
                 ))}
-              </div>
-            </section>
-          ) : null}
+              </ResultsGrid>
+            ) : (
+              <ResultsGrid
+                count={products.length}
+                columnsClassName="grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+                footer={<PaginationControl hasMore hasPrevious={false} />}
+              >
+                {products.map((p) => (
+                  <ProductCard key={p.id} product={p} href={productHref(p)} />
+                ))}
+              </ResultsGrid>
+            )}
+
+            {/* Related Categories rail (ARCH §9.1) — children first, then siblings; DERIVED from
+              the taxonomy, collapses entirely for legacy-only slugs. */}
+            {related.length > 0 ? (
+              <section aria-label="Related categories" className="mt-8">
+                <h2 className="mb-3 text-lg font-semibold tracking-tight text-iv-ink-heading">
+                  Related categories
+                </h2>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  {related.map((node) => (
+                    <CategoryCard
+                      key={node.id}
+                      node={node}
+                      href={categoryHref(node)}
+                      rootSlug={rootSlug ?? node.slug}
+                      size="sm"
+                      showDescription={false}
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }

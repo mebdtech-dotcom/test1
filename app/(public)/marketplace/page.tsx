@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SearchBar } from "@/frontend/components/search-bar";
+import { PublicPageHead } from "../_components/public-page-head";
 import { Container } from "@/frontend/components/container";
 import { FeaturedCategories } from "../_components/landing/featured-categories";
 import { SupplierShowcase } from "../_components/landing/supplier-showcase";
@@ -18,19 +19,18 @@ export const metadata: Metadata = {
 export default function MarketplacePage() {
   return (
     <>
-      <section className="border-b border-border bg-background">
-        <Container className="py-10 sm:py-12">
-          <h1 className="text-3xl font-bold tracking-tight text-iv-ink-heading sm:text-4xl">
-            Marketplace
-          </h1>
-          <p className="mt-2 max-w-2xl text-iv-ink-secondary">
-            Discover verified industrial suppliers and products across Bangladesh.
-          </p>
-          <div className="mt-5 max-w-2xl">
-            <SearchBar action="/search" />
-          </div>
-        </Container>
-      </section>
+      {/* Page head — the reference's shared `.pghead` (`isMarketplace`). Copy unchanged; the search
+          bar keeps its place inside the head exactly as the reference composes it. */}
+      <PublicPageHead
+        eyebrow="Marketplace"
+        crumbs={[{ label: "Marketplace" }]}
+        title="Marketplace"
+        description="Discover verified industrial suppliers and products across Bangladesh."
+      >
+        <div className="max-w-2xl">
+          <SearchBar action="/search" />
+        </div>
+      </PublicPageHead>
 
       <FeaturedCategories />
       <SupplierShowcase />

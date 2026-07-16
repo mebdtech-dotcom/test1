@@ -1,6 +1,15 @@
 // SEC-CTA — Final conversion band (landing_page_spec §13 · Doc-7D). STATIC. CTAs ROUTE (no anonymous
 // mutation): "Post an RFQ" → `(auth)` (Doc-7E); "Talk to us" → the public contact page (P-PUB-24). No
 // anonymous lead-capture POST. Navy brand band; amber stays reserved (not used decoratively here).
+//
+// 2026-07-16 — the "iVendorz Public Pages" reference composes this band as two columns with a
+// decorative image beside the copy ("Drop an image (factory / team / product)"). This band stays
+// CENTERED, deliberately. The owner's media ruling allows a decorative slot to reuse an existing
+// approved project visual "where appropriate" — but the repo's only photograph (`hero-bg.jpg`)
+// already opens THIS SAME PAGE as the hero, so repeating it two screens down would read as a
+// duplication artifact rather than a design, and there is no second approved visual to use. A stock
+// or AI image is out (the same ruling), and an empty media frame in a conversion band would be worse
+// than none. Revisit when a second real project visual exists.
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/frontend/primitives/button";

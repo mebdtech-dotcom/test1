@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ChevronRight, Info, Package, Store } from "lucide-react";
 import { Card, CardContent } from "@/frontend/primitives/card";
+import { MediaPlaceholder } from "../../../_components/media-placeholder";
 import { Button } from "@/frontend/primitives/button";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { categoryHref } from "@/frontend/navigation/model/types";
@@ -113,14 +114,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
       <Card>
         <CardContent className="grid grid-cols-1 gap-6 p-6 md:grid-cols-[minmax(0,18rem)_1fr]">
-          {/* Decorative product tile (no <img>; media refs are storage-only per the frozen contract —
-              none exist in this seed, so this stays the honest glyph fallback, never a fabricated URL). */}
-          <div
-            aria-hidden="true"
-            className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-border bg-muted text-muted-foreground"
-          >
-            <Package className="size-10" />
-          </div>
+          {/* Product media — no <img>: media refs are storage-only per the frozen contract and none
+              exist in this seed, so this stays the honest glyph fallback, never a fabricated URL. The
+              frame now comes from the shared `MediaPlaceholder` (this file was its third instance);
+              same tokens, same proportion, same posture — see that file for the owner ruling: a real
+              product photo belongs to a vendor and arrives via the M2 asset pipeline, so no stock, AI
+              or borrowed image may stand in for it. */}
+          <MediaPlaceholder className="aspect-[4/3]" icon={<Package />} />
 
           <div className="flex min-w-0 flex-col gap-3">
             <div className="min-w-0">
