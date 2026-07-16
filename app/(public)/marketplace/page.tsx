@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { SearchBar } from "@/frontend/components/search-bar";
 import { PublicPageHead } from "../_components/public-page-head";
-import { Container } from "@/frontend/components/container";
 import { FeaturedCategories } from "../_components/landing/featured-categories";
 import { SupplierShowcase } from "../_components/landing/supplier-showcase";
 import { PopularProducts } from "../_components/landing/popular-products";

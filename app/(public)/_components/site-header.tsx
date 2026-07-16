@@ -22,15 +22,15 @@
 // keep the Doc-7E auth entry, Suppliers keeps the real vendor directory (`/vendors`).
 //
 // Two-row layout (owner reference mockup, 2026-07-04): row 1 = logo + catalog search + auth
-// entry; row 2 = Categories/Suppliers/More/Sell-on-iVendorz + Help Center/Request-for-Quotation.
+// entry; row 2 = Categories/Suppliers/More/Sell-on-iVendorz + Support/Request-for-Quotation.
 // "Suppliers" is the existing vendor directory (P-PUB-12), relabeled for this row — not a new
 // destination. "Sell on iVendorz" routes to the same shared auth-entry area as every other
-// conversion CTA (Doc-7E owns auth; no distinct vendor-signup flow exists to invent a route for).
-// "More" groups the two still-unbuilt Wave-3 placeholders (Pricing/Resources) rather than
-// inventing new destinations. "Help Center" is placeholdered to "/" — same Wave-3 convention, no
-// help-center surface exists yet. No language switcher / account-menu affordance is rendered:
-// this codebase has no i18n system and no anonymous "account" concept, so a decorative toggle for
-// either would be pure fabrication (GI-03).
+// conversion CTA (Doc-7E owns auth; no distinct vendor-signup flow exists to invent a route for)
+// — see `SELL_ON_IVENDORZ_HREF` for the 2026-07-16 revert that restored this. "More" groups
+// Pricing/Resources/How-it-works, all of which are now BUILT (see the placeholder note below).
+// "Support" routes to `/contact`; no help-centre surface exists, so no label promises one.
+// No language switcher / account-menu affordance is rendered: this codebase has no i18n system and
+// no anonymous "account" concept, so a decorative toggle for either would be pure fabrication (GI-03).
 import * as React from "react";
 import Link from "next/link";
 import { ChevronDown, FilePlus2, Menu } from "lucide-react";
@@ -67,10 +67,32 @@ const MORE_LINKS = [
   { href: "/resources", label: "Resources" },
   { href: "/how-it-works", label: "How it works" },
 ];
-/** Nav label → its own marketing page (reference: `#/for-vendors`). NOT a conversion CTA, so the
- *  auth-entry rule below does not apply to it. */
-const SELL_ON_IVENDORZ_HREF = "/for-vendors";
+/**
+ * REVERTED 2026-07-16 (Review-A MAJOR) — back to the Doc-7E auth entry, pending an owner ruling.
+ *
+ * This briefly pointed at `/for-vendors` on the reference's authority, reclassified in a comment as
+ * "not a conversion CTA". That was wrong on process: **Doc-7D is FROZEN** and PR5 says conversion CTAs
+ * route to the `(auth)` group; this file's own note (below) already classified "Sell on iVendorz" AS a
+ * conversion CTA. Re-deciding that in a code comment is precisely what §11 requires Flag-and-Halt for,
+ * and `visual_reference_implementation.md` §2 lists "Navigation shell" under MUST-NOT. Worse, this file
+ * refuses the reference's `Sign in`→/for-vendors as loose prototype routing (see header) and then
+ * adopted that same destination for a neighbouring label — one rule, applied to three CTAs, abandoned
+ * for the fourth.
+ *
+ * `/for-vendors` may well be the better IA — that is for the owner to rule, not for this file to
+ * assume. ESCALATED; restore only on an owner-attributed ruling recorded here.
+ */
+const SELL_ON_IVENDORZ_HREF = "/login";
+/** Routes to the real `/contact` page ("Contact & support"). Labelled "Support" — see `SUPPORT_LABEL`. */
 const HELP_CENTER_HREF = "/contact";
+/**
+ * "Support", not the reference's "Help Center": no help-centre surface exists in this codebase, and a
+ * label must not promise one. The sibling footer, changed in the same commit, DROPPED "Help center" for
+ * exactly this reason ("if a future label has no route, it does not go in this footer") — the same rule
+ * has to reach the header. `/contact` titles itself "Contact & support", so this label describes what
+ * the destination actually is. Copy is ours; a reference defines the visual design, not the words.
+ */
+const SUPPORT_LABEL = "Support";
 
 export function SiteHeader() {
   const [open, setOpen] = React.useState(false);
@@ -162,7 +184,7 @@ export function SiteHeader() {
                 </SheetClose>
                 <SheetClose asChild>
                   <Button asChild variant="ghost" className="justify-start">
-                    <Link href={HELP_CENTER_HREF}>Help Center</Link>
+                    <Link href={HELP_CENTER_HREF}>{SUPPORT_LABEL}</Link>
                   </Button>
                 </SheetClose>
               </nav>
@@ -206,7 +228,7 @@ export function SiteHeader() {
         </div>
       </Container>
 
-      {/* Row 2 — Categories · Suppliers · More · Sell on iVendorz · Help Center · Request for Quotation */}
+      {/* Row 2 — Categories · Suppliers · More · Sell on iVendorz · Support · Request for Quotation */}
       <div className="hidden border-t border-border md:block">
         <Container className="flex h-11 items-center gap-1">
           <Explorer />
@@ -239,7 +261,7 @@ export function SiteHeader() {
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="hover:text-iv-ink-heading">
-              <Link href={HELP_CENTER_HREF}>Help Center</Link>
+              <Link href={HELP_CENTER_HREF}>{SUPPORT_LABEL}</Link>
             </Button>
             {/* Request for Quotation = the visually dominant row-2 action (owner delta; Smart
                 RFQ is the moat) — same destination/intent as the prior "Post RFQ" CTA, restyled

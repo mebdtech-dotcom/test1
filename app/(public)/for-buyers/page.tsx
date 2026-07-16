@@ -11,7 +11,7 @@ import {
 import { Card } from "@/frontend/primitives/card";
 import { Button } from "@/frontend/primitives/button";
 import { Container } from "@/frontend/components/container";
-import { PublicPageHead } from "../_components/public-page-head";
+import { PublicPageHead, ON_NAVY_FOCUS } from "../_components/public-page-head";
 
 // Public "For Buyers" segment route (`/for-buyers`) — P-PUB-05 (Doc-7D Public surface · T-STATIC ·
 // TB-NONE; screen_specifications §P-PUB-02..06, journey J-GST-01). A pure SERVER COMPONENT mounted in the
@@ -77,12 +77,13 @@ export default function ForBuyersPage() {
         {/* On-navy CTA pair — the established idiom for buttons on a navy band (white fill for the
             primary, translucent outline for the secondary). The kit `primary` variant is a navy
             gradient and would disappear into this background; `secondary`/`outline` are light-surface
-            variants for the same reason. Composition-level classes only — no variant is added. */}
+            variants for the same reason. Composition-level classes only — no variant is added.
+            `ON_NAVY_FOCUS` re-tunes the focus ring for this band (see its definition). */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button
             asChild
             size="lg"
-            className="gap-2 border-transparent bg-white text-iv-brand-700 hover:bg-iv-brand-50"
+            className={`gap-2 border-transparent bg-white text-iv-brand-700 hover:bg-iv-brand-50 ${ON_NAVY_FOCUS}`}
           >
             <Link href="/login">
               Get started <ArrowRight aria-hidden="true" />
@@ -92,7 +93,7 @@ export default function ForBuyersPage() {
             asChild
             size="lg"
             variant="outline"
-            className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            className={`border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white ${ON_NAVY_FOCUS}`}
           >
             <Link href="/marketplace">Explore the marketplace</Link>
           </Button>

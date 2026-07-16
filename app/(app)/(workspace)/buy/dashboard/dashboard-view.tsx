@@ -42,9 +42,23 @@
 //     `[Compare]` navigation into the comparison workspace instead.
 //  6. Its "Decisions waiting · 5" card title + badge — no approval-queue ROW read exists (only a count),
 //     and the badge is a client-computed cross-queue aggregate (R7). See the same header.
-//  7. Its per-KPI delta chips ("▲ 6.4% vs last mo") — retained ONLY because this page already shipped
-//     them as explicitly-disclosed BX-06 illustrative decoration (see `kpi-stat-card.tsx`'s `KpiTrend`
-//     doc and the gating below); no frozen trend/delta read exists. They are NOT contract-traced.
+//  7. Its per-KPI delta chips ("▲ 6.4% vs last mo") — **NOT BUILT. REMOVED 2026-07-16 (Review-A
+//     MAJOR).** They shipped here briefly as "+6.4% vs last month" / "+3 this week" / "+2 pts vs last
+//     quarter", defended as explicitly-disclosed BX-06 illustrative decoration. That defence does not
+//     survive the owner's 2026-07-16 §Data & Copy Fidelity directive, on three counts:
+//       • "No read yet ⇒ no figure. Ever… never substitute a plausible-looking number to fill the
+//         layout" — and the disclosure lived in a CODE COMMENT no visitor reads; the user saw only
+//         "▲ +6.4% vs last month". That is the directive's own "it's only a mockup value" failure mode.
+//       • A fixture "supplies values, never new concepts": `BuyerDashboardKpis` has `spend`,
+//         `activeRfqCount`, `awaitingMyApprovalCount`, `winRate` and NO trend/delta field, so a
+//         period-over-period delta is a new CONCEPT, not a fixture value for a real field. (This is
+//         exactly why the funnel's stage counts ARE legitimate and these were not.)
+//       • BX-06 (2026-07-03) predates the directive, which carries no grandfather clause.
+//     They were also self-contradictory: this page rejects "Good morning" because a time-of-day claim
+//     needs a client clock, while "vs last month" is a time claim from the same clockless page. The
+//     owner's canonical treatment already applied to the tiles row in this same band (`c7dcb19`) —
+//     keep the footprint, drop the fabricated payload — now applies here too: the tiles keep their
+//     value + label + caption, and carry no delta.
 //
 // ALSO DROPPED FROM THE REFERENCE, DELIBERATELY:
 //  • Its sidebar, top bar, search box and account chip — all already rendered by the shared `(workspace)`
@@ -428,26 +442,20 @@ export function BuyerDashboardView({
       </div>
 
       {/* KPI band — every VALUE is a contract read; counts non-disclosure-safe (Inv #11). Mobile-first
-          single column, 2-up at sm, full 4-up at xl (the reference's KPI strip). `trend` is UI-layer
-          illustrative decoration, gated on the real value being present — never shown next to a "—"
-          placeholder — same disclosure posture as the rest of this page's presentation-fixture SEED
-          (page.tsx's header), not a contract-traced figure (no frozen trend/delta read exists). */}
+          single column, 2-up at sm, full 4-up at xl (the reference's KPI strip).
+          NO `trend` chips: see this file's header, item 7. Each tile's `value` fills a REAL frozen
+          field on `BuyerDashboardKpis`; there is no trend/delta field, so a delta cannot be a fixture
+          value for it — it would be a new concept, which the Data & Copy Fidelity directive forbids. */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiStatCard
           label="Spend"
           value={kpis.spend ? <Money value={kpis.spend} /> : undefined}
-          trend={kpis.spend ? { label: "+6.4% vs last month", direction: "up" } : undefined}
           icon={<Wallet aria-hidden />}
           tone="brand"
         />
         <KpiStatCard
           label="Active RFQs"
           value={typeof kpis.activeRfqCount === "number" ? kpis.activeRfqCount : undefined}
-          trend={
-            typeof kpis.activeRfqCount === "number"
-              ? { label: "+3 this week", direction: "up" }
-              : undefined
-          }
           icon={<FileText aria-hidden />}
           tone="info"
         />
@@ -472,7 +480,6 @@ export function BuyerDashboardView({
         <KpiStatCard
           label="Win rate"
           value={winRatePct}
-          trend={winRatePct ? { label: "+2 pts vs last quarter", direction: "up" } : undefined}
           icon={<TrendingUp aria-hidden />}
           tone="success"
         />

@@ -65,7 +65,7 @@ export function LandingSection({
                 / text-xs / tracking-wider / ink-heading-strong recipe, so a page composing both kinds
                 of section head shows ONE eyebrow style, not two. */}
             {eyebrow ? (
-              <p className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-iv-fg-heading-strong">
+              <p className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-iv-ink-heading-strong">
                 {eyebrow}
               </p>
             ) : null}

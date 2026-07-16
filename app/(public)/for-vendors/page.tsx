@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Search, Inbox, Grid3x3, Store, BadgeCheck, FileText } from "lucide-react";
 import { Card } from "@/frontend/primitives/card";
-import { PublicPageHead } from "../_components/public-page-head";
+import { PublicPageHead, ON_NAVY_FOCUS } from "../_components/public-page-head";
 import { Button } from "@/frontend/primitives/button";
 import { Container } from "@/frontend/components/container";
 
@@ -72,11 +72,13 @@ export default function ForVendorsPage() {
         title="Get found. Win real work."
         description="Put your capabilities in front of industrial buyers across Bangladesh — and let qualified RFQs come to you."
       >
+        {/* On-navy CTA pair — see `for-buyers/page.tsx`; `ON_NAVY_FOCUS` re-tunes the focus ring for
+            this band (the kit default is tuned for light surfaces). */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button
             asChild
             size="lg"
-            className="gap-2 border-transparent bg-white text-iv-brand-700 hover:bg-iv-brand-50"
+            className={`gap-2 border-transparent bg-white text-iv-brand-700 hover:bg-iv-brand-50 ${ON_NAVY_FOCUS}`}
           >
             <Link href="/login">
               Get started <ArrowRight aria-hidden="true" />
@@ -86,7 +88,7 @@ export default function ForVendorsPage() {
             asChild
             size="lg"
             variant="outline"
-            className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            className={`border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white ${ON_NAVY_FOCUS}`}
           >
             <Link href="/vendors">Browse the directory</Link>
           </Button>

@@ -32,7 +32,7 @@ export default function HomePage() {
       <section className="border-b border-iv-light-border bg-iv-light-base py-9 sm:py-12">
         <Container>
           <div className="mx-auto mb-6 max-w-2xl text-center">
-            <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-fg-heading-strong">
+            <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-ink-heading-strong">
               Start here
             </p>
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-iv-ink-heading">

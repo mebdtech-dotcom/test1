@@ -48,7 +48,7 @@ export function HowItWorks() {
     >
       <Container>
         <div className="mx-auto mb-7 max-w-2xl text-center">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-fg-heading-strong">
+          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-ink-heading-strong">
             How it works
           </p>
           <h2

@@ -27,7 +27,7 @@ export function Testimonials() {
     >
       <Container>
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-fg-heading-strong">
+          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-ink-heading-strong">
             What buyers say
           </p>
           <h2

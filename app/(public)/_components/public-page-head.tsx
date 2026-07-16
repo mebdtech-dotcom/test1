@@ -37,6 +37,23 @@ import { ChevronRight } from "lucide-react";
 import { Container } from "@/frontend/components/container";
 import { cn } from "@/frontend/lib/cn";
 
+/**
+ * Focus-ring override for any interactive element a caller places INSIDE this band (`children`).
+ *
+ * WHY IT EXISTS (Review-A/B finding, 2026-07-16). The kit `Button` focuses with
+ * `ring-ring` + `ring-offset-background` — correct on a light page, wrong here: `--ring` is
+ * `--iv-brand-500` (#2f5eb8) and this band ends at `--iv-brand-600` (#23438f), so the ring measures
+ * ~1.5:1 against it, below the 3:1 WCAG 2.1 SC 1.4.11 requires of a focus indicator. Focus stayed
+ * *perceivable* only because the near-white `ring-offset-background` halo happened to show — i.e. the
+ * page background leaking onto a dark band, which is an accident, not a design.
+ *
+ * This band is navy in EVERY theme, so it opts out of the theme-following ring the same way the
+ * on-navy button colours already opt out of the semantic variants. White ring, navy offset.
+ * The head's own crumb links carry the same treatment inline (measured 6.3:1).
+ */
+export const ON_NAVY_FOCUS =
+  "focus-visible:ring-white/70 focus-visible:ring-offset-iv-brand-800" as const;
+
 /** One crumb. Linked when `href` is given; the final crumb is the current page and is never linked. */
 export interface PublicCrumb {
   label: string;
@@ -86,7 +103,11 @@ export function PublicPageHead({
           {crumbs.map((crumb, index) => {
             const isLast = index === crumbs.length - 1;
             return (
-              <span key={crumb.label} className="flex items-center gap-1.5">
+              // Keyed by index, not by `label`: a crumb label is display text, and a trail may legally
+              // repeat one (a category named like its ancestor). No collision is reachable in today's
+              // taxonomy — all 794 nodes checked, 0 duplicate trails — but the list is static and
+              // never reordered, so the index is both safe and collision-proof.
+              <span key={index} className="flex items-center gap-1.5">
                 <ChevronRight aria-hidden className="size-3 shrink-0 text-white/40" />
                 {crumb.href && !isLast ? (
                   <Link

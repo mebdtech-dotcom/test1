@@ -12,7 +12,6 @@ import type { CategoryNodeData } from "@/frontend/navigation";
 import { FEATURED_CATEGORIES } from "../_components/discovery/seed";
 import { SupplierShowcase } from "../_components/landing/supplier-showcase";
 import { PopularProducts } from "../_components/landing/popular-products";
-import { Container } from "@/frontend/components/container";
 import { CategoriesExplorer } from "./categories-explorer";
 
 // P-PUB-07 Categories index (Doc-7D Public surface · landing_page_spec §4; FE-PUB-02 delta;

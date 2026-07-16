@@ -45,7 +45,7 @@ export function Faq() {
     >
       <Container>
         <div className="mx-auto mb-6 max-w-2xl text-center">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-fg-heading-strong">
+          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-iv-ink-heading-strong">
             FAQ
           </p>
           <h2
