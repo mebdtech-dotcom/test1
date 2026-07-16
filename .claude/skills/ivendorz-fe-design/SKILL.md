@@ -125,11 +125,31 @@ reference's visual rhythm, drop the fabricated payload.**
 ## Frozen Foundation Reference
 
 ### Brand Palette
-- **Navy (dominant)**: `--iv-navy-*` (sidebar, main nav, primary actions)
-- **Indigo (interactive)**: `--iv-brand-*` (secondary interactions, focus states)
-- **Gold (premium)**: `--iv-amber-*` (highlights, premium features, badges)
-- **Semantic**: `--iv-success/warning/error/info` (per-use status colors)
-- **Neutrals**: `--iv-slate-*` (backgrounds, borders, text hierarchy)
+
+> **`app/globals.css` is the canonical implementation** (with `tailwind.config.ts` exposing the
+> utility names). This section mirrors it — on any drift, globals.css wins and this doc is corrected.
+> Corrected 2026-07-16: it previously named `--iv-error-*` and `--iv-slate-*`, neither of which has
+> ever existed. Those were pre-migration names left over from before the 2026-06-30 navy migration;
+> anyone following them wrote dead classes silently. **Retired names are not re-added to the
+> codebase** — the doc is aligned to the code, never the reverse.
+
+- **Navy (dominant)**: `--iv-navy-50…950` (sidebar, main nav, primary fills)
+- **Indigo (interactive)**: `--iv-brand-50…950` (focus ring, links, selected-nav, brand chips)
+- **Gold (premium)**: `--iv-amber-50…900` (award, premium, verified tiers, featured — name kept, values are gold)
+- **Semantic status**: `--iv-success-*` · `--iv-warning-*` · `--iv-danger-*` · `--iv-info-*` · `--iv-neutral-*`
+  — each a 5-step ramp: `-subtle` (tint bg) · `-muted` (text on subtle) · `-base` (solid fill) ·
+  `-bright` · `-text` (dark-mode text). **It is `danger`, never `error`.**
+- **Text / ink**: `--iv-fg` · `-strong` · `-secondary` · `-muted` · `-heading` · `-heading-strong`
+- **Surfaces**: `--iv-surface-*` (dark) · `--iv-light-*` (light) · `--iv-nav-*` (sidebar) · `--iv-chart-1…6`
+
+**⚠️ Ink gotcha — the CSS var and the utility name differ.** The variables are `--iv-fg-*`, but the
+Tailwind family is **`iv-ink-*`**: write `text-iv-ink-heading`, `text-iv-ink-secondary`,
+`text-iv-ink-heading-strong` — there is no `text-iv-fg-*` class. Every other family keeps its name
+(`--iv-navy-700` → `bg-iv-navy-700`).
+
+**There is no generic hue family.** No `--iv-green/yellow/red/blue/slate-*` exists, by design — the
+2026-06-30 migration replaced hue-named tokens with the semantic ramps above so colour is chosen by
+*meaning*, not by hue. Reaching for a hue name is the tell that you want a semantic token.
 
 **Token pattern:** Named tokens only, no hand-picked hex codes. Use `--primary`, `--secondary`, `--accent` mapped to the palette above.
 

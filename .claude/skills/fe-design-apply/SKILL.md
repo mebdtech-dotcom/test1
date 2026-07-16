@@ -305,6 +305,13 @@ surface class with their own rules (print CSS, wet-ink signature blocks) — not
 
 ### Palette Rules (Never Vary)
 
+> **`app/globals.css` is the canonical implementation**; `tailwind.config.ts` exposes the utility
+> names. This section mirrors it — on drift, globals.css wins and this doc is corrected. Corrected
+> 2026-07-16: it previously listed `--iv-green-500`, `--iv-yellow-500`, `--iv-red-500`,
+> `--iv-blue-500` and `--iv-slate-*` — **none of which has ever existed**. They were pre-migration
+> hue names from before the 2026-06-30 navy migration; following them produced dead classes that
+> failed silently. Retired names are **not** re-added to the codebase; the doc aligns to the code.
+
 **Primary:** Navy (`--iv-navy-700`, `--primary`)
 - Main nav, sidebar, primary buttons, headlines
 
@@ -314,14 +321,30 @@ surface class with their own rules (print CSS, wet-ink signature blocks) — not
 **Accent:** Gold (`--iv-amber-400`, `--accent`)
 - Badges, premium features, highlights, icons
 
-**Semantic:**
-- Success: `--iv-green-500`
-- Warning: `--iv-yellow-500`
-- Error: `--iv-red-500`
-- Info: `--iv-blue-500`
+**Semantic status** — five families, each a 5-step ramp
+(`-subtle` tint bg · `-muted` text-on-subtle · `-base` solid fill · `-bright` · `-text` dark-mode text):
 
-**Neutrals:** Slate (`--iv-slate-*`)
-- Backgrounds, borders, text hierarchy
+| Meaning | Family | Typical use |
+|---|---|---|
+| Success | `--iv-success-*` | verified, active, won |
+| Warning | `--iv-warning-*` | pending, under review, expiring |
+| Danger | `--iv-danger-*` | rejected, overdue (**`danger`, never `error`**) |
+| Info | `--iv-info-*` | new, submitted, invited |
+| Neutral | `--iv-neutral-*` | draft, closed, inactive |
+
+e.g. `bg-iv-success-subtle text-iv-success-muted` for a tint chip; `bg-iv-info-base` for a solid fill.
+
+**Text / ink:** `--iv-fg` · `-strong` · `-secondary` · `-muted` · `-heading` · `-heading-strong`.
+**⚠️ The utility family is `iv-ink-*`, not `iv-fg-*`** — write `text-iv-ink-secondary`; there is no
+`text-iv-fg-*` class. Every other family keeps its name (`--iv-navy-700` → `bg-iv-navy-700`).
+
+**Surfaces / borders:** `--iv-surface-*` (dark) · `--iv-light-*` (light) · `--iv-nav-*` (sidebar) ·
+`--iv-chart-1…6`. Prefer the shadcn semantics where they exist (`bg-background`, `bg-card`,
+`border-border`, `text-muted-foreground`).
+
+**No generic hue family exists** (`green`/`yellow`/`red`/`blue`/`slate`) — by design. The migration
+replaced hue names with the semantic ramps so colour is chosen by *meaning*, not hue. Reaching for a
+hue name is the tell that you want a semantic token.
 
 ---
 
