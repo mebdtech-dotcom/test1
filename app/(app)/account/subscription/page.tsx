@@ -9,6 +9,7 @@
 //
 // The `?state=none` preview (empty subscription) is a DEV/QA harness — honored ONLY outside production.
 import { PageHeader } from "../../_components/shell/page-header";
+import { BillingSubNav } from "../billing/billing-sub-nav";
 import { SubscriptionView } from "./subscription-view";
 
 export const metadata = {
@@ -29,6 +30,7 @@ export default async function SubscriptionPage({
   return (
     <>
       <PageHeader title="Subscription" description="Your plan, usage, and billing history." />
+      <BillingSubNav active="subscription" />
       <SubscriptionView empty={empty} />
     </>
   );

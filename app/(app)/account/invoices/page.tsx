@@ -7,6 +7,7 @@
 // between buyer and vendor (`billing.platform_invoices ≠ operations.trade_invoices`, Doc-4I FIXED;
 // R8/DF-6) — no escrow, wallet, or settlement. The shell owns the `<main>` container + the page `<h1>`.
 import { PageHeader } from "../../_components/shell/page-header";
+import { BillingSubNav } from "../billing/billing-sub-nav";
 import { PlatformInvoicesView } from "./platform-invoices-view";
 
 export const metadata = {
@@ -20,6 +21,7 @@ export default function PlatformInvoicesPage() {
         title="Platform invoices"
         description="Invoices for your iVendorz plan, lead packages, and ads."
       />
+      <BillingSubNav active="invoices" />
       <PlatformInvoicesView />
     </>
   );

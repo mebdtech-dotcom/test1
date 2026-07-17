@@ -5,6 +5,7 @@
 // PRESENTATION ONLY: shows entitlement usage vs quota via the frozen read `get_usage` (BC-BILL-3,
 // Doc-4I) — a read; no mutation. The shell owns the `<main>` container + the page `<h1>` (PageHeader).
 import { PageHeader } from "../../_components/shell/page-header";
+import { BillingSubNav } from "../billing/billing-sub-nav";
 import { UsageDashboard } from "./usage-dashboard";
 
 export const metadata = {
@@ -18,6 +19,7 @@ export default function UsagePage() {
         title="Usage & quota"
         description="How much of your plan's entitlements you've used this period."
       />
+      <BillingSubNav active="usage" />
       <UsageDashboard />
     </>
   );
