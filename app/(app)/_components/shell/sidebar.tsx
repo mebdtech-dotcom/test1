@@ -21,14 +21,24 @@ import type { NavItem, NavSection, SurfaceSwitchItem } from "./types";
  * href keeps the original prefix-match behavior (so `/rfqs/123` still activates a plain `/rfqs`
  * link) but only when the CURRENT url also carries no query — otherwise `/rfqs?state=draft` would
  * incorrectly also mark the query-less "My RFQs" (`/rfqs`) link active.
+ *
+ * `activeAcrossQuery` (opt-in per NavItem) relaxes ONLY that empty-query guard for a surface-parent
+ * that owns its own query views: the merged `/sell/rfqs` must stay lit on `?view=board`/`?state=…`
+ * (Cluster #1 · Team-1 F2). Query-bearing hrefs are unaffected — they keep exact path+query match, so
+ * a deep-link child (documents-hub "Offers" `?state=submitted`) still activates only on its exact URL.
  */
-function isActive(pathname: string, search: string, href: string): boolean {
+function isActive(
+  pathname: string,
+  search: string,
+  href: string,
+  activeAcrossQuery = false,
+): boolean {
   const qIndex = href.indexOf("?");
   const hrefPath = qIndex === -1 ? href : href.slice(0, qIndex);
   const hrefQuery = qIndex === -1 ? "" : href.slice(qIndex + 1);
   if (hrefQuery) return pathname === hrefPath && search === hrefQuery;
   return (
-    (pathname === hrefPath && search === "") ||
+    (pathname === hrefPath && (activeAcrossQuery || search === "")) ||
     (hrefPath !== "/" && pathname.startsWith(hrefPath + "/"))
   );
 }
@@ -48,7 +58,7 @@ function NavLink({
   indented?: boolean;
 }) {
   const Icon = item.icon ? NAV_ICONS[item.icon] : null;
-  const active = isActive(pathname, search, item.href);
+  const active = isActive(pathname, search, item.href, item.activeAcrossQuery);
   return (
     <Link
       href={item.href}
@@ -97,7 +107,8 @@ function NavGroup({
   onToggle: () => void;
 }) {
   const Icon = item.icon ? NAV_ICONS[item.icon] : null;
-  const hasActiveChild = item.children?.some((c) => isActive(pathname, search, c.href)) ?? false;
+  const hasActiveChild =
+    item.children?.some((c) => isActive(pathname, search, c.href, c.activeAcrossQuery)) ?? false;
   const panelId = `nav-group-${item.label.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <li>
@@ -149,7 +160,8 @@ function NavGroup({
 function findActiveGroupLabel(nav: NavSection[], pathname: string, search: string): string | null {
   for (const section of nav) {
     for (const item of section.items) {
-      if (item.children?.some((c) => isActive(pathname, search, c.href))) return item.label;
+      if (item.children?.some((c) => isActive(pathname, search, c.href, c.activeAcrossQuery)))
+        return item.label;
     }
   }
   return null;

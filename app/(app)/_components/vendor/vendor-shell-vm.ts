@@ -37,14 +37,22 @@ export const VENDOR_NAV: NavSection[] = [
     id: "primary",
     items: [
       { label: "Dashboard", href: `${BASE}/dashboard`, icon: "dashboard" },
-      { label: "RFQ Leads", href: `${BASE}/rfqs`, icon: "rfqs" },
-      { label: "Leadboard", href: `${BASE}/leads`, icon: "pipeline" },
+      // Cluster #1 merge (Team-1 build order F4 · closure record §2.2): the former colliding "RFQ
+      // Leads" (this inbox) and "Leadboard" (`/sell/leads`, the same received invitations under a
+      // private-CRM lens) are ONE surface now — the standalone Leadboard nav item is removed and its
+      // board folds into `/sell/rfqs` as an Inbox ⇄ Pipeline `?view=` toggle (`/sell/leads`
+      // 308-redirects there). `activeAcrossQuery` keeps this parent lit across its own `?view=`/
+      // `?state=` variants while the documents-hub "Offers" deep-link keeps exact-match (F2).
+      { label: "RFQs & Quotations", href: `${BASE}/rfqs`, icon: "rfqs", activeAcrossQuery: true },
       { label: "Engagements", href: `${BASE}/engagements`, icon: "engagements" },
       { label: "Finance", href: `${BASE}/finance`, icon: "reports" },
       { label: "Buyer Inquiries", href: `${BASE}/inquiries`, icon: "inquiries" },
       // VX-03 (owner directive 2026-07-17) — the design's Selling "Buyer CRM" surface. Private
       // per-vendor buyer relationship data (the sell-side mirror of the buyer's M4 Vendor CRM).
-      { label: "Buyer CRM", href: `${BASE}/buyer-crm`, icon: "crm" },
+      // Terminology (Team-1 build order C4/C5 · closure record D4): the USER-FACING label is "Buyer
+      // Relationships"; the internal domain term stays "Buyer CRM" (route path, component name, and
+      // directory unchanged — no `BuyerRelationship` concept minted).
+      { label: "Buyer Relationships", href: `${BASE}/buyer-crm`, icon: "crm" },
     ],
   },
   {
@@ -94,7 +102,8 @@ export const VENDOR_NAV: NavSection[] = [
     ],
   },
   // Trust is a READ-ONLY governance signal (M5), NOT an editable vendor surface. It is kept in its
-  // OWN discrete section — never folded among the editable `primary` leaves (RFQ Leads / Engagements)
+  // OWN discrete section — never folded among the editable `primary` leaves (RFQs & Quotations /
+  // Engagements)
   // — per `esc_registry.md:53` ("Trust read-only") and `vendor_planning_and_design.md:97`. This
   // additive extraction improves BOTH single-surface vendor rendering and the Hybrid co-mount, where
   // Trust is the always-terminal group ([ESC-7G-A7] realization). The vendor may only VIEW it.

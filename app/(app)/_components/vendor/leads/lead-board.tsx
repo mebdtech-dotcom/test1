@@ -1,5 +1,7 @@
 // PL-1 Pipeline — BOARD view (companion §13.2; a desktop convenience, NOT offered on mobile). Six
-// stage columns. CRITICAL byte-equivalence rules: each column header carries the stage label + a
+// stage columns. Mounted under the merged RFQ workspace's Pipeline lens (`/sell/rfqs?view=board` —
+// Cluster #1 merge, Team-1 F1/F3); the column "View →" links point at that lens, not the retired index.
+// CRITICAL byte-equivalence rules: each column header carries the stage label + a
 // NON-NUMERIC "View →" link — NEVER a count ([ESC-7-API] #1: no received-only count read exists). There
 // is NO client cross-column tally [MINOR-2]; each column is its own lazy cursor-paged read. A zero-row
 // column uses the SAME canonical empty token as every other (excluded ≡ not-matched ≡ zero). In the
@@ -33,7 +35,7 @@ export function LeadBoard({ leadsByStage, basePath = "/sell" }: LeadBoardProps) 
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-3">
               <LeadStageChip stage={stage} />
               <Link
-                href={`${basePath}/leads`}
+                href={`${basePath}/rfqs?view=board`}
                 className="text-xs font-medium text-iv-brand-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 View →

@@ -90,20 +90,23 @@ export default function VendorDashboardPage() {
         <PlaceholderPanel
           title="Sales pipeline"
           actionLabel="View pipeline"
-          actionHref="/sell/leads"
+          // Cluster #1 merge (Team-1 F1): the pipeline board now lives on the merged RFQ workspace.
+          actionHref="/sell/rfqs?view=board"
           emptyTitle="No pipeline activity yet"
           emptyDescription="Your RFQ pipeline appears here as leads move through quoting, negotiation and award."
         />
         <NextActionsCard leads={[]} />
       </div>
 
-      {/* Row 3 — Latest RFQ leads + Buyer inquiries */}
+      {/* Row 3 — Latest RFQ invitations + Buyer inquiries */}
       <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
         <PlaceholderPanel
-          title="Latest RFQ leads"
+          // "RFQ Leads" retired (Team-1 F4 · closure record §3-D4): the received-invitation register
+          // reads "RFQ invitations" — the retired nav-label collision is gone. Opens the inbox lens.
+          title="Latest RFQ invitations"
           actionLabel="View all"
           actionHref="/sell/rfqs"
-          emptyTitle="No RFQ leads yet"
+          emptyTitle="No RFQ invitations yet"
           emptyDescription="Matched RFQ invitations from buyers will appear here."
         />
         <PlaceholderPanel

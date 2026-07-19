@@ -40,6 +40,14 @@ export { QuotationSubmitPanel, type QuotationSubmitPanelProps } from "./quotatio
 export { QuotaMeter, type QuotaMeterProps } from "./quota-meter";
 export { WindowStateChip, type WindowStateChipProps } from "./window-state-chip";
 export { RfqStateChip, InvitationStateChip, QuotationStateChip } from "./state-chips";
+// Cluster #1 merge (Team-1 F2): the Inbox ⇄ Pipeline lens toggle for the merged `/sell/rfqs` surface.
+export {
+  RfqViewToggle,
+  parseRfqView,
+  RFQ_VIEWS,
+  type RfqView,
+  type RfqViewToggleProps,
+} from "./rfq-view-toggle";
 
 export type {
   RfqState,

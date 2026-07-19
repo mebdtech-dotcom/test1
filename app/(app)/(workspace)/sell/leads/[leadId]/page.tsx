@@ -22,7 +22,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ lea
   return (
     <div className="space-y-6">
       <Breadcrumbs
-        items={[{ label: "Leadboard", href: "/sell/leads" }, { label: "Lead detail" }]}
+        // Cluster #1 merge (Team-1 F3/F4): the crumb points at the merged Pipeline lens, not the
+        // retired "Leadboard" index. This detail route KEEPS its path (`/sell/leads/[leadId]`).
+        items={[{ label: "Pipeline", href: "/sell/rfqs?view=board" }, { label: "Lead detail" }]}
         className="mb-4"
       />
       <PageHeader

@@ -18,6 +18,12 @@ Track-2:    Applied 2026-06-30 - 18/18 contract escalations dispositioned (see S
             3 BLOCKERs remain with the human Board. Gate: still WITHHELD.
 Track-3:    Applied 2026-06-30 - Sec.13 addendum folded in (Leads 13.2, Engagements 13.3, quote-builder 13.1); the Sec.10.3 completeness gap is FILLED, MAJOR-10 discharged.
             +9 new [ESC-...] contract questions raised to the API Governance Board / corpus reconciliation (Sec.13.4); NO new BLOCKER. Gate: still WITHHELD.
+Track-4:    Applied 2026-07-19 (ADDITIVE, Team-1 build order F7) - Cluster #1 nav re-home recorded: PL-1's
+            standalone "Leads / Pipeline" destination ((app)/leads) is SUPERSEDED by an Inbox ⇄ Pipeline
+            `?view=` toggle on the RFQ workspace (/sell/rfqs); /sell/leads 308-redirects there; the
+            per-lead detail route is kept. Also Cluster #2 C4: the vendor "Buyer CRM" surface renders the
+            USER-FACING label "Buyer Relationships" (internal domain term unchanged). See §2.2 note.
+            Additive only - no frozen doc touched; companion conforms upward (CLAUDE.md §7). NO new BLOCKER.
 -->
 
 # iVendorz Vendor Workspace — Planning & Design (Track 3)
@@ -130,6 +136,24 @@ iVendorz Vendor Workspace  (app)/  — org-scoped, server-resolved active org
 ```
 
 **Why Trust & Verification sits in "Standing & Account," not "Company":** the four bands are M5-owned, read-only, firewalled from the editable M2 content. Keeping it out of the editable group structurally prevents any implication that the vendor edits these signals (DP4). **Billing and Trust are deliberately separate top-level nodes** (DP6 — Financial Tier ≠ Plan).
+
+> **ADDITIVE PATCH — Cluster #1 nav re-home (2026-07-19, Team-1 build order F7 · closure record
+> `governanceReviews/Cluster_1_2_Governance_Closure_and_Team1_Handoff_v1.0.md` §2).** The standalone
+> **"Leads / Pipeline" `(app)/leads`** destination shown in the map above is **superseded**: the
+> Leadboard board view folds into the **RFQ workspace** (`(app)/rfqs`, i.e. `/sell/rfqs`) as an
+> **Inbox ⇄ Pipeline** lens chosen by the allowlisted `?view=inbox|board` param (URL-driven,
+> navigation-not-state). `/sell/leads` **308-redirects** to `/sell/rfqs?view=board`; the **per-lead
+> detail** route (`(app)/leads/[leadId]`) is **kept**. Rationale (Review-A/B, closure record §2.3):
+> both surfaces present the SAME received RFQ invitations through two lenses (M3 inbox read + M4
+> `ops.list_leads` CRM read), and Doc-7G fixes the view inventory + bindings while **deferring
+> routes/nav to implementation** — so composing them on one surface is conformant, not a redesign.
+> The aggregate-free guard binds the shared stat band (no lead-derived count enters it; the board keeps
+> non-numeric column links; the quota meter is inbox-scoped — closure record F6). *Also (Cluster #2,
+> C4):* the Selling **"Buyer CRM"** surface (`/sell/buyer-crm`) renders the user-facing label **"Buyer
+> Relationships"**; the internal domain term stays **"Buyer CRM"** (no `BuyerRelationship` concept
+> minted). This note is **additive**; it records the re-home without rewriting the historical map, and
+> resolves the companion's own `(app)/leads` reference upward to the frozen Doc-7G (no frozen doc
+> touched).
 
 ### 2.3 Route tree under `(app)` (no org id ever in URL — DP9)
 ```

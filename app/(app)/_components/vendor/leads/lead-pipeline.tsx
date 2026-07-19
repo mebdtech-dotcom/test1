@@ -16,8 +16,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/primitives/
 export interface LeadPipelineProps {
   list: ReactNode;
   board: ReactNode;
-  /** Which view opens first. Defaults to "list" (the low-bandwidth recommendation); the Leadboard
-   *  surface passes "board" so the kanban shows immediately (VX-03, owner directive 2026-07-17). */
+  /** Which view opens first. Defaults to "list" (the low-bandwidth recommendation); the merged RFQ
+   *  workspace's Pipeline lens (`/sell/rfqs?view=board` — Cluster #1 merge) passes "board" so the
+   *  kanban shows immediately (VX-03, owner directive 2026-07-17). */
   defaultView?: "list" | "board";
 }
 

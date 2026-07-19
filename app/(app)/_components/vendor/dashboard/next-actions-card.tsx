@@ -14,8 +14,10 @@
 // for. No header badge, no total, no "N due".
 //
 // NO CREATE AFFORDANCE: the reference's "Add follow-up" footer button has no analogue — the vendor
-// NEVER self-creates a lead (`../leads/types.ts`), so the footer is a NAVIGATION action to the real
-// Leads & Pipeline surface instead, preserving the card's footprint without a fabricated command.
+// NEVER self-creates a lead (`../leads/types.ts`), so the footer is a NAVIGATION action to the merged
+// RFQ Pipeline lens (`/sell/rfqs?view=board` — Cluster #1 merge, Team-1 F1/F4) instead, preserving the
+// card's footprint without a fabricated command. Per-lead rows still deep-link the KEPT detail route
+// (`/sell/leads/[leadId]`, F3), so the two destinations are separate props below.
 //
 // NO PARTY NAME / AVATAR: the reference rows lead with a counterparty's initials. A lead projects no
 // buyer name (rfq_id is a bare UUID, "not a window into RFQ data" — DF-3), so the leading 34px slot
@@ -31,17 +33,25 @@ import type { LeadView } from "../leads/types";
 export interface NextActionsCardProps {
   /** Lead rows carrying their own `next_action_*` fields — order is the caller's. */
   leads: LeadView[];
-  leadsHref?: string;
+  /** The pipeline INDEX destination (the "All →" link + footer CTA) — the merged Pipeline lens
+   *  (Cluster #1 merge; Team-1 F1). */
+  pipelineHref?: string;
+  /** Base path for a per-lead deep-link — the KEPT lead-detail route (F3). Rows link `${base}/${id}`. */
+  leadHrefBase?: string;
 }
 
-export function NextActionsCard({ leads, leadsHref = "/sell/leads" }: NextActionsCardProps) {
+export function NextActionsCard({
+  leads,
+  pipelineHref = "/sell/rfqs?view=board",
+  leadHrefBase = "/sell/leads",
+}: NextActionsCardProps) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex-row items-center justify-between gap-3 space-y-0 p-5">
         {/* No count badge — see the ND-8 note in this file's header. */}
         <h2 className="text-base font-semibold leading-none tracking-tight">Next actions</h2>
         <Link
-          href={leadsHref}
+          href={pipelineHref}
           className="shrink-0 text-sm font-medium text-iv-brand-600 hover:underline"
         >
           All <span aria-hidden>→</span>
@@ -56,7 +66,7 @@ export function NextActionsCard({ leads, leadsHref = "/sell/leads" }: NextAction
             {leads.map((lead) => (
               <li key={lead.id}>
                 <Link
-                  href={`${leadsHref}/${lead.id}`}
+                  href={`${leadHrefBase}/${lead.id}`}
                   className="flex items-start gap-3 px-5 py-3 transition-colors hover:bg-muted/50"
                 >
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
@@ -86,7 +96,7 @@ export function NextActionsCard({ leads, leadsHref = "/sell/leads" }: NextAction
 
       <div className="border-t border-border p-4">
         <Button asChild variant="outline" size="sm" className="w-full">
-          <Link href={leadsHref}>Open Leadboard</Link>
+          <Link href={pipelineHref}>View pipeline</Link>
         </Button>
       </div>
     </Card>

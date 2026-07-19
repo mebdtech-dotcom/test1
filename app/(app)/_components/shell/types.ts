@@ -40,6 +40,16 @@ export interface NavItem {
   badge?: number;
   disabled?: boolean;
   /**
+   * Opt-in active-highlight relaxation for a query-less href: when `true`, this item highlights on ANY
+   * URL whose pathname matches `href` (or a sub-path), regardless of the current query string. Default
+   * (unset) keeps the strict rule — a query-less href matches only when the URL also carries no query,
+   * so a query-bearing sibling in the SAME group (e.g. documents-hub `?stage=` filters vs the query-less
+   * "Dashboard" child) never double-highlights. Set it on a SURFACE-PARENT item that owns its own
+   * query-param views (e.g. the merged `/sell/rfqs` with `?view=`/`?state=`) so the parent stays lit
+   * across its variants while any query-bearing deep-link keeps exact-match (Cluster #1 · Team-1 F2).
+   */
+  activeAcrossQuery?: boolean;
+  /**
    * Optional one-level grouping (IA — Buyer sidebar sub-groups, e.g. "RFQs" containing "My RFQs" /
    * "Draft Requests" / "Closed RFQs"). When present, the client nav components (`Sidebar`/`MobileNav`)
    * render this item as a non-interactive group header (icon + label, `href` unused for the header

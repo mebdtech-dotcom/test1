@@ -524,9 +524,11 @@ export function DocumentsHubView({ data }: { data: DocumentsHubData }) {
                   // buyer's `/rfqs/[rfqId]/quotations/[quotationId]` shape (Review-B catch).
                   { id: "rfqs", label: "RFQs & Quotations", href: `${BASE}/rfqs`, kindKey: "rfq" },
                   {
+                    // Cluster #1 merge (Team-1 F1/F4): the Leadboard folded into the RFQ workspace;
+                    // this link now opens the Pipeline lens (retired label + repointed href).
                     id: "leads",
-                    label: "Leadboard",
-                    href: `${BASE}/leads`,
+                    label: "Pipeline",
+                    href: `${BASE}/rfqs?view=board`,
                     kindKey: "rfq",
                   },
                 ]}
