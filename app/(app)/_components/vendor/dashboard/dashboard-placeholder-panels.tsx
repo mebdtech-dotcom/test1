@@ -117,7 +117,7 @@ const QUICK_ACTIONS = [
   { label: "Upload product", href: "/sell/company/products", icon: Package },
   { label: "Create challan", href: "/sell/documents?stage=challan", icon: Truck },
   { label: "Create invoice", href: "/sell/documents?stage=trade_invoice", icon: Receipt },
-  { label: "Add buyer to CRM", href: "/sell/buyer-crm", icon: UserPlus },
+  { label: "Add buyer", href: "/sell/buyer-relationships", icon: UserPlus },
   { label: "Update showcase", href: "/sell/company", icon: RefreshCw },
 ] as const;
 

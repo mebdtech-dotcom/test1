@@ -1,42 +1,43 @@
-// Vendor Workspace — Buyer Relationships (VX-03, owner directive 2026-07-17). PRESENTATION-ONLY SHELL.
+// Vendor Workspace — Buyer Relationships (design plan v0.2 gate-4 PRESENTATION BUILD,
+// owner-authorized 2026-07-19 — "no change required, implement it"). VX-03: this governed page
+// renders the honest pre-wiring state; the populated target is the approved mockup, mounted only
+// when reads land.
 //
-// TERMINOLOGY (Team-1 build order C4/C5 · closure record D4 — two-register split): the USER-FACING
-// label is "Buyer Relationships" (page title, nav, copy, empty states); the INTERNAL domain term stays
-// "Buyer CRM" (this component `BuyerCrmView`, its directory, and the `/sell/buyer-crm` route). This is a
-// PRESENTATION rename only — NO `BuyerRelationship` domain concept, type, or entity is minted.
+// AUTHORITY (all folded 2026-07-19): domain = Doc-2 v1.0.9 (PATCH-D2-08, Vendor Buyer Relationship
+// aggregate); contracts = Doc-4F BC-OPS-6 (PATCH-4F-BCOPS6-01, 9 contracts); event payload =
+// PATCH-4E-VIP-01. Design = governanceReviews/Buyer_Relationships_Design_Plan_v0.2.md (FROZEN by
+// owner sign-off at gate 3). Route = Amendment A1: canonical `/sell/buyer-relationships` (+ detail
+// `[relationshipId]`); `/sell/buyer-crm` is a 308 redirect source only.
 //
-// GOVERNANCE — RULED at documentation level (closure record §3 D2/D4, 2026-07-19); wiring still gated:
-//  • OWNERSHIP settled: this surface is M4-Operations-owned (an unfrozen concept now reserved under
-//    M4). It is the sell-side companion to the buyer's frozen M4 "Vendor CRM" and holds PRIVATE per-
-//    vendor relationship data. CRM data NEVER mutates platform-wide scores (§4 firewall; §3 M4 note).
-//  • SEEDING CHANNELS (D2, five, indicative until the Doc-4F patch): manual vendor entry · RFQ
-//    participation · awarded engagement · conversation participation (contact tier only) · imported
-//    private contacts (strict controls). PROVENANCE LADDER (max-over-history, monotone):
-//    MANUAL_OR_IMPORTED < CONVERSATION < RFQ_PARTICIPATION < ENGAGEMENT < AWARDED_CUSTOMER — tokens
-//    INDICATIVE until minted in the Doc-4F patch. PROVENANCE ≠ STAGE: provenance evidences the
-//    relationship (strongest verified source ever observed); the vendor-controlled STAGE manages it.
-//  • PRIVACY FLOOR (non-negotiable): a record renders only vendor-authored data + facts the vendor
-//    holds through its OWN participation; buyer-side private decisions (blacklist — Inv #11) stay
-//    undetectable, symmetrically. Stage labels speak in private-CRM voice, never platform award status.
-//  • RENDERS NOTHING NEW (Team-1 C6, this phase = documentation level only): no tier UI, no provenance
-//    vocabulary in visible copy beyond the ruled labels; KPI tiles stay the neutral "—" (VX-03). The
-//    status-filter tabs + row-detail drawer + Log-activity modal mount only once the Doc-4F contract
-//    is patched and a read is wired. This surface stays UNWIRED and non-implementable beyond this rename.
+// TERMINOLOGY (D4 two-register split): user-facing "Buyer Relationships"; internal domain term stays
+// "Buyer CRM" (this component `BuyerCrmView` + its directory) — no `BuyerRelationship` type minted.
+//
+// PRE-WIRING RULES (binding, from the frozen design plan §6–§8):
+//  • KPI band = the four ruled own-facts (Buyers · Awarded customers · RFQs received · Engagements),
+//    adapter-supplied at wiring (`ops.get_buyer_relationship_summary.v1`) — "—" until then; never
+//    client-computed (R7).
+//  • Stage renders NOTHING pre-wiring (no fake disabled select); provenance has NO edit path ever.
+//  • Buyer-name search is honestly disabled until the ESC-IDN-ORG-DISPLAY-LABEL seam folds — never
+//    simulated client-side (Board ruling; gates name resolution/search ONLY).
+//  • Import stays plain-disabled ("Import controls are not yet available") until the import contract
+//    + its POLICY keys exist; Add buyer disabled until `ops.create_buyer_relationship.v1` is wired.
+//  • The canonical empty copy below is byte-stable — one owner, never duplicated.
 // Server Component; no hooks, no fetch (Content ≠ Presentation).
-import { Users, Pencil, Info } from "lucide-react";
+import { Users, Search, Upload, UserPlus, Info } from "lucide-react";
 import { PageHeader } from "../../shell";
 import { Card } from "@/frontend/primitives/card";
 import { Button } from "@/frontend/primitives/button";
+import { Input } from "@/frontend/primitives/input";
 import { EmptyState } from "@/frontend/components/empty-state";
 import { VendorKpiStatCard } from "../dashboard/vendor-kpi-stat-card";
 
-// Neutral, non-count-coining tile labels — each renders "—" until the CRM read is wired and the
-// governance ruling (above) confirms what may be shown.
+// The four ruled summary own-facts (Doc-4F BC-OPS-6 §F16.5 pinned semantics) — labels/captions per
+// the frozen design plan; values arrive only from the wired summary read.
 const KPI_TILES = [
   { label: "Buyers", caption: "In your private relationship list" },
-  { label: "Active", caption: "Relationships you're currently working" },
-  { label: "RFQs received", caption: "Invitations from these buyers" },
-  { label: "Engagements", caption: "Awarded work in progress" },
+  { label: "Awarded customers", caption: "Evidenced by awarded engagement history" },
+  { label: "RFQs received", caption: "Distinct RFQs from these buyers" },
+  { label: "Engagements", caption: "Awarded work, lifetime" },
 ];
 
 export function BuyerCrmView() {
@@ -44,24 +45,31 @@ export function BuyerCrmView() {
     <div className="space-y-6">
       <PageHeader
         title="Buyer Relationships"
-        description="Your private relationship record for the buyers you work with — separate from public marketplace data."
+        description="Your private relationship record for the buyers you work with — evidence builds automatically from verified interactions; the stage is yours to manage."
         actions={
-          // Disabled until the CRM write command is wired (the Log-activity modal mounts then).
-          <Button disabled>
-            <Pencil aria-hidden className="size-4" />
-            Log activity
-          </Button>
+          <div className="flex gap-2">
+            {/* Plain-disabled until the governed import contract exists (no alarm glyphs — D4). */}
+            <Button variant="outline" disabled title="Import controls are not yet available.">
+              <Upload aria-hidden className="size-4" />
+              Import
+            </Button>
+            {/* Disabled until ops.create_buyer_relationship.v1 is wired (manual channel, D2). */}
+            <Button disabled>
+              <UserPlus aria-hidden className="size-4" />
+              Add buyer
+            </Button>
+          </div>
         }
       />
 
-      {/* Unwired disclosure — the concept is now ruled/reserved under M4 (closure record D2/D4) but
-          no read is wired yet; keeps VX-03's honest placeholders. No new tier vocabulary (C6). */}
+      {/* Wiring disclosure — the model and contracts are ruled and folded; the reads are not yet
+          implemented. Honest placeholder posture per VX-03. */}
       <div className="flex items-start gap-3 rounded-lg border border-border bg-iv-info-subtle p-4 text-sm text-iv-info-muted">
         <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
         <p>
           Buyer Relationships is your private, per-vendor record — the sell-side companion to the
-          buyer&apos;s Vendor CRM. It&apos;s not wired to live data yet, so the tiles below show
-          placeholders.
+          buyer&apos;s Vendor CRM. Its contracts are approved and it will populate automatically
+          once live reads are connected; until then the tiles show placeholders.
         </p>
       </div>
 
@@ -71,7 +79,32 @@ export function BuyerCrmView() {
         ))}
       </div>
 
-      <Card className="p-2">
+      <Card className="overflow-hidden">
+        {/* Toolbar — structure per the frozen design; every control honestly disabled pre-wiring.
+            Search additionally gates on the Identity display-label seam (never client-simulated). */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
+          <div className="relative w-full sm:w-64">
+            <Search
+              aria-hidden
+              className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              type="search"
+              placeholder="Search buyer name"
+              aria-label="Search buyer name"
+              className="pl-8"
+              disabled
+            />
+          </div>
+          <Button type="button" variant="outline" size="sm" disabled>
+            Evidence: All
+          </Button>
+          <Button type="button" variant="outline" size="sm" disabled>
+            Stage: All
+          </Button>
+          <span className="ml-auto text-xs text-muted-foreground">Sorted by last interaction</span>
+        </div>
+        {/* Canonical empty state — byte-stable, component-owned. */}
         <EmptyState
           icon={<Users aria-hidden />}
           title="No buyers yet"

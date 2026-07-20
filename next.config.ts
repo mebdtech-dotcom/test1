@@ -19,6 +19,16 @@ const nextConfig: NextConfig = {
         destination: "/sell/rfqs?view=board",
         permanent: true,
       },
+      // Amendment A1 (closure record v1.1 §7): the Buyer CRM surface is renamed at both
+      // presentation and route levels — `/sell/buyer-crm` is a redirect SOURCE ONLY (it must not
+      // render, host nested detail routes, or become an alternate canonical URL; its route file is
+      // deleted). Exact-path source; incoming query strings are auto-forwarded by Next.js since the
+      // destination declares none (A1's query-preservation requirement).
+      {
+        source: "/sell/buyer-crm",
+        destination: "/sell/buyer-relationships",
+        permanent: true,
+      },
     ];
   },
 };

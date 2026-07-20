@@ -52,7 +52,7 @@ export const VENDOR_NAV: NavSection[] = [
       // Terminology (Team-1 build order C4/C5 · closure record D4): the USER-FACING label is "Buyer
       // Relationships"; the internal domain term stays "Buyer CRM" (route path, component name, and
       // directory unchanged — no `BuyerRelationship` concept minted).
-      { label: "Buyer Relationships", href: `${BASE}/buyer-crm`, icon: "crm" },
+      { label: "Buyer Relationships", href: `${BASE}/buyer-relationships`, icon: "crm" },
     ],
   },
   {
