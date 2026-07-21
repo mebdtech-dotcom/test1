@@ -178,7 +178,7 @@ Each realizes an already-frozen schema (Doc-6x), API surface (Doc-5x), and Doc-8
   Admin `staff_can_support`) + append-only + non-disclosure firewall.
 - **Frozen authority:** Doc-4H Pass-B Part-4 (§HB-4.1…4.6) · Doc-5H §7 (wire) · Doc-6H §3.4 (schema/RLS) ·
   Doc-2 §3.7/§7/§9/§10.7 · **the audit gate `[ESC-COMM-AUDIT]` resolved Path A** by the folded linked pair
-  `Doc-2_Patch_v1.0.9` (new §9 **Communication** domain, 4 actions) + `Doc-4H_SupportTicketAuditToken_Patch_v1.0`
+  `Doc-2_Patch_v1.0.11` (PATCH-D2-10; new §9 **Communication** domain, 4 actions) + `Doc-4H_SupportTicketAuditToken_Patch_v1.0`
   (tokens → `SupportTicketAuditAction.*`); owner-ruled 2026-07-11, Authority-Map-registered.
 - **Outputs:** `communication` schema (`support_tickets` + `ticket_messages` + `communication.command_dedup`
   the Doc-6A §10.3 idempotency vehicle; RLS `support_tickets_party`/`ticket_messages_party`; append-only

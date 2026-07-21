@@ -5,7 +5,7 @@
 // business write AND the audit obligation — wiring them atomically — but knows neither the SQL (the
 // repository owns it) NOR the audit MECHANISM (the M0 `core.append_audit_record.v1` facade owns it).
 //
-// THE M6 AUDITED-WRITE VARIANT (Doc-2_Patch_v1.0.9 / Doc-4H_SupportTicketAuditToken_Patch_v1.0): a
+// THE M6 AUDITED-WRITE VARIANT (Doc-2_Patch_v1.0.11 / Doc-4H_SupportTicketAuditToken_Patch_v1.0): a
 // SIMPLER D7 — `business write + audit append` in ONE transaction, **NO outbox/event leg** (BC-COMM-4
 // emits no Doc-2 §8 event — R11 / Doc-4H §H7). The two invariants hold by sharing ONE tx:
 //   • No business write without an audit row — the append runs in the SAME tx; if it throws, the tx

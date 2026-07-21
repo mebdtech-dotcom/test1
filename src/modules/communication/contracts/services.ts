@@ -4,7 +4,7 @@
 // layers (same-module import; the cross-module One-Module rule is untouched — `${from.module}`-scoped).
 //
 // Every mutation is an AUDITED, ATOMIC write (the M6 variant of D7 — write + audit in ONE tx, NO outbox
-// event; Doc-2_Patch_v1.0.9 / Doc-4H_SupportTicketAuditToken_Patch_v1.0). The M0 `appendAuditRecord`
+// event; Doc-2_Patch_v1.0.11 / Doc-4H_SupportTicketAuditToken_Patch_v1.0). The M0 `appendAuditRecord`
 // (`core.append_audit_record.v1`) is INJECTED by the contract TYPE (`@/modules/core/contracts`); the
 // app-layer composition edge (`src/server/communication`) supplies the concrete. Reads are unaudited.
 

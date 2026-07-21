@@ -1,22 +1,36 @@
-# Doc-2_Patch_v1.0.9_CommunicationSupportAudit_PROPOSAL.md
+# Doc-2_Patch_v1.0.11 — Communication (Support-Ticket) Audit Actions
 
-> **⏳ STATUS: PROPOSED — awaiting human (owner/Board) approval + fold.** On approval this becomes the corpus
-> copy `generatedDocs/Doc-2_Patch_v1.0.9.md` (producing **Doc-2 v1.0.9**), registered in `00_AUTHORITY_MAP.md`,
-> carried **alongside** the unedited frozen `Doc-2_…_v1.0.2` (+ patches v1.0.3…v1.0.8) — **no frozen file edited
-> in place.** **Linked-pair** with the Doc-4H realization patch
-> (`Doc-4H_SupportTicketAuditToken_Patch_v1.0`) — to be approved/folded together.
+> **✅ STATUS: APPROVED (human — owner ruling 2026-07-11) + FOLDED into the corpus.** This is the corpus copy
+> `generatedDocs/Doc-2_Patch_v1.0.11.md` (producing **Doc-2 v1.0.11**), registered in `00_AUTHORITY_MAP.md`,
+> carried **alongside** the unedited frozen `Doc-2_…_v1.0.2` (+ patches v1.0.3…v1.0.10) — **no frozen file edited
+> in place.** Origin/provenance: `governanceReviews/Doc-2_Patch_v1.0.11_CommunicationSupportAudit_PROPOSAL.md`.
+> **Linked-pair** with the Doc-4H realization patch (`Doc-4H_SupportTicketAuditToken_Patch_v1.0`) — folded together.
 >
 > Mirrors the **D7 precedent** (`Doc-2_Patch_v1.0.4_BuyerProfileAudit` + `Doc-4C_BuyerProfileAuditToken`): Doc-2
 > carries **business semantics only**; the wire-level audit **token** realization lives in the Doc-4H patch.
 
+> **RENUMBER ACT (Board-directed 2026-07-21).** Folded as **v1.0.9 / PATCH-D2-09**; **renumbered to
+> v1.0.11 / PATCH-D2-10**. Cause: version + patch-ID collision with the main corpus lineage, which folded
+> **`Doc-2_Patch_v1.0.9` = Vendor Buyer Relationship (PATCH-D2-08)** and
+> **`Doc-2_Patch_v1.0.10_GrowthHub` (PATCH-D2-09)** on 2026-07-19. **Chronology, recorded honestly:** this
+> Communication patch is the **chronologically prior fold** (2026-07-11, human-approved — owner ruling,
+> `[ESC-COMM-AUDIT]` Path A). It renumbers because the **main corpus lineage is the one that must stay
+> stable**, not because its claim was later or weaker. **Content is semantically unchanged** — the same four
+> business audit actions under the same new §9 **Communication** domain row; only the version number, the
+> patch ID, the effective-chain statement, and self-citations move. The linked
+> **`Doc-4H_SupportTicketAuditToken_Patch_v1.0`** is **unaffected in content** (version stays v1.0; only its
+> citations of this patch are re-pointed). Mechanism precedent: the Growth Hub patch's own "Renumber note"
+> (authored v1.0.9 / PATCH-D2-08 → folded v1.0.10 / PATCH-D2-09).
+
 ## Status
 
-Proposed Patch — awaiting human approval (architecture-affecting → CLAUDE.md §8)
+Approved Patch — FOLDED 2026-07-11 (human-approved, owner ruling — `[ESC-COMM-AUDIT]` Path A)
 
 | Field | Value |
 |---|---|
-| Applies to | `Doc-2_Domain_Model_And_Database_Blueprint_v1.0.2.md` (+ additive patches v1.0.3…v1.0.8) |
-| Produces | Doc-2 **v1.0.9** (v1.0.8 + this patch) |
+| Applies to | `Doc-2_Domain_Model_And_Database_Blueprint_v1.0.2.md` (+ additive patches v1.0.3…**v1.0.10**) |
+| Produces | Doc-2 **v1.0.11** (v1.0.10 + this patch) |
+| Stacking check (renumber act, 2026-07-21) | **No semantic conflict** with the two patches it now stacks on. `Doc-2_Patch_v1.0.9` (Vendor Buyer Relationship) appends a **separate** §9 domain row ("Vendor Buyer Relationships", after Buyer CRM) and touches §2/§3.5/§7/§8/§10.5; `Doc-2_Patch_v1.0.10_GrowthHub` **extends the existing §9 Organization row** with two actions and touches §5/§7/§8/§10.2. This patch appends a **third, disjoint** §9 domain row ("Communication") at the table tail — no shared row, no shared action, no shared token. Its §9 Before/After excerpt (tail = Admin, Platform) remains accurate on the v1.0.10 effective baseline. **Count arithmetic unaffected:** this patch changes no §7 permission slug, no entity, no schema, no event — the v1.0.10 catalog transition (tenant 37→38, total 46→47) is neither consumed nor re-based here. |
 | Scope | **One additive business audit domain** — a new **Communication** row in §9 Audit Mapping enumerating **four** support-ticket business actions — **nothing else.** No entity changes, no ownership changes, no schema changes, no event-catalog changes, no state-machine changes, no slug/permission changes, **and no wire-level token/serialization** (that is the Doc-4H realization patch's remit, per the D7 Board ruling). |
 | Purpose | **Resolve `[ESC-COMM-AUDIT]` for the BC-COMM-4 (Support Communications) mutations** (`comm.create_ticket.v1`, `comm.update_ticket.v1`, `comm.add_ticket_message.v1`, `comm.close_ticket.v1`) at the **business-semantic** layer. Doc-2 §9 enumerates **no Communication audit domain** (the frozen `[ESC-COMM-AUDIT]` marker names exactly this gap: Doc-4H §H6/§H7, Doc-5H §7.5, Doc-6H §8). The first M6 audited write therefore has **no canonical §9 action** to record. This patch enumerates the four support-ticket business actions so the immutable ledger is **semantically correct from the first persisted row.** |
 | Raised by | W3-COMM-1 (M6 support-ticket pilot slice) prerequisite; owner-directed (2026-07-11): `[ESC-COMM-AUDIT]` resolution = **Path A** (additive Doc-2 §9 + Doc-4H serialization, human-approved) — "the audit action must be canonical from the first persisted row" (`REFERENCE_Audited_Write_Pattern_v1.0` §3). |
@@ -29,7 +43,7 @@ change management (human approval), mirroring the lifecycle used for `Doc-2_Patc
 
 ---
 
-# PATCH-D2-09 — Communication (Support-Ticket) Audit Actions (resolves `[ESC-COMM-AUDIT]` for BC-COMM-4, business layer)
+# PATCH-D2-10 — Communication (Support-Ticket) Audit Actions (resolves `[ESC-COMM-AUDIT]` for BC-COMM-4, business layer)
 
 **Location:** §9 Audit Mapping — a **new domain row** ("Communication") appended to the "Actions that MUST create
 audit records" table.
@@ -122,10 +136,10 @@ After (one new **Communication** row appended; every other row unchanged):
 
 ---
 
-*End of Doc-2_Patch_v1.0.9 (PROPOSED) — minimal additive §9 enumeration of the **four business** support-ticket audit
-actions under a new **Communication** domain; resolves `[ESC-COMM-AUDIT]` for the BC-COMM-4 mutations only at the
+*End of Doc-2_Patch_v1.0.11 — minimal additive §9 enumeration of the **four business** support-ticket audit actions
+under a new **Communication** domain; resolves `[ESC-COMM-AUDIT]` for the BC-COMM-4 mutations only at the
 business-semantic layer; coins four business actions, no token/serialization, no event, no slug, no schema/ownership/
 state change. Serialization is the Doc-4H realization patch's remit (D7 Board ruling). Downstream: Doc-4H §H6/§H7
 (markers resolved by pointer + token realization), Doc-4B `core.append_audit_record.v1` (unchanged), W3-COMM-1
-(exported action constants). **Linked-pair with `Doc-4H_SupportTicketAuditToken_Patch_v1.0`. Awaiting human approval
-+ fold.***
+(exported action constants). **APPROVED & FOLDED into the corpus (human, owner ruling 2026-07-11); linked-pair with
+Doc-4H_SupportTicketAuditToken_Patch_v1.0.***

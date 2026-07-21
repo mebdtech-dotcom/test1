@@ -3,7 +3,7 @@
 > **⏳ STATUS: PROPOSED — awaiting human (owner/Board) approval + fold.** On approval this becomes the corpus
 > copy `generatedDocs/Doc-4H_SupportTicketAuditToken_Patch_v1.0.md`, registered in `00_AUTHORITY_MAP.md`, carried
 > **alongside** the unedited frozen Doc-4H Pass-A / Pass-B set — **no frozen file edited in place.**
-> **Linked-pair** with the Doc-2 business patch (`Doc-2_Patch_v1.0.9_CommunicationSupportAudit`) — approved/folded
+> **Linked-pair** with the Doc-2 business patch (`Doc-2_Patch_v1.0.11_CommunicationSupportAudit`) — approved/folded
 > together.
 >
 > Mirrors the **serialization-realization** precedents `Doc-4C_BuyerProfileAuditToken_Patch_v1.0.2` (D7) and
@@ -17,10 +17,10 @@ Proposed realization patch — awaiting human approval (linked-pair with the Doc
 | Field | Value |
 |---|---|
 | Applies to | `Doc-4H_PassA_v1.0_FROZEN` §HA-9 + Pass-B Part-4 §HB-4.1/§HB-4.2/§HB-4.3/§HB-4.4 (BC-COMM-4 audit bindings) |
-| Depends on | `Doc-2_Patch_v1.0.9` (the four business actions under the new §9 **Communication** domain) — MUST be approved with this patch |
+| Depends on | `Doc-2_Patch_v1.0.11` (the four business actions under the new §9 **Communication** domain) — MUST be approved with this patch |
 | Scope | **Serialization only** — the `action` token strings, `entity_type`, and `old_value`/`new_value` field mapping for the four BC-COMM-4 audited mutations. **No** business action coined here (Doc-2 owns those); **no** entity/aggregate/state/slug/event/POLICY change; **no** frozen text edited in place. |
-| Purpose | Realize `[ESC-COMM-AUDIT]` at the **wire/serialization** layer so W3-COMM-1 can bind **exported constants** (never string literals — Board ruling 2026-06-30) whose business meaning traces to Doc-2 §9 (via `Doc-2_Patch_v1.0.9`). |
-| Authority | CLAUDE.md §7/§8/§11/§13; Doc-4H §H6/§H7 (audit binding; `[ESC-COMM-AUDIT]`); Doc-2 §9 (field set + the four business actions via `Doc-2_Patch_v1.0.9`); Doc-4B `core.append_audit_record.v1` (append primitive, unchanged); `REFERENCE_Audited_Write_Pattern_v1.0` (§2 rule 6 — canonical constants; §3 — canonical from first row). |
+| Purpose | Realize `[ESC-COMM-AUDIT]` at the **wire/serialization** layer so W3-COMM-1 can bind **exported constants** (never string literals — Board ruling 2026-06-30) whose business meaning traces to Doc-2 §9 (via `Doc-2_Patch_v1.0.11`). |
+| Authority | CLAUDE.md §7/§8/§11/§13; Doc-4H §H6/§H7 (audit binding; `[ESC-COMM-AUDIT]`); Doc-2 §9 (field set + the four business actions via `Doc-2_Patch_v1.0.11`); Doc-4B `core.append_audit_record.v1` (append primitive, unchanged); `REFERENCE_Audited_Write_Pattern_v1.0` (§2 rule 6 — canonical constants; §3 — canonical from first row). |
 
 ---
 
@@ -92,4 +92,4 @@ by future additive patches appending to the §9 Communication row).
 *End of Doc-4H_SupportTicketAuditToken_Patch_v1.0 (PROPOSED) — serialization-only realization of the four Doc-2 §9
 Communication (support-ticket) business actions: four `action` tokens + `entity_type` + `old_value`/`new_value`
 mapping; exported as `SupportTicketAuditAction.*`; no business action coined here, no event, no slug, no schema/state
-change. **Linked-pair with `Doc-2_Patch_v1.0.9_CommunicationSupportAudit`. Awaiting human approval + fold.***
+change. **Linked-pair with `Doc-2_Patch_v1.0.11_CommunicationSupportAudit`. Awaiting human approval + fold.***
