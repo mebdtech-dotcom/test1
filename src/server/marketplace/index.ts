@@ -10,3 +10,11 @@ export {
   type ListVendorDirectoryWireInput,
 } from "./list-vendor-directory.route-handler";
 export { listPublicVendorDirectory } from "./list-public-vendor-directory";
+
+// W3-MKT-3 — the vendor-profile write spine (USER-actor; session + active-org compositions).
+export {
+  handleCreateVendorProfile,
+  handleGetOwnVendorProfile,
+  handleUpdateVendorProfile,
+  type VendorProfileHandlerDeps,
+} from "./vendor-profile.route-handler";

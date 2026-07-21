@@ -86,7 +86,13 @@ export type CoreServiceErrorCode =
   /** Doc-4B §B8 — VALIDATION: key absent or not well-formed per Doc-4A §18.2. */
   | "core_config_invalid_key"
   /** Doc-4B §B9 — VALIDATION: flag_key absent, or scope not well-formed per scope_jsonb shape. */
-  | "core_flag_invalid_input";
+  | "core_flag_invalid_input"
+  /**
+   * Doc-4B §B10 — SYSTEM: the `core.outbox_events` INSERT failed inside `core.write_outbox_event.v1`.
+   * The throw rolls the CALLER's transaction back — the business write cannot commit without its outbox
+   * row (§16.2 atomicity). Bound by pointer to the Doc-4B §B10 error; never coined here.
+   */
+  | "core_outbox_write_failed";
 
 /**
  * Typed contract error carrying a Doc-4B error code. Part of the cross-module surface so
@@ -100,8 +106,8 @@ export type CoreServiceErrorCode =
 export class CoreServiceError extends Error {
   readonly code: CoreServiceErrorCode;
 
-  constructor(code: CoreServiceErrorCode, message: string) {
-    super(message);
+  constructor(code: CoreServiceErrorCode, message: string, options?: { cause?: unknown }) {
+    super(message, options); // ES2022 ErrorOptions — preserves the underlying DB fault as `cause`.
     this.name = "CoreServiceError";
     this.code = code;
   }
@@ -231,4 +237,42 @@ export interface OutboxArchiveResult {
    * `core.outbox_archive_retention` (the retention-bounded distinct archival leg).
    */
   archived: number;
+}
+
+// ── W3-TRUST-3 (Part A) — the producer-emit primitive `core.write_outbox_event.v1` (Doc-4B §B10) ─────
+// The transactional-outbox-WRITE mechanism every emitting module's §16.2 Events-Produced resolves to —
+// the twin of `core.append_audit_record.v1`. It INSERTs exactly one `core.outbox_events` row inside the
+// CALLER's transaction (atomic with the business write — §16.2). It COINS NO event name: the owning
+// (emitting) module supplies a name that MUST exist in Doc-2 §8 (by pointer); this primitive persists the
+// row structurally and does NOT validate the catalog (Doc-4B §B10 Ownership/validation).
+
+/**
+ * Input to `core.write_outbox_event.v1` (Doc-4B §B10). Field names/semantics owned by Doc-2 §10.1
+ * (`event_name`, `event_version`, `aggregate_id`, `payload_jsonb`); bound by pointer, never re-authored.
+ */
+export interface WriteOutboxEventInput {
+  /**
+   * `event_name` — MUST exist in Doc-2 §8 (by pointer); never coined (§16.4). The caller (the owning
+   * module per §16.6) is the only legal emitter of its events; this primitive does not validate the catalog.
+   */
+  eventName: string;
+  /** `event_version` — integer ≥ 1 (§16.4). */
+  eventVersion: number;
+  /** `aggregate_id` — the aggregate-root id the event concerns (Doc-2 §10.1 `aggregate_id`; §16.5). */
+  aggregateId: string;
+  /**
+   * `payload` — the THIN event payload per §16.5 (IDs + minimal metadata; no blobs). Privacy-Review is
+   * the caller's assertion — no protected facts (§16.3 / §7.5). Persisted to `payload_jsonb` (Doc-2 §10.1).
+   */
+  payload: Record<string, unknown>;
+}
+
+/**
+ * Output of `core.write_outbox_event.v1`. Returns the platform-assigned identity of the appended
+ * (`status='pending'`) outbox row — the correlation handle for the emit (mirrors the audit twin's
+ * `auditId`; the emit itself is observed downstream via the dispatcher — §B6).
+ */
+export interface WriteOutboxEventResult {
+  /** The `id` (UUIDv7, time-ordered) of the written `core.outbox_events` row. */
+  outboxEventId: string;
 }

@@ -76,7 +76,8 @@ export interface PublicVendorProfileView {
  * indistinguishable; never leaks which). UNCHANGED by the 2026-07-11 DTO-conformance fix.
  */
 export type GetPublicVendorProfileResult =
-  { found: true; profile: PublicVendorProfileView } | { found: false };
+  | { found: true; profile: PublicVendorProfileView }
+  | { found: false };
 
 /**
  * The application-level outcome of the `get_public_vendor_profile` query: the frozen found/not-found
@@ -88,7 +89,8 @@ export type GetPublicVendorProfileResult =
  * branch (the wire `result` shape is byte-identical to the frozen contract on every success).
  */
 export type GetPublicVendorProfileOutcome =
-  GetPublicVendorProfileResult | { found: false; invalidInput: true };
+  | GetPublicVendorProfileResult
+  | { found: false; invalidInput: true };
 
 /**
  * Lookup key for `get_public_vendor_profile` — EXACTLY ONE of `vendorProfileId` (UUIDv7) or `humanRef`
@@ -223,3 +225,123 @@ export type ResolveVendorSlugResult =
  * verbatim (byte-identical to `ResolveVendorSlugResult`).
  */
 export type ResolveVendorSlugOutcome = ResolveVendorSlugResult | { status: "invalid_input" };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// W3-MKT-3 — the BC-MKT-1 vendor-profile WRITE SPINE (Doc-4D_Content_v1.0_PassB_VendorProfile.md §D4;
+// wire realization Doc-5D Pass-1 §2.2 rows 1/3/6 + Pass-2 §4):
+//   `marketplace.create_vendor_profile.v1` — POST /marketplace/vendor_profiles (201; User, active-org)
+//   `marketplace.update_vendor_profile.v1` — PATCH /marketplace/vendor_profiles/{id} (200; User)
+//   `marketplace.get_vendor_profile.v1`    — GET  /marketplace/vendor_profiles/{id} (200; User —
+//                                            the CONTROLLING-ORG projection leg; the Public leg is
+//                                            row 64 `get_public_vendor_profile.v1`, already built)
+// Error codes are the FROZEN Doc-4D §D4 `marketplace_vendor_*` register — bound by pointer, never
+// coined. Wire casing per Doc-5A v1.0.1: requests/envelope/enums snake_case at the route; `result`
+// payloads camelCase (M1 module-close precedent).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Doc-4D §D4 error surface shared by the vendor-profile write/read commands (frozen register codes). */
+export interface VendorProfileWriteError {
+  errorClass: "VALIDATION" | "AUTHORIZATION" | "NOT_FOUND" | "CONFLICT";
+  errorCode: string;
+  message: string;
+}
+
+/**
+ * `marketplace.create_vendor_profile.v1` request (Doc-4D §D4 Request Contract, camelCase-mapped):
+ * `name` required (bounded); `capability_flags` required (the 4-flag matrix — Invariant #1);
+ * `geography` required (BD administrative hierarchy; members nullable); `vendor_type_preset`
+ * optional (a UI preset label — NEVER the capability source of truth). `controlling_organization_id`
+ * and `human_ref` are SERVER-SET (active-org context §5.3 / Doc-4B §B.2) — never request fields;
+ * the slug is PLATFORM-ISSUED (Doc-2 v1.0.5 D2-04.1) — never a request field.
+ */
+export interface CreateVendorProfileInput {
+  name: string;
+  capabilityFlags: VendorCapabilityFlags;
+  geography: VendorGeography;
+  vendorTypePreset?: string | null;
+}
+
+/** `create_vendor_profile` success result (Doc-4D §D4 Response Contract, camelCase wire `result`). */
+export interface CreateVendorProfileResult {
+  vendorProfileId: string;
+  humanRef: string;
+  /** Always `claimed` — direct registration enters at `claimed` (Doc-2 §5.3; Doc-5D Pass-2 BR-M-02). */
+  claimState: "claimed";
+  /** Always `active` on create (Doc-2 §5.3 STATUS dimension). */
+  status: "active";
+  controllingOrganizationId: string;
+}
+
+/** Outcome of the create command (in-process; the wire mapper realizes §6.2 statuses). */
+export type CreateVendorProfileOutcome =
+  | { ok: true; result: CreateVendorProfileResult }
+  | { ok: false; error: VendorProfileWriteError };
+
+/**
+ * `marketplace.update_vendor_profile.v1` request (Doc-4D §D4 — partial attribute edit, no §5.3
+ * transition): every field optional; `expectedUpdatedAt` is the REQUIRED optimistic-concurrency
+ * token (`updated_at` — Doc-5D §4.5 `If-Match`). `vendorProfileId` is the path `{id}`.
+ */
+export interface UpdateVendorProfileInput {
+  vendorProfileId: string;
+  name?: string;
+  capabilityFlags?: Partial<VendorCapabilityFlags>;
+  geography?: Partial<VendorGeography>;
+  vendorTypePreset?: string | null;
+  expectedUpdatedAt: Date;
+}
+
+/** `update_vendor_profile` success result (Doc-4D §D4 Response Contract). */
+export interface UpdateVendorProfileResult {
+  vendorProfileId: string;
+  updatedAt: Date;
+}
+
+/** Outcome of the update command. */
+export type UpdateVendorProfileOutcome =
+  | { ok: true; result: UpdateVendorProfileResult }
+  | { ok: false; error: VendorProfileWriteError };
+
+/**
+ * The CONTROLLING-ORG vendor-profile projection (`get_vendor_profile.v1`, Doc-5D Pass-2 §4.4 —
+ * "Public-or-Controlling-Org"; this DTO is the Controlling-Org leg: the owning org sees its own
+ * profile INCLUDING pre-publish/two-dimension state). NEVER merged with the Public projection
+ * (R5 — `PublicVendorProfileView` above stays the distinct anonymous surface). No trust/performance
+ * score field exists here (Invariant #6 — M5-owned; M2 stores none).
+ */
+export interface OwnVendorProfileView {
+  vendorProfileId: string;
+  humanRef: string;
+  name: string;
+  /** The platform-issued Vendor Slug (Doc-2 v1.0.5 — the owning org may see its own slug). */
+  slug: string;
+  capabilityFlags: VendorCapabilityFlags;
+  geography: VendorGeography;
+  vendorTypePreset: string | null;
+  /** Doc-2 §5.3 CLAIM dimension (`seeded|invited|claimed|verified`) — own-org visible. */
+  claimState: string;
+  /** Doc-2 §5.3 STATUS dimension (`active|suspended|banned`) — own-org visible. */
+  status: string;
+  controllingOrganizationId: string;
+  /** Concurrency token for the follow-up `update_vendor_profile` (`If-Match`). */
+  updatedAt: Date;
+}
+
+/**
+ * Lookup key for the Controlling-Org read — EXACTLY ONE of `vendorProfileId` XOR `humanRef`
+ * (Doc-4D §D4 `get_vendor_profile` request contract). The HTTP route carries `{id}` (Doc-5D row 6);
+ * the `humanRef` leg is reachable via the in-process contract.
+ */
+export interface GetOwnVendorProfileKey {
+  vendorProfileId?: string;
+  humanRef?: string;
+}
+
+/**
+ * Outcome of the Controlling-Org read. Absent / cross-tenant / soft-deleted all collapse to the SAME
+ * `found: false` (non-disclosure — Doc-5A §6.6); `invalidInput` is the pre-SCOPE SYNTAX leg.
+ */
+export type GetOwnVendorProfileOutcome =
+  | { found: true; profile: OwnVendorProfileView }
+  | { found: false }
+  | { found: false; invalidInput: true };
