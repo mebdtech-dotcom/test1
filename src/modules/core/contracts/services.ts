@@ -16,6 +16,7 @@ import {
   dispatchOutboxEvents as dispatchOutboxEventsImpl,
   drainOutbox as drainOutboxImpl,
   featureFlagEvaluate as featureFlagEvaluateImpl,
+  writeOutboxEvent as writeOutboxEventImpl,
 } from "../infrastructure";
 import type {
   AllocateHumanReferenceInput,
@@ -32,6 +33,8 @@ import type {
   OutboxArchiveResult,
   OutboxDispatchInput,
   OutboxDispatchResult,
+  WriteOutboxEventInput,
+  WriteOutboxEventResult,
 } from "./types";
 
 /**
@@ -65,6 +68,18 @@ export type AppendAuditRecord = (
   input: AppendAuditRecordInput,
   executor?: CoreServiceExecutor,
 ) => Promise<AppendAuditRecordResult>;
+
+/**
+ * `core.write_outbox_event.v1` (Doc-4B).
+ * Appends exactly one `pending` envelope row to `core.outbox_events` (Doc-2 §10.1). MUST be bound
+ * to the caller's transaction (business write + event insert in ONE txn — Doc-6A §7.1 write+emit
+ * atomicity). M0 transports the envelope and authors NO event — the name/version/payload are the
+ * emitting module's frozen Doc-2 §8 declaration (catalog Doc-4J, by pointer).
+ */
+export type WriteOutboxEvent = (
+  input: WriteOutboxEventInput,
+  executor?: CoreServiceExecutor,
+) => Promise<WriteOutboxEventResult>;
 
 /**
  * `core` transactional-outbox drainer (Doc-8B §7.2; Doc-6B §3.2). Drains `core.outbox_events`
@@ -120,6 +135,7 @@ export type FeatureFlagEvaluate = (
 export interface CoreServices {
   allocateHumanReference: AllocateHumanReference;
   appendAuditRecord: AppendAuditRecord;
+  writeOutboxEvent: WriteOutboxEvent;
   drainOutbox: DrainOutbox;
   dispatchOutboxEvents: DispatchOutboxEvents;
   archiveDispatchedEvents: ArchiveDispatchedEvents;
@@ -154,6 +170,17 @@ export const allocateHumanReference: AllocateHumanReference = allocateHumanRefer
  * (the `audit_id` is app-minted); coins nothing.
  */
 export const appendAuditRecord: AppendAuditRecord = appendAuditRecordImpl;
+
+/**
+ * Concrete `core.write_outbox_event.v1` (Doc-4B), bound to the M0 infrastructure adapter. Appends
+ * exactly one `pending` envelope to `core.outbox_events`; participates in the caller's transaction
+ * when an executor is supplied (write+emit atomic — Doc-6A §7.1). Consumed cross-module via
+ * `@/modules/core/contracts` (strictly contracts/-only; the contracts→infrastructure binding is
+ * same-module-legal — the canonical DDD facade pattern). The append is NON-`RETURNING` (the
+ * audit-record precedent — staff-only SELECT posture) and coins nothing: names/versions/payloads
+ * are the emitter's frozen Doc-2 §8 declaration (catalog Doc-4J), by pointer.
+ */
+export const writeOutboxEvent: WriteOutboxEvent = writeOutboxEventImpl;
 
 /**
  * Concrete `core` outbox drainer (Doc-8B §7.2 / Doc-6B §3.2), bound to the M0 infrastructure adapter.

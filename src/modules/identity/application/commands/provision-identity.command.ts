@@ -28,9 +28,23 @@
 // membership WITH CHECK is also met by its primary leg. GUCs are set transaction-local
 // (`set_config(.,.,true)`) so they never leak past this transaction — RLS is not weakened.
 
+import { createHash } from "node:crypto";
 import { Prisma, prisma } from "../../../../shared/db";
 import { uuidv7 } from "../../../../shared/ids";
-import type { AllocateHumanReference } from "@/modules/core/contracts";
+import type {
+  AllocateHumanReference,
+  AppendAuditRecord,
+  WriteOutboxEvent,
+} from "@/modules/core/contracts";
+import { buildUserAuditInput } from "./_audit";
+import {
+  GrowthInvitationAuditAction,
+  INVITATION_CONVERSION_ENTITY_TYPE,
+} from "../../domain/audit-actions";
+import {
+  INVITATION_CONVERTED_EVENT,
+  type InvitationConvertedPayload,
+} from "../../contracts/events";
 import type { ProvisionIdentityInput, ProvisionIdentityResult } from "../../contracts/types";
 
 // The seeded Owner system-bundle role (Doc-6C §5.2 / migration seed): organization_id IS NULL,
@@ -85,6 +99,22 @@ interface ProvisionDeps {
    * replay"; Doc-4B §A7 atomicity).
    */
   allocateHumanReference: AllocateHumanReference;
+  /**
+   * `core.write_outbox_event.v1` (Doc-4B), injected by the contract TYPE — OPTIONAL (§PROV-EXT,
+   * Doc-4C v1.0.3): when present and a valid `referralToken` binds, the attribution appends
+   * `InvitationConverted` to the M0 outbox INSIDE this same transaction (Doc-6A §7.1 write+emit).
+   * Absent → the bind still commits; the event leg is skipped (compatibility: with no token,
+   * provisioning behaves exactly as frozen).
+   */
+  writeOutboxEvent?: WriteOutboxEvent;
+  /**
+   * `core.append_audit_record.v1` (Doc-4B §A10), injected by the contract TYPE — OPTIONAL
+   * (§PROV-EXT, Doc-4C v1.0.3 — Audit: yes, "invitation converted (referral attribution)"): when
+   * present and the GI-1 bind lands, ONE User-attributed audit record appends INSIDE this same
+   * transaction (D7 atomicity — audit atomic with the conversion write). Absent → the bind still
+   * commits; the audit leg is skipped (same optional posture as `writeOutboxEvent`).
+   */
+  appendAuditRecord?: AppendAuditRecord;
 }
 
 /**
@@ -249,6 +279,162 @@ export async function provisionIdentityForAuthUser(
         updatedBy: createdUserId,
       },
     });
+
+    // ── (6) §PROV-EXT — referral attribution (Doc-4C v1.0.3 §PROV-EXT; Q-14 / Board MAJOR-2
+    //    ruling: the `provisionIdentity` application service OWNS the single transaction;
+    //    attribution is an IN-TXN internal step, never a separately-committed command). BEST
+    //    EFFORT, fail-open on token grounds: an invalid/exhausted/expired token — or ANY
+    //    unexpected attribution failure — never fails registration (§PROV-EXT rule 2: "attribution
+    //    does not bind; provisioning still commits"). The GI-1 SQL is transcribed VERBATIM
+    //    (Doc-6C v1.0.4 §4); the RLS staff-GUC context set at the top of this tx admits the
+    //    cross-tenant growth writes (the Review-B F6 backstop model).
+    if (typeof input.referralToken === "string" && input.referralToken.length > 0) {
+      // DEP GUARD (fail-closed — L3-MINOR-2): the `InvitationConverted` outbox append AND the
+      // `invitation_converted` audit record are UNCONDITIONAL consequences of a GI-1 bind per the
+      // folded §PROV-EXT (Doc-4C v1.0.3) — absent either dep, the bind MUST NOT happen (a bind
+      // without its event/audit legs would be a silent contract breach). Attribution fail-closed;
+      // registration untouched (provisioning proceeds exactly as frozen).
+      const writeOutboxEvent = deps.writeOutboxEvent;
+      const appendAuditRecord = deps.appendAuditRecord;
+      if (writeOutboxEvent === undefined || appendAuditRecord === undefined) {
+        console.warn(
+          "provision-identity: referral attribution skipped (§PROV-EXT — outbox/audit deps absent; the bind must not happen without its unconditional legs).",
+        );
+      } else {
+        try {
+          // SAVEPOINT (L3-MINOR-3 — closes the 25P02 aborted-transaction gap): a DB-level failure
+          // inside attribution would otherwise abort the OUTER provisioning transaction, and the
+          // catch's swallow could not save the commit. Rolling back TO the savepoint restores a
+          // usable tx, so "registration never fails on token grounds" holds against in-tx DB
+          // failures too. The one-txn §PROV-EXT ruling is preserved — a savepoint is an internal
+          // step of THIS transaction, never a second transaction.
+          await tx.$executeRaw`SAVEPOINT prov_ext_attribution`;
+
+          // (a) Hash the token server-side (never client-trusted; only token_hash is compared —
+          //     GI-2) and resolve the LIVE invitation. None → skip (no bind).
+          const tokenHash = createHash("sha256").update(input.referralToken).digest("hex");
+          const invitation = await tx.growthInvitation.findFirst({
+            where: { tokenHash, deletedAt: null },
+            select: {
+              id: true,
+              referrerOrganizationId: true,
+              campaignKey: true,
+              recipientType: true,
+            },
+          });
+          if (invitation !== null) {
+            // (b) GI-1 ATOMIC CAPACITY GUARD — the packet §A.7 / Doc-6C v1.0.4 §4 conditional
+            //     UPDATE, verbatim. `$executeRaw` returns the affected-row count: 0 rows ⇒
+            //     expired/exhausted/revoked (the guard's own predicate) ⇒ attribution does NOT
+            //     bind. Same-row lock semantics serialize concurrent redemptions (EvalPlanQual
+            //     under READ COMMITTED — the §G verification).
+            const bound = await tx.$executeRaw`
+              UPDATE identity.growth_invitations
+                 SET redemption_count = redemption_count + 1
+               WHERE id = ${invitation.id}::uuid AND state = 'issued' AND expires_at > now()
+                 AND (max_redemptions IS NULL OR redemption_count < max_redemptions)`;
+            if (bound === 1) {
+              // (c) The conversion bind — `started → registered` COLLAPSES to ONE insert at
+              //     registration (the sole insert path in this set: no persistent `started` row
+              //     ever exists — Doc-6C v1.0.4 §7 fold-note; the 5.12 shape CHECK is satisfied:
+              //     state/referred_organization_id/registered_at set together). Append-only (Inv #8).
+              const conversionId = uuidv7();
+              const registeredAt = new Date();
+              await tx.invitationConversion.create({
+                data: {
+                  id: conversionId,
+                  growthInvitationId: invitation.id,
+                  referrerOrganizationId: invitation.referrerOrganizationId,
+                  referredOrganizationId: organizationId,
+                  state: "registered",
+                  registeredAt,
+                  createdBy: createdUserId,
+                  updatedBy: createdUserId,
+                },
+              });
+
+              // (d) `InvitationConverted` → the M0 outbox, SAME tx (Doc-6A §7.1 write+emit; Doc-2
+              //     v1.0.10 §4 / Doc-4J v1.0.1 — the six declared snake_case fields; no token, no
+              //     recipient identifier — GI-3/§16.5). The downstream M7 referral-create consumes
+              //     it under `actor_type=System` (Doc-4I v1.0.1; the Q-15 guard).
+              const payload: InvitationConvertedPayload = {
+                conversion_id: conversionId,
+                growth_invitation_id: invitation.id,
+                campaign_key: invitation.campaignKey,
+                recipient_type: invitation.recipientType,
+                referrer_organization_id: invitation.referrerOrganizationId,
+                referred_organization_id: organizationId,
+              };
+              await writeOutboxEvent(
+                {
+                  eventName: INVITATION_CONVERTED_EVENT.name,
+                  eventVersion: INVITATION_CONVERTED_EVENT.version,
+                  aggregateId: invitation.id,
+                  payload,
+                },
+                tx,
+              );
+
+              // (d′) The §PROV-EXT attribution AUDIT (Doc-4C v1.0.3 §PROV-EXT — Audit: yes;
+              //     Domain Organization "invitation converted (referral attribution)", Doc-2
+              //     v1.0.10 §5; wire token = the §9 realization `invitation_converted`). SAME tx —
+              //     audit atomic with the conversion write (D7); the staff-GUC context set at the
+              //     top of this tx admits the append (the ADR-021 System/bootstrap leg).
+              //     User-attributed (the WP-1.3 txn pattern / packet §A.4(3)): the registering
+              //     user; `organizationId` = the REFERRER org (the org whose §9 Organization-domain
+              //     stream the action extends — the invitation aggregate's owner). The `_audit`
+              //     helper fits without contortion — its ctx shape is {userId, ipAddress?,
+              //     userAgent?}, and the provisioning seam simply carries no ip/ua (the Doc-2 §9
+              //     redaction-aware optionals → null); commented per the wiring directive.
+              //     `new_value` = the FROZEN Doc-4C v1.0.3 §9 pin for this token —
+              //     {growth_invitation_id, referred_organization_id, state} VERBATIM; it EXCLUDES
+              //     `recipient_identifier` (GI-3 — the invitee contact never enters the immutable
+              //     ledger). Inside the try/catch: an audit failure must not fail registration
+              //     (the §PROV-EXT fail-open rule).
+              await appendAuditRecord(
+                buildUserAuditInput(
+                  { userId: createdUserId },
+                  {
+                    organizationId: invitation.referrerOrganizationId,
+                    entityType: INVITATION_CONVERSION_ENTITY_TYPE,
+                    entityId: conversionId,
+                    action: GrowthInvitationAuditAction.CONVERTED,
+                    oldValue: null,
+                    newValue: {
+                      growth_invitation_id: invitation.id,
+                      referred_organization_id: organizationId,
+                      state: "registered",
+                    },
+                  },
+                ),
+                tx,
+              );
+            }
+          }
+
+          // Attribution complete (bound or legitimately skipped) — release the savepoint; the
+          // outer provisioning transaction proceeds normally.
+          await tx.$executeRaw`RELEASE SAVEPOINT prov_ext_attribution`;
+        } catch (e) {
+          // (e) §PROV-EXT ruling: registration NEVER fails on token/attribution grounds — roll
+          //     back TO the savepoint (restoring a usable transaction after a DB-level failure —
+          //     the 25P02 gap), swallow, log, and let provisioning commit (a THROWN escape here
+          //     would roll back the minted identity, inverting the frozen priority). The
+          //     idempotency story is unaffected: a re-provision returns `created:false` before
+          //     this block; the append-only conversion + the incremented counter block a second
+          //     bind.
+          try {
+            await tx.$executeRaw`ROLLBACK TO SAVEPOINT prov_ext_attribution`;
+          } catch {
+            /* session beyond recovery — the outer tx will fail; nothing more to do */
+          }
+          console.warn(
+            "provision-identity: referral attribution skipped (§PROV-EXT — provisioning still commits):",
+            e,
+          );
+        }
+      }
+    }
 
     return {
       created: true,

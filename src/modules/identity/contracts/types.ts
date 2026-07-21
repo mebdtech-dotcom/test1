@@ -1025,6 +1025,15 @@ export interface ProvisionIdentityInput {
   authUserId: string;
   /** The subject's email (auth-managed identifier; persisted on `identity.users` per Doc-2 §10.2). */
   email?: string | null;
+  /**
+   * `referral_token : string : optional` — the §PROV-EXT attribution extension (Doc-4C v1.0.3;
+   * Q-14 / Board MAJOR-2 ruling). Carried from the registration→provisioning flow OUT-OF-BAND
+   * (`[ESC-7-API-SIGNUP]` / the Doc-7E landing surface — never a Doc-5C wire input); validated
+   * SERVER-SIDE (hash → live invitation), never client-trusted. Absent/invalid/exhausted →
+   * provisioning behaves EXACTLY as frozen (attribution is best-effort; registration never fails
+   * on token grounds).
+   */
+  referralToken?: string | null;
 }
 
 /**
@@ -1394,3 +1403,103 @@ export interface WorkflowSettingsError {
 export type UpdateWorkflowSettingsOutcome =
   | { ok: true; result: UpdateWorkflowSettingsResult }
   | { ok: false; error: WorkflowSettingsError };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §C13 — Growth Invitation contracts (P1 Growth Hub M1 core slice; Doc-4C v1.0.3 §C13 · Doc-5C
+// v1.0.1 rows 36–37 + out-of-wire row 8 · Doc-2 v1.0.10 §1/§2 · Doc-6C v1.0.4). Field
+// names/semantics owned by the folded patches (verbatim); bound by pointer, never re-authored.
+//   `create_invitation.v1`               POST /identity/growth_invitations · 201        · User (active-org; `can_manage_growth_invites`)
+//   `resolve_invitation_token.v1`        GET  /identity/growth_invitations/resolve · 200 · PUBLIC (M1's first Public wire actor; rate-limited)
+//   `resolve_invitation_delivery_payload.v1`  (NO wire row — internal-service, M6 sole caller)
+// GI-2: the raw token is returned ONCE (only `token_hash` persists). GI-3: `recipient_identifier`
+// egresses ONLY via the delivery-payload read. The referrer is the SERVER-RESOLVED active org
+// (Invariant #5) and is NOT part of any input.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The `growth_recipient_type` value set (Doc-2 v1.0.10 §1 closed set / Doc-6C v1.0.4 §1 enum). */
+export type GrowthRecipientTypeValue = "email" | "sms" | "whatsapp" | "link" | "qr";
+
+/** Error outcome of a §C13 growth-invitation contract (Doc-4C v1.0.3 §C13 error registers —
+ *  the single `growth_invite` domain segment; classes per Doc-5A §6.2). */
+export interface GrowthInvitationError {
+  /** Doc-5A §6.2 class → HTTP status (VALIDATION→400 · AUTHORIZATION→403 · REFERENCE→422 ·
+   *  QUOTA→403). Only classes the §C13 registers author are raised. */
+  errorClass: "VALIDATION" | "AUTHORIZATION" | "REFERENCE" | "QUOTA" | "DEPENDENCY";
+  /** The frozen §C13 `identity_growth_invite_*` register code (never coined here). */
+  errorCode: string;
+  /** Human-safe, non-leaking message. */
+  message: string;
+}
+
+/**
+ * Input to `identity.create_invitation.v1` (Doc-4C v1.0.3 §C13). `recipient_identifier` is
+ * REQUIRED iff `recipientType ∈ {email,sms,whatsapp}` (targeted) and FORBIDDEN for `link|qr`
+ * (open) — the frozen SYNTAX presence rule. The referrer org is server-resolved (Invariant #5).
+ */
+export interface CreateInvitationInput {
+  /** `campaign_key : string(slug) : required : REF → the registered campaign set (M0 config;
+   *  MVP `referral`)` — an open text slug, never a schema enum. */
+  campaignKey: string;
+  /** `recipient_type : enum(email|sms|whatsapp|link|qr) : required`. */
+  recipientType: GrowthRecipientTypeValue;
+  /** `recipient_identifier : string : conditional` — required targeted, forbidden open. */
+  recipientIdentifier?: string;
+}
+
+/** Result of a successful `create_invitation` (§C13 response: growth_invitation_id · state
+ *  (= issued) · token — the raw token, returned ONCE (GI-2; only `token_hash` persists)). */
+export interface CreateInvitationResult {
+  growthInvitationId: string;
+  state: "issued";
+  /** The raw invite token/link material — returned ONCE, never re-readable (GI-2). */
+  token: string;
+}
+
+/** Outcome of `identity.create_invitation.v1`. */
+export type CreateInvitationOutcome =
+  | { ok: true; result: CreateInvitationResult }
+  | { ok: false; error: GrowthInvitationError };
+
+/** Input to `identity.resolve_invitation_token.v1` (Doc-4C v1.0.3 §C13 — Public/anonymous). */
+export interface ResolveInvitationTokenInput {
+  /** `token : string : required : the raw invite token (from the link/QR)` — validated
+   *  server-side, never client-trusted. */
+  token: string;
+}
+
+/**
+ * Result of `identity.resolve_invitation_token.v1` — `valid` true iff the token resolves to a
+ * live `issued`, non-expired, non-revoked invitation; `campaignKey` present iff valid. NO
+ * `invitation_state` (anti-oracle — Review-B MAJOR-3: anything non-live is uniformly
+ * `valid=false`), never the referrer identity (Q-4 default-anonymous), never recipient facts.
+ */
+export interface ResolveInvitationTokenResult {
+  valid: boolean;
+  campaignKey?: string;
+}
+
+/** Input to `identity.resolve_invitation_delivery_payload.v1` (internal-service — M6 SOLE caller;
+ *  Doc-4C v1.0.3 §C13). `delivery_reference_id` comes from the `InvitationIssued` event. */
+export interface ResolveInvitationDeliveryPayloadInput {
+  deliveryReferenceId: string;
+}
+
+/**
+ * Result of a successful delivery-payload resolve — THE ONLY PATH that surfaces
+ * `recipient_identifier` + a token-bearing URL (the GI-3 transient delivery-only exception), to
+ * M6 exclusively. The one-time/replay-nonce hardening of `signed_invitation_url` is the flagged
+ * `[ESC-6-API]` store leg (Doc-6C v1.0.4 §5), not yet realized.
+ */
+export interface ResolveInvitationDeliveryPayloadResult {
+  recipientType: GrowthRecipientTypeValue;
+  recipientIdentifier: string;
+  signedInvitationUrl: string;
+}
+
+/** Outcome of `identity.resolve_invitation_delivery_payload.v1`. `ok:false` carries the §C13
+ *  register split (Doc-4H F-1/F-2 seam reconciliation): `identity_growth_invite_delivery_not_
+ *  resolvable` (REFERENCE — DEFINITIVE; M6 never re-queues) vs `…_delivery_unavailable`
+ *  (DEPENDENCY — transient only, retryable). */
+export type ResolveInvitationDeliveryPayloadOutcome =
+  | { ok: true; result: ResolveInvitationDeliveryPayloadResult }
+  | { ok: false; error: GrowthInvitationError };

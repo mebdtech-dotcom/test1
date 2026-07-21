@@ -320,3 +320,47 @@ export const WorkflowSettingsAuditAction = {
 
 export type WorkflowSettingsAuditActionToken =
   (typeof WorkflowSettingsAuditAction)[keyof typeof WorkflowSettingsAuditAction];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Growth-invitation audit actions (P1 Growth Hub M1 core slice). BUSINESS actions are the Doc-2
+// §9 Organization-domain additive of `Doc-2_Patch_v1.0.10 §5` ("growth invitation created" /
+// "invitation converted (referral attribution)"); the WIRE realization (these token strings +
+// entity_type) is the Doc-4C v1.0.3 §9 audit-token table (the `buyer_profile` linked-pair
+// pattern) — a future token rename touches Doc-4C + this constant, never Doc-2. Imported as NAMED
+// CONSTANTS — never hardcoded string literals (Board ruling 2026-06-30).
+//
+// GI-3 (binding on every call site): the `growth_invitation_created` `new_value` is EXACTLY
+// `{campaign_key, recipient_type, state}` — it EXCLUDES `recipient_identifier` (Doc-4C v1.0.3 §9);
+// the invitation id is the audit `entity_id`, never a `new_value` field.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The audit `entity_type` for `identity.growth_invitations` rows — the FOLDED Doc-4C v1.0.3 §9
+ *  table literal, VERBATIM (`growth_invitations`). [L2-MINOR-3 frozen-literal ruling: each audit
+ *  token follows ITS OWN folded pin — `buyer_profile` was pinned SINGULAR by its own folded patch
+ *  (v1.0.2); the growth §9 cells are pinned as the TABLE names. Frozen wins over the
+ *  house-convention analogy — the immutable ledger carries the folded literal from day one.] */
+export const GROWTH_INVITATION_ENTITY_TYPE = "growth_invitations" as const;
+
+/** The audit `entity_type` for `identity.invitation_conversions` rows (the §PROV-EXT attribution
+ *  bind — Doc-4C v1.0.3 §9 row `invitation_converted`) — the FOLDED §9 table literal, VERBATIM
+ *  (`invitation_conversions`). [Same L2-MINOR-3 ruling as above: the folded pin, not the
+ *  singular-analogy.] */
+export const INVITATION_CONVERSION_ENTITY_TYPE = "invitation_conversions" as const;
+
+/**
+ * Canonical growth-invitation audit actions (Doc-2 v1.0.10 §5 → Doc-4C v1.0.3 §9 wire tokens):
+ *   CREATED   → "growth invitation created" — the `create_invitation` leg (User;
+ *               `new_value = {campaign_key, recipient_type, state}` — GI-3-restricted).
+ *   CONVERTED → "invitation converted (referral attribution)" — the §PROV-EXT attribution bind
+ *               (User-attributed, the WP-1.3 txn pattern; `new_value =
+ *               {growth_invitation_id, referred_organization_id, state}` per the §9 table).
+ */
+export const GrowthInvitationAuditAction = {
+  /** Doc-2 v1.0.10 §5 "growth invitation created" (Doc-4C v1.0.3 §9 token). */
+  CREATED: "growth_invitation_created",
+  /** Doc-2 v1.0.10 §5 "invitation converted (referral attribution)" (Doc-4C v1.0.3 §9 token). */
+  CONVERTED: "invitation_converted",
+} as const;
+
+export type GrowthInvitationAuditActionToken =
+  (typeof GrowthInvitationAuditAction)[keyof typeof GrowthInvitationAuditAction];

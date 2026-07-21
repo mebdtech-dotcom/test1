@@ -12,11 +12,13 @@ import {
   dispatchOutboxEvents,
   drainOutbox,
   featureFlagEvaluate,
+  writeOutboxEvent,
 } from "./infrastructure";
 
 export const coreServices: CoreServices = {
   allocateHumanReference,
   appendAuditRecord,
+  writeOutboxEvent,
   drainOutbox: (input) => drainOutbox(input),
   dispatchOutboxEvents: (input) => dispatchOutboxEvents(input),
   archiveDispatchedEvents: (input) => archiveDispatchedEvents(input),

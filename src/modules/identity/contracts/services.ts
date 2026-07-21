@@ -10,7 +10,11 @@
 // stays flowing through contracts, never a concrete cross-module value import (Doc-4B §A7; Doc-4C §C5
 // "allocate the ref via Module 0").
 
-import type { AllocateHumanReference } from "@/modules/core/contracts";
+import type {
+  AllocateHumanReference,
+  AppendAuditRecord,
+  WriteOutboxEvent,
+} from "@/modules/core/contracts";
 import type { DbExecutor } from "@/shared/db";
 import {
   createDelegationGrantCommand,
@@ -188,7 +192,27 @@ import {
   checkPermission as checkPermissionQuery,
   type CheckPermissionDeps,
 } from "../application/queries/check-permission.query";
+import {
+  CAN_MANAGE_GROWTH_INVITES_SLUG,
+  createInvitationCommand,
+  GROWTH_CAMPAIGN_REGISTRY_KEY,
+  GROWTH_INVITE_QUOTA_MAX_KEY,
+  GROWTH_INVITE_QUOTA_WINDOW_KEY,
+  GROWTH_INVITE_TOKEN_TTL_KEY,
+  RECIPIENT_EMAIL_MAX_LENGTH,
+  validateCreateInvitationInput,
+  type CreateInvitationContext,
+  type CreateInvitationDeps,
+} from "../application/commands/create-invitation.command";
+import { resolveInvitationToken as resolveInvitationTokenQuery } from "../application/queries/resolve-invitation-token.query";
+import { resolveInvitationDeliveryPayload as resolveInvitationDeliveryPayloadQuery } from "../application/queries/resolve-invitation-delivery-payload.query";
 import type {
+  CreateInvitationInput,
+  CreateInvitationOutcome,
+  ResolveInvitationDeliveryPayloadInput,
+  ResolveInvitationDeliveryPayloadOutcome,
+  ResolveInvitationTokenInput,
+  ResolveInvitationTokenResult,
   AcceptInvitationInput,
   AcceptInvitationOutcome,
   ActivateMembershipInput,
@@ -285,6 +309,20 @@ export interface ProvisionIdentityDeps {
    * with the org create (Doc-4C §C5 — "no second ref on replay").
    */
   allocateHumanReference: AllocateHumanReference;
+  /**
+   * `core.write_outbox_event.v1` (Doc-4B), injected by the contract TYPE — OPTIONAL (the §PROV-EXT
+   * attribution extension, Doc-4C v1.0.3): when a valid `referralToken` binds, `InvitationConverted`
+   * appends to the M0 outbox in the SAME provisioning transaction (Doc-6A §7.1 write+emit). With no
+   * token (or no dep), provisioning behaves exactly as frozen.
+   */
+  writeOutboxEvent?: WriteOutboxEvent;
+  /**
+   * `core.append_audit_record.v1` (Doc-4B §A10), injected by the contract TYPE — OPTIONAL (the
+   * §PROV-EXT attribution extension, Doc-4C v1.0.3 — Audit: yes): when the GI-1 bind lands, the
+   * `invitation_converted` audit record appends in the SAME provisioning transaction (D7,
+   * User-attributed). With no dep (or no bind), no audit leg runs.
+   */
+  appendAuditRecord?: AppendAuditRecord;
 }
 
 /**
@@ -303,7 +341,11 @@ export type ProvisionIdentity = (
  * Cross-module consumers call this via `@/modules/identity/contracts`.
  */
 export const provisionIdentity: ProvisionIdentity = (input, deps) =>
-  provisionIdentityForAuthUser(input, { allocateHumanReference: deps.allocateHumanReference });
+  provisionIdentityForAuthUser(input, {
+    allocateHumanReference: deps.allocateHumanReference,
+    ...(deps.writeOutboxEvent !== undefined ? { writeOutboxEvent: deps.writeOutboxEvent } : {}),
+    ...(deps.appendAuditRecord !== undefined ? { appendAuditRecord: deps.appendAuditRecord } : {}),
+  });
 
 /**
  * `identity.get_buyer_profile.v1` (Doc-5C §6.1 row 33; §6.3 non-disclosure) — the PUBLIC, contracts-only
@@ -1283,3 +1325,81 @@ export {
 
 // Re-export the workflow-settings view type on the contracts surface (the wire mapper's result type).
 export type { WorkflowSettingsView };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §C13 — Growth Invitation surface (P1 Growth Hub M1 core slice; Doc-4C v1.0.3 §C13 · Doc-5C
+// v1.0.1 rows 36–37 + out-of-wire row 8 · Doc-6C v1.0.4). Every mutation is an AUDITED, ATOMIC
+// write (D7): the M0 `appendAuditRecord` / `writeOutboxEvent` / `configValueQuery` services are
+// INJECTED by contract TYPE. M1's FIRST two Doc-2 §8 events ride the M0 outbox (the §C12.7 FLIP;
+// declarations in `contracts/events.ts`) — no wire/webhook surface exists for them (R6). GI-2:
+// token returned ONCE; GI-3: recipient egress confined to the internal-service delivery read.
+// Context/deps shapes re-exported for the composition edge (contracts-only).
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type { CreateInvitationContext, CreateInvitationDeps };
+
+// The frozen Doc-2 §7 slug binding (Doc-2 v1.0.10 §3 — catalog token by pointer) + the exported
+// SYNTAX validator (composition-edge category ordering — the invite-member precedent) + the
+// [DC-5] POLICY-key reference forms this surface reads (registered Doc-3 v1.14; never literals).
+export {
+  CAN_MANAGE_GROWTH_INVITES_SLUG,
+  GROWTH_CAMPAIGN_REGISTRY_KEY,
+  GROWTH_INVITE_QUOTA_MAX_KEY,
+  GROWTH_INVITE_QUOTA_WINDOW_KEY,
+  GROWTH_INVITE_TOKEN_TTL_KEY,
+  RECIPIENT_EMAIL_MAX_LENGTH,
+  validateCreateInvitationInput,
+};
+
+/** The `create_invitation`-specific §B.6 dedup window (Doc-3 v1.14 GrowthHub key
+ *  `identity.growth_invite_dedup_window` — REGISTERED name verbatim; reference form per Doc-4A
+ *  §18.2; seeded by `identity_growth_hub` — read, never a literal). */
+export const GROWTH_INVITE_DEDUP_WINDOW_KEY =
+  "core.system_configuration.identity.growth_invite_dedup_window" as const;
+
+/** `identity.create_invitation.v1` (Doc-4C v1.0.3 §C13; Doc-5C v1.0.1 row 36 —
+ *  `POST /identity/growth_invitations` · 201). `→ issued` (Doc-2 §5.11);
+ *  `can_manage_growth_invites`; active-org scope (the referrer — Invariant #5); emits
+ *  `InvitationIssued` iff targeted (same tx — Doc-6A §7.1). The §B.6 CREATE claim leg lives at
+ *  the composition (RV-0153 F2). MUST run INSIDE `withActiveOrgContext`. */
+export type CreateInvitation = (
+  input: CreateInvitationInput,
+  ctx: CreateInvitationContext,
+  deps: CreateInvitationDeps,
+  db?: DbExecutor,
+) => Promise<CreateInvitationOutcome>;
+export const createInvitation: CreateInvitation = (input, ctx, deps, db) =>
+  createInvitationCommand(input, ctx, deps, db);
+
+/** `identity.resolve_invitation_token.v1` (Doc-4C v1.0.3 §C13; Doc-5C v1.0.1 row 37 — PUBLIC,
+ *  M1's first Public wire actor; §19 rate-limited at the composition). Anti-oracle: every
+ *  non-live cause collapses uniformly to `valid:false`; `campaignKey` present iff valid. Runs in
+ *  its own staff-GUC service transaction (the Doc-6C v1.0.4 §5 service-role read path). */
+export type ResolveInvitationToken = (
+  input: ResolveInvitationTokenInput,
+) => Promise<ResolveInvitationTokenResult>;
+export const resolveInvitationToken: ResolveInvitationToken = (input) =>
+  resolveInvitationTokenQuery(input);
+
+/** `identity.resolve_invitation_delivery_payload.v1` (Doc-4C v1.0.3 §C13 — INTERNAL-SERVICE, M6
+ *  SOLE caller; 21.3-with-response). NO wire row exists or may be added (Doc-5C v1.0.1 §4 —
+ *  out-of-wire set 7 → 8; conformance G-5). The ONLY `recipient_identifier`/token-URL egress
+ *  (GI-3 transient delivery exception); not-live/unknown → the DEFINITIVE
+ *  `identity_growth_invite_delivery_not_resolvable` (REFERENCE — M6 never re-queues). */
+export type ResolveInvitationDeliveryPayload = (
+  input: ResolveInvitationDeliveryPayloadInput,
+) => Promise<ResolveInvitationDeliveryPayloadOutcome>;
+export const resolveInvitationDeliveryPayload: ResolveInvitationDeliveryPayload = (input) =>
+  resolveInvitationDeliveryPayloadQuery(input);
+
+// The M1 WIRE FACES for the two caller-facing §C13 contracts (outcome → Doc-5A envelope + §6.2
+// status) — the One-Owner placement; the app-layer composition edge consumes them via
+// `@/modules/identity/contracts` (contracts-only). The delivery-payload read deliberately has NO
+// wire face (out-of-wire fence — G-5).
+export {
+  growthContextCollapse,
+  growthInvalidInput,
+  growthInvitationErrorResponse,
+  mapCreateInvitation,
+  mapResolveInvitationToken,
+} from "../api/growth-invitation.handler";

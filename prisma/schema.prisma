@@ -212,12 +212,15 @@ model Organization {
   deletedBy         String?           @map("deleted_by") @db.Uuid
   deleteReason      String?           @map("delete_reason")
 
-  memberships                    Membership[]
-  roles                          Role[]
-  buyerProfiles                  BuyerProfile[]
-  organizationWorkflowSettings   OrganizationWorkflowSettings[]
-  delegationGrantsControlling    DelegationGrant[]              @relation("DelegationGrantsControlling")
-  delegationGrantsRepresentative DelegationGrant[]              @relation("DelegationGrantsRepresentative")
+  memberships                     Membership[]
+  roles                           Role[]
+  buyerProfiles                   BuyerProfile[]
+  organizationWorkflowSettings    OrganizationWorkflowSettings[]
+  delegationGrantsControlling     DelegationGrant[]              @relation("DelegationGrantsControlling")
+  delegationGrantsRepresentative  DelegationGrant[]              @relation("DelegationGrantsRepresentative")
+  growthInvitations               GrowthInvitation[]
+  invitationConversionsAsReferrer InvitationConversion[]         @relation("ConversionReferrer")
+  invitationConversionsAsReferred InvitationConversion[]         @relation("ConversionReferred")
 
   @@unique([humanRef], map: "organizations_human_ref_uq")
   @@map("organizations")
@@ -458,5 +461,106 @@ model CommandDedup {
   updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
 
   @@map("command_dedup")
+  @@schema("identity")
+}
+
+// Doc-6C_GrowthInvitation_Patch_v1.0.4 §2 — identity.growth_invitations (the issued growth-invite
+// artifact; GI-2 immutable core — the at-create column trigger, the partial-unique-live token_hash
+// index, Band-H indexes and RLS live raw-SQL-only in the `identity_growth_hub` migration; the house
+// pattern for constraints Prisma cannot express). SD=YES.
+model GrowthInvitation {
+  id                     String                @id @db.Uuid
+  referrerOrganizationId String                @map("referrer_organization_id") @db.Uuid
+  campaignKey            String                @map("campaign_key")
+  recipientType          GrowthRecipientType   @map("recipient_type")
+  recipientIdentifier    String?               @map("recipient_identifier")
+  tokenHash              String                @map("token_hash")
+  maxRedemptions         Int?                  @map("max_redemptions")
+  redemptionCount        Int                   @default(0) @map("redemption_count")
+  state                  GrowthInvitationState @default(issued)
+  expiresAt              DateTime              @map("expires_at") @db.Timestamptz
+  createdAt              DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime              @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy              String?               @map("created_by") @db.Uuid
+  updatedBy              String?               @map("updated_by") @db.Uuid
+  deletedAt              DateTime?             @map("deleted_at") @db.Timestamptz
+  deletedBy              String?               @map("deleted_by") @db.Uuid
+  deleteReason           String?               @map("delete_reason")
+
+  referrerOrganization Organization            @relation(fields: [referrerOrganizationId], references: [id], map: "growth_invitations_referrer_fk")
+  conversions          InvitationConversion[]
+  deliveryRefs         InvitationDeliveryRef[]
+
+  @@map("growth_invitations")
+  @@schema("identity")
+}
+
+enum GrowthInvitationState {
+  issued
+  expired
+  revoked
+
+  @@map("growth_invitation_state")
+  @@schema("identity")
+}
+
+enum GrowthRecipientType {
+  email
+  sms
+  whatsapp
+  link
+  qr
+
+  @@map("growth_recipient_type")
+  @@schema("identity")
+}
+
+// Doc-6C_GrowthInvitation_Patch_v1.0.4 §3 — identity.invitation_conversions (the attribution
+// record; APPEND-ONLY, Inv #8 — NO soft-delete tuple; the block_delete / at-create triggers, the
+// 5.12 shape CHECK, Band-H indexes and RLS live raw-SQL-only in the `identity_growth_hub`
+// migration). `referrer_organization_id` is the ONE documented denormalized tenant anchor (Rec-2).
+model InvitationConversion {
+  id                     String                    @id @db.Uuid
+  growthInvitationId     String                    @map("growth_invitation_id") @db.Uuid
+  referrerOrganizationId String                    @map("referrer_organization_id") @db.Uuid
+  referredOrganizationId String?                   @map("referred_organization_id") @db.Uuid
+  state                  InvitationConversionState @default(started)
+  startedAt              DateTime                  @default(now()) @map("started_at") @db.Timestamptz
+  registeredAt           DateTime?                 @map("registered_at") @db.Timestamptz
+  createdAt              DateTime                  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime                  @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy              String?                   @map("created_by") @db.Uuid
+  updatedBy              String?                   @map("updated_by") @db.Uuid
+
+  growthInvitation     GrowthInvitation @relation(fields: [growthInvitationId], references: [id], map: "invitation_conversions_invitation_fk")
+  referrerOrganization Organization     @relation("ConversionReferrer", fields: [referrerOrganizationId], references: [id], map: "invitation_conversions_referrer_fk")
+  referredOrganization Organization?    @relation("ConversionReferred", fields: [referredOrganizationId], references: [id], map: "invitation_conversions_referred_fk")
+
+  @@map("invitation_conversions")
+  @@schema("identity")
+}
+
+enum InvitationConversionState {
+  started
+  registered
+
+  @@map("invitation_conversion_state")
+  @@schema("identity")
+}
+
+// The §10.3-class OPERATIONAL delivery-reference store (Doc-6C v1.0.4 §5 — service-layer state,
+// NOT a Doc-2 aggregate; the CHK-6-072 idempotency-store class). P1 holds ONLY the
+// reference→invitation mapping — NO token material ("raw token is never stored", Doc-2 v1.0.10 §1,
+// holds absolutely); the token-material/nonce/TTL legs are the Board-recorded P2 carry (the
+// `[ESC-6-API]` flag covers the store's physical shape only). Staff-GUC-only RLS, raw SQL in the
+// migration.
+model InvitationDeliveryRef {
+  deliveryReferenceId String   @id @map("delivery_reference_id") @db.Uuid
+  growthInvitationId  String   @map("growth_invitation_id") @db.Uuid
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  growthInvitation GrowthInvitation @relation(fields: [growthInvitationId], references: [id], map: "invitation_delivery_refs_invitation_fk")
+
+  @@map("invitation_delivery_refs")
   @@schema("identity")
 }

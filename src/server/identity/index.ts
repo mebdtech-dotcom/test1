@@ -159,3 +159,13 @@ export {
   type GetWorkflowSettingsHandlerDeps,
   type UpdateWorkflowSettingsHandlerDeps,
 } from "./workflow-settings.route-handler";
+
+// P1 Growth Hub M1 core slice — the §C13 growth-invitation wired surface (Doc-5C v1.0.1 rows
+// 36–37): the active-org create (§B.6 claim leg; its own [DC-5] dedup window) + M1's FIRST PUBLIC
+// composition (the §19-rate-limit-bound token resolve). The delivery-payload read is OUT-OF-WIRE
+// (internal-service, M6 sole caller — no composition exists here by design; conformance G-5).
+export {
+  handleCreateInvitation,
+  handleResolveInvitationToken,
+  type GrowthInvitationHandlerDeps,
+} from "./growth-invitation.route-handler";

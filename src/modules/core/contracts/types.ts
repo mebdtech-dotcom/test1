@@ -73,6 +73,37 @@ export interface AppendAuditRecordResult {
   auditId: string;
 }
 
+// ── `core.write_outbox_event.v1` (Doc-4B — the M0 transactional-outbox producer surface) ──────
+// The platform's FIRST producer use lands with the Growth Hub slice (M1 `InvitationIssued` /
+// `InvitationConverted` — Doc-2 v1.0.10 §4; catalog Doc-4J v1.0.1; flow Doc-4L v1.0.1). M0
+// TRANSPORTS envelopes and authors no event; the event name/version/payload are owned by the
+// emitting module's frozen declaration (bound by pointer, never coined here).
+
+/**
+ * Input to `core.write_outbox_event.v1` (Doc-4B). Appends exactly one `pending` envelope row to
+ * `core.outbox_events` (Doc-2 §10.1) — MUST ride the caller's transaction (business write + event
+ * insert in ONE txn; Doc-6A §7.1 write+emit atomicity).
+ */
+export interface WriteOutboxEventInput {
+  /** The Doc-2 §8 event name (authoritative catalog Doc-4J — by pointer; never invented here). */
+  eventName: string;
+  /** The declared event version (Doc-2 §8 / Doc-4J). */
+  eventVersion: number;
+  /** The emitting aggregate's id (bare UUID — Doc-2 §10.1 Ref; no cross-schema FK). Optional. */
+  aggregateId?: string | null;
+  /**
+   * The thin domain payload (IDs + metadata only, no blobs — Doc-2 §10.1 / §16.5). The envelope
+   * fields `event_id` / `occurred_at` are stamped by this service, not by the caller.
+   */
+  payload: Record<string, unknown>;
+}
+
+/** Output of `core.write_outbox_event.v1` — the appended row's id (= the envelope `event_id`). */
+export interface WriteOutboxEventResult {
+  /** The `core.outbox_events.id` (UUIDv7, time-ordered) = the payload envelope `event_id`. */
+  eventId: string;
+}
+
 // ── W2-CORE-1 — config (POLICY) + feature-flag read services (Doc-4B §B8/§B9) ────────────────
 
 /**
