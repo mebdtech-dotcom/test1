@@ -1,5 +1,16 @@
 # Digital Showcase — Workspace Authoring Flow
 
+> 🛑 **TEMPLATE NAMES: `OWNER-PROPOSED — architecture amendment required`.** The names
+> *Corporate Classic · Modern Industrial · Product Catalogue · Portfolio & Projects · Business Landing*
+> appear in this prototype under that label ONLY. They are **not** production semantics and **not**
+> corpus-authoritative: the G3 mint proposal was **REJECTED FOR FOLD** (owner/Board 2026-07-21) because
+> `Master_System_Architecture_v1.0_FINAL.md:569` (rank 0) and `ADR_Compendium_v1.md:1008` (rank 1,
+> ADR-020) already bind **A Directory Style · B Engineering Company · C Manufacturer · D Service
+> Company · E Corporate Microsite**. Production renders neutral `Template A`…`Template E` until an
+> atomic **Master §8.4 + ADR-020** amendment packet is Board-approved
+> (`governanceReviews/G3_TemplateSemantics_Amendment_Packet_v1.0_PROPOSAL.md`).
+
+
 > **Stage-3 clickable prototype — NON-AUTHORITATIVE, coins nothing.** Every element marked
 > **PROPOSED** awaits a Board ruling; frozen anchors are bound **by pointer**. Sample vendor content
 > is illustrative only. On any conflict with a frozen document: **Flag-and-Halt** (CLAUDE.md §11).

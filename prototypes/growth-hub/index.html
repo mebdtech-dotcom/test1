@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Growth Hub — Clickable Prototype (Stage-3, non-authoritative)</title>
+<style>
+  /* ── iVendorz ratified tokens (mirrored from app/globals.css — illustrative only) ─────────── */
+  :root{
+    --navy-800:#182643; --navy-900:#111c33; --navy-950:#0b1322;
+    --amber:#cda434; --amber-soft:rgba(205,164,52,.14);
+    --bg:#f6f7f9; --card:#ffffff; --border:#e4e7ec; --muted:#667085; --text:#101828;
+    --ok:#12805c; --ok-bg:#e8f5ef; --warn:#8a6a10; --warn-bg:#fbf3dd; --pend:#5c6470; --pend-bg:#eef0f3;
+    --r:12px; --r-sm:8px;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{font:14px/1.55 ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif;color:var(--text);background:var(--bg)}
+  button{font:inherit;cursor:pointer}
+  .mono{font-family:ui-monospace,Consolas,monospace}
+
+  /* ── prototype chrome ── */
+  .proto-bar{position:sticky;top:0;z-index:50;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    padding:8px 16px;background:var(--navy-950);color:#fff;font-size:12px}
+  .proto-bar b{color:var(--amber)}
+  .proto-bar .tabs{display:flex;gap:4px;margin-left:auto}
+  .proto-bar .tabs button{border:1px solid rgba(255,255,255,.2);background:transparent;color:#fff;
+    border-radius:999px;padding:4px 12px;font-size:12px;transition:background .15s ease-out}
+  .proto-bar .tabs button:hover{background:rgba(255,255,255,.1)}
+  .proto-bar .tabs button.active{background:var(--amber);border-color:var(--amber);color:var(--navy-950);font-weight:600}
+  .annot-toggle{border:1px dashed rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:6px;padding:4px 10px;font-size:12px}
+  .screen{display:none;max-width:960px;margin:0 auto;padding:24px 16px 64px}
+  .screen.on{display:block;animation:fade .2s ease-out}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen.on{animation:none}}
+
+  /* annotations */
+  .annot{display:none;border:1px dashed #b9a24a;background:var(--warn-bg);color:#6b5410;border-radius:var(--r-sm);
+    padding:8px 12px;font-size:12px;margin:10px 0}
+  body.show-annot .annot{display:block}
+  .annot b{color:#4d3c07}
+
+  /* ── hero (the ratified navy band — always dark) ── */
+  .hero{border-radius:var(--r);overflow:hidden;color:#fff;
+    background:linear-gradient(135deg,var(--navy-800),var(--navy-900) 55%,var(--navy-950));box-shadow:0 8px 24px rgba(11,19,34,.18)}
+  .hero-grid{display:grid;gap:24px;padding:28px;grid-template-columns:1.4fr 1fr}
+  @media (max-width:760px){.hero-grid{grid-template-columns:1fr}}
+  .eyebrow{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.1);color:var(--amber);
+    border-radius:999px;padding:4px 12px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  .hero h1{margin:14px 0 8px;font-size:30px;line-height:1.12;letter-spacing:-.01em}
+  .hero p.sub{margin:0;max-width:420px;color:rgba(255,255,255,.7)}
+  .cta{margin-top:20px;display:inline-flex;gap:8px;align-items:center;border:0;border-radius:10px;
+    background:var(--amber);color:var(--navy-950);font-weight:700;padding:12px 20px;font-size:15px;transition:transform .15s ease-out,filter .15s ease-out}
+  .cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .stats{display:grid;grid-template-columns:1fr 1fr;align-self:stretch;border-left:1px solid rgba(255,255,255,.12)}
+  @media (max-width:760px){.stats{border-left:0;border-top:1px solid rgba(255,255,255,.12)}}
+  .stat{padding:18px 22px;display:flex;flex-direction:column;justify-content:center}
+  .stat:nth-child(2n){border-left:1px solid rgba(255,255,255,.12)}
+  .stat:nth-child(n+3){border-top:1px solid rgba(255,255,255,.12)}
+  .stat .v{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
+  .stat .v.amber{color:var(--amber)}
+  .stat .k{margin-top:2px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+  .sample-note{padding:0 28px 20px;font-size:11px;color:rgba(255,255,255,.45)}
+
+  /* ── funnel strip ── */
+  .funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0}
+  @media (max-width:760px){.funnel{grid-template-columns:repeat(2,1fr)}}
+  .f-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px}
+  .f-tile .k{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .f-tile .v{font-size:22px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+  .f-tile.deferred{background:transparent;border-style:dashed;color:var(--muted)}
+  .f-tile.deferred .v{font-size:11px;font-weight:500;line-height:1.4;margin-top:6px;color:var(--pend)}
+
+  /* ── cards / list ── */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:16px 0}
+  .card h2{margin:0 0 4px;font-size:16px}
+  .card .hint{margin:0 0 14px;color:var(--muted);font-size:12.5px}
+  .seg{display:inline-flex;background:var(--pend-bg);border-radius:8px;padding:3px;gap:2px;margin-bottom:12px}
+  .seg button{border:0;background:transparent;border-radius:6px;padding:5px 14px;font-size:12.5px;color:var(--pend)}
+  .seg button.active{background:#fff;color:var(--text);font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.1)}
+  table{width:100%;border-collapse:collapse}
+  th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+  td{padding:10px;border-bottom:1px solid var(--border);font-size:13px}
+  .chip{display:inline-block;border-radius:999px;padding:2px 10px;font-size:11.5px;font-weight:600}
+  .chip.rewarded{background:var(--ok-bg);color:var(--ok)} .chip.qualified{background:var(--warn-bg);color:var(--warn)}
+  .chip.pending{background:var(--pend-bg);color:var(--pend)} .chip.issued{background:var(--amber-soft);color:#7c6320}
+  .footnote{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--border);background:var(--pend-bg);
+    border-radius:var(--r-sm);padding:10px 12px;font-size:12px;color:var(--muted);margin-top:10px}
+
+  /* ── invite flow / modal ── */
+  .overlay{position:fixed;inset:0;background:rgba(11,19,34,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+  .overlay.on{display:flex}
+  .modal{background:#fff;border-radius:var(--r);max-width:520px;width:100%;padding:24px;box-shadow:0 24px 64px rgba(11,19,34,.35);animation:fade .2s ease-out}
+  .modal h3{margin:0 0 4px;font-size:17px}
+  .modal .hint{color:var(--muted);font-size:12.5px;margin:0 0 16px}
+  .field{margin:12px 0}
+  .field label{display:block;font-size:12px;font-weight:600;margin-bottom:4px}
+  .field input[readonly],.field input{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13.5px}
+  .rt-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .rt-grid button{border:1px solid var(--border);background:#fff;border-radius:8px;padding:8px 4px;font-size:12px;transition:border-color .15s ease-out}
+  .rt-grid button.active{border-color:var(--amber);background:var(--amber-soft);font-weight:600}
+  .row-end{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+  .btn{border:1px solid var(--border);background:#fff;border-radius:8px;padding:9px 16px;font-size:13.5px}
+  .btn.primary{background:var(--navy-900);border-color:var(--navy-900);color:#fff;font-weight:600}
+  .btn.amber{background:var(--amber);border-color:var(--amber);color:var(--navy-950);font-weight:700}
+
+  /* token-once */
+  .token-box{border:1.5px solid var(--amber);background:var(--amber-soft);border-radius:var(--r-sm);padding:12px;margin:12px 0}
+  .token-box .tk{display:flex;gap:8px;align-items:center}
+  .token-box input{flex:1;border:0;background:transparent;font-family:ui-monospace,Consolas,monospace;font-size:12.5px}
+  .once-warn{display:flex;gap:8px;font-size:12.5px;color:#7c2d12;background:#fdf0e7;border:1px solid #f3ceb0;border-radius:var(--r-sm);padding:9px 12px;margin-top:10px}
+  .qr{width:120px;height:120px;margin:10px auto;background:
+    repeating-linear-gradient(0deg,var(--navy-950) 0 6px,transparent 6px 12px),
+    repeating-linear-gradient(90deg,var(--navy-950) 0 6px,#fff 6px 12px);border:6px solid #fff;outline:1px solid var(--border)}
+
+  /* ── public landing ── */
+  .land-wrap{min-height:70vh;display:flex;align-items:center;justify-content:center}
+  .land{max-width:440px;width:100%;background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;text-align:center;box-shadow:0 12px 40px rgba(11,19,34,.08)}
+  .land .logo{font-weight:800;letter-spacing:-.02em;font-size:18px;color:var(--navy-900)}
+  .land .logo span{color:var(--amber)}
+  .land h2{margin:18px 0 6px;font-size:22px}
+  .land p{color:var(--muted);margin:0 0 8px}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy-950);color:#fff;
+    border-radius:10px;padding:10px 18px;font-size:13px;opacity:0;transition:opacity .2s ease-out;z-index:200;pointer-events:none}
+  .toast.on{opacity:1}
+</style>
+</head>
+<body class="show-annot">
+
+<div class="proto-bar">
+  <span><b>Growth Hub</b> · clickable prototype (Stage-3) — <b>NON-AUTHORITATIVE</b>, sample data, coins nothing; bindings = the folded 10-patch set</span>
+  <div class="tabs">
+    <button data-go="hub" class="active">1 · Growth Hub</button>
+    <button data-go="land-valid">2 · Landing (valid)</button>
+    <button data-go="land-invalid">3 · Landing (invalid)</button>
+    <button class="annot-toggle" onclick="document.body.classList.toggle('show-annot')">governance notes</button>
+  </div>
+</div>
+
+<!-- ═════════ SCREEN 1 — Growth Hub (/account/rewards, Doc-7E v1.0.1) ═════════ -->
+<section id="hub" class="screen on">
+  <div class="annot"><b>Binding:</b> Doc-7E_GrowthHub_Patch_v1.0.1 §2(a) — the ER6 Rewards row extended. Wired reads only:
+    <span class="mono">get_reward_balance</span> + <span class="mono">list_referrals</span> (frozen BC-BILL-6) + the
+    <span class="mono">create_invitation</span> command (Doc-5C row 36). Figures below are session-sample values.</div>
+
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">✦ Network growth rewards</span>
+        <h1>Invite a business,<br/>earn reward points</h1>
+        <p class="sub">Invite other businesses to iVendorz. When an organization you invite registers and reaches the
+          qualification milestone, you earn reward points toward premium sourcing services.</p>
+        <button class="cta" onclick="openInvite()">＋ Invite a business</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="v amber" id="st-balance">900</div><div class="k">Reward points</div></div>
+        <div class="stat"><div class="v" id="st-total">5</div><div class="k">Total referrals</div></div>
+        <div class="stat"><div class="v" id="st-qualified">1</div><div class="k">Qualified</div></div>
+        <div class="stat"><div class="v" id="st-rewarded">2</div><div class="k">Rewarded</div></div>
+      </div>
+    </div>
+    <div class="sample-note">Sample data — the live balance and referral list bind the frozen BC-BILL-6 reads once wired.</div>
+  </div>
+
+  <div class="funnel">
+    <div class="f-tile deferred"><div class="k">Sent</div><div class="v">Awaits the invitation read pair — [ESC-7-API]; tile unmounted, never fabricated</div></div>
+    <div class="f-tile deferred"><div class="k">Accepted</div><div class="v">= conversion <i>started</i> — same deferred read</div></div>
+    <div class="f-tile deferred"><div class="k">Registered</div><div class="v">= conversion <i>registered</i> — same deferred read</div></div>
+    <div class="f-tile"><div class="k">Qualified</div><div class="v">1</div></div>
+    <div class="f-tile"><div class="k">Rewarded</div><div class="v">2</div></div>
+  </div>
+  <div class="annot"><b>Funnel honesty (§A.2 re-map):</b> Sent=<span class="mono">issued</span> · Accepted=<span class="mono">started</span> ·
+    Registered=<span class="mono">registered</span> have <b>no wired read in the folded set</b> — the three tiles render as explicit
+    deferred placeholders (no figures). Qualified/Rewarded come from <span class="mono">list_referrals</span> states (wired).</div>
+
+  <div class="card">
+    <h2>Referral history</h2>
+    <p class="hint">Referrals are shown by organization reference — display names aren’t part of this list.</p>
+    <div class="seg" id="filter">
+      <button class="active" data-f="all">All</button><button data-f="pending">Pending</button>
+      <button data-f="qualified">Qualified</button><button data-f="rewarded">Rewarded</button>
+    </div>
+    <table>
+      <thead><tr><th>Referral</th><th>Referred organization</th><th>State</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="footnote">ⓘ Reward points are a loyalty perk. They never affect RFQ matching, routing, or awards.</div>
+  </div>
+
+  <div class="card" id="session-card" style="display:none">
+    <h2>Invitations created this session</h2>
+    <p class="hint">Session-only illustration — no invitation-list read exists in the folded set ([ESC-7-API]); a live build
+      shows nothing here until that read pair lands.</p>
+    <table><thead><tr><th>Campaign</th><th>Channel</th><th>State</th><th>Token</th></tr></thead><tbody id="session-rows"></tbody></table>
+  </div>
+</section>
+
+<!-- ═════════ SCREEN 2 — Token landing (valid) ═════════ -->
+<section id="land-valid" class="screen">
+  <div class="annot"><b>Binding:</b> Doc-7E v1.0.1 §2(b) — a <span class="mono">(public)</span> surface; the landing calls
+    <span class="mono">resolve_invitation_token</span> (Doc-5C row 37) <b>server-side</b>; response = <span class="mono">valid + campaign_key</span> only.
+    <b>Q-4 default-anonymous:</b> the referrer's identity is never shown. The signup CTA enters the ER1 (auth) flow; the token rides the
+    registration flow state — attribution binds inside <span class="mono">provisionIdentity</span> (§PROV-EXT); registration never fails on token grounds.</div>
+  <div class="land-wrap"><div class="land">
+    <div class="logo">iVendor<span>z</span></div>
+    <h2>You’ve been invited to iVendorz</h2>
+    <p>A business on iVendorz has invited your organization to join Bangladesh’s industrial procurement network.</p>
+    <p style="font-size:12.5px">Campaign: <b>Referral</b></p>
+    <button class="btn amber" style="width:100%;margin-top:12px" onclick="go('signup')">Create your account</button>
+    <p style="font-size:11.5px;margin-top:14px">Already have an account? <a href="#" onclick="go('signup');return false">Sign in</a></p>
+  </div></div>
+</section>
+
+<!-- ═════════ SCREEN 3 — Token landing (invalid) ═════════ -->
+<section id="land-invalid" class="screen">
+  <div class="annot"><b>Anti-oracle UX:</b> unknown, expired, and revoked tokens all produce this <b>one uniform message</b> —
+    the wire returns only <span class="mono">valid:false</span> (no state, uniform timing); the UI must not disclose which case it was.</div>
+  <div class="land-wrap"><div class="land">
+    <div class="logo">iVendor<span>z</span></div>
+    <h2>This invitation link isn’t valid</h2>
+    <p>The link may have been mistyped or may no longer be active. You can still explore iVendorz and create an account directly.</p>
+    <button class="btn primary" style="width:100%;margin-top:12px">Explore iVendorz</button>
+  </div></div>
+</section>
+
+<!-- ═════════ SCREEN 4 — simulated signup → attribution explainer ═════════ -->
+<section id="signup" class="screen">
+  <div class="annot"><b>Simulated:</b> signup = Supabase Auth (ER1 — “signup creates no user record”); on first entry to the app,
+    <span class="mono">provisionIdentity</span> runs ONE transaction: mints the Personal Org → GI-1 atomic capacity guard →
+    binds the conversion (<span class="mono">started → registered</span>) → appends <span class="mono">InvitationConverted</span> →
+    M7 creates the referral at <span class="mono">pending</span> via its System event-create branch. An invalid/exhausted token at this
+    moment: provisioning still succeeds; attribution simply does not bind.</div>
+  <div class="land-wrap"><div class="land">
+    <div class="logo">iVendor<span>z</span></div>
+    <h2>Welcome to iVendorz</h2>
+    <p>Your organization was created. Because you arrived through an invitation, the referring organization’s referral is now
+      <span class="chip pending">pending</span> — it advances only when your organization reaches the qualification milestone.</p>
+    <p style="font-size:11.5px;color:var(--muted)">You won’t see who invited you, and they see your organization only as an opaque reference.</p>
+    <button class="btn primary" style="width:100%;margin-top:12px" onclick="go('hub')">Go to dashboard (prototype loop)</button>
+  </div></div>
+</section>
+
+<!-- ═════════ Invite modal (create_invitation, Doc-5C row 36) ═════════ -->
+<div class="overlay" id="ov-invite">
+  <div class="modal">
+    <h3>Invite a business</h3>
+    <p class="hint">Requires <span class="mono">can_manage_growth_invites</span> — this gate is UX only; the M1 app layer authorizes.</p>
+    <div class="field">
+      <label>Campaign</label>
+      <input readonly value="Referral" />
+      <div class="annot" style="margin:6px 0 0"><b>Pinned MVP:</b> the flow submits the static <span class="mono">referral</span> key —
+        no enumeration is rendered (no wired registry read; server REFERENCE stage backstops).</div>
+    </div>
+    <div class="field">
+      <label>How do you want to invite them?</label>
+      <div class="rt-grid" id="rt">
+        <button data-rt="email" class="active">Email</button><button data-rt="sms">SMS</button>
+        <button data-rt="whatsapp">WhatsApp</button><button data-rt="link">Link</button><button data-rt="qr">QR</button>
+      </div>
+    </div>
+    <div class="field" id="recip-field">
+      <label id="recip-label">Recipient email</label>
+      <input id="recip" placeholder="procurement@factory.example" />
+    </div>
+    <div class="annot"><b>§C13 presence rule:</b> targeted (email/sms/whatsapp) → recipient <b>required</b>; open (link/qr) → the field is
+      <b>not collected and not submitted</b> (forbidden — never an empty string). Targeted also emits <span class="mono">InvitationIssued</span> → M6 delivers;
+      open emits nothing (you share the link/QR yourself).</div>
+    <div class="row-end">
+      <button class="btn" onclick="closeOv('ov-invite')">Cancel</button>
+      <button class="btn amber" onclick="createInvitation()">Create invitation</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════ Token-once modal ═════════ -->
+<div class="overlay" id="ov-token">
+  <div class="modal">
+    <h3>Invitation created <span class="chip issued">issued</span></h3>
+    <p class="hint" id="tk-sub"></p>
+    <div class="token-box">
+      <div class="tk">
+        <input readonly id="tk-url" class="mono" />
+        <button class="btn" onclick="copyToken()">Copy</button>
+      </div>
+      <div id="tk-qr" style="display:none"><div class="qr" role="img" aria-label="QR code (illustrative)"></div>
+        <p style="text-align:center;font-size:11px;color:var(--muted);margin:0">QR rendered client-side from this one response</p></div>
+    </div>
+    <div class="once-warn">⚠ <span><b>You won’t see this again.</b> The link is shown once — only its hash is stored
+      (GI-2). Copy it now if you need it later.</span></div>
+    <div class="annot"><b>Wire:</b> the 201 response returns the raw token exactly once (<span class="mono">Cache-Control: no-store</span>);
+      an idempotent replay of the same create is the same logical response — delivery recovery, never a re-read.</div>
+    <div class="row-end"><button class="btn primary" onclick="closeToken()">Done</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── sample seed (illustrative; the frozen list_referrals shape: referral_id · referred_organization_id · state) ──
+  const REFERRALS=[
+    {id:"ref_01",org:"0192f0c1-…-00e1",state:"rewarded"},
+    {id:"ref_02",org:"0192f0c1-…-00e2",state:"rewarded"},
+    {id:"ref_03",org:"0192f0c1-…-00e3",state:"qualified"},
+    {id:"ref_04",org:"0192f0c1-…-00e4",state:"pending"},
+    {id:"ref_05",org:"0192f0c1-…-00e5",state:"pending"},
+  ];
+  const rows=document.getElementById("rows");
+  function renderRows(f){rows.innerHTML=REFERRALS.filter(r=>f==="all"||r.state===f)
+    .map(r=>`<tr><td class="mono">${r.id}</td><td class="mono">${r.org}</td><td><span class="chip ${r.state}">${r.state}</span></td></tr>`).join("")
+    ||`<tr><td colspan="3" style="color:var(--muted)">No referrals in this state.</td></tr>`;}
+  renderRows("all");
+  document.getElementById("filter").addEventListener("click",e=>{if(!e.target.dataset.f)return;
+    document.querySelectorAll("#filter button").forEach(b=>b.classList.toggle("active",b===e.target));renderRows(e.target.dataset.f);});
+
+  // ── screens ──
+  function go(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));
+    document.querySelectorAll(".proto-bar .tabs button[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
+    window.scrollTo({top:0});}
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+
+  // ── invite flow ──
+  let rt="email";
+  const RT_LABEL={email:"Recipient email",sms:"Recipient mobile number",whatsapp:"Recipient WhatsApp number"};
+  document.getElementById("rt").addEventListener("click",e=>{if(!e.target.dataset.rt)return;rt=e.target.dataset.rt;
+    document.querySelectorAll("#rt button").forEach(b=>b.classList.toggle("active",b.dataset.rt===rt));
+    const f=document.getElementById("recip-field"),targeted=["email","sms","whatsapp"].includes(rt);
+    f.style.display=targeted?"":"none";if(targeted)document.getElementById("recip-label").textContent=RT_LABEL[rt];});
+  function openInvite(){document.getElementById("ov-invite").classList.add("on");}
+  function closeOv(id){document.getElementById(id).classList.remove("on");}
+  function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2200);}
+
+  let sessionInvites=[];
+  function createInvitation(){
+    const targeted=["email","sms","whatsapp"].includes(rt);
+    if(targeted && !document.getElementById("recip").value.trim()){toast("Recipient is required for a targeted invitation");return;}
+    closeOv("ov-invite");
+    // simulate the 201 — the raw token exists ONLY in this "response"
+    const token="ivz_inv_SAMPLE_"+Math.random().toString(36).slice(2,10);
+    const url="https://ivendorz.example/invite?token="+token;
+    document.getElementById("tk-url").value=url;
+    document.getElementById("tk-qr").style.display=(rt==="qr")?"block":"none";
+    document.getElementById("tk-sub").textContent=targeted
+      ?"A delivery to the recipient is on its way (M6). This link is your own copy."
+      :"Share this "+(rt==="qr"?"QR code":"link")+" yourself — open invitations aren’t delivered by the platform.";
+    sessionInvites.push({campaign:"referral",rt,state:"issued"});
+    document.getElementById("ov-token").classList.add("on");
+  }
+  function copyToken(){navigator.clipboard?.writeText(document.getElementById("tk-url").value);toast("Copied — this was your one look (GI-2)");}
+  function closeToken(){
+    closeOv("ov-token");
+    document.getElementById("tk-url").value="•••••••• token no longer available — only its hash is stored ••••••••";
+    const sc=document.getElementById("session-card");sc.style.display="";
+    document.getElementById("session-rows").innerHTML=sessionInvites
+      .map(i=>`<tr><td>${i.campaign}</td><td>${i.rt}</td><td><span class="chip issued">${i.state}</span></td>
+      <td style="color:var(--muted)">shown once — not re-readable</td></tr>`).join("");
+    toast("Invitation created");
+  }
+</script>
+</body>
+</html>

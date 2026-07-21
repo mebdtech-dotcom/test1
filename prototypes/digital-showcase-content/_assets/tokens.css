@@ -1,0 +1,239 @@
+/* ==========================================================================
+   iVendorz Design Tokens — copied VERBATIM from app/globals.css (--iv-*)
+   NON-PRODUCTION prototype asset. Light theme is the PRIMARY experience
+   (DP §3.1; Doc-7B §3.4). `.iv-theme-dark` reassigns SEMANTIC tokens only —
+   it binds to the frozen, first-class `.dark` theme (primitives unchanged).
+   Do not edit values here to "improve" them — these mirror the frozen system.
+   ========================================================================== */
+
+:root {
+  /* Brand — Electric Indigo (INTERACTIVE only: links, focus, selected nav) */
+  --iv-brand-50: #eef2ff;
+  --iv-brand-100: #e0e7ff;
+  --iv-brand-200: #c7d2fe;
+  --iv-brand-300: #a5b4fc;
+  --iv-brand-400: #818cf8;
+  --iv-brand-500: #6366f1;
+  --iv-brand-600: #4f46e5;
+  --iv-brand-700: #4338ca;
+  --iv-brand-800: #3730a3;
+  --iv-brand-900: #312e81;
+  --iv-brand-950: #1e1b4b;
+
+  /* Navy — Deep Industrial Navy (DOMINANT · primary fills · sidebar) */
+  --iv-navy-50: #eef2f8;
+  --iv-navy-100: #d9e1ef;
+  --iv-navy-200: #b7c6e0;
+  --iv-navy-300: #8ba0c6;
+  --iv-navy-400: #5a74a3;
+  --iv-navy-500: #375081;
+  --iv-navy-600: #283f6a;
+  --iv-navy-700: #1f3154;
+  --iv-navy-800: #182643;
+  --iv-navy-900: #111c33;
+  --iv-navy-950: #0b1322;
+
+  /* Premium Gold (token name kept --iv-amber-*; values are gold) */
+  --iv-amber-50: #fbf7ea;
+  --iv-amber-100: #f5ecca;
+  --iv-amber-200: #ebd99a;
+  --iv-amber-300: #dcc05f;
+  --iv-amber-400: #cda434;
+  --iv-amber-500: #b8860b;
+  --iv-amber-600: #9a6f08;
+  --iv-amber-700: #7c5807;
+  --iv-amber-800: #5f4406;
+  --iv-amber-900: #4a3504;
+
+  /* Surface — Dark palette (powers the .iv-theme-dark toggle) */
+  --iv-surface-base: #0a0e1a;
+  --iv-surface-raised: #0f1424;
+  --iv-surface-overlay: #151b2e;
+  --iv-surface-muted: #1c2340;
+  --iv-surface-border: #252d47;
+  --iv-surface-hover: #1e2540;
+  --iv-surface-selected: #202745;
+
+  /* Surface — Light Mode (Primary Experience) */
+  --iv-light-base: #f8fafc;
+  --iv-light-raised: #ffffff;
+  --iv-light-overlay: #ffffff;
+  --iv-light-muted: #f1f5f9;
+  --iv-light-border: #e2e8f0;
+  --iv-light-hover: #f8fafc;
+  --iv-light-selected: #eef2ff;
+
+  /* Status */
+  --iv-success-subtle: rgba(22, 163, 74, 0.08);
+  --iv-success-muted: #14532d;
+  --iv-success-base: #16a34a;
+  --iv-success-bright: #22c55e;
+  --iv-success-text: #4ade80;
+  --iv-success-ink: #15803d;
+
+  --iv-warning-subtle: rgba(202, 138, 4, 0.08);
+  --iv-warning-muted: #713f12;
+  --iv-warning-base: #ca8a04;
+  --iv-warning-bright: #eab308;
+  --iv-warning-text: #fde047;
+  --iv-warning-ink: #a16207;
+
+  --iv-danger-subtle: rgba(220, 38, 38, 0.08);
+  --iv-danger-muted: #7f1d1d;
+  --iv-danger-base: #dc2626;
+  --iv-danger-bright: #ef4444;
+  --iv-danger-text: #fca5a5;
+  --iv-danger-ink: #b91c1c;
+
+  --iv-info-subtle: rgba(37, 99, 235, 0.08);
+  --iv-info-muted: #1e3a5f;
+  --iv-info-base: #2563eb;
+  --iv-info-bright: #3b82f6;
+  --iv-info-text: #93c5fd;
+  --iv-info-ink: #1d4ed8;
+
+  --iv-neutral-subtle: rgba(107, 114, 128, 0.08);
+  --iv-neutral-muted: #374151;
+  --iv-neutral-base: #6b7280;
+  --iv-neutral-bright: #9ca3af;
+  --iv-neutral-text: #d1d5db;
+  --iv-neutral-ink: #475569;
+
+  /* Trust Score Ring — 0–100 (band + numeric MAY render publicly; never
+     formula / matching / fraud / ranking / percentile) */
+  --iv-trust-low: #ef4444;
+  --iv-trust-medium: #f59e0b;
+  --iv-trust-high: #22c55e;
+  --iv-trust-elite: #283f6a;
+
+  /* Financial Tier badges */
+  --iv-tier-a: #94a3b8;
+  --iv-tier-b: #34d399;
+  --iv-tier-c: #60a5fa;
+  --iv-tier-d: #fbbf24;
+  --iv-tier-e: #283f6a;
+
+  /* Vendor capability flags (4-flag matrix — Invariant #1) */
+  --iv-cap-supply: #3b82f6;
+  --iv-cap-service: #0d9488;
+  --iv-cap-fabricate: #fbbf24;
+  --iv-cap-consult: #22c55e;
+
+  /* Typography */
+  --iv-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --iv-font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+  --iv-text-2xs: 0.625rem;
+  --iv-text-xs: 0.75rem;
+  --iv-text-sm: 0.875rem;
+  --iv-text-base: 1rem;
+  --iv-text-lg: 1.125rem;
+  --iv-text-xl: 1.25rem;
+  --iv-text-2xl: 1.5rem;
+  --iv-text-3xl: 1.875rem;
+  --iv-text-4xl: 2.25rem;
+  --iv-text-5xl: 3rem;
+  --iv-text-6xl: 3.75rem;
+
+  /* Spacing — 4px base grid */
+  --iv-space-1: 4px;
+  --iv-space-2: 8px;
+  --iv-space-3: 12px;
+  --iv-space-4: 16px;
+  --iv-space-5: 20px;
+  --iv-space-6: 24px;
+  --iv-space-8: 32px;
+  --iv-space-10: 40px;
+  --iv-space-12: 48px;
+  --iv-space-16: 64px;
+  --iv-space-20: 80px;
+  --iv-space-24: 96px;
+
+  /* Radius */
+  --iv-radius-sm: 4px;
+  --iv-radius-md: 8px;
+  --iv-radius-lg: 12px;
+  --iv-radius-xl: 16px;
+  --iv-radius-2xl: 24px;
+  --iv-radius-full: 9999px;
+
+  /* Shadows — light-tuned (primary) */
+  --iv-shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --iv-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.1), 0 1px 2px rgba(15, 23, 42, 0.06);
+  --iv-shadow-md: 0 4px 8px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.06);
+  --iv-shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.1), 0 4px 8px rgba(15, 23, 42, 0.06);
+  --iv-shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.12), 0 8px 16px rgba(15, 23, 42, 0.08);
+  --iv-shadow-2xl: 0 28px 64px rgba(15, 23, 42, 0.16);
+
+  --iv-glow-brand: 0 0 0 1px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.15);
+  --iv-glow-amber: 0 0 0 1px rgba(251, 191, 36, 0.3), 0 0 20px rgba(251, 191, 36, 0.12);
+
+  /* Motion */
+  --iv-duration-fast: 100ms;
+  --iv-duration-normal: 200ms;
+  --iv-duration-slow: 300ms;
+  --iv-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --iv-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --iv-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* SEMANTIC tokens — the layer components read (theme-aware) */
+  --iv-bg: var(--iv-light-base);
+  --iv-surface: var(--iv-light-raised);
+  --iv-surface-2: var(--iv-light-muted);
+  --iv-overlay: var(--iv-light-overlay);
+  --iv-border: var(--iv-light-border);
+  --iv-hover: var(--iv-light-hover);
+  --iv-selected: var(--iv-light-selected);
+
+  --iv-fg-strong: #0f172a;
+  --iv-fg: #334155;
+  --iv-fg-secondary: #475569;
+  --iv-fg-muted: #5f6f86;
+  --iv-fg-heading: #23438f;
+  --iv-fg-heading-strong: #1e3a8a;
+  --iv-fg-inverse: #ffffff;
+
+  --iv-elevation-1: var(--iv-shadow-sm);
+  --iv-elevation-2: var(--iv-shadow-md);
+  --iv-elevation-3: var(--iv-shadow-lg);
+  --iv-elevation-4: var(--iv-shadow-xl);
+
+  --iv-content-max: 1280px;
+  --iv-gutter: 24px;
+
+  --iv-gradient-primary: linear-gradient(135deg, #23438f 0%, #2f5eb8 100%);
+
+  /* Primary brand fill (shadcn alias parity) */
+  --iv-primary: var(--iv-navy-700);
+}
+
+/* ==========================================================================
+   DARK THEME — reassigns SEMANTIC tokens only (binds to frozen `.dark`).
+   Scoped to `.iv-theme-dark` so the prototype harness chrome is unaffected.
+   ========================================================================== */
+.iv-theme-dark {
+  --iv-bg: var(--iv-surface-base);
+  --iv-surface: var(--iv-surface-raised);
+  --iv-surface-2: var(--iv-surface-muted);
+  --iv-overlay: var(--iv-surface-overlay);
+  --iv-border: var(--iv-surface-border);
+  --iv-hover: var(--iv-surface-hover);
+  --iv-selected: var(--iv-surface-selected);
+
+  --iv-fg-strong: #ffffff;
+  --iv-fg: #e8edf6;
+  --iv-fg-secondary: var(--iv-neutral-text);
+  --iv-fg-muted: var(--iv-neutral-bright);
+  --iv-fg-heading: #e2e8f0;
+  --iv-fg-heading-strong: #f1f5f9;
+  --iv-fg-inverse: #0a0e1a;
+
+  --iv-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --iv-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --iv-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --iv-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+  --iv-shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.7), 0 8px 16px rgba(0, 0, 0, 0.5);
+  --iv-shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.8);
+
+  --iv-primary: var(--iv-navy-600);
+  --iv-gradient-primary: linear-gradient(135deg, #1f3154 0%, #375081 100%);
+}

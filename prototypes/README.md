@@ -36,7 +36,8 @@ build, Node (not python) per the local-server lesson on this box.
 | Review System | [`review-system/`](review-system/) | 3 rating lanes (public/admin/CRM) | Visual-approved (owner) | see `review_system_planning_and_design.md` |
 | Digital Showcase Decisions | [`digital-showcase-decisions/`](digital-showcase-decisions/) | G3/G4/G5 decision packet — template mapping, Starter semantics, Project Portfolio fields | Stage-3 (G3 axis since ruled — hybrid model) | Planning `digital_showcase_planning_and_design.md` v0.2 · Prototype **v0.1** |
 | Digital Showcase Workspace | [`digital-showcase-workspace/`](digital-showcase-workspace/) | Vendor authoring journey, **three steps** — Overview · DS-W2B Choose Template + Arrange Sections · DS-W3 Preview & Publish | Stage-3 (awaits owner/Board review) | Planning v0.9 · Audit v0.2 · Prototype **v0.2** |
-| Digital Showcase Nav | [`digital-showcase-nav/`](digital-showcase-nav/) | Sidebar IA rearrangement — Current vs Option A (labeled section, Content / Publish & Promote sub-groups) vs Option B (reordered single group); all 9 entries kept | Stage-3 (awaits owner approval) | `vendor-shell-vm.ts` VX-01 group · Prototype **v0.1** |
+| Digital Showcase Nav | [`digital-showcase-nav/`](digital-showcase-nav/) | Sidebar IA rearrangement — Current vs Option A (labeled section, Content / Publish & Promote sub-groups) vs Option B (reordered single group); all 9 entries kept | **Owner-APPROVED Option A** (2026-07-20, built) | `vendor-shell-vm.ts` VX-01 group · Prototype **v0.1** |
+| Digital Showcase Content | [`digital-showcase-content/`](digital-showcase-content/) | The Content-group pages populated with sample data — Company Profile (**S1–S5 tabs**, Categories folded in + its sidebar entry removed per owner directions 07-21) · Product Portfolio + editor (S6/S7) · Project Portfolio (DS-W1/G5) · Spec Library (P-VND-09) | Stage-3 (awaits owner review) | DS-NAV Option A sidebar · Prototype **v0.3** |
 
 ## Conventions
 

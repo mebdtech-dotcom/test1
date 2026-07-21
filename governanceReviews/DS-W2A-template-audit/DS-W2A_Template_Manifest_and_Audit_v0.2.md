@@ -16,7 +16,12 @@ JavaScript, component, token, manifest, or demo asset is retained, required, or 
 **Implementation rule:** DS-P2 builds the five canonical templates from §3B + the approved prototype
 (`prototypes/vendor-profile-templates/`) on the frozen `--iv-*` token system and production
 components — **never from kit source**.
-**Gates at issue:** the A–E mapping is proposed but formally unminted (G3 READY); route semantics
+**Gates at issue:** the A–E mapping is **🛑 BLOCKED (G3), not merely unminted** — updated 2026-07-21:
+the G3 mint proposal was **REJECTED FOR FOLD** because `Master_System_Architecture_v1.0_FINAL.md:569`
+(rank 0) and `ADR_Compendium_v1.md:1008` (rank 1, ADR-020) already bind **A Directory Style ·
+B Engineering Company · C Manufacturer · D Service Company · E Corporate Microsite**, unamended. The
+proposed mapping is a **REMAP requiring an atomic Master §8.4 + ADR-020 amendment packet**
+(`governanceReviews/G3_TemplateSemantics_Amendment_Packet_v1.0_PROPOSAL.md`). Route semantics
 undecided (G4 open). **DS-W2A-B1 survives as an implementation guardrail** — no fabricated trust
 panel may be recreated.
 
@@ -35,9 +40,13 @@ panel may be recreated.
 > Consequences for this document: §0's three options are settled (Option 3); §1's "guessed approved
 > analogue" column is **STRUCK — do not use** (there is no kit↔template correspondence to mint, by
 > ruling); neutral IDs kit-01…kit-04 are **permanent**; the §4 exit item blocked on canonicality is
-> now **cleared**. **DS-W2A-B1 (trust panel) remains a production BLOCKER.** Proposed G3 mint:
+> now **cleared**. **DS-W2A-B1 (trust panel) remains a production BLOCKER.** ~~Proposed G3 mint:
 > A→Corporate Classic · B→Modern Industrial · C→Product Catalogue · D→Portfolio & Projects ·
-> E→Business Landing (corpus verified conflict-free; note frozen `DEFAULT 'A'`).
+> E→Business Landing (corpus verified conflict-free; note frozen `DEFAULT 'A'`).~~
+> **🛑 STRUCK 2026-07-21 — "corpus verified conflict-free" was FALSE** (the sweep searched the
+> identifier `layout_template` and the five *proposed* names; ranks 0/1 bind the letters in prose).
+> The mapping is **OWNER-PROPOSED and BLOCKED pending an architecture amendment** — see the §0
+> gates note above.
 
 ## 0. The headline finding (read first) — *superseded by the ruling above; retained as the record of why the question was raised*
 
