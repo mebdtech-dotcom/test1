@@ -337,7 +337,7 @@ describe("W3-TRUST-4a — BC-TRUST-3 Performance Scoring (Doc-4G §G6; Doc-6G §
       expect(events[0]!.eventVersion).toBe(1);
       expect(events[0]!.aggregateId).toBe(vendorProfileId);
       const payload = events[0]!.payloadJsonb as Record<string, unknown>;
-      expect(payload).toMatchObject({ vendorProfileId, rated: true });
+      expect(payload).toMatchObject({ vendor_profile_id: vendorProfileId, rated: true });
       expect(payload).not.toHaveProperty("score"); // the numeric score is never public/in-event
 
       // exactly ONE recalculation audit (System)
@@ -562,8 +562,8 @@ describe("W3-TRUST-4a — BC-TRUST-3 Performance Scoring (Doc-4G §G6; Doc-6G §
       expect(events).toHaveLength(1);
       expect(events[0]!.eventVersion).toBe(1);
       expect(events[0]!.payloadJsonb).toMatchObject({
-        vendorProfileId,
-        triggerReason: "threshold_crossing",
+        vendor_profile_id: vendorProfileId,
+        trigger_reason: "threshold_crossing",
       });
 
       const audit = await scoreAuditByAction(scoreId, "performance_review_triggered");

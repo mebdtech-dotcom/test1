@@ -228,7 +228,7 @@ export async function computePerformanceScore(
     // (5) EMIT `PerformanceScoreUpdated` via M0 — SAME tx — publish-on-change, SUPPRESSED while frozen (Doc-4G §H.5).
     if (!frozen) {
       const payload: Record<string, unknown> = {
-        vendorProfileId: input.vendorProfileId,
+        vendor_profile_id: input.vendorProfileId,
         rated,
       } satisfies PerformanceScoreUpdatedPayload;
       await deps.writeOutboxEvent(
@@ -320,8 +320,8 @@ export async function triggerPerformanceReview(
 
   // (3) EMIT `PerformanceReviewTriggered` via M0 — SAME tx (no score write; Doc-4G §G6.4 §6/§8).
   const payload: Record<string, unknown> = {
-    vendorProfileId: input.vendorProfileId,
-    triggerReason: input.triggerReason,
+    vendor_profile_id: input.vendorProfileId,
+    trigger_reason: input.triggerReason,
   } satisfies PerformanceReviewTriggeredPayload;
   await deps.writeOutboxEvent(
     {

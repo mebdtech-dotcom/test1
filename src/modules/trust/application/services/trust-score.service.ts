@@ -117,7 +117,7 @@ export async function computeTrustScore(
     //     THIN payload: {vendorProfileId, band} — band is PUBLIC (Doc-2 §3.6); NO numeric score in the event.
     if (!frozen) {
       const payload: Record<string, unknown> = {
-        vendorProfileId: input.vendorProfileId,
+        vendor_profile_id: input.vendorProfileId,
         band: computation.band,
       } satisfies TrustScoreUpdatedPayload;
       await deps.writeOutboxEvent(
