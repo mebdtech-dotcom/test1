@@ -114,7 +114,7 @@ export async function computeTrustScore(
 
   if (write.changed) {
     // (5) EMIT `TrustScoreUpdated` via M0 — SAME tx — publish-on-change, SUPPRESSED while frozen (Doc-4G §H.5).
-    //     THIN payload: {vendorProfileId, band} — band is PUBLIC (Doc-2 §3.6); NO numeric score in the event.
+    //     THIN payload: {vendor_profile_id, band} — band is PUBLIC (Doc-2 §3.6); NO numeric score in the event.
     if (!frozen) {
       const payload: Record<string, unknown> = {
         vendor_profile_id: input.vendorProfileId,
