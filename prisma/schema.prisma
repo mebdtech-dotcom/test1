@@ -1123,6 +1123,41 @@ enum SupportTicketStatus {
   @@schema("communication")
 }
 
+// §3.2 — communication.notifications (recipient-tenant; M0-event source; in_app) — W3-COMM-2
+// (BC-COMM-2, Doc-6H §3.2 verbatim). Lifecycle `unread → read → archived` is COLUMN-DERIVED (no status
+// column): `read_at IS NULL` = unread · `read_at` set = read · `deleted_at` set = archived (SD =
+// archive — R12; archive never deletes the row). Bare-UUID refs → M1 (recipients) / M0 (source event).
+model Notification {
+  id                      String              @id @db.Uuid
+  recipientUserId         String?             @map("recipient_user_id") @db.Uuid
+  recipientOrganizationId String              @map("recipient_organization_id") @db.Uuid
+  sourceEventId           String?             @map("source_event_id") @db.Uuid
+  channel                 NotificationChannel @default(in_app)
+  title                   String?
+  body                    String?
+  payloadJsonb            Json?               @map("payload_jsonb") @db.JsonB
+  readAt                  DateTime?           @map("read_at") @db.Timestamptz
+  createdAt               DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime            @default(now()) @map("updated_at") @db.Timestamptz
+  createdBy               String?             @map("created_by") @db.Uuid
+  updatedBy               String?             @map("updated_by") @db.Uuid
+  deletedAt               DateTime?           @map("deleted_at") @db.Timestamptz
+  deletedBy               String?             @map("deleted_by") @db.Uuid
+  deleteReason            String?             @map("delete_reason")
+
+  @@index([recipientOrganizationId, readAt], map: "notifications_recipient_idx")
+  @@index([sourceEventId, recipientOrganizationId, recipientUserId], map: "notifications_source_event_idx")
+  @@map("notifications")
+  @@schema("communication")
+}
+
+enum NotificationChannel {
+  in_app
+
+  @@map("notification_channel")
+  @@schema("communication")
+}
+
 // W3-COMM-1 — the M6 Idempotency-Key replay store (Doc-6A §10.3 realization vehicle; NOT a Doc-2 §10.7
 // entity — an operational replay cache). The `UNIQUE NULLS NOT DISTINCT` scope key is raw-SQL in the
 // `communication_command_dedup` migration (Prisma cannot express it); this model is Prisma's handle over

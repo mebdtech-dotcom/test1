@@ -11,8 +11,9 @@ import type {
   SupportTicketStatusValue,
   SupportTicketTargetStatus,
 } from "../domain/state-machines/support-ticket.state-machine";
+import type { NotificationStatusValue } from "../domain/state-machines/notification.state-machine";
 
-export type { SupportTicketStatusValue, SupportTicketTargetStatus };
+export type { SupportTicketStatusValue, SupportTicketTargetStatus, NotificationStatusValue };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Actor context — the SERVER-RESOLVED two-sided actor (Doc-5H §7.3). The command binds attribution +
@@ -255,3 +256,152 @@ export interface StoredCommandResponse {
   /** Stored standard HTTP infrastructure headers (e.g. the create `Location`), when any. */
   headers?: Record<string, string>;
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// W3-COMM-2 — BC-COMM-2 Notifications (Doc-4H Pass-B Part-2 §HB-2.1…2.4 + Patch v1.0; Doc-5H §5;
+// Doc-6H §3.2). Recipient-scoped User surface + the out-of-wire System consumed-event effect.
+// ═════════════════════════════════════════════════════════════════════════════
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Actor context — the SERVER-RESOLVED recipient (Doc-4H H.2/H.5: User recipient for reads + state
+// commands; NO Admin surface in BC-COMM-2). Built at the composition edge inside `withActiveOrg`;
+// NEVER client input (Invariant #5). No distinct Doc-2 §7 slug exists for the recipient scope —
+// `[ESC-COMM-SLUG]` (no slug invented, none borrowed); the gate is authenticated User + server-resolved
+// active org + the recipient row predicate (RLS backstop).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The acting recipient User (Doc-4H H.5 — `recipient_user_id`/`recipient_organization_id` scope). */
+export interface NotificationRecipientContext {
+  /** The acting `identity.users` id (audit `actor_id`; gates user-targeted rows). */
+  userId: string;
+  /** The server-resolved active org (the recipient-tenant anchor — Invariant #5). */
+  activeOrgId: string;
+  /** Caller IP for the audit (Doc-2 §9; redaction-aware). Optional. */
+  ipAddress?: string | null;
+  /** Caller user-agent for the audit (Doc-2 §9; redaction-aware). Optional. */
+  userAgent?: string | null;
+}
+
+/** Error outcome of a BC-COMM-2 operation (Doc-4H §HB-2.x Error Registers; classes per Doc-5A §6.2).
+ *  Reachable classes: VALIDATION · NOT_FOUND (H.9 collapse) · STATE · CONFLICT (OCC — distinct). */
+export interface NotificationError {
+  errorClass: "VALIDATION" | "NOT_FOUND" | "STATE" | "CONFLICT";
+  /** The `comm_notification_*` register code (namespaced `comm_`; realized, never coined upstream). */
+  errorCode: string;
+  /** Human-safe, non-leaking message (H.9/R10 — never confirms out-of-scope existence). */
+  message: string;
+}
+
+/** The `notifications` row projection (Doc-2 §10.7 fields; `status` DERIVED per Doc-6H §3.2). */
+export interface NotificationView {
+  notificationId: string;
+  /** `null` = org-wide recipient (visible to any active member of the recipient org). */
+  recipientUserId: string | null;
+  recipientOrganizationId: string;
+  /** The consumed Doc-2 §8 event id (M0 `core.outbox_events` — bare UUID; CM-CR7). */
+  sourceEventId: string | null;
+  channel: "in_app";
+  title: string | null;
+  body: string | null;
+  /** `payload_jsonb` — structured references by UUID; owns no producer entity (H.10). */
+  payload: unknown;
+  /** Derived lifecycle state (`unread → read → archived` — Doc-2 §3.7). */
+  status: NotificationStatusValue;
+  readAt: Date | null;
+  createdAt: Date;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §HB-2.1 — comm.create_notification.v1 (System consumed-event effect; OUT-OF-WIRE — Doc-5H §8; no
+// HTTP face in any protocol). Recipients arrive PRE-RESOLVED per the frozen request schema (resolution
+// per Identity-owned rules is the CONSUMER's obligation — DH-1; `[ESC-COMM-NOTIF-RULES]`, gap analysis N2).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Input to `comm.create_notification.v1` (Doc-4H §HB-2.1 request schema — internal consumer input). */
+export interface CreateNotificationInput {
+  /** The inbound Doc-2 §8 event id — the H.8 natural idempotency key. */
+  sourceEventId: string;
+  /** Recipient user (`null` = org-wide) — resolved upstream per Identity rules (DH-1). */
+  recipientUserId: string | null;
+  /** Recipient org (the RLS tenant scope). */
+  recipientOrganizationId: string;
+  /** Rendered notification title (derived from the event per DH-1 rules; no business decision). */
+  title: string;
+  /** Rendered notification text — producer/Trust outputs consumed as TEXT only (H.10). */
+  body: string;
+  /** Structured references by UUID (e.g. `rfq_id`); owns no producer entity. Optional. */
+  payload?: unknown;
+}
+
+/** Outcome of `comm.create_notification.v1` — the created OR idempotently-returned row (H.8). */
+export type CreateNotificationOutcome =
+  | { ok: true; result: NotificationView; replayed: boolean }
+  | { ok: false; error: NotificationError };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §HB-2.3 / §HB-2.4 — the recipient state commands (Idempotency-Key is a WIRE HEADER, handled at the
+// composition edge — NOT a typed input field).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Input to `comm.mark_notification_read.v1` (Doc-4H §HB-2.3). */
+export interface MarkNotificationReadInput {
+  /** The recipient's own notification (path `{id}`). */
+  notificationId: string;
+}
+
+/** Result of `comm.mark_notification_read.v1` (Doc-4H §HB-2.3 response: id, status=read, read_at). */
+export interface MarkNotificationReadResult {
+  notificationId: string;
+  status: "read";
+  readAt: Date;
+}
+
+/** Outcome of `comm.mark_notification_read.v1`. */
+export type MarkNotificationReadOutcome =
+  | { ok: true; result: MarkNotificationReadResult }
+  | { ok: false; error: NotificationError };
+
+/** Input to `comm.archive_notification.v1` (Doc-4H §HB-2.4). */
+export interface ArchiveNotificationInput {
+  /** The recipient's own notification (path `{id}`) — a `read` notification (Patch Outcome A). */
+  notificationId: string;
+}
+
+/** Result of `comm.archive_notification.v1` (Doc-4H §HB-2.4 response: id, status=archived). */
+export interface ArchiveNotificationResult {
+  notificationId: string;
+  status: "archived";
+}
+
+/** Outcome of `comm.archive_notification.v1`. */
+export type ArchiveNotificationOutcome =
+  | { ok: true; result: ArchiveNotificationResult }
+  | { ok: false; error: NotificationError };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// §HB-2.2 — comm.get_notification.v1 · comm.list_notifications.v1 (recipient reads — unaudited).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Outcome of `comm.get_notification.v1` — `found: false` collapses absent AND non-recipient (H.9). */
+export type GetNotificationResult =
+  | { found: true; notification: NotificationView }
+  | { found: false };
+
+/** Input to `comm.list_notifications.v1` (Doc-4H §HB-2.2 request schema). */
+export interface ListNotificationsInput {
+  /** `status : enum(unread,read,archived) : optional` — allowlisted filter (Doc-4A §9.6). */
+  status?: NotificationStatusValue;
+  /** `page_size : int : optional` — within the `communication.list_page_size_max` POLICY bound. */
+  pageSize?: number;
+  /** `cursor : string : optional` — opaque keyset token (Doc-5A §8.2). */
+  cursor?: string;
+}
+
+/** Result of `comm.list_notifications.v1` — the Doc-5A §8.6 list shape (items + page_info). */
+export interface ListNotificationsResult {
+  items: NotificationView[];
+  pageInfo: { hasMore: boolean; nextCursor?: string };
+}
+
+/** Outcome of `comm.list_notifications.v1` — `{ invalidInput: true }` is the SYNTAX 400. */
+export type ListNotificationsOutcome = ListNotificationsResult | { invalidInput: true };

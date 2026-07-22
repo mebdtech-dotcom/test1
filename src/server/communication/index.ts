@@ -15,3 +15,13 @@ export {
   type SupportTicketMutationDeps,
   type SupportTicketReadDeps,
 } from "./support-ticket.route-handler";
+
+// W3-COMM-2 — the BC-COMM-2 Notification surface (Doc-5H §5; recipient User leg only — H.2).
+export {
+  handleArchiveNotification,
+  handleGetNotification,
+  handleListNotifications,
+  handleMarkNotificationRead,
+  type NotificationMutationDeps,
+  type NotificationReadDeps,
+} from "./notification.route-handler";

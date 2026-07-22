@@ -188,6 +188,12 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   await prisma.$executeRawUnsafe(
     `GRANT SELECT, INSERT ON billing.reward_transactions TO ${RESTRICTED_RLS_ROLE}`,
   );
+  // W3-COMM-2 — the BC-COMM-2 `notifications` RLS gate (`notifications_recipient` recipient-tenant +
+  // staff — Doc-6H §3.x). Full CRUD so the USING/WITH CHECK legs are reached (not a bare
+  // permission-denied); the role stays non-owner/NOBYPASSRLS, so RLS enforces against every grant.
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT, UPDATE, DELETE ON communication.notifications TO ${RESTRICTED_RLS_ROLE}`,
+  );
 }
 
 /**

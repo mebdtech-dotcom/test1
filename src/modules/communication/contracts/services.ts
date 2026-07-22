@@ -22,6 +22,18 @@ import {
   type ListTicketsDeps,
 } from "../application/queries/support-ticket.query";
 import {
+  archiveNotificationCommand,
+  createNotificationCommand,
+  markNotificationReadCommand,
+  type NotificationCommandDeps,
+} from "../application/commands/notification.command";
+import {
+  getNotification as getNotificationQuery,
+  listNotifications as listNotificationsQuery,
+  type ListNotificationsDeps,
+  type NotificationReadScope,
+} from "../application/queries/notification.query";
+import {
   claimCommandDedupRecord as claimCommandDedupRecordImpl,
   findCommandDedupRecord as findCommandDedupRecordImpl,
   persistCommandDedupRecord as persistCommandDedupRecordImpl,
@@ -31,14 +43,24 @@ import {
 import type {
   AddTicketMessageInput,
   AddTicketMessageOutcome,
+  ArchiveNotificationInput,
+  ArchiveNotificationOutcome,
   CloseTicketInput,
   CloseTicketOutcome,
   CommandDedupScope,
+  CreateNotificationInput,
+  CreateNotificationOutcome,
   CreateTicketInput,
   CreateTicketOutcome,
+  GetNotificationResult,
   GetTicketResult,
+  ListNotificationsInput,
+  ListNotificationsOutcome,
   ListTicketsInput,
   ListTicketsOutcome,
+  MarkNotificationReadInput,
+  MarkNotificationReadOutcome,
+  NotificationRecipientContext,
   StoredCommandResponse,
   SupportTicketActorContext,
   UpdateTicketInput,
@@ -48,7 +70,14 @@ import type {
 
 // Re-export the command/query deps shapes so the app-layer composition edge builds them via
 // `@/modules/communication/contracts` (contracts-only).
-export type { SupportTicketCommandDeps, ListTicketsDeps, FindCommandDedupDeps };
+export type {
+  SupportTicketCommandDeps,
+  ListTicketsDeps,
+  FindCommandDedupDeps,
+  NotificationCommandDeps,
+  ListNotificationsDeps,
+  NotificationReadScope,
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Doc-2 §7 authority slugs (bound BY POINTER to the frozen catalog tokens — verified seeded in the
@@ -221,3 +250,82 @@ export type ReleaseCommandDedupRecord = (
 ) => Promise<void>;
 export const releaseCommandDedupRecord: ReleaseCommandDedupRecord = (scope, db) =>
   releaseCommandDedupRecordImpl(scope, db);
+
+// ═════════════════════════════════════════════════════════════════════════════
+// W3-COMM-2 — BC-COMM-2 Notifications (Doc-4H Pass-B Part-2 + Patch v1.0; Doc-5H §5/§8; Doc-6H §3.2).
+// Recipient-scoped User surface (NO Admin leg — H.2; NO distinct §7 slug — `[ESC-COMM-SLUG]`, none
+// invented) + the OUT-OF-WIRE System consumed-event effect. Every mutation is the M6 audited, atomic
+// write (write + audit in ONE tx, NO §8 event — H.7/R11); reads are unaudited.
+// ═════════════════════════════════════════════════════════════════════════════
+
+// The canonical `comm_notification_*` error-code register — one module-owned source, re-exported so
+// the api wire mapper + the app-layer composition bind the SAME codes as the command (no drift).
+export { NotificationErrorCode } from "../domain/error-codes";
+export type { NotificationErrorCodeValue } from "../domain/error-codes";
+
+/** `comm.create_notification.v1` (Doc-4H §HB-2.1; Doc-5H §8 — OUT-OF-WIRE System consumed-event
+ *  effect; NO HTTP face in any protocol — flag-and-halt if one is proposed). Event-consumer idempotent
+ *  on `source_event_id` per recipient (H.8): re-delivery → the SAME row, no duplicate row/audit.
+ *  Recipients arrive PRE-RESOLVED (resolution per Identity-owned rules is the consumer's obligation —
+ *  DH-1; `[ESC-COMM-NOTIF-RULES]`). Audited (interim `notification_created`, System actor). */
+export type CreateNotification = (
+  input: CreateNotificationInput,
+  deps: NotificationCommandDeps,
+  db?: DbExecutor,
+) => Promise<CreateNotificationOutcome>;
+export const createNotification: CreateNotification = (input, deps, db) =>
+  createNotificationCommand(input, deps, db);
+
+/** `comm.mark_notification_read.v1` (Doc-4H §HB-2.3; Doc-5H §5.1 → POST /communication/notifications/
+ *  {id}/mark_notification_read · 200). Recipient only; `unread → read` (already-`read` = idempotent
+ *  no-op; `archived` = STATE). MUST run INSIDE the `withActiveOrg` RLS-scoped tx. */
+export type MarkNotificationRead = (
+  input: MarkNotificationReadInput,
+  ctx: NotificationRecipientContext,
+  deps: NotificationCommandDeps,
+  db?: DbExecutor,
+) => Promise<MarkNotificationReadOutcome>;
+export const markNotificationRead: MarkNotificationRead = (input, ctx, deps, db) =>
+  markNotificationReadCommand(input, ctx, deps, db);
+
+/** `comm.archive_notification.v1` (Doc-4H §HB-2.4 PATCHED — Outcome A; Doc-5H §5.1 → POST
+ *  …/{id}/archive_notification · 200). Recipient only; `read → archived` ONLY (`unread → archived`
+ *  illegal — mark read first; `archived → archived` no-op). SD = archive, never a delete (R12). */
+export type ArchiveNotification = (
+  input: ArchiveNotificationInput,
+  ctx: NotificationRecipientContext,
+  deps: NotificationCommandDeps,
+  db?: DbExecutor,
+) => Promise<ArchiveNotificationOutcome>;
+export const archiveNotification: ArchiveNotification = (input, ctx, deps, db) =>
+  archiveNotificationCommand(input, ctx, deps, db);
+
+/** `comm.get_notification.v1` (Doc-4H §HB-2.2; Doc-5H §5.1 → GET /communication/notifications/{id} ·
+ *  200/404). Recipient scope; absent/non-recipient collapses (H.9). Unaudited. */
+export type GetNotification = (
+  notificationId: string,
+  scope: NotificationReadScope,
+  db?: DbExecutor,
+) => Promise<GetNotificationResult>;
+export const getNotification: GetNotification = (notificationId, scope, db) =>
+  getNotificationQuery(notificationId, scope, db);
+
+/** `comm.list_notifications.v1` (Doc-4H §HB-2.2; Doc-5H §5.1 → GET /communication/notifications ·
+ *  200). Keyset; `status` allowlisted filter; `page_size` bound by `communication.list_page_size_max`
+ *  (POLICY). Recipient scope — never enumerates another recipient's rows. Unaudited. */
+export type ListNotifications = (
+  input: ListNotificationsInput,
+  scope: NotificationReadScope,
+  db?: DbExecutor,
+  deps?: ListNotificationsDeps,
+) => Promise<ListNotificationsOutcome>;
+export const listNotifications: ListNotifications = (input, scope, db, deps) =>
+  listNotificationsQuery(input, scope, db, deps);
+
+// The BC-COMM-2 WIRE FACES (outcome → Doc-5A envelope + §6.2 status) — One-Owner placement.
+export {
+  mapArchiveNotification,
+  mapGetNotification,
+  mapListNotifications,
+  mapMarkNotificationRead,
+} from "../api/notification.handler";
