@@ -24,6 +24,9 @@ import { getVendorOr404 } from "./get-vendor";
 // computed ranking (GI-04). Composes the shared kit + sibling microsite components ONLY.
 const AUTH_HREF = "/login";
 
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -46,7 +49,7 @@ export async function generateMetadata({
 
 export default async function VendorHomePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const products = getPublicVendorProducts(slug);
   const content = getCompanyContent(profile);
 

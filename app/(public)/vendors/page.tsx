@@ -2,29 +2,46 @@ import type { Metadata } from "next";
 import { FilterSidebar } from "@/frontend/components/filter-sidebar";
 import { VendorCard } from "@/frontend/components/vendor-card";
 import { ResultsGrid } from "@/frontend/components/results-grid";
-import { PaginationControl } from "@/frontend/components/pagination-control";
 import { SearchBar } from "@/frontend/components/search-bar";
 import { Container } from "@/frontend/components/container";
-import { VENDORS, VENDOR_FACETS, getVendorTopProductNames } from "../_components/discovery/seed";
+import { VENDOR_FACETS } from "../_components/discovery/seed";
+import { getVendorDirectoryPage } from "../_components/discovery/vendor-directory";
+import { CursorPaginationNav } from "../_components/discovery/cursor-pagination-nav";
 import { vendorHref } from "../_components/vendor-url";
 
-// P-PUB-12 Vendor Directory (Doc-7D Public surface · landing_page_spec §5). PRESENTATION & COMPOSITION
-// ONLY: anonymous, read-only, binds NO Doc-5 contract. Composes the M2.1 VendorCard (no new card type)
-// behind a presentational FilterSidebar + ResultsGrid + cursor PaginationControl.
+// P-PUB-12 Vendor Directory (Doc-7D Public surface · landing_page_spec §5). COMPOSITION ONLY:
+// anonymous, read-only. Composes the M2.1 VendorCard (no new card type) behind a presentational
+// FilterSidebar + ResultsGrid + REAL cursor pagination (CursorPaginationNav / PaginationControl).
+//
+// WIRED (Wave-3 M2 second slice, 2026-07-11): the vendor grid now calls the real
+// `marketplace.list_vendor_directory.v1` read (`../_components/discovery/vendor-directory.ts`) instead
+// of the static `VENDORS` seed. `FilterSidebar` stays PRESENTATIONAL (kit-level "Apply/Clear are inert
+// affordances until wired" — its checkboxes carry no name/value/category-id and the contract's
+// `capability` filter accepts only ONE flag per call; wiring it is a disproportionate kit-level change
+// outside this slice's scope, not an oversight).
 //
 // FE-PUB-06 delta: added the spec's Toolbar search entry point (`SearchBar`, Doc-7B kit, already
 // promoted for Public-surface use by /categories). Points at `/search` — not this page — because
-// /search already owns the real `?q=`-consuming filter logic (incl. a Vendors result tab over the
-// same seed); this page stays a pure listing, never a second fork of that filter logic.
+// /search already owns the real `?q=`-consuming filter logic (incl. a Vendors result tab, now ALSO
+// wired to the same real read); this page stays a pure listing, never a second fork of that logic.
 //
 // GOVERNANCE: cursor pagination only — no offset, no page numbers, no client-computed total (GI-03);
 // the empty branch is byte-identical to absence and an excluded vendor still appears (Invariant #11).
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Vendor directory · iVendorz",
   description: "Browse verified industrial suppliers across Bangladesh by category and capability.",
 };
 
-export default function VendorsPage() {
+export default async function VendorsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cursor?: string }>;
+}) {
+  const sp = await searchParams;
+  const page = await getVendorDirectoryPage(sp.cursor);
+
   return (
     <Container className="py-8">
       <header className="mb-6">
@@ -52,20 +69,12 @@ export default function VendorsPage() {
 
         <div className="min-w-0 flex-1">
           <ResultsGrid
-            count={VENDORS.length}
+            count={page.items.length}
             columnsClassName="grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
-            // Presentation cursor state: a forward page is available; the cursor handlers wire later
-            // (no offset/total — GI-03). The Next control is an inert affordance until wired.
-            footer={<PaginationControl hasMore hasPrevious={false} />}
+            footer={<CursorPaginationNav hasMore={page.hasMore} nextCursor={page.nextCursor} />}
           >
-            {VENDORS.map((vendor) => (
-              // Richer directory card: the `topProducts` slot is fed real M2 catalog names (the lean
-              // landing showcase omits it). Matrix stays authoritative; products never replace it.
-              <VendorCard
-                key={vendor.slug}
-                vendor={{ ...vendor, topProducts: getVendorTopProductNames(vendor.slug) }}
-                href={vendorHref(vendor.slug)}
-              />
+            {page.items.map((vendor) => (
+              <VendorCard key={vendor.slug} vendor={vendor} href={vendorHref(vendor.slug)} />
             ))}
           </ResultsGrid>
         </div>

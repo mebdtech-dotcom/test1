@@ -12,6 +12,9 @@ import { getVendorOr404 } from "../get-vendor";
 // Presentation-only; no standalone anonymous product page invented.
 const AUTH_HREF = "/login";
 
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -37,7 +40,7 @@ export default async function VendorProductsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const products = getPublicVendorProducts(slug);
 
   return (

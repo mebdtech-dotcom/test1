@@ -50,6 +50,9 @@ import { getVendorOr404 } from "../../get-vendor";
 
 const AUTH_HREF = "/login";
 
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -75,7 +78,7 @@ export default async function VendorProjectDetailPage({
   params: Promise<{ slug: string; projectSlug: string }>;
 }) {
   const { slug, projectSlug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const project = getShowcaseProject(profile, projectSlug);
   // Unknown project -> the SAME byte-equivalent 404 an unknown vendor renders (Invariant #11).
   if (!project) notFound();

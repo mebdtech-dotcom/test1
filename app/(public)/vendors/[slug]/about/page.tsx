@@ -17,6 +17,10 @@ import { getVendorOr404 } from "../get-vendor";
 // Vendor Microsite — ABOUT page (M2.7 · ADR-022 / Doc-7D §10). Everything corporate: overview + mission/vision +
 // core values + why-choose-us + history/timeline + statistics + management. Presentation-only; composes existing
 // components. ("Why choose us" is not in the Board page spec — placed here pending Board confirmation; flagged.)
+
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -38,7 +42,7 @@ export async function generateMetadata({
 
 export default async function VendorAboutPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const content = getCompanyContent(profile);
 
   return (

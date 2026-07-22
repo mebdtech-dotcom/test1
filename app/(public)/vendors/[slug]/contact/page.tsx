@@ -16,6 +16,9 @@ import { getVendorOr404 } from "../get-vendor";
 const AUTH_HREF = "/login";
 const MARKETPLACE_HREF = "/marketplace";
 
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -37,7 +40,7 @@ export async function generateMetadata({
 
 export default async function VendorContactPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const content = getCompanyContent(profile);
 
   return (

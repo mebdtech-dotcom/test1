@@ -70,7 +70,7 @@ review/patch/audit trail is grouped by category.
 - PassB sub-domains: `Doc-4D_Content_v1.0_PassB_{VendorProfile,CatalogProductSpec,ProfileExperience,AdvertisingFavorites,Discovery}.md`
 - Content: `Doc-4D_Content_v1.0_PassA.md`
 - Reviews: `Doc-4D_Structure_Hard_Review_Report_v1.0.md` · `Doc-4D_PassA/PassB_Hard_Review_Report_v1.0.md`
-- Realization patches (folded, carried alongside — full detail per `00_AUTHORITY_MAP.md`): `Doc-4D_CanonicalHost_Patch_v1.0.2.md` (ADR-024, Canonical Vendor Subdomain wire realization) · `Doc-4D_PublicProductDetail_Patch_v1.0.3.md` (new `marketplace.get_public_product_detail.v1` contract, `R-ESC7-PRODDETAIL-FREEZE` E-1, folded 2026-07-03 with `Doc-5D_PublicProductDetail_Patch_v1.0.1.md` + `Doc-3_Policy_Key_Registration_Patch_v1.11_PublicReadRateLimit.md` + `ADR-025_Marketplace_Public_URL_Law.md`)
+- Realization patches (folded, carried alongside — full detail per `00_AUTHORITY_MAP.md`): `Doc-4D_CanonicalHost_Patch_v1.0.2.md` (ADR-024, Canonical Vendor Subdomain wire realization) · `Doc-4D_PublicProductDetail_Patch_v1.0.3.md` (new `marketplace.get_public_product_detail.v1` contract, `R-ESC7-PRODDETAIL-FREEZE` E-1, folded 2026-07-03 with `Doc-5D_PublicProductDetail_Patch_v1.0.1.md` + `Doc-3_Policy_Key_Registration_Patch_v1.11_PublicReadRateLimit.md` + `ADR-025_Marketplace_Public_URL_Law.md`) · `Doc-4D_VendorSlugResolve_Patch_v1.0.4.md` (new `marketplace.resolve_vendor_slug.v1` contract, resolves `[ESC-MKT-SLUG-RESOLVE]`, folded 2026-07-11 with `Doc-5D_VendorSlugResolve_Patch_v1.0.2.md`)
 - Patches/gates: `Doc-4D_Structure_Patch_v0.1.1.md` · `Doc-4D_Structure_Freeze_Gate_v1.0.md` · `Doc-4D_PassA/PassB_Patch_v1.0.1.md` · `…_Patch_Verification_Report_v1.0.md`
 
 ### Doc-4E — M3 RFQ Procurement Engine
@@ -157,7 +157,7 @@ review/patch/audit trail is grouped by category.
 | `Doc-5E_Structure_Proposal_v0.1.md` · `governanceReviews/Doc-5E_Freeze_Readiness_Audit_v1.0.md` | Doc-5E structure authoring history (v0.2; Hard Review) + freeze audit (`[ESC-RFQ-POLICY]` gate → cleared by Patch v1.1) |
 | `Doc-3_Policy_Key_Registration_Patch_v1.1_RFQ.md` | Additive Doc-3 §12.2 registration of 2 `rfq.*` API-realization keys; clears the Doc-5E freeze gate (Doc-4A §18.2) |
 | `Doc-3_Policy_Key_Registration_Patch_v1.2_Marketplace.md` | Additive Doc-3 §12.2 registration of 2 `marketplace.*` API-realization keys; clears the Doc-5D DD-6 content-freeze gate (Doc-4A §18.2) |
-| `Doc-5D_SERIES_FROZEN_v1.0.md` (M2 `marketplace`) (+ `Doc-5D_PublicProductDetail_Patch_v1.0.1.md`) | **Doc-5D FROZEN** — M2 Marketplace & Discovery API realization freeze manifest; effective = `Doc-5D_Content_v1.0_Pass1…3` + `Doc-5D_Structure_v1.0_FROZEN` + resolved registers. Realizes Doc-4D (71→72 contracts); first large public/anonymous surface; tri-actor (Public/User/Admin); R1–R10; R5 projection-separation + R9 non-disclosure attestations. **`Doc-5D_PublicProductDetail_Patch_v1.0.1.md`** (folded 2026-07-03): wire realization of `marketplace.get_public_product_detail.v1` (new row 65) + breadcrumb deterministic pick rule + `get_spec_library_entry` conformance correction; `R-ESC7-PRODDETAIL-FREEZE` E-1 wire leg |
+| `Doc-5D_SERIES_FROZEN_v1.0.md` (M2 `marketplace`) (+ `Doc-5D_PublicProductDetail_Patch_v1.0.1.md` + `Doc-5D_VendorSlugResolve_Patch_v1.0.2.md` + `Doc-5D_VendorDirectoryProjection_Patch_v1.0.3.md` + `Doc-5D_VendorDirectorySlugField_Patch_v1.0.4.md`) | **Doc-5D FROZEN** — M2 Marketplace & Discovery API realization freeze manifest; effective = `Doc-5D_Content_v1.0_Pass1…3` + `Doc-5D_Structure_v1.0_FROZEN` + resolved registers. Realizes Doc-4D (72→73 contracts); first large public/anonymous surface; tri-actor (Public/User/Admin); R1–R10; R5 projection-separation + R9 non-disclosure attestations. **`Doc-5D_PublicProductDetail_Patch_v1.0.1.md`** (folded 2026-07-03): wire realization of `marketplace.get_public_product_detail.v1` (new row 65) + breadcrumb deterministic pick rule + `get_spec_library_entry` conformance correction; `R-ESC7-PRODDETAIL-FREEZE` E-1 wire leg. **`Doc-5D_VendorSlugResolve_Patch_v1.0.2.md`** (folded 2026-07-11): wire realization of `marketplace.resolve_vendor_slug.v1` (new row 66, `GET /marketplace/vendor_slug_resolutions/{slug}`); resolves `[ESC-MKT-SLUG-RESOLVE]`. **`Doc-5D_VendorDirectoryProjection_Patch_v1.0.3.md`** (folded 2026-07-11): field-level realization of the EXISTING `marketplace.list_vendor_directory.v1` (row 63) — list-item shape + filter typing + cursor pagination, no new contract; resolves `[ESC-MKT-VENDORDIR-PROJECTION]`. **`Doc-5D_VendorDirectorySlugField_Patch_v1.0.4.md`** (folded 2026-07-11): adds one additive `slug` output field to the list-item projection (list rows need it to link to each vendor's page); resolves `[ESC-MKT-VENDORDIR-SLUGFIELD]` |
 | `Doc-5D_Structure_v1.0_FROZEN.md` · `Doc-5D_Content_v1.0_Pass1…3.md` | Doc-5D source (canonical TOC + §0–§10 + Appendix A) |
 | `Doc-5D_Structure_Proposal_v0.1.md` · `governanceReviews/Doc-5D_Freeze_Readiness_Audit_v1.0.md` | Doc-5D structure authoring history (v0.2 + round-3 ADD-1/ADD-2; Hard Review) + freeze audit (DD-6 gate → cleared by Patch v1.2) |
 | `Doc-5G_SERIES_FROZEN_v1.0.md` (M5 `trust`) | **Doc-5G FROZEN** — M5 Trust & Verification (the governance-signal owner) API realization freeze manifest; effective = `Doc-5G_Content_v1.0_Pass1…3` + `Doc-5G_Structure_v1.0_FROZEN` + resolved registers. Realizes Doc-4G (40 contracts); multi-actor (Public/User/Admin); R1–R12; score-computation + governance/Billing firewall + non-disclosure attestations |
@@ -254,7 +254,7 @@ review/patch/audit trail is grouped by category.
 | `Doc-7H_SERIES_FROZEN_v1.0.md` | **7H FROZEN** — Admin Console *(last)*; HR1–HR12; Doc-5J + cross-module Admin legs; Admin-decides/owning-module-owns; no active-org; Trust firewall; event framing (M8 emits `VendorBanned` only) |
 | `Doc-7{A…H}_Structure_*` · `Doc-7{A…H}_Content_*` · `…_Independent_Hard_Review_*` · `…_Patch_*` · `…_Freeze_Audit_*` | Per-doc source + authoring history (each: Pass → Board Hard Review → Patch → closure check → Structure & Content Freeze Audits — all PASS) |
 
-**Program-level carried (additive channels, Board-approved):** `[ESC-7-API]` file-upload grant (M0/Doc-4B Storage by pointer; `file_ref` only) · `[ESC-7-API-CATNAV/ADS]` (7D anonymous reads → Doc-5D patch) · `[ESC-IDN-DELEG-EXPIRY]` (7E reinstate UI → Doc-2 §5.10). **`[ESC-7-API-PRODDETAIL]` RESOLVED 2026-07-03** — `Doc-4D_PublicProductDetail_Patch_v1.0.3.md` + `Doc-5D_PublicProductDetail_Patch_v1.0.1.md` + `Doc-3_Policy_Key_Registration_Patch_v1.11_PublicReadRateLimit.md` + `ADR-025_Marketplace_Public_URL_Law.md` folded together (`R-ESC7-PRODDETAIL-FREEZE`); unblocks FE-PUB-05. **Doc-7 = COMPLETE; sibling programs Doc-6 (DB) / Doc-8 (Tests) continue.**
+**Program-level carried (additive channels, Board-approved):** `[ESC-7-API]` file-upload grant (M0/Doc-4B Storage by pointer; `file_ref` only) · `[ESC-7-API-CATNAV/ADS]` (7D anonymous reads → Doc-5D patch) · `[ESC-IDN-DELEG-EXPIRY]` (7E reinstate UI → Doc-2 §5.10). **`[ESC-7-API-PRODDETAIL]` RESOLVED 2026-07-03** — `Doc-4D_PublicProductDetail_Patch_v1.0.3.md` + `Doc-5D_PublicProductDetail_Patch_v1.0.1.md` + `Doc-3_Policy_Key_Registration_Patch_v1.11_PublicReadRateLimit.md` + `ADR-025_Marketplace_Public_URL_Law.md` folded together (`R-ESC7-PRODDETAIL-FREEZE`); unblocks FE-PUB-05. **`[ESC-MKT-SLUG-RESOLVE]` RESOLVED 2026-07-11** — `Doc-4D_VendorSlugResolve_Patch_v1.0.4.md` + `Doc-5D_VendorSlugResolve_Patch_v1.0.2.md` folded together; unblocks `W3-MKT-1` (Wave-3 M2 pilot vertical, wires `app/(public)/vendors/[slug]/` to a real backend read). **Doc-7 = COMPLETE; sibling programs Doc-6 (DB) / Doc-8 (Tests) continue.**
 
 ---
 
@@ -285,20 +285,20 @@ review/patch/audit trail is grouped by category.
 
 ---
 
-## 5e. Implementation Planning & Build (Implementation — **current phase: Wave 3 — M2/M5/M6/M7 parallel**)
+## 5e. Implementation Planning & Build (Implementation — **current phase: Wave 3 — Independent Domains (M2/M5/M6/M7) — INTEGRATED · exit gate GREEN**)
 
 > The bridge from the frozen corpus to application code. **Non-authoritative**; decomposes
 > only — coins no architecture/API/schema/UI/event/permission/route/module/state/contract.
 > The corpus's declared phase sequence is **Development Decomposition → Build Roadmap →
 > Implementation (Code)**; both planning artifacts are produced and the build is underway.
-> **Waves 0–2 are DELIVERED** to `main`: Wave 0 Repository Bootstrap (2026-06-27; `wave0-complete`;
-> `Wave0_Baseline_Report_v1.0.md`) · Wave 1 Foundation / Walking Skeleton (2026-06-28; `wave1-complete`,
-> merge `3345b00`; `Wave1_Baseline_Report_v1.0.md`) · **Wave 2 Core Platform (M0 → M1)** — merged to
-> `origin/main` (PR #2, `2e42ed5`), branch-protection CI all-green, Vercel production deploy live
-> (`Wave2_Baseline_Report_v1.0.md`; Supabase production migrations owner-deferred). **Current phase:
-> Wave 3 — M2/M5/M6/M7 parallel** (per-module branches off `main`, not yet merged;
-> `Build_Roadmap_v1.0.md` § Wave 3). Program status/roadmap SSoT: `Program_Status_And_Roadmap.md`
-> (not restated here).
+> **Waves 0–2 are DELIVERED** to `main`: Wave 0 Repository Bootstrap (2026-06-27; `wave0-complete`) +
+> Wave 1 Foundation / Walking Skeleton (2026-06-28; `wave1-complete`, merge `3345b00`) + **Wave 2 Core
+> Platform (full M0 + M1)** (2026-07-11; PR #2 → `origin/main` `2e42ed5`; CI all-green; Vercel prod live).
+> **Current phase: Wave 3 — Independent Domains (M2/M5/M6/M7 parallel) — ALL FOUR INTEGRATED + EXIT GATE
+> GREEN** (2026-07-12) on `wave/3-integration` (`tsc`/Prisma/migrations clean · vitest 806/806; the
+> `[ESC-CORE-OUTBOX-MECH]` outbox conflict resolved Option A). **Awaiting owner-gated merge to `main`**
+> (CI runs the authoritative `next build` + Playwright on the PR) + Supabase prod migrations. Records:
+> `governanceReviews/Wave-3_Integration_Audit_and_Exit_Gate_v1.0.md` · `BOARD-PACKET-W3-CORE-OUTBOX-MECHANISM_v1.0.md`.
 
 | File | Purpose |
 |------|---------|

@@ -437,6 +437,184 @@ enum DelegationGrantStatus {
   @@schema("identity")
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// M2 — Marketplace & Discovery (`marketplace`) — Doc-6D (FROZEN)
+//
+// W3-MKT-1 pilot slice (Wave 3): the two anonymous Public Discovery reads
+// `marketplace.get_public_vendor_profile.v1` (Doc-4D PassB Discovery / Doc-5D Pass-1 row 64) and
+// `marketplace.resolve_vendor_slug.v1` (Doc-4D_VendorSlugResolve_Patch_v1.0.4 /
+// Doc-5D_VendorSlugResolve_Patch_v1.0.2). Realizes ONLY the Vendor Profile aggregate root
+// (`vendor_profiles`, Doc-6D Pass-1 §3.1.1, incl. the VSS `slug` format CHECK) + the category-join
+// child (`category_assignments`, §3.1.4) + the category tree it joins to (`categories`, Doc-6D
+// Pass-2 §3.2 — pulled forward into this slice because the frozen public projection includes real
+// category names, not deferred like `trust_indicators`/`profile_experience`) + the append-only
+// `vendor_slug_history` (Doc-6D_VendorSlugSubdomain_Patch_v1.0.1 6D-VSS-01.2/01.3). The remaining
+// Vendor Profile aggregate children (vendor_capacity_profiles, declared_financial_tiers,
+// financial_tier_history, vendor_ownership_history, vendor_matching_attributes,
+// vendor_claim_records) and the rest of Pass-2/Pass-3 (products, spec library, presentation, ads,
+// favorites) are OUT of this pilot's scope — the frozen public projection this slice realizes
+// (`name, human_ref, capability_flags, geography, categories`) needs none of them.
+//
+// Columns are [Doc-2 binding] verbatim Doc-2 §10.3; physical specifics are [§2.5] realization
+// choices tagged in Doc-6D. Enums / FKs / partial-unique indexes / CHECK / RLS are raw SQL in the
+// `marketplace_vendor_slug_pilot` migration (tables/columns managed by Prisma).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// §3.1.1 — marketplace.vendor_profiles (AR; capability matrix; §5.3 two-dimension state; human_ref)
+model VendorProfile {
+  id                        String           @id @db.Uuid
+  humanRef                  String           @map("human_ref")
+  controllingOrganizationId String           @map("controlling_organization_id") @db.Uuid
+  name                      String
+  slug                      String
+  canSupply                 Boolean          @default(false) @map("can_supply")
+  canService                Boolean          @default(false) @map("can_service")
+  canFabricate              Boolean          @default(false) @map("can_fabricate")
+  canConsult                Boolean          @default(false) @map("can_consult")
+  vendorTypePreset          String?          @map("vendor_type_preset")
+  country                   String?
+  division                  String?
+  district                  String?
+  industrialZone            String?          @map("industrial_zone")
+  claimState                VendorClaimState @default(seeded) @map("claim_state")
+  status                    VendorStatus     @default(active)
+  visibility                VendorVisibility @default(public)
+  createdAt                 DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                 DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy                 String?          @map("created_by") @db.Uuid
+  updatedBy                 String?          @map("updated_by") @db.Uuid
+  deletedAt                 DateTime?        @map("deleted_at") @db.Timestamptz
+  deletedBy                 String?          @map("deleted_by") @db.Uuid
+  deleteReason              String?          @map("delete_reason")
+
+  categoryAssignments CategoryAssignment[]
+  slugHistory         VendorSlugHistory[]
+
+  @@unique([humanRef], map: "vendor_profiles_human_ref_uq")
+  // Directory read (`marketplace.list_vendor_directory.v1`) indexes — W3-MKT-2
+  // (20260711120000_marketplace_directory_indexes). The geography-drill-down composite below IS
+  // Prisma-expressible and declared here. The (name, id) keyset-sort index is PARTIAL
+  // (WHERE visibility='public' AND deleted_at IS NULL) and therefore NOT Prisma-expressible — it lives
+  // in that migration's raw SQL only, the same split used for vendor_profiles_public_idx / the partial
+  // uniques (a partial index is invisible to Prisma's schema diff, so no drift).
+  @@index([country, division, district, industrialZone], map: "vendor_profiles_directory_geo_idx")
+  @@map("vendor_profiles")
+  @@schema("marketplace")
+}
+
+enum VendorClaimState {
+  seeded
+  invited
+  claimed
+  verified
+
+  @@map("vendor_claim_state")
+  @@schema("marketplace")
+}
+
+enum VendorStatus {
+  active
+  suspended
+  banned
+
+  @@map("vendor_status")
+  @@schema("marketplace")
+}
+
+enum VendorVisibility {
+  public
+
+  @@map("vendor_visibility")
+  @@schema("marketplace")
+}
+
+// §3.2 — marketplace.categories (4-level self-FK tree; platform-owned; admin-governed — DD-4).
+// Pulled forward from Doc-6D Pass-2 into this pilot (see module header note above).
+model Category {
+  id           String    @id @db.Uuid
+  parentId     String?   @map("parent_id") @db.Uuid
+  name         String
+  slug         String
+  level        Int       @db.SmallInt
+  path         String
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy    String?   @map("created_by") @db.Uuid
+  updatedBy    String?   @map("updated_by") @db.Uuid
+  deletedAt    DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy    String?   @map("deleted_by") @db.Uuid
+  deleteReason String?   @map("delete_reason")
+
+  parent              Category?            @relation("CategoryTree", fields: [parentId], references: [id], map: "categories_parent_fk")
+  children            Category[]           @relation("CategoryTree")
+  categoryAssignments CategoryAssignment[]
+
+  @@map("categories")
+  @@schema("marketplace")
+}
+
+// §3.1.4 — marketplace.category_assignments (vendor↔category; service-bounded ≤10/≤5)
+model CategoryAssignment {
+  id              String                   @id @db.Uuid
+  vendorProfileId String                   @map("vendor_profile_id") @db.Uuid
+  categoryId      String                   @map("category_id") @db.Uuid
+  level           CategoryAssignmentLevel
+  isSpecialized   Boolean                  @default(false) @map("is_specialized")
+  status          CategoryAssignmentStatus @default(proposed)
+  createdAt       DateTime                 @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime                 @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy       String?                  @map("created_by") @db.Uuid
+  updatedBy       String?                  @map("updated_by") @db.Uuid
+  deletedAt       DateTime?                @map("deleted_at") @db.Timestamptz
+  deletedBy       String?                  @map("deleted_by") @db.Uuid
+  deleteReason    String?                  @map("delete_reason")
+
+  vendorProfile VendorProfile @relation(fields: [vendorProfileId], references: [id], map: "category_assignments_profile_fk")
+  category      Category      @relation(fields: [categoryId], references: [id], map: "category_assignments_category_fk")
+
+  @@map("category_assignments")
+  @@schema("marketplace")
+}
+
+enum CategoryAssignmentLevel {
+  primary
+  secondary
+
+  @@map("category_assignment_level")
+  @@schema("marketplace")
+}
+
+enum CategoryAssignmentStatus {
+  proposed
+  active
+  removed
+
+  @@map("category_assignment_status")
+  @@schema("marketplace")
+}
+
+// Doc-6D_VendorSlugSubdomain_Patch_v1.0.1 6D-VSS-01.2 — marketplace.vendor_slug_history
+// (append-only; permanent; global-unique old_slug; public-read/system-write RLS).
+model VendorSlugHistory {
+  id              String   @id @db.Uuid
+  vendorProfileId String   @map("vendor_profile_id") @db.Uuid
+  oldSlug         String   @map("old_slug")
+  newSlug         String   @map("new_slug")
+  reason          String
+  approvedBy      String   @map("approved_by") @db.Uuid
+  migratedAt      DateTime @default(now()) @map("migrated_at") @db.Timestamptz
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy       String?  @map("created_by") @db.Uuid
+  updatedBy       String?  @map("updated_by") @db.Uuid
+
+  vendorProfile VendorProfile @relation(fields: [vendorProfileId], references: [id], map: "vendor_slug_history_profile_fk")
+
+  @@unique([oldSlug], map: "vendor_slug_history_old_slug_uq")
+  @@map("vendor_slug_history")
+  @@schema("marketplace")
+}
+
 // W2-IDN-6.5 — the M1 §B.6 command-dedup / Idempotency-Key replay store (Doc-4C §B.6; vehicle =
 // the Doc-6A §10.3 dedicated dedup table per the owning-module design, Doc-6C §6.1; stored-result
 // column set per Doc-5A §9.3). OPERATIONAL replay cache, NOT a domain aggregate (Doc-6A R2) — no
@@ -459,4 +637,899 @@ model CommandDedup {
 
   @@map("command_dedup")
   @@schema("identity")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// M5 — Trust & Verification (`trust`) — Doc-6G (Content Pass-1, FROZEN)
+//
+// W3-TRUST-1 (`trust_verification_substrate`) realizes the BC-TRUST-1 Verification
+// grouping (Doc-6G §3.1): `verification_records` (§3.1.1; polymorphic subject,
+// platform-internal, column-scoped immutability) + `verification_decisions`
+// (§3.1.2; append-only, Admin-decides/Trust-owns) and their 4 enums.
+//
+// Columns/enum labels are [Doc-2 binding] (verbatim Doc-2 §10.6 / Doc-6G §3.1);
+// physical types/names are [§2.5] realization choices, tagged in Doc-6G. The
+// column-scoped/append-only immutability triggers (via M0's shared-kernel
+// `core.raise_immutable_violation`), the partial work-queue index, the in-module
+// FK, and the platform-internal RLS are realized as raw SQL in the
+// `trust_verification_substrate` migration (Doc-6G §3.x; tables/columns managed by
+// Prisma). Deferred (NOT this WP): `verified_financial_tiers` (§3.1.3) + the
+// Trust/Performance scores (Doc-6G Pass-2/3). No cross-schema FK — `subject_id`,
+// `requested_by`, `verification_task_id`, `created_by`/`updated_by` are bare UUIDs.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// §3.1.1 — trust.verification_records (§5.6; polymorphic subject; platform-internal; NO SD)
+model VerificationRecord {
+  id                   String                  @id @db.Uuid
+  subjectId            String                  @map("subject_id") @db.Uuid
+  subjectType          VerificationSubjectType @map("subject_type")
+  verificationType     VerificationType        @map("verification_type")
+  state                VerificationState       @default(requested)
+  evidenceDocumentRefs String[]                @default([]) @map("evidence_document_refs") @db.Uuid
+  requestedBy          String?                 @map("requested_by") @db.Uuid
+  expiresAt            DateTime?               @map("expires_at") @db.Timestamptz
+  createdAt            DateTime                @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime                @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy            String?                 @map("created_by") @db.Uuid
+  updatedBy            String?                 @map("updated_by") @db.Uuid
+
+  decisions VerificationDecision[]
+
+  @@map("verification_records")
+  @@schema("trust")
+}
+
+enum VerificationSubjectType {
+  vendor_profile
+  organization
+  capacity
+  declared_tier
+
+  @@map("verification_subject_type")
+  @@schema("trust")
+}
+
+enum VerificationType {
+  contact
+  business
+  factory
+  organization
+  tier
+  capacity
+
+  @@map("verification_type")
+  @@schema("trust")
+}
+
+enum VerificationState {
+  requested
+  in_review
+  approved
+  rejected
+  expired
+  revoked
+
+  @@map("verification_state")
+  @@schema("trust")
+}
+
+// §3.1.2 — trust.verification_decisions (append-only; Admin decides, Trust owns; in-module FK; NO SD)
+model VerificationDecision {
+  id                   String                   @id @db.Uuid
+  verificationRecordId String                   @map("verification_record_id") @db.Uuid
+  decidedBy            String?                  @map("decided_by") @db.Uuid
+  verificationTaskId   String?                  @map("verification_task_id") @db.Uuid
+  decision             VerificationDecisionType
+  reason               String?
+  decidedAt            DateTime                 @default(now()) @map("decided_at") @db.Timestamptz
+  createdAt            DateTime                 @default(now()) @map("created_at") @db.Timestamptz
+  createdBy            String?                  @map("created_by") @db.Uuid
+
+  verificationRecord VerificationRecord @relation(fields: [verificationRecordId], references: [id], map: "verification_decisions_record_fk")
+
+  @@map("verification_decisions")
+  @@schema("trust")
+}
+
+enum VerificationDecisionType {
+  approve
+  reject
+  confirm
+  downgrade
+  request_info
+
+  @@map("verification_decision")
+  @@schema("trust")
+}
+
+// §3.1.3 — trust.verified_financial_tiers (System-written; emits VendorTierChanged; NO in-band write
+// policy — the System verification service writes via owner-role/SECURITY DEFINER; `Declared`-only =
+// absence of a row). W3-TRUST-3 realizes this (substrate + SD write functions + immutability + RLS in the
+// `trust_verified_financial_tiers` migration). `vendor_profile_id` is a bare cross-module UUID → M2 (no FK);
+// `tier` uses the MODULE-OWNED `trust.financial_tier` (NOT a cross-schema ref to marketplace.financial_tier).
+// The FULL unique index on vendor_profile_id + the partial review-sweep index + the column-scoped
+// immutability trigger (frozen id/vendor_profile_id/created_at/created_by; DELETE blocked) live raw-SQL in
+// the migration (the house pattern). Columns/enum labels are [Doc-2 §10.6 / Doc-6G §3.1.3 binding].
+model VerifiedFinancialTier {
+  id              String             @id @db.Uuid
+  vendorProfileId String             @unique(map: "verified_financial_tiers_vendor_uq") @map("vendor_profile_id") @db.Uuid
+  tier            FinancialTier
+  status          VerifiedTierStatus @default(pending_verification)
+  verifiedAt      DateTime?          @map("verified_at") @db.Timestamptz
+  nextReviewAt    DateTime?          @map("next_review_at") @db.Timestamptz
+  basisJsonb      Json?              @map("basis_jsonb") @db.JsonB
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy       String?            @map("created_by") @db.Uuid
+  updatedBy       String?            @map("updated_by") @db.Uuid
+
+  @@map("verified_financial_tiers")
+  @@schema("trust")
+}
+
+enum FinancialTier {
+  A
+  B
+  C
+  D
+  E
+
+  @@map("financial_tier")
+  @@schema("trust")
+}
+
+enum VerifiedTierStatus {
+  pending_verification
+  verified
+  suspended
+  expired
+
+  @@map("verified_tier_status")
+  @@schema("trust")
+}
+
+// §3.2 — Trust Score (System-computed; freeze; per-update history) — Doc-6G §3.2 / Doc-4G PassB Part2
+// §G5/§H. W3-TRUST-4b realizes the head (`trust_scores`; `score smallint NOT NULL` 0–100 — UNLIKE
+// performance's NULLABLE Not-Rated; lifecycle computed|frozen; `band` text) + the append-only per-update
+// snapshot (`trust_score_history`). NO in-band write policy — the System Trust-scoring service writes via
+// owner-role/SECURITY DEFINER (Invariant #6). FIREWALL (Doc-6G §3.2.1; Invariant #6): NO column computed
+// from Financial Tier / Performance / Buyer-Vendor Status and NO cross-score FK — the score CONSUMES
+// `verification_records` + `performance_scores` + a fraud read-seam only, and NEVER `verified_financial_tiers`.
+// Absence-of-history is NEVER 0 (Doc-3 §12.1 FIXED): a no-input vendor gets a documented NON-ZERO interim
+// baseline (the formula plug's [ESC-TRUST-POLICY] concern). `vendor_profile_id` is a bare cross-module UUID
+// (→ M2; no FK). The index + immutability triggers + RLS + the ONE SD write function live raw-SQL in the
+// `trust_trust_scoring` migration; `ScoreFreezeState` is SHARED with the performance tables (declared once,
+// in `trust_performance_scoring` / below). Columns/enum labels [Doc-2 §10.6 / Doc-6G §3.2 binding]; [§2.5].
+
+// §3.2.1 — trust.trust_scores (head; score smallint NOT NULL 0–100; lifecycle computed|frozen; System-written)
+model TrustScore {
+  id                  String           @id @db.Uuid
+  vendorProfileId     String           @unique(map: "trust_scores_vendor_uq") @map("vendor_profile_id") @db.Uuid
+  score               Int              @db.SmallInt
+  band                String
+  trustFormulaVersion String           @map("trust_formula_version")
+  trustScoreUpdatedAt DateTime         @default(now()) @map("trust_score_updated_at") @db.Timestamptz
+  freezeState         ScoreFreezeState @default(none) @map("freeze_state")
+  freezeReason        String?          @map("freeze_reason")
+  frozenAt            DateTime?        @map("frozen_at") @db.Timestamptz
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy           String?          @map("created_by") @db.Uuid
+  updatedBy           String?          @map("updated_by") @db.Uuid
+
+  history TrustScoreHistory[]
+
+  @@map("trust_scores")
+  @@schema("trust")
+}
+
+// §3.2.2 — trust.trust_score_history (append-only; per-update snapshot; in-module FK → trust_scores)
+model TrustScoreHistory {
+  id                  String   @id @db.Uuid
+  trustScoreId        String   @map("trust_score_id") @db.Uuid
+  vendorProfileId     String   @map("vendor_profile_id") @db.Uuid
+  score               Int      @db.SmallInt
+  band                String
+  trustFormulaVersion String   @map("trust_formula_version")
+  snapshotAt          DateTime @default(now()) @map("snapshot_at") @db.Timestamptz
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
+  createdBy           String?  @map("created_by") @db.Uuid
+
+  trustScore TrustScore @relation(fields: [trustScoreId], references: [id], map: "trust_score_history_score_fk")
+
+  @@index([vendorProfileId, snapshotAt], map: "trust_score_history_vendor_idx")
+  @@map("trust_score_history")
+  @@schema("trust")
+}
+
+// §3.3 — Performance Scoring (System-computed; idempotent inputs; per-update history) — Doc-6G §3.3 /
+// Doc-4G PassB Part3 §G6/§H. W3-TRUST-4a realizes the head (`performance_scores`; NULLABLE score = Not
+// Rated below the 5-responses-OR-2-projects min-threshold gate — never 0), the append-only per-update
+// snapshot (`performance_score_history`), and the idempotent Operations/RFQ consumer inputs
+// (`performance_inputs`; dedup UNIQUE on (source_type, source_entity_id, input_type)). NO in-band write
+// policy — the System Performance-scoring service writes via owner-role/SECURITY DEFINER (Invariant #6).
+// FIREWALL (Doc-6G §3.3.1 line 84): components_jsonb carries performance inputs ONLY — no Financial Tier /
+// Trust Score / Buyer-Vendor Status column or FK. `vendor_profile_id`/`source_entity_id` are bare
+// cross-module UUIDs (→ M2/M3/M4; no FK). The 3 enums + indexes + immutability triggers + RLS + the SD
+// write functions live raw-SQL in the `trust_performance_scoring` migration. Columns/enum labels are
+// [Doc-2 §10.6 / Doc-6G §3.3 binding]; physical specifics [§2.5].
+
+// §3.3.1 — trust.performance_scores (head; NULLABLE score = Not Rated; min-threshold gate; System-written)
+model PerformanceScore {
+  id                        String           @id @db.Uuid
+  vendorProfileId           String           @unique(map: "performance_scores_vendor_uq") @map("vendor_profile_id") @db.Uuid
+  score                     Int?             @db.SmallInt
+  level                     String?
+  componentsJsonb           Json?            @map("components_jsonb") @db.JsonB
+  performanceFormulaVersion String           @map("performance_formula_version")
+  performanceScoreUpdatedAt DateTime         @default(now()) @map("performance_score_updated_at") @db.Timestamptz
+  freezeState               ScoreFreezeState @default(none) @map("freeze_state")
+  freezeReason              String?          @map("freeze_reason")
+  frozenAt                  DateTime?        @map("frozen_at") @db.Timestamptz
+  minThresholdMet           Boolean          @default(false) @map("min_threshold_met")
+  createdAt                 DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                 DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy                 String?          @map("created_by") @db.Uuid
+  updatedBy                 String?          @map("updated_by") @db.Uuid
+
+  history PerformanceScoreHistory[]
+
+  @@map("performance_scores")
+  @@schema("trust")
+}
+
+// §3.3.2 — trust.performance_score_history (append-only; per-update snapshot; in-module FK → performance_scores)
+model PerformanceScoreHistory {
+  id                        String   @id @db.Uuid
+  performanceScoreId        String   @map("performance_score_id") @db.Uuid
+  vendorProfileId           String   @map("vendor_profile_id") @db.Uuid
+  score                     Int?     @db.SmallInt
+  level                     String?
+  performanceFormulaVersion String   @map("performance_formula_version")
+  snapshotAt                DateTime @default(now()) @map("snapshot_at") @db.Timestamptz
+  createdAt                 DateTime @default(now()) @map("created_at") @db.Timestamptz
+  createdBy                 String?  @map("created_by") @db.Uuid
+
+  performanceScore PerformanceScore @relation(fields: [performanceScoreId], references: [id], map: "performance_score_history_score_fk")
+
+  @@map("performance_score_history")
+  @@schema("trust")
+}
+
+// §3.3.3 — trust.performance_inputs (append-only; idempotent Operations/RFQ consumer; dedup UNIQUE; NO SD-edit)
+model PerformanceInput {
+  id              String                @id @db.Uuid
+  vendorProfileId String                @map("vendor_profile_id") @db.Uuid
+  sourceEntityId  String                @map("source_entity_id") @db.Uuid
+  sourceType      PerformanceSourceType @map("source_type")
+  inputType       PerformanceInputType  @map("input_type")
+  occurredAt      DateTime              @map("occurred_at") @db.Timestamptz
+  valueJsonb      Json?                 @map("value_jsonb") @db.JsonB
+  createdAt       DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  createdBy       String?               @map("created_by") @db.Uuid
+
+  @@unique([sourceType, sourceEntityId, inputType], map: "performance_inputs_dedup_uq")
+  @@index([vendorProfileId, inputType, occurredAt], map: "performance_inputs_vendor_idx")
+  @@map("performance_inputs")
+  @@schema("trust")
+}
+
+enum ScoreFreezeState {
+  none
+  frozen
+
+  @@map("score_freeze_state")
+  @@schema("trust")
+}
+
+enum PerformanceInputType {
+  response
+  decline
+  non_response
+  delivery
+  feedback
+  dispute
+  completion
+
+  @@map("performance_input_type")
+  @@schema("trust")
+}
+
+enum PerformanceSourceType {
+  invitation
+  quotation
+  engagement
+  wcc
+
+  @@map("performance_source_type")
+  @@schema("trust")
+}
+
+// §3.4 — trust.fraud_signals (platform-internal; polymorphic subject; admin/System FOR ALL — NO SD; emits
+// NO event — Doc-2 §8 has no Trust fraud event). W3-TRUST-4c realizes the BC-TRUST-4 aggregate (substrate +
+// in-band audited-write lifecycle in the `trust_fraud_signals` migration + the M5 fraud-signal service).
+// `subject_id`/`reported_by`/`created_by`/`updated_by` are bare cross-module UUIDs (Doc-2 §0.3; no FK).
+// `subjectType`/`signalType`/`severity` are TEXT — Doc-2 §10.6 declares no value set (validated non-empty in
+// the app layer; membership `[ESC]`-deferred, no fixed enum coined). NO CHECK, NO business UNIQUE, and NO
+// detection_ref/triage_note column (Doc-4G §H.10 — Pass-B introduces no column; the request fields
+// detection_ref/triage_note ride the immutable AUDIT `newValue`). The 2 indexes + the column-scoped
+// immutability trigger (identity + creation facts frozen; DELETE blocked) + the `fraud_signals_admin FOR ALL`
+// RLS live raw-SQL in the migration (the house pattern). Columns/enum labels [Doc-2 §10.6 / Doc-6G §3.4 binding].
+model FraudSignal {
+  id          String          @id @db.Uuid
+  subjectId   String          @map("subject_id") @db.Uuid
+  subjectType String          @map("subject_type")
+  reportedBy  String?         @map("reported_by") @db.Uuid
+  signalType  String          @map("signal_type")
+  severity    String
+  state       FraudSignalState @default(open)
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy   String?         @map("created_by") @db.Uuid
+  updatedBy   String?         @map("updated_by") @db.Uuid
+
+  // Indexes (subject lookup + the partial `open/reviewed` work-queue) live raw-SQL in the
+  // `trust_fraud_signals` migration (the WP1 verification_records precedent — partial predicates are
+  // not expressible via Prisma `@@index`; kept in one place, the migration).
+  @@map("fraud_signals")
+  @@schema("trust")
+}
+
+enum FraudSignalState {
+  open
+  reviewed
+  actioned
+  dismissed
+
+  @@map("fraud_signal_state")
+  @@schema("trust")
+}
+
+// §3.5.2 — trust.public_reviews (post-award; moderation; public when published; feeds performance via the
+// in-module BC-TRUST-3 ingestion service — F4G-M2/M3, NOT a cross-module event). W3-TRUST-5a realizes the
+// BC-TRUST-5 (Part A) Public Review aggregate (substrate + in-band audited-write lifecycle in the
+// `trust_public_reviews` migration + the M5 public-review service/command). `vendorProfileId`/
+// `authorOrganizationId`/`engagementId`/`moderatedBy`/`createdBy`/`updatedBy`/`deletedBy` are bare
+// cross-module UUIDs (Doc-2 §0.3; no FK). `rating` is a smallint 1–5 (CHECK in the migration). SD tuple
+// (removed = hidden). The `UNIQUE(engagement_id, author_organization_id)` business key, the partial
+// published index, the column-scoped immutability trigger (authored/identity facts frozen; DELETE blocked),
+// and the author/public-read/staff RLS live raw-SQL in the migration (the house pattern). Columns/enum labels
+// [Doc-2 §10.6 / Doc-6G §3.5.2 binding]. NO event — Doc-2 §8 has no Trust review event (Doc-4G §H.7).
+model PublicReview {
+  id                   String             @id @db.Uuid
+  vendorProfileId      String             @map("vendor_profile_id") @db.Uuid
+  authorOrganizationId String             @map("author_organization_id") @db.Uuid
+  engagementId         String             @map("engagement_id") @db.Uuid
+  rating               Int                @db.SmallInt
+  body                 String?
+  status               PublicReviewStatus @default(submitted)
+  moderatedBy          String?            @map("moderated_by") @db.Uuid
+  moderatedAt          DateTime?          @map("moderated_at") @db.Timestamptz
+  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy            String?            @map("created_by") @db.Uuid
+  updatedBy            String?            @map("updated_by") @db.Uuid
+  deletedAt            DateTime?          @map("deleted_at") @db.Timestamptz
+  deletedBy            String?            @map("deleted_by") @db.Uuid
+  deleteReason         String?            @map("delete_reason")
+
+  // The UNIQUE(engagement_id, author_organization_id) business key, the partial published index, the
+  // column-scoped immutability trigger, and the RLS live raw-SQL in the `trust_public_reviews` migration
+  // (partial predicates + triggers + RLS are not expressible via Prisma; kept in one place, the migration).
+  @@map("public_reviews")
+  @@schema("trust")
+}
+
+enum PublicReviewStatus {
+  submitted
+  approved
+  published
+  rejected
+  removed
+
+  @@map("public_review_status")
+  @@schema("trust")
+}
+
+// §3.5.1 — trust.admin_ratings (INTERNAL-ONLY staff rating — never public, never tenant-visible, never exposed
+// externally; F4G-PB5-M3 / Doc-4A §7.5). W3-TRUST-5b realizes the BC-TRUST-5 (Part B) Admin Rating aggregate —
+// a SEPARATE authority from the Public Review (Doc-4G §H.9a "never merged"). `vendorProfileId`/`ratedBy`/
+// `createdBy`/`updatedBy`/`deletedBy` are bare cross-module UUIDs (Doc-2 §0.3; no FK). `score` is `numeric`
+// with NO range CHECK (the 1–5 CHECK belongs to `public_reviews`, a DIFFERENT table) → Prisma `Decimal`
+// (the repository maps it to `number`). SD tuple. The per-vendor SINGLETON is app-enforced (advisory-xact-lock;
+// the frozen §3.5.1 DDL has NO `UNIQUE(vendor_profile_id)`). The column-scoped immutability trigger (identity
+// facts frozen; DELETE blocked) and the STAFF-ONLY `admin_ratings_staff FOR ALL` RLS (the non-disclosure crux —
+// NO public/author/tenant policy) live raw-SQL in the `trust_admin_ratings` migration. Columns [Doc-2 §10.6 /
+// Doc-6G §3.5.1 binding]. NO event — Doc-2 §8 has no Trust admin-rating event (Doc-4G §H.7).
+model AdminRating {
+  id              String    @id @db.Uuid
+  vendorProfileId String    @map("vendor_profile_id") @db.Uuid
+  ratedBy         String?   @map("rated_by") @db.Uuid
+  score           Decimal?  @db.Decimal
+  comment         String?
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy       String?   @map("created_by") @db.Uuid
+  updatedBy       String?   @map("updated_by") @db.Uuid
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy       String?   @map("deleted_by") @db.Uuid
+  deleteReason    String?   @map("delete_reason")
+
+  // The column-scoped immutability trigger + the STAFF-ONLY RLS live raw-SQL in the `trust_admin_ratings`
+  // migration (triggers + RLS are not expressible via Prisma; kept in one place, the migration). The per-vendor
+  // singleton is app-enforced (advisory-xact-lock) — the frozen §3.5.1 DDL has NO UNIQUE(vendor_profile_id).
+  @@map("admin_ratings")
+  @@schema("trust")
+}
+
+// M6 — Communication (`communication`) — Doc-6H (FROZEN) — W3-COMM-1 BC-COMM-4 Support Communications.
+//
+// The Support Ticket aggregate (Doc-2 §10.7): support_tickets (org + staff; status; SD) +
+// ticket_messages (append-only; NO SD — the immutability trigger guards it). Columns are
+// [Doc-2 §10.7 binding]; physical specifics [Doc-6H §2.5]. The enum, the immutability trigger, RLS, and
+// the 2 POLICY seeds live raw-SQL in the `communication_support_tickets` migration (tables/columns
+// managed by Prisma). NO `human_ref` (Doc-2 §10.7 declares none). `communication.command_dedup` (the
+// Doc-6A §10.3 Idempotency-Key replay vehicle) lives in the `communication_command_dedup` migration.
+//
+// OUT OF SCOPE (land with their own M6 slices): threads/messages/thread_participants (BC-COMM-1),
+// notifications (BC-COMM-2), email/sms/whatsapp logs (BC-COMM-3) — Doc-6H Pass-1/Pass-2.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// §3.4.1 — communication.support_tickets (org + staff; status; soft-delete = yes).
+model SupportTicket {
+  id             String              @id @db.Uuid
+  organizationId String              @map("organization_id") @db.Uuid
+  openedBy       String?             @map("opened_by") @db.Uuid
+  status         SupportTicketStatus @default(open)
+  subject        String
+  priority       String?
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime            @default(now()) @map("updated_at") @db.Timestamptz
+  createdBy      String?             @map("created_by") @db.Uuid
+  updatedBy      String?             @map("updated_by") @db.Uuid
+  deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz
+  deletedBy      String?             @map("deleted_by") @db.Uuid
+  deleteReason   String?             @map("delete_reason")
+
+  messages TicketMessage[]
+
+  @@index([organizationId, status], map: "support_tickets_org_status_idx")
+  @@map("support_tickets")
+  @@schema("communication")
+}
+
+// §3.4.2 — communication.ticket_messages (append-only; NO soft-delete; in-module FK → support_tickets).
+model TicketMessage {
+  id              String   @id @db.Uuid
+  supportTicketId String   @map("support_ticket_id") @db.Uuid
+  authorId        String?  @map("author_id") @db.Uuid
+  body            String
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  createdBy       String?  @map("created_by") @db.Uuid
+
+  ticket SupportTicket @relation(fields: [supportTicketId], references: [id], map: "ticket_messages_ticket_fk")
+
+  @@map("ticket_messages")
+  @@schema("communication")
+}
+
+enum SupportTicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+
+  @@map("support_ticket_status")
+  @@schema("communication")
+}
+
+// W3-COMM-1 — the M6 Idempotency-Key replay store (Doc-6A §10.3 realization vehicle; NOT a Doc-2 §10.7
+// entity — an operational replay cache). The `UNIQUE NULLS NOT DISTINCT` scope key is raw-SQL in the
+// `communication_command_dedup` migration (Prisma cannot express it); this model is Prisma's handle over
+// the same table for the read/delete legs. Mirrors `identity.command_dedup`.
+model CommunicationCommandDedup {
+  id              String   @id @db.Uuid
+  contractId      String   @map("contract_id")
+  actorUserId     String   @map("actor_user_id") @db.Uuid
+  organizationId  String?  @map("organization_id") @db.Uuid
+  idempotencyKey  String   @map("idempotency_key")
+  responseStatus  Int      @map("response_status")
+  responseBody    Json     @map("response_body") @db.JsonB
+  responseHeaders Json?    @map("response_headers") @db.JsonB
+  executedAt      DateTime @default(now()) @map("executed_at") @db.Timestamptz
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("command_dedup")
+  @@schema("communication")
+}
+
+// M7 — Monetization / Billing (`billing`) — Doc-6I (FROZEN)
+//
+// W3-BILL-1 [Wave-3 M7 pilot slice] realizes the Plans & Entitlements grouping
+// (Doc-6I §3.1 — `plans` + `entitlements` + `plan_entitlements`): the platform-owned
+// plan catalog behind the two authenticated Platform-Public reads
+// `billing.get_plan.v1` / `billing.list_plans.v1` (Doc-4I §HB-1.4 / Doc-5I §4).
+// Columns are [Doc-2 §10.8 binding]; physical specifics [Doc-6I §2.5]. Enums / RLS /
+// composite-PK live raw-SQL in the `billing_plan_catalog_pilot` migration
+// (tables/columns managed by Prisma). The logical `status` (draft|active|retired) is
+// DERIVED, never a stored column (Doc-2 §10.8: `plans` carries no `status` — `is_active`
+// + soft-delete `SD = retire`): retired ⟺ soft-deleted, active ⟺ is_active, draft otherwise.
+//
+// OUT OF SCOPE (land with their own M7 slices): subscriptions (+events), usage_ledger,
+// lead_credit_accounts (+transactions), platform_invoices (+payments), reward_accounts
+// (+transactions), referrals — Doc-6I §3.2–§3.6.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// §3.1.1 — billing.plans (platform-owned marketing catalog; public-read + admin-write RLS).
+model Plan {
+  id           String       @id @db.Uuid
+  name         String
+  billingCycle BillingCycle @map("billing_cycle")
+  price        Decimal      @db.Decimal
+  currency     String       @default("BDT") @db.Char(3)
+  isActive     Boolean      @default(false) @map("is_active")
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy    String?      @map("created_by") @db.Uuid
+  updatedBy    String?      @map("updated_by") @db.Uuid
+  deletedAt    DateTime?    @map("deleted_at") @db.Timestamptz
+  deletedBy    String?      @map("deleted_by") @db.Uuid
+  deleteReason String?      @map("delete_reason")
+
+  planEntitlements PlanEntitlement[]
+  subscriptions    Subscription[]
+
+  @@map("plans")
+  @@schema("billing")
+}
+
+// §3.1.2 — billing.entitlements (typed catalog; `slug` UNIQUE; NO soft-delete — Doc-2 §10.8).
+model Entitlement {
+  id           String          @id @db.Uuid
+  slug         String
+  type         EntitlementType
+  defaultValue Json?           @map("default_value") @db.JsonB
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy    String?         @map("created_by") @db.Uuid
+  updatedBy    String?         @map("updated_by") @db.Uuid
+
+  planEntitlements PlanEntitlement[]
+  usageLedger      UsageLedger[]
+
+  @@unique([slug], map: "entitlements_slug_uq")
+  @@map("entitlements")
+  @@schema("billing")
+}
+
+// §3.1.3 — billing.plan_entitlements (M:N per-plan value; composite PK; append/upsert — no SD, no updated_at).
+model PlanEntitlement {
+  planId        String   @map("plan_id") @db.Uuid
+  entitlementId String   @map("entitlement_id") @db.Uuid
+  valueJsonb    Json     @map("value_jsonb") @db.JsonB
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  createdBy     String?  @map("created_by") @db.Uuid
+
+  plan        Plan        @relation(fields: [planId], references: [id], map: "plan_entitlements_plan_fk")
+  entitlement Entitlement @relation(fields: [entitlementId], references: [id], map: "plan_entitlements_entitlement_fk")
+
+  @@id([planId, entitlementId], map: "plan_entitlements_pkey")
+  @@map("plan_entitlements")
+  @@schema("billing")
+}
+
+enum BillingCycle {
+  monthly
+  annual
+
+  @@map("billing_cycle")
+  @@schema("billing")
+}
+
+// DB values are `'boolean' | 'numeric' | 'enum'` (Doc-2 §10.8 / Doc-6I). `enum` is a Prisma keyword,
+// so its member is `enum_`, @map'd to the DB literal `enum`; the module maps client → wire string.
+enum EntitlementType {
+  boolean
+  numeric
+  enum_   @map("enum")
+
+  @@map("entitlement_type")
+  @@schema("billing")
+}
+
+// §3.2 — billing.subscriptions (Doc-6I §3.2.1 / Doc-2 §10.8 + §5.7) — org-tenant; one active per org
+// (partial-unique WHERE state='active'; raw-SQL in the migration). W3-BILL-4.
+model Subscription {
+  id             String            @id @db.Uuid
+  organizationId String            @map("organization_id") @db.Uuid
+  planId         String            @map("plan_id") @db.Uuid
+  state          SubscriptionState @default(pending_payment)
+  periodStart    DateTime?         @map("period_start") @db.Timestamptz
+  periodEnd      DateTime?         @map("period_end") @db.Timestamptz
+  autoRenew      Boolean           @default(true) @map("auto_renew")
+  createdAt      DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy      String?           @map("created_by") @db.Uuid
+  updatedBy      String?           @map("updated_by") @db.Uuid
+  deletedAt      DateTime?         @map("deleted_at") @db.Timestamptz
+  deletedBy      String?           @map("deleted_by") @db.Uuid
+  deleteReason   String?           @map("delete_reason")
+
+  plan   Plan                @relation(fields: [planId], references: [id], map: "subscriptions_plan_fk")
+  events SubscriptionEvent[]
+
+  @@map("subscriptions")
+  @@schema("billing")
+}
+
+// §3.2.2 — billing.subscription_events (Doc-6I §3.2.2 / Doc-2 §10.8) — append-only (immutability trigger
+// in the migration); NO soft-delete, NO updated_at.
+model SubscriptionEvent {
+  id             String                @id @db.Uuid
+  subscriptionId String                @map("subscription_id") @db.Uuid
+  eventType      SubscriptionEventType @map("event_type")
+  occurredAt     DateTime              @default(now()) @map("occurred_at") @db.Timestamptz
+  payloadJsonb   Json?                 @map("payload_jsonb") @db.JsonB
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  createdBy      String?               @map("created_by") @db.Uuid
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], map: "subscription_events_subscription_fk")
+
+  @@map("subscription_events")
+  @@schema("billing")
+}
+
+enum SubscriptionState {
+  pending_payment
+  active
+  expired
+
+  @@map("subscription_state")
+  @@schema("billing")
+}
+
+enum SubscriptionEventType {
+  purchase
+  renew
+  expire
+  cancel
+
+  @@map("subscription_event_type")
+  @@schema("billing")
+}
+
+/// billing.usage_ledger (Doc-6I §3.3) — append-only quota metering; Controlling-Org attribution. W3-BILL-6
+/// realizes the table + the read authorities (enforce_quota/get_usage); the sole writer record_usage is
+/// deferred on [ESC-BILL-USAGE-ENTID] (entitlement_id NOT-NULL FK unpopulatable by the frozen contract).
+model UsageLedger {
+  id                String      @id @db.Uuid
+  entitlementId     String      @map("entitlement_id") @db.Uuid
+  organizationId    String      @map("organization_id") @db.Uuid
+  actingUserId      String?     @map("acting_user_id") @db.Uuid
+  consumingEntityId String?     @map("consuming_entity_id") @db.Uuid
+  quotaKey          String      @map("quota_key")
+  amount            Decimal     @db.Decimal
+  period            String?
+  source            UsageSource
+  createdAt         DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  createdBy         String?     @map("created_by") @db.Uuid
+
+  entitlement Entitlement @relation(fields: [entitlementId], references: [id], map: "usage_ledger_entitlement_fk")
+
+  @@index([organizationId, quotaKey, period], map: "usage_ledger_org_quota_idx")
+  @@map("usage_ledger")
+  @@schema("billing")
+}
+
+enum UsageSource {
+  rfq_response
+  lead_access
+  ad_launch
+
+  @@map("usage_source")
+  @@schema("billing")
+}
+
+/// billing.lead_credit_accounts (Doc-6I §3.4) — org lead-credit balance head (one live per org). W3-BILL-7
+/// realizes the table + the reads (get_lead_balance/list_lead_transactions); credit/debit writes next slice.
+model LeadCreditAccount {
+  id             String    @id @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  balance        Decimal   @default(0) @db.Decimal
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy      String?   @map("deleted_by") @db.Uuid
+  deleteReason   String?   @map("delete_reason")
+
+  transactions LeadCreditTransaction[]
+
+  @@map("lead_credit_accounts")
+  @@schema("billing")
+}
+
+/// billing.lead_credit_transactions (Doc-6I §3.4) — append-only credit/debit ledger (source of truth).
+/// `source_invoice_id` → platform_invoices FK is DEFERRED to BC-BILL-5 (nullable column only for now).
+model LeadCreditTransaction {
+  id                  String            @id @db.Uuid
+  leadCreditAccountId String            @map("lead_credit_account_id") @db.Uuid
+  txnType             LeadCreditTxnType @map("txn_type")
+  amount              Decimal           @db.Decimal
+  sourceInvoiceId     String?           @map("source_invoice_id") @db.Uuid
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  createdBy           String?           @map("created_by") @db.Uuid
+
+  account LeadCreditAccount @relation(fields: [leadCreditAccountId], references: [id], map: "lead_credit_transactions_account_fk")
+
+  @@map("lead_credit_transactions")
+  @@schema("billing")
+}
+
+enum LeadCreditTxnType {
+  credit
+  debit
+
+  @@map("lead_credit_txn_type")
+  @@schema("billing")
+}
+
+/// billing.platform_invoices (Doc-6I §3.5) — the platform's OWN revenue invoice (≠ operations.trade_invoices;
+/// firewalled, no operations FK). `amount`/`currency` = real money. W3-BILL-8 realizes the table + the reads
+/// (get_platform_invoice/list_platform_invoices); issue/update_status writes + record_payment land next slice.
+/// `subscription_id` FK → subscriptions is DB-enforced (migration) but not modeled as a Prisma relation
+/// (nullable, peripheral, not traversed by the reads).
+model PlatformInvoice {
+  id             String         @id @db.Uuid
+  humanRef       String         @map("human_ref")
+  organizationId String         @map("organization_id") @db.Uuid
+  subscriptionId String?        @map("subscription_id") @db.Uuid
+  amount         Decimal        @db.Decimal
+  currency       String         @default("BDT") @db.Char(3)
+  status         InvoiceStatus  @default(issued)
+  purpose        InvoicePurpose
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy      String?        @map("created_by") @db.Uuid
+  updatedBy      String?        @map("updated_by") @db.Uuid
+
+  payments PlatformPayment[]
+
+  @@unique([humanRef], map: "platform_invoices_human_ref_uq")
+  @@index([organizationId, status], map: "platform_invoices_org_status_idx")
+  @@map("platform_invoices")
+  @@schema("billing")
+}
+
+/// billing.platform_payments (Doc-6I §3.5) — gateway payment records (platform-owned; record_payment
+/// callback advances status/gateway_ref). No `amount` (the invoice carries it). W3-BILL-8 models it for the
+/// get_platform_invoice `payments` sub-list; the record_payment writer lands next slice.
+model PlatformPayment {
+  id                String         @id @db.Uuid
+  platformInvoiceId String         @map("platform_invoice_id") @db.Uuid
+  gateway           PaymentGateway
+  gatewayRef        String?        @map("gateway_ref")
+  status            PaymentStatus  @default(initiated)
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy         String?        @map("created_by") @db.Uuid
+  updatedBy         String?        @map("updated_by") @db.Uuid
+
+  invoice PlatformInvoice @relation(fields: [platformInvoiceId], references: [id], map: "platform_payments_invoice_fk")
+
+  @@map("platform_payments")
+  @@schema("billing")
+}
+
+enum InvoiceStatus {
+  issued
+  paid
+  overdue
+  void
+
+  @@map("invoice_status")
+  @@schema("billing")
+}
+
+enum InvoicePurpose {
+  subscription
+  lead_package
+  advertising
+  microsite
+  service
+
+  @@map("invoice_purpose")
+  @@schema("billing")
+}
+
+enum PaymentGateway {
+  sslcommerz
+  bkash
+  nagad
+  bank
+
+  @@map("payment_gateway")
+  @@schema("billing")
+}
+
+enum PaymentStatus {
+  initiated
+  succeeded
+  failed
+  refunded
+
+  @@map("payment_status")
+  @@schema("billing")
+}
+
+/// billing.reward_accounts (Doc-6I §3.6) — org reward-POINTS balance head (one live per org). W3-BILL-11
+/// realizes the table + the reads (get_reward_balance/list_referrals); credit_reward writes land next slice.
+model RewardAccount {
+  id             String    @id @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  balance        Decimal   @default(0) @db.Decimal
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy      String?   @map("created_by") @db.Uuid
+  updatedBy      String?   @map("updated_by") @db.Uuid
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz
+  deletedBy      String?   @map("deleted_by") @db.Uuid
+  deleteReason   String?   @map("delete_reason")
+
+  transactions RewardTransaction[]
+
+  @@map("reward_accounts")
+  @@schema("billing")
+}
+
+/// billing.reward_transactions (Doc-6I §3.6) — append-only points credit/debit ledger (source of truth).
+model RewardTransaction {
+  id              String         @id @db.Uuid
+  rewardAccountId String         @map("reward_account_id") @db.Uuid
+  txnType         RewardTxnType  @map("txn_type")
+  amount          Decimal        @db.Decimal
+  reason          String?
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  createdBy       String?        @map("created_by") @db.Uuid
+
+  account RewardAccount @relation(fields: [rewardAccountId], references: [id], map: "reward_transactions_account_fk")
+
+  @@map("reward_transactions")
+  @@schema("billing")
+}
+
+/// billing.referrals (Doc-6I §3.6) — referral tracking; state pending→qualified→rewarded (NO SD). Anchored
+/// on the REFERRER org. W3-BILL-11 realizes the table + list_referrals; track/advance writes land next slice.
+model Referral {
+  id                     String        @id @db.Uuid
+  referrerOrganizationId String        @map("referrer_organization_id") @db.Uuid
+  referredOrganizationId String?       @map("referred_organization_id") @db.Uuid
+  state                  ReferralState @default(pending)
+  createdAt              DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  createdBy              String?       @map("created_by") @db.Uuid
+  updatedBy              String?       @map("updated_by") @db.Uuid
+
+  @@index([referrerOrganizationId, state], map: "referrals_referrer_idx")
+  @@map("referrals")
+  @@schema("billing")
+}
+
+enum RewardTxnType {
+  credit
+  debit
+
+  @@map("reward_txn_type")
+  @@schema("billing")
+}
+
+enum ReferralState {
+  pending
+  qualified
+  rewarded
+
+  @@map("referral_state")
+  @@schema("billing")
 }

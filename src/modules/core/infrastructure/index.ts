@@ -4,6 +4,7 @@
 
 export { allocateHumanReference } from "./data/human-reference.service";
 export { appendAuditRecord } from "./data/audit-record.service";
+export { writeOutboxEvent } from "./data/outbox-event.service";
 export { configValueQuery } from "./data/system-configuration.service";
 export { featureFlagEvaluate } from "./data/feature-flag.service";
 export {

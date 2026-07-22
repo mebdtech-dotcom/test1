@@ -19,6 +19,10 @@ import { getVendorOr404 } from "../get-vendor";
 // downloads are DISABLED (no fabricated files), certifications are SELF-DECLARED (never the platform Verified
 // signal), gallery is decorative placeholders, videos is a genuine-empty placeholder (no video field is wired).
 // ("FAQ" is not in the Board page spec — placed here pending Board confirmation; flagged.)
+
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -44,7 +48,7 @@ export default async function VendorResourcesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const content = getCompanyContent(profile);
 
   return (

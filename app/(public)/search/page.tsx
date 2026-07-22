@@ -3,7 +3,9 @@ import Link from "next/link";
 import { Info } from "lucide-react";
 import { SearchBar } from "@/frontend/components/search-bar";
 import { FilterSidebar } from "@/frontend/components/filter-sidebar";
-import { VENDORS, PRODUCTS, CATEGORY_GROUPS, VENDOR_FACETS } from "../_components/discovery/seed";
+import { PRODUCTS, CATEGORY_GROUPS, VENDOR_FACETS } from "../_components/discovery/seed";
+import { getVendorDirectoryPage } from "../_components/discovery/vendor-directory";
+import { CursorPaginationNav } from "../_components/discovery/cursor-pagination-nav";
 import { VendorCard } from "@/frontend/components/vendor-card";
 import { ProductCard } from "@/frontend/components/product-card";
 import { CategoryTile } from "@/frontend/components/category-tile";
@@ -17,21 +19,29 @@ import { Button } from "@/frontend/primitives/button";
 import { Container } from "@/frontend/components/container";
 import { cn } from "@/frontend/lib/cn";
 
-// P-PUB-10 Search Experience (Doc-7D Public surface · landing_page_spec §2 · M2.3). PRESENTATION &
-// COMPOSITION ONLY: anonymous, read-only, binds NO Doc-5 contract. Reuses the kit cards + ONE ResultsGrid
-// across Products / Vendors / Categories (no new card types). The query is URL-synced (?q=); results are
-// an INTERIM seed filter standing in for `search_catalog` (BC-MKT-6 §8) — disclosed to the visitor (header
-// note) and never presented as a real search/rank (GI-04). Removed when the read is wired.
+// P-PUB-10 Search Experience (Doc-7D Public surface · landing_page_spec §2 · M2.3). COMPOSITION ONLY:
+// anonymous, read-only. Reuses the kit cards + ONE ResultsGrid across Products / Vendors / Categories
+// (no new card types).
+//
+// WIRED (Wave-3 M2 second slice, 2026-07-11): the "Vendors" tab now calls the real
+// `marketplace.list_vendor_directory.v1` read (`../_components/discovery/vendor-directory.ts`) with REAL
+// cursor pagination — no longer the static seed. `list_vendor_directory` has NO free-text `query`
+// parameter (Doc-4D §D6 — only `filters`/`cursor`/`page_size`), so the `?q=` search box does not
+// actually narrow the Vendors tab yet; a scoped disclosure covers exactly that gap (never silently
+// presented as a real name/category match — GI-04). Products/Categories tabs are UNCHANGED — still the
+// seed-backed interim standing in for `search_catalog` (BC-MKT-6 §8), with their existing disclosure.
 //
 // GOVERNANCE: cursor pagination only, no offset/page-number/total (GI-03); empty = byte-identical to
 // absence (Invariant #11). The `?state=` loading/partial/error preview is a DEV/QA harness — honored ONLY
 // outside production so a real visitor can never be shown a fabricated system state.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Search · iVendorz",
   description: "Search verified industrial suppliers and products across Bangladesh.",
 };
 
-type SearchParams = { q?: string; tab?: string; state?: string };
+type SearchParams = { q?: string; tab?: string; state?: string; cursor?: string };
 
 const TABS = [
   { key: "products", label: "Products" },
@@ -137,10 +147,14 @@ export default async function SearchPage({
         (p) => contains(p.name, ql) || contains(p.category ?? "", ql) || contains(p.vendorName, ql),
       )
     : PRODUCTS;
-  const vendors = ql
-    ? VENDORS.filter((v) => contains(v.name, ql) || contains(v.category, ql))
-    : VENDORS;
   const categories = ql ? allCategories.filter((c) => contains(c.name, ql)) : allCategories;
+
+  // WIRED: the real `marketplace.list_vendor_directory.v1` read — only fetched for the active tab
+  // (avoid an unnecessary DB round trip on the Products/Categories tabs). `list_vendor_directory` has
+  // no `query` param, so `q` does NOT filter these results (see the file-top comment / the disclosure
+  // rendered below when `q` is set).
+  const vendorPage = activeTab === "vendors" ? await getVendorDirectoryPage(sp.cursor) : null;
+  const vendors = vendorPage?.items ?? [];
 
   const tabHref = (tab: string) =>
     q ? `/search?q=${encodeURIComponent(q)}&tab=${tab}` : `/search?tab=${tab}`;
@@ -168,7 +182,12 @@ export default async function SearchPage({
         <ResultsGrid
           count={vendors.length}
           columnsClassName={grid.columnsClassName}
-          footer={<PaginationControl hasMore hasPrevious={false} />}
+          footer={
+            <CursorPaginationNav
+              hasMore={vendorPage?.hasMore ?? false}
+              nextCursor={vendorPage?.nextCursor}
+            />
+          }
         >
           {vendors.map((v) => (
             <VendorCard key={v.slug} vendor={v} href={vendorHref(v.slug)} />
@@ -217,11 +236,21 @@ export default async function SearchPage({
         <div className="mt-4 max-w-2xl">
           <SearchBar action="/search" defaultQuery={q} />
         </div>
-        {/* Honest interim disclosure (byte-neutral) — live catalog search is not yet wired. Removed when
-            `search_catalog` lands. */}
-        <p className="mt-2 text-xs text-muted-foreground">
-          Live catalog search is coming soon — showing example listings from across the marketplace.
-        </p>
+        {/* Honest interim disclosure (byte-neutral). Products/Categories: `search_catalog` isn't wired
+            yet (example listings). Vendors: the directory read IS real, but `list_vendor_directory` has
+            no `query` param, so a non-empty `q` doesn't actually narrow it — only disclosed then. */}
+        {activeTab === "vendors" ? (
+          q ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Vendor name/category search isn’t live yet — showing the full vendor directory.
+            </p>
+          ) : null
+        ) : (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Live catalog search is coming soon — showing example listings from across the
+            marketplace.
+          </p>
+        )}
       </header>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">

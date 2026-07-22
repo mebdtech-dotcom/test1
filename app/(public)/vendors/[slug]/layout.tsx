@@ -9,6 +9,12 @@ import { getVendorOr404 } from "./get-vendor";
 // its own data independently via the same `getVendorOr404` gate (identical byte-equivalent 404 — Invariant #11).
 const AUTH_HREF = "/login";
 
+// Never statically render or cache this route: a stale render of a since-banned/since-migrated
+// vendor would violate the non-disclosure guarantee (Invariant #11). Cascades to every nested
+// page/layout in this segment, but every leaf also sets it directly (defense-in-depth, not reliance
+// on inheritance alone).
+export const dynamic = "force-dynamic";
+
 export default async function VendorMicrositeRouteLayout({
   children,
   params,
@@ -17,7 +23,7 @@ export default async function VendorMicrositeRouteLayout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   return (
     <VendorMicrositeLayout profile={profile} authHref={AUTH_HREF}>
       {children}

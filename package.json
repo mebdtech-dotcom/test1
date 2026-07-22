@@ -5,7 +5,7 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:lan": "next dev --turbopack -H 0.0.0.0 -p 8000",

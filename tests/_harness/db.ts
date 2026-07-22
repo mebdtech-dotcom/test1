@@ -102,6 +102,92 @@ export async function ensureRestrictedRlsRole(): Promise<void> {
   await prisma.$executeRawUnsafe(
     `GRANT SELECT, INSERT ON core.audit_records, core.audit_records_default TO ${RESTRICTED_RLS_ROLE}`,
   );
+  // W3-MKT-1 — the M2 public-projection RLS conformance gate (`vendor_profiles` tri-actor public-read
+  // leg + the fully-public `vendor_slug_history`). SELECT-only: this pilot slice is read-only, no
+  // write-path RLS to prove here (unlike the identity_authz full-CRUD grant, which exists to prove a
+  // MISSING write policy's fail-closed 0-rows — no analogous claim is made for marketplace yet).
+  await prisma.$executeRawUnsafe(`GRANT USAGE ON SCHEMA marketplace TO ${RESTRICTED_RLS_ROLE}`);
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT ON marketplace.vendor_profiles, marketplace.vendor_slug_history, marketplace.categories, marketplace.category_assignments TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-COMM-1 — the M6 support-ticket RLS conformance gate (`support_tickets_party` org+staff;
+  // `ticket_messages_party` via-parent + append-only). Full CRUD on `support_tickets` (proving the party
+  // policy's WITH CHECK admits/rejects + tenant-isolated reads); SELECT/INSERT/UPDATE/DELETE on
+  // `ticket_messages` so the immutability-trigger + party checks are reached (not a bare permission-denied).
+  // The role stays non-owner/NOBYPASSRLS, so RLS enforces against every grant.
+  await prisma.$executeRawUnsafe(`GRANT USAGE ON SCHEMA communication TO ${RESTRICTED_RLS_ROLE}`);
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT, UPDATE, DELETE ON communication.support_tickets, communication.ticket_messages TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-COMM-1 (MIN-4) — the `communication.command_dedup` replay store holds full wire response bodies
+  // (incl. subject / Location); prove `command_dedup_actor` blocks a cross-actor SELECT at the DB level.
+  // SELECT/INSERT so a WITH-CHECK/USING probe reaches the policy (not a bare permission-denied).
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT ON communication.command_dedup TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-1 — the M7 plan-catalog public-projection RLS conformance gate (`plans` public-read leg
+  // `deleted_at IS NULL` — retired/soft-deleted hidden from non-staff; fully-public `entitlements` /
+  // `plan_entitlements` catalog). W3-BILL-2 adds INSERT/UPDATE on `billing.plans` so the write-path gate
+  // proves `plans_admin` fail-closed: a non-staff role's INSERT hits the RLS WITH CHECK (rejection), not a
+  // bare permission-denied (the identity_authz full-CRUD-grant precedent). Entitlements/plan_entitlements
+  // stay SELECT-only (their writes land with W3-BILL-3).
+  // W3-BILL-3 adds INSERT/UPDATE on `entitlements` + `plan_entitlements` so their `*_admin` write
+  // policies are provable fail-closed (a non-staff INSERT hits the RLS WITH CHECK, not a permission-denied).
+  await prisma.$executeRawUnsafe(`GRANT USAGE ON SCHEMA billing TO ${RESTRICTED_RLS_ROLE}`);
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT, UPDATE ON billing.plans, billing.entitlements, billing.plan_entitlements TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-4 — BC-BILL-2 subscriptions: SELECT proves the `subscriptions_tenant` RLS scopes reads to the
+  // org (tenant isolation). The `core.write_outbox_event` SECURITY DEFINER function needs only PUBLIC
+  // EXECUTE (default) + core USAGE (granted above) — a tenant role invokes it without an outbox_events grant.
+  // W3-BILL-5 adds UPDATE on `subscriptions` so the cancel-write fence is provable fail-closed: a non-staff
+  // role in org B's context that attempts the cancel CAS on org A's subscription affects 0 rows (the RLS
+  // `USING`/`WITH CHECK` scopes it), not a bare permission-denied (the identity_authz full-CRUD precedent).
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, UPDATE ON billing.subscriptions TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT ON billing.subscription_events TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-6 — BC-BILL-3 usage_ledger: SELECT proves `usage_ledger_tenant` scopes reads to the org;
+  // INSERT lets the write-fence gate observe the RLS WITH CHECK reject a cross-org insert (not a bare
+  // permission-denied) — the same full-grant discipline the other tenant tables use. (record_usage, the
+  // app writer, is deferred on [ESC-BILL-USAGE-ENTID]; this grant is for the DB-level RLS backstop only.)
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT ON billing.usage_ledger TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-7/13 — BC-BILL-4 lead credits: SELECT proves the `lead_credit_*_tenant` RLS scopes reads to the
+  // org (account head + the parent-anchored transactions ledger). W3-BILL-13 adds INSERT/UPDATE on the
+  // account + INSERT on the ledger so the credit/debit write-fence is provable fail-closed.
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT, UPDATE ON billing.lead_credit_accounts TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT ON billing.lead_credit_transactions TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-8 — BC-BILL-5 platform invoicing: SELECT proves `platform_invoices_tenant` (debtor-org reads)
+  // and `platform_payments_read` (org reads payments VIA the parent invoice). W3-BILL-9 adds INSERT/UPDATE
+  // on `platform_invoices` so the issue/void write-fence is provable fail-closed (a cross-org INSERT/UPDATE
+  // hits the RLS WITH CHECK, not a bare permission-denied). record_payment (System) lands next slice.
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT, UPDATE ON billing.platform_invoices TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-10 — record_payment writes are STAFF/System only (`platform_payments_admin` FOR ALL). INSERT
+  // grant so the write-fence gate proves a non-staff INSERT hits the RLS WITH CHECK (rejection), not a bare
+  // permission-denied; SELECT proves `platform_payments_read` (org read via the parent invoice).
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT ON billing.platform_payments TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  // W3-BILL-11/12 — BC-BILL-6 rewards & referrals: SELECT proves `reward_accounts_tenant` / `referrals_tenant`
+  // (org/referrer scoping) + the parent-anchored `reward_transactions`. W3-BILL-12 adds INSERT/UPDATE so the
+  // credit/track/advance write-fences are provable fail-closed (a cross-org write hits the RLS WITH CHECK,
+  // not a bare permission-denied).
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT, UPDATE ON billing.reward_accounts, billing.referrals TO ${RESTRICTED_RLS_ROLE}`,
+  );
+  await prisma.$executeRawUnsafe(
+    `GRANT SELECT, INSERT ON billing.reward_transactions TO ${RESTRICTED_RLS_ROLE}`,
+  );
 }
 
 /**

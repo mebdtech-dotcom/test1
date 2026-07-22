@@ -16,6 +16,7 @@ import {
   dispatchOutboxEvents as dispatchOutboxEventsImpl,
   drainOutbox as drainOutboxImpl,
   featureFlagEvaluate as featureFlagEvaluateImpl,
+  writeOutboxEvent as writeOutboxEventImpl,
 } from "../infrastructure";
 import type {
   AllocateHumanReferenceInput,
@@ -32,6 +33,7 @@ import type {
   OutboxArchiveResult,
   OutboxDispatchInput,
   OutboxDispatchResult,
+  WriteOutboxEventInput,
 } from "./types";
 
 /**
@@ -65,6 +67,22 @@ export type AppendAuditRecord = (
   input: AppendAuditRecordInput,
   executor?: CoreServiceExecutor,
 ) => Promise<AppendAuditRecordResult>;
+
+/**
+ * `core.write_outbox_event.v1` (Doc-4B §B10).
+ * Inserts exactly one `core.outbox_events` row with `status='pending'` (Doc-2 §10.1). Bound to the
+ * caller's transaction when an executor is supplied — the emit is ATOMIC with the caller's business
+ * write (§16.2: the business write cannot commit without its outbox row). COINS NO event name: the
+ * owning (emitting) module supplies a Doc-2 §8 name (by pointer); this primitive persists the row
+ * structurally and does not validate the catalog. Error → `core_outbox_write_failed` (SYSTEM; rolls
+ * the caller's tx back). NOT separately audited (the business action is audited by the caller — §17).
+ * Returns void — the frozen contract declares `Response: none` (Doc-4A §21.5 carve-out);
+ * [ESC-CORE-OUTBOX-MECH] Option A, owner-ruled 2026-07-12.
+ */
+export type WriteOutboxEvent = (
+  input: WriteOutboxEventInput,
+  executor?: CoreServiceExecutor,
+) => Promise<void>;
 
 /**
  * `core` transactional-outbox drainer (Doc-8B §7.2; Doc-6B §3.2). Drains `core.outbox_events`
@@ -120,6 +138,7 @@ export type FeatureFlagEvaluate = (
 export interface CoreServices {
   allocateHumanReference: AllocateHumanReference;
   appendAuditRecord: AppendAuditRecord;
+  writeOutboxEvent: WriteOutboxEvent;
   drainOutbox: DrainOutbox;
   dispatchOutboxEvents: DispatchOutboxEvents;
   archiveDispatchedEvents: ArchiveDispatchedEvents;
@@ -154,6 +173,17 @@ export const allocateHumanReference: AllocateHumanReference = allocateHumanRefer
  * (the `audit_id` is app-minted); coins nothing.
  */
 export const appendAuditRecord: AppendAuditRecord = appendAuditRecordImpl;
+
+/**
+ * Concrete `core.write_outbox_event.v1` (Doc-4B §B10), bound to the M0 infrastructure adapter. Inserts
+ * exactly one `pending` `core.outbox_events` row; participates in the caller's transaction when an
+ * executor is supplied (the emit is atomic with the caller's business write — Doc-4B §16.2). Consumed
+ * cross-module via `@/modules/core/contracts` (strictly contracts/-only; the contracts→infrastructure
+ * binding is same-module-legal — the canonical DDD facade pattern). The producer-emit twin of
+ * `appendAuditRecord`; NON-`RETURNING` (mirrors the audit twin); coins no event name (caller supplies a
+ * Doc-2 §8 name by pointer). This is the codebase's FIRST §8-emitter primitive — shared Wave-3 infra.
+ */
+export const writeOutboxEvent: WriteOutboxEvent = writeOutboxEventImpl;
 
 /**
  * Concrete `core` outbox drainer (Doc-8B §7.2 / Doc-6B §3.2), bound to the M0 infrastructure adapter.

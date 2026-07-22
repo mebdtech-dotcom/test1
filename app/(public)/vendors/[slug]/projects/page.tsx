@@ -12,6 +12,10 @@ import { getVendorOr404 } from "../get-vendor";
 // Vendor Microsite — PROJECTS page (M2.7 · ADR-022 / Doc-7D §10). Selected work: project cards with scope,
 // industry, equipment, and decorative galleries; "View details" disabled until the frozen `showcase_projects`
 // read is wired. Presentation-only; editorial stand-in (sector/role "client" only — never a fabricated name).
+
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -37,7 +41,7 @@ export default async function VendorProjectsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const content = getCompanyContent(profile);
 
   return (

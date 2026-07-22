@@ -11,6 +11,10 @@ import { getVendorOr404 } from "../get-vendor";
 
 // Vendor Microsite — INDUSTRIES page (M2.7 · ADR-022 / Doc-7D §10). All sectors the supplier serves.
 // Industries are a presentation reference (not modeled in the frozen corpus); editorial, coins nothing.
+
+// Never statically render or cache this route (Invariant #11 non-disclosure — see `../layout.tsx`).
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
@@ -36,7 +40,7 @@ export default async function VendorIndustriesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const profile = getVendorOr404(slug);
+  const profile = await getVendorOr404(slug);
   const content = getCompanyContent(profile);
 
   return (

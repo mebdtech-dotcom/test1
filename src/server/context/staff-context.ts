@@ -17,6 +17,7 @@
 // default; tests inject a staff context to exercise the allow leg. NEVER client-inferred; no
 // header/body field can assert staffness (Doc-4A §9.7).
 
+import { prisma, type Prisma } from "@/shared/db";
 import type { AuthSession } from "@/server/auth/provisioning";
 
 /** A SERVER-DERIVED platform-staff principal (Doc-5C §3.2). Never constructed from client input. */
@@ -38,3 +39,30 @@ export type ResolveStaffContext = (session: AuthSession) => Promise<StaffContext
  * staff roster). The session is intentionally not consulted — there is nothing to resolve against.
  */
 export const resolveStaffContext: ResolveStaffContext = async () => null;
+
+/** The transaction client handed to staff-context work — `app.is_platform_staff = true` pinned; no org. */
+export type StaffTx = Prisma.TransactionClient;
+
+/**
+ * Run `fn` inside ONE transaction whose RLS context is a PLATFORM-STAFF principal: `app.user_id` pinned
+ * to `userId` (audit attribution), `app.is_platform_staff` pinned `true` (the staff RLS backstop leg),
+ * and `app.active_org` deliberately UNSET (Admin governance carries no org context — Doc-4A §5.6 / Doc-5C
+ * §4.5). GUCs are transaction-local (`set_config(.,.,true)`) — never session-global (no context bleed on
+ * pooled connections). Used by the M6 support-ticket Admin (Support Staff) leg (Doc-5H §7.3): the staff
+ * RLS leg admits every ticket in scope, and the audit `WITH CHECK` staff leg admits the Admin-attributed
+ * (`actor_type = 'admin'`) audit row. The `userId` MUST be a SERVER-RESOLVED staff principal (from
+ * `resolveStaffContext` — never client input).
+ *
+ * @param userId the SERVER-RESOLVED platform-staff principal (audit attribution).
+ * @param fn     the staff-scoped work; receives the transaction client.
+ */
+export async function withStaffContext<T>(
+  userId: string,
+  fn: (tx: StaffTx) => Promise<T>,
+): Promise<T> {
+  return prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT set_config('app.user_id', ${userId}::text, true)`;
+    await tx.$executeRaw`SELECT set_config('app.is_platform_staff', 'true'::text, true)`;
+    return fn(tx);
+  });
+}
