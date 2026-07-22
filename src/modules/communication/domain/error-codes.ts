@@ -19,3 +19,20 @@ export const SupportTicketErrorCode = {
 
 export type SupportTicketErrorCodeValue =
   (typeof SupportTicketErrorCode)[keyof typeof SupportTicketErrorCode];
+
+// M6 domain — the canonical `comm_notification_*` error-code register (Doc-4H §H5 `comm_` namespace;
+// W3-COMM-2). Same discipline as the ticket register above: the code STRINGS are development-document
+// realization (Pass-B fixes class + trigger + retryable); ONE module-owned source across all layers.
+export const NotificationErrorCode = {
+  /** VALIDATION (Doc-4H §HB-2.x Stage 1 SYNTAX; incl. list filter/cursor/page_size). */
+  INVALID_INPUT: "comm_notification_invalid_input",
+  /** NOT_FOUND (Stage 4 SCOPE — the H.9/R10 protected-fact collapse; absent OR non-recipient). */
+  NOT_FOUND: "comm_notification_not_found",
+  /** STATE (Stage 6 — `archived → read` / `unread → archived` illegal edges). */
+  INVALID_STATE: "comm_notification_invalid_state",
+  /** CONFLICT (the contract-internal OCC lost race — distinct from STATE; retryable). */
+  CONFLICT: "comm_notification_conflict",
+} as const;
+
+export type NotificationErrorCodeValue =
+  (typeof NotificationErrorCode)[keyof typeof NotificationErrorCode];

@@ -45,3 +45,41 @@ export const SupportTicketAuditAction = {
 
 export type SupportTicketAuditActionToken =
   (typeof SupportTicketAuditAction)[keyof typeof SupportTicketAuditAction];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BC-COMM-2 Notifications (W3-COMM-2) — INTERIM `[ESC-COMM-AUDIT]` serializations.
+//
+// Doc-2_Patch_v1.0.9 resolved `[ESC-COMM-AUDIT]` for the BC-COMM-4 mutations ONLY and states verbatim
+// that the BC-COMM-2 notification mutations (`create_notification`, `mark_notification_read`,
+// `archive_notification`) "remain on their interim binding" pending "a future, separate §9 additive
+// that appends to this same Communication row." No canonical §9 business action exists yet for these
+// three mutations; the frozen Doc-4H §H6/H.6 interim mechanism applies.
+//
+// These tokens follow the accepted W3-COMM-GRW-1 precedent (`wave/3-communication-growth` — interim
+// `[ESC-COMM-AUDIT]` action strings, gate-closed with a recorded carry): DISTINCT, disclosed interim
+// serializations pending the Doc-2 §9 additive + its Doc-4H token-ratification companion (Board item —
+// see `docs/backend/wp/W3-COMM-GAP-ANALYSIS.md` N3). They mirror the §9 Communication-row style so the
+// future additive can ratify them verbatim. NEVER a hardcoded literal at a call site.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** The audit `entity_type` for `communication.notifications` rows (Doc-4H §HB-2.x audit binding). */
+export const NOTIFICATION_ENTITY_TYPE = "notifications" as const;
+
+/**
+ * Interim BC-COMM-2 notification audit actions (`[ESC-COMM-AUDIT]` — pending §9 additive; see block
+ * comment). Three DISTINCT tokens so the ledger records the executed command leg:
+ *   CREATED     → `comm.create_notification.v1` (System consumed-event effect; enters `unread`).
+ *   MARKED_READ → `comm.mark_notification_read.v1` (recipient; `unread → read`).
+ *   ARCHIVED    → `comm.archive_notification.v1` (recipient; `read → archived` — SD, never deleted).
+ */
+export const NotificationAuditAction = {
+  /** `[ESC-COMM-AUDIT]` interim — `old_value = null`, `new_value = { status:'unread', source_event_id }`. */
+  CREATED: "notification_created",
+  /** `[ESC-COMM-AUDIT]` interim — `old_value = { status:'unread' }`, `new_value = { status:'read' }`. */
+  MARKED_READ: "notification_marked_read",
+  /** `[ESC-COMM-AUDIT]` interim — `old_value = { status:'read' }`, `new_value = { status:'archived' }`. */
+  ARCHIVED: "notification_archived",
+} as const;
+
+export type NotificationAuditActionToken =
+  (typeof NotificationAuditAction)[keyof typeof NotificationAuditAction];

@@ -9,6 +9,12 @@
 // CONSUMER note (deferred): Marketplace consumes `VendorTierChanged[verified]` and writes
 // `marketplace.financial_tier_history` + its read-model band — Trust NEVER writes that table (Doc-4G
 // §G4.6/§G4.7 §8). No consumer is built in this WP.
+//
+// WIRE CASING (Doc-5A_Patch v1.0.1 §3): the camelCase realization is scoped to API `result` payloads ONLY.
+// An event payload is cross-module integration data persisted VERBATIM into `core.outbox_events.payload_jsonb`
+// (the M0 writer applies no transform) — it is NOT an API `result`, so its property names stay snake_case per
+// the Doc-2 §8 / Doc-4A §3.2·§16.5 abstract field-name grammar (matching the billing §8 emitter). A deferred
+// M2 consumer reads `payload_jsonb->>'tier_type'`/`old_tier`/`new_tier`. Enum VALUES are the frozen sets.
 
 import type { FinancialTier } from "./types";
 
@@ -27,18 +33,18 @@ export const VENDOR_TIER_CHANGED_EVENT_VERSION = 1 as const;
 
 /**
  * The THIN payload of `VendorTierChanged` (Doc-4G §G4.6/§G4.7 §8: `tier_type='verified'` + old/new tier).
- * `aggregate_id` on the outbox row is the `vendorProfileId` (the aggregate the event concerns). Property
- * NAMES are camelCase (Doc-5A v1.0.1 Option B — result-payload convention); enum VALUES are the frozen sets.
+ * `aggregate_id` on the outbox row is the `vendor_profile_id` (the aggregate the event concerns). Property
+ * NAMES are snake_case (event payload — see the WIRE CASING note above); enum VALUES are the frozen sets.
  */
 export interface VendorTierChangedPayload {
   /** The tier dimension this event concerns — always `verified` here (M5 owns the verified tier). */
-  tierType: "verified";
+  tier_type: "verified";
   /** The vendor profile the verified tier belongs to (bare UUID → M2). = the outbox `aggregate_id`. */
-  vendorProfileId: string;
+  vendor_profile_id: string;
   /** The tier BEFORE the change — `null` only on `set` (absence-of-row → verified). */
-  oldTier: FinancialTier | null;
+  old_tier: FinancialTier | null;
   /** The tier AFTER the change (A–E). Unchanged on confirm/suspend/expire (status-only change). */
-  newTier: FinancialTier;
+  new_tier: FinancialTier;
 }
 
 // ── W3-TRUST-4a — BC-TRUST-3 Performance Scoring events (Doc-2 §8; Doc-4G §G6.2/§G6.4 §8) ───────────────
@@ -65,26 +71,26 @@ export const PERFORMANCE_REVIEW_TRIGGERED_EVENT = "PerformanceReviewTriggered" a
 export const PERFORMANCE_EVENT_VERSION = 1 as const;
 
 /**
- * THIN payload of `PerformanceScoreUpdated` (Doc-4G §G6.2 §8). `aggregate_id` = `vendorProfileId`. Carries
+ * THIN payload of `PerformanceScoreUpdated` (Doc-4G §G6.2 §8). `aggregate_id` = `vendor_profile_id`. Carries
  * NO numeric score (staff-only; never public — Doc-4G §G6.5 / §16.3): only `rated` (false = Not Rated). Property
- * NAMES are camelCase (Doc-5A Option B); the numeric score never leaves the module in an event.
+ * NAMES are snake_case (event payload — see the WIRE CASING note above); the numeric score never leaves the module.
  */
 export interface PerformanceScoreUpdatedPayload {
   /** The vendor profile the score concerns (bare UUID → M2). = the outbox `aggregate_id`. */
-  vendorProfileId: string;
+  vendor_profile_id: string;
   /** `false` = Not Rated (below the min-threshold gate); the badge surfaces Not Rated, never 0. */
   rated: boolean;
 }
 
 /**
- * THIN payload of `PerformanceReviewTriggered` (Doc-4G §G6.4 §8). `aggregate_id` = `vendorProfileId`. Carries
- * the trigger reason for staff attention; NO score value. Property NAMES camelCase (Doc-5A Option B).
+ * THIN payload of `PerformanceReviewTriggered` (Doc-4G §G6.4 §8). `aggregate_id` = `vendor_profile_id`. Carries
+ * the trigger reason for staff attention; NO score value. Property NAMES snake_case (event payload — WIRE CASING above).
  */
 export interface PerformanceReviewTriggeredPayload {
   /** The vendor profile the review concerns (bare UUID → M2). = the outbox `aggregate_id`. */
-  vendorProfileId: string;
+  vendor_profile_id: string;
   /** The frozen review-trigger reason (Doc-4G §G6.4). */
-  triggerReason: "threshold_crossing" | "periodic_cadence" | "dispute_pattern";
+  trigger_reason: "threshold_crossing" | "periodic_cadence" | "dispute_pattern";
 }
 
 // ── W3-TRUST-4b — BC-TRUST-2 Trust Scoring event (Doc-2 §8; Doc-4G §G5.1 §8) ────────────────────────────
@@ -108,14 +114,14 @@ export const TRUST_SCORE_UPDATED_EVENT = "TrustScoreUpdated" as const;
 export const TRUST_EVENT_VERSION = 1 as const;
 
 /**
- * THIN payload of `TrustScoreUpdated` (Doc-4G §G5.1 §8). `aggregate_id` = `vendorProfileId`. Carries the PUBLIC
+ * THIN payload of `TrustScoreUpdated` (Doc-4G §G5.1 §8). `aggregate_id` = `vendor_profile_id`. Carries the PUBLIC
  * `band` (Doc-2 §3.6 "band published unless frozen") — safe metadata for M2's read-model rebuild — and carries
- * NO numeric score (staff-only; never public — Doc-4G §G5.3 / §16.3). Property NAMES are camelCase (Doc-5A
- * Option B); the numeric score never leaves the module in an event.
+ * NO numeric score (staff-only; never public — Doc-4G §G5.3 / §16.3). Property NAMES are snake_case (event
+ * payload — see the WIRE CASING note above); the numeric score never leaves the module in an event.
  */
 export interface TrustScoreUpdatedPayload {
   /** The vendor profile the score concerns (bare UUID → M2). = the outbox `aggregate_id`. */
-  vendorProfileId: string;
+  vendor_profile_id: string;
   /** The PUBLIC trust band (Doc-2 §3.6). Text (Doc-6G §3.2.1 declares no band enum). NO numeric score is carried. */
   band: string;
 }

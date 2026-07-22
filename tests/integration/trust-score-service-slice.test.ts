@@ -131,14 +131,17 @@ describe("W3-TRUST-4b — BC-TRUST-2 Trust Scoring (Doc-4G §G5.1; Doc-6G §3.2)
       // exactly ONE history snapshot
       expect(await historyRows(vendorProfileId)).toHaveLength(1);
 
-      // exactly ONE TrustScoreUpdated (v1, pending, thin payload — {vendorProfileId, band}, NO numeric score)
+      // exactly ONE TrustScoreUpdated (v1, pending, thin payload — {vendor_profile_id, band}, NO numeric score)
       const events = await updatedEvents(vendorProfileId);
       expect(events).toHaveLength(1);
       expect(events[0]!.status).toBe("pending");
       expect(events[0]!.eventVersion).toBe(1);
       expect(events[0]!.aggregateId).toBe(vendorProfileId);
       const payload = events[0]!.payloadJsonb as Record<string, unknown>;
-      expect(payload).toMatchObject({ vendorProfileId, band: outcome.result.band });
+      expect(payload).toMatchObject({
+        vendor_profile_id: vendorProfileId,
+        band: outcome.result.band,
+      });
       expect(payload).not.toHaveProperty("score"); // the numeric score is never public/in-event
 
       // exactly ONE recalculation audit (System)

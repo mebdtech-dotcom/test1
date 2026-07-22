@@ -113,10 +113,10 @@ async function emitAndAudit(p: {
 }): Promise<void> {
   // (3) EMIT `VendorTierChanged` via M0 `core.write_outbox_event.v1` — SAME tx (§16.2 atomicity; Doc-4G §8).
   const payload: Record<string, unknown> = {
-    tierType: "verified",
-    vendorProfileId: p.vendorProfileId,
-    oldTier: p.oldTier,
-    newTier: p.newTier,
+    tier_type: "verified",
+    vendor_profile_id: p.vendorProfileId,
+    old_tier: p.oldTier,
+    new_tier: p.newTier,
   } satisfies VendorTierChangedPayload;
   await p.deps.writeOutboxEvent(
     {
@@ -147,7 +147,7 @@ async function emitAndAudit(p: {
 
 /**
  * `set` (establish) — absence-of-row → verified (Doc-4G §G4.6). Admin. UNIQUE(vendor_profile_id) guard: a
- * second `set` for the same vendor → BUSINESS. Emits `VendorTierChanged` (oldTier=null) + a `verified_tier_set`
+ * second `set` for the same vendor → BUSINESS. Emits `VendorTierChanged` (old_tier=null) + a `verified_tier_set`
  * audit, atomically with the SD write.
  */
 export async function establishVerifiedTier(

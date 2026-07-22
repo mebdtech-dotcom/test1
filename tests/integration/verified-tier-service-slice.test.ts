@@ -29,10 +29,10 @@ const ADMIN_ACTOR = "01920000-0000-7000-8000-00000000ad31"; // fixed admin staff
 const deps = { appendAuditRecord, writeOutboxEvent };
 
 interface OutboxPayload {
-  tierType: string;
-  vendorProfileId: string;
-  oldTier: string | null;
-  newTier: string;
+  tier_type: string;
+  vendor_profile_id: string;
+  old_tier: string | null;
+  new_tier: string;
 }
 
 /** Run `fn` inside ONE tx with the platform-staff GUC set (the Admin/System actor context the outbox INSERT
@@ -146,10 +146,10 @@ describe("W3-TRUST-3 (Part B) — verified_financial_tiers write-service (Doc-4G
       expect(events[0]!.eventVersion).toBe(1);
       expect(events[0]!.aggregateId).toBe(vendorProfileId);
       expect(payloadOf(events[0]!)).toMatchObject({
-        tierType: "verified",
-        vendorProfileId,
-        oldTier: null,
-        newTier: "B",
+        tier_type: "verified",
+        vendor_profile_id: vendorProfileId,
+        old_tier: null,
+        new_tier: "B",
       });
 
       // exactly ONE audit row, verified_tier_set, Admin attribution
@@ -301,8 +301,8 @@ describe("W3-TRUST-3 (Part B) — verified_financial_tiers write-service (Doc-4G
 
       const events = await outboxRows(vendorProfileId);
       expect(events).toHaveLength(2); // set + confirm
-      const confirmEvent = events.find((e) => payloadOf(e).oldTier !== null)!;
-      expect(payloadOf(confirmEvent)).toMatchObject({ oldTier: "A", newTier: "A" });
+      const confirmEvent = events.find((e) => payloadOf(e).old_tier !== null)!;
+      expect(payloadOf(confirmEvent)).toMatchObject({ old_tier: "A", new_tier: "A" });
 
       const audit = await auditByAction(rowId, "verified_tier_confirmed");
       expect(audit).toHaveLength(1);
@@ -373,9 +373,9 @@ describe("W3-TRUST-3 (Part B) — verified_financial_tiers write-service (Doc-4G
       expect(row?.tier).toBe("C");
 
       const dgEvent = (await outboxRows(vendorProfileId)).find(
-        (e) => payloadOf(e).oldTier !== null,
+        (e) => payloadOf(e).old_tier !== null,
       )!;
-      expect(payloadOf(dgEvent)).toMatchObject({ oldTier: "A", newTier: "C" });
+      expect(payloadOf(dgEvent)).toMatchObject({ old_tier: "A", new_tier: "C" });
       expect(await auditByAction(rowId, "verified_tier_downgraded")).toHaveLength(1);
     });
 
@@ -429,9 +429,9 @@ describe("W3-TRUST-3 (Part B) — verified_financial_tiers write-service (Doc-4G
 
       expect((await tierRow(vendorProfileId))?.status).toBe("suspended");
       const spEvent = (await outboxRows(vendorProfileId)).find(
-        (e) => payloadOf(e).oldTier !== null,
+        (e) => payloadOf(e).old_tier !== null,
       )!;
-      expect(payloadOf(spEvent)).toMatchObject({ oldTier: "B", newTier: "B" });
+      expect(payloadOf(spEvent)).toMatchObject({ old_tier: "B", new_tier: "B" });
       const audit = await auditByAction(rowId, "verified_tier_suspended");
       expect(audit).toHaveLength(1);
       expect(audit[0]!.newValue).toMatchObject({ status: "suspended", reason: "compliance hold" });
@@ -466,9 +466,9 @@ describe("W3-TRUST-3 (Part B) — verified_financial_tiers write-service (Doc-4G
 
       expect((await tierRow(vendorProfileId))?.status).toBe("expired");
       const exEvent = (await outboxRows(vendorProfileId)).find(
-        (e) => payloadOf(e).oldTier !== null,
+        (e) => payloadOf(e).old_tier !== null,
       )!;
-      expect(payloadOf(exEvent)).toMatchObject({ oldTier: "D", newTier: "D" });
+      expect(payloadOf(exEvent)).toMatchObject({ old_tier: "D", new_tier: "D" });
       const audit = await auditByAction(rowId, "verified_tier_expired");
       expect(audit).toHaveLength(1);
       expect(audit[0]!.actorType).toBe("system");
