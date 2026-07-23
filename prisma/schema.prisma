@@ -1146,7 +1146,9 @@ model Notification {
   deleteReason            String?             @map("delete_reason")
 
   @@index([recipientOrganizationId, readAt], map: "notifications_recipient_idx")
-  @@index([sourceEventId, recipientOrganizationId, recipientUserId], map: "notifications_source_event_idx")
+  // notifications_source_event_key — the H.8 idempotency dedup KEY: UNIQUE, NULLS NOT DISTINCT, partial
+  // (WHERE source_event_id IS NOT NULL). Not expressible via Prisma `@@unique`; kept in the migration
+  // (`communication_notifications_dedup_key` — the follow-up that replaces `notifications_source_event_idx`).
   @@map("notifications")
   @@schema("communication")
 }

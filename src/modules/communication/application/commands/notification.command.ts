@@ -73,6 +73,25 @@ function conflictError(): NotificationError {
   };
 }
 
+/** Prisma P2002 (unique-constraint violation) discrimination — the `notifications_source_event_key`
+ *  dedup-index race backstop (the identity `provision-identity` precedent). */
+function isUniqueViolation(e: unknown): boolean {
+  return (
+    typeof e === "object" && e !== null && "code" in e && (e as { code?: unknown }).code === "P2002"
+  );
+}
+
+/** Run `fn` in ONE transaction: if `db` is the base client, open an interactive tx; if it is already a
+ *  tx executor (a caller-supplied tx), run inline (already atomic). Guarantees the create write + audit
+ *  share a transaction however the out-of-wire consumer invokes the command (the M6 audited-write
+ *  invariant: no business write without its audit row). */
+async function withTx<T>(db: DbExecutor, fn: (tx: DbExecutor) => Promise<T>): Promise<T> {
+  if ("$transaction" in db) {
+    return db.$transaction((tx) => fn(tx));
+  }
+  return fn(db);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // §HB-2.1 — comm.create_notification.v1 (SYSTEM consumed-event effect; OUT-OF-WIRE — Doc-5H §8).
 // Event-consumer idempotent on `source_event_id` per recipient (H.8): re-delivery of the same §8 event
@@ -117,41 +136,66 @@ export async function createNotificationCommand(
     return { ok: true, result: existing, replayed: true };
   }
 
-  // (3) WRITE — enters `unread` (the entry transition only — Doc-4H §HB-2.1 item 6).
-  const created = await insertNotification(
-    {
-      sourceEventId: input.sourceEventId,
-      recipientUserId: input.recipientUserId,
-      recipientOrganizationId: input.recipientOrganizationId,
-      title: input.title,
-      body: input.body,
-      payload: input.payload ?? null,
-    },
-    db,
-  );
+  // (3+4) WRITE + AUDIT — atomic in ONE transaction (no business write without its audit row — the M6
+  //       audited-write invariant), and RACE-SAFE on the UNIQUE `notifications_source_event_key` dedup
+  //       index: two concurrent re-deliveries can both pass the (2) probe, but only one insert wins; the
+  //       loser trips P2002 → re-read the winner and return the H.8 replay (exactly-once over at-least-once).
+  try {
+    const created = await withTx(db, async (tx) => {
+      // (3) WRITE — enters `unread` (the entry transition only — Doc-4H §HB-2.1 item 6).
+      const row = await insertNotification(
+        {
+          sourceEventId: input.sourceEventId,
+          recipientUserId: input.recipientUserId,
+          recipientOrganizationId: input.recipientOrganizationId,
+          title: input.title,
+          body: input.body,
+          payload: input.payload ?? null,
+        },
+        tx,
+      );
 
-  // (4) AUDIT — atomic with the write (SAME tx); SYSTEM attribution (actor_id NULL — Doc-6B §3.1),
-  //     org = the recipient org; interim `[ESC-COMM-AUDIT]` token. The `body` text is NEVER serialized
-  //     into the ledger (ids + meta only).
-  await deps.appendAuditRecord(
-    {
-      actorId: null,
-      actorType: "system",
-      organizationId: input.recipientOrganizationId,
-      entityType: NOTIFICATION_ENTITY_TYPE,
-      entityId: created.notificationId,
-      action: NotificationAuditAction.CREATED,
-      oldValue: null,
-      newValue: {
-        status: "unread",
-        source_event_id: input.sourceEventId,
-        recipient_user_id: input.recipientUserId,
-      },
-    },
-    db,
-  );
+      // (4) AUDIT — SAME tx; SYSTEM attribution (actor_id NULL — Doc-6B §3.1), org = the recipient org;
+      //     interim `[ESC-COMM-AUDIT]` token. The `body` text is NEVER serialized (ids + meta only).
+      await deps.appendAuditRecord(
+        {
+          actorId: null,
+          actorType: "system",
+          organizationId: input.recipientOrganizationId,
+          entityType: NOTIFICATION_ENTITY_TYPE,
+          entityId: row.notificationId,
+          action: NotificationAuditAction.CREATED,
+          oldValue: null,
+          newValue: {
+            status: "unread",
+            source_event_id: input.sourceEventId,
+            recipient_user_id: input.recipientUserId,
+          },
+        },
+        tx,
+      );
 
-  return { ok: true, result: created, replayed: false };
+      return row;
+    });
+
+    return { ok: true, result: created, replayed: false };
+  } catch (e) {
+    // A concurrent re-delivery won the (source_event_id, recipient) race — the UNIQUE dedup index
+    // rejected this insert. Re-read the winner on the BASE client (the tx above is rolled back) and
+    // return the idempotent replay; anything else propagates.
+    if (isUniqueViolation(e)) {
+      const winner = await findNotificationBySourceEvent(
+        input.sourceEventId,
+        input.recipientOrganizationId,
+        input.recipientUserId,
+        prisma,
+      );
+      if (winner !== null) {
+        return { ok: true, result: winner, replayed: true };
+      }
+    }
+    throw e;
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
