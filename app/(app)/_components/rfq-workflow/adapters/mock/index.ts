@@ -12,7 +12,15 @@ import type {
   ComparativeStatementData,
   CsLineItem,
 } from "../../../../(workspace)/buy/_components/comparative-statement";
-import type { RfqPipelineStage } from "../../../../(workspace)/buy/_components/view-models";
+import type {
+  RfqPipelineStage,
+  QuotationState,
+} from "../../../../(workspace)/buy/_components/view-models";
+import type {
+  BuyerOrgQuotationItem,
+  ComparableRfqOption,
+} from "../../../../(workspace)/buy/_components/quotations/org-quotation-view-models";
+import { MIN_COMPARE } from "../../../../(workspace)/buy/_components/comparison-workspace/selection";
 import type { JourneyBucketCount } from "../../journey";
 import { BUYER_PIPELINE_BUCKETS } from "../../journey";
 import type { RfqWorkflowData } from "../types";
@@ -97,6 +105,90 @@ function vendorPipelineSummary(): JourneyBucketCount[] {
       ),
     },
   ];
+}
+
+// ── Received Quotes / Compare Quotes derivation (ESC-BUY-QUOTES-LIST — GATED) ───────────────────
+//
+// Everything below is derived HERE because this file stands in for the SERVER. Counts, the expiry flag,
+// comparison eligibility and row order are all server facts (R7 / GI-04 / GI-10): the presentation renders
+// them and recomputes nothing. When the Board rules ESC-BUY-QUOTES-LIST, the wired resolver replaces these
+// functions and no page changes.
+
+/**
+ * The fixture universe's authored "today". A wired server would use the request instant; the mock pins an
+ * explicit constant so the expiry-window arithmetic (and its tests) are DETERMINISTIC — a `Date.now()` here
+ * would make the tiles drift and the suite flake. Matches the universe's own latest-activity window.
+ */
+const MOCK_CLOCK = new Date("2026-07-05T09:00:00+06:00");
+
+/** Expiry-notice window. At wiring this is a server POLICY value, not a client constant. */
+const EXPIRY_NOTICE_DAYS = 7;
+
+const MS_PER_DAY = 86_400_000;
+
+/** Quotation states still awaiting the buyer — the only ones for which "expiring" is meaningful. */
+const OPEN_QUOTATION_STATES: readonly QuotationState[] = ["submitted", "shortlisted"];
+
+/** Quotation states no longer awaiting the buyer. `withdrawn` is included NON-PENALIZINGLY (Doc-3 §8.3). */
+const CONCLUDED_QUOTATION_STATES: readonly QuotationState[] = [
+  "selected",
+  "not_selected",
+  "withdrawn",
+  "expired",
+];
+
+/**
+ * Validity-window arithmetic only — an open quotation whose validity ends within the notice window. This is
+ * never a judgement about the vendor, and it is never derived from price, rank or any governance signal.
+ */
+function isExpiringSoon(state: QuotationState, validUntil: string | undefined): boolean {
+  if (validUntil === undefined) return false;
+  if (!OPEN_QUOTATION_STATES.includes(state)) return false;
+  const endsAt = Date.parse(validUntil);
+  if (Number.isNaN(endsAt)) return false;
+  const daysRemaining = (endsAt - MOCK_CLOCK.getTime()) / MS_PER_DAY;
+  return daysRemaining >= 0 && daysRemaining <= EXPIRY_NOTICE_DAYS;
+}
+
+/** Disclosed-quotation count for an RFQ — the comparison set. Never a count of anything withheld. */
+function disclosedComparisonCount(rfqId: string): number {
+  return BUYER_RFQ_UNIVERSE.find((r) => r.detail.id === rfqId)?.comparison?.suppliers.length ?? 0;
+}
+
+/**
+ * Flatten the per-RFQ disclosed quotation lists into the buyer-org aggregate, then apply the stand-in
+ * server's GOVERNED ORDER: most recently received first, opaque id as a stable tiebreak. The UI renders
+ * this order verbatim and never re-ranks it (R6 / GI-04).
+ */
+function buildOrgQuotationRows(): BuyerOrgQuotationItem[] {
+  const rows: BuyerOrgQuotationItem[] = [];
+  for (const record of BUYER_RFQ_UNIVERSE) {
+    const quotations = record.detail.quotations?.items ?? [];
+    const comparable = (record.comparison?.suppliers.length ?? 0) >= MIN_COMPARE;
+    for (const quotation of quotations) {
+      rows.push({
+        id: quotation.id,
+        // The QTN human ref lives on the detail projection; absent ⇒ the row simply shows no ref.
+        humanRef: record.quotationDetails?.find((d) => d.id === quotation.id)?.humanRef,
+        rfqId: record.detail.id,
+        rfqHumanRef: record.detail.humanRef,
+        rfqTitle: record.detail.title,
+        vendorName: quotation.vendorName,
+        state: quotation.state,
+        amount: quotation.amount,
+        validUntil: quotation.validUntil,
+        submittedAt: quotation.submittedAt,
+        expiringSoon: isExpiringSoon(quotation.state, quotation.validUntil),
+        comparable,
+      });
+    }
+  }
+  return rows.sort((a, b) => {
+    const aAt = a.submittedAt ? Date.parse(a.submittedAt) : 0;
+    const bAt = b.submittedAt ? Date.parse(b.submittedAt) : 0;
+    if (bAt !== aAt) return bAt - aAt;
+    return a.id.localeCompare(b.id);
+  });
 }
 
 export const mockRfqWorkflowData: RfqWorkflowData = {
@@ -328,6 +420,65 @@ export const mockRfqWorkflowData: RfqWorkflowData = {
 
     async getQuotationDetail(rfqId, quotationId) {
       return findBuyerRecord(rfqId)?.quotationDetails?.find((q) => q.id === quotationId) ?? null;
+    },
+
+    async listOrgQuotations() {
+      const items = buildOrgQuotationRows();
+
+      // Counts span the WHOLE org scope, never the rendered/filtered subset (R7 / GI-12).
+      const countWhere = (predicate: (row: BuyerOrgQuotationItem) => boolean) =>
+        items.filter(predicate).length;
+
+      const perStateCounts: Partial<Record<QuotationState, number>> = {};
+      for (const row of items) {
+        perStateCounts[row.state] = (perStateCounts[row.state] ?? 0) + 1;
+      }
+
+      // Facets follow first appearance in the governed order — the client invents no facet set.
+      const seenRfqIds = new Set<string>();
+      const rfqFacets = [];
+      for (const row of items) {
+        if (seenRfqIds.has(row.rfqId)) continue;
+        seenRfqIds.add(row.rfqId);
+        rfqFacets.push({ rfqId: row.rfqId, humanRef: row.rfqHumanRef, title: row.rfqTitle });
+      }
+
+      return {
+        items,
+        stateCounts: {
+          awaitingReview: countWhere((r) => r.state === "submitted"),
+          shortlisted: countWhere((r) => r.state === "shortlisted"),
+          expiringSoon: countWhere((r) => r.expiringSoon === true),
+          concluded: countWhere((r) => CONCLUDED_QUOTATION_STATES.includes(r.state)),
+        },
+        perStateCounts,
+        rfqFacets,
+        // Single fixture page; the wired read is cursor-paginated (GI-03).
+        nextCursor: null,
+        total: items.length,
+      };
+    },
+
+    async listComparableRfqs(): Promise<ComparableRfqOption[]> {
+      // Only RFQs that actually have disclosed quotations appear. An RFQ with too few to compare is shown
+      // INELIGIBLE with a plain reason rather than hidden — hiding it would read as "something happened to
+      // this RFQ"; stating "one quotation received" is the honest, non-disclosing explanation (Inv #11).
+      return BUYER_RFQ_UNIVERSE.filter((r) => (r.comparison?.suppliers.length ?? 0) > 0).map(
+        (r) => {
+          const quotationCount = disclosedComparisonCount(r.detail.id);
+          const eligible = quotationCount >= MIN_COMPARE;
+          return {
+            rfqId: r.detail.id,
+            humanRef: r.detail.humanRef,
+            title: r.detail.title,
+            quotationCount,
+            eligible,
+            ineligibleReason: eligible
+              ? undefined
+              : `Only ${quotationCount} quotation received — at least ${MIN_COMPARE} are needed to compare.`,
+          };
+        },
+      );
     },
   },
 

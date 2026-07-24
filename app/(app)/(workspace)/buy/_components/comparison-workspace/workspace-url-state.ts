@@ -69,6 +69,12 @@ export function useWorkspaceView(): WorkspaceView {
       // focus
       const nextFocus = patch.focusedVendor !== undefined ? patch.focusedVendor : focusedVendor;
       if (nextFocus) next.set("focus", nextFocus);
+      // rfq — the Compare Quotes route (/buy/quotations/compare) carries its RFQ selection in the query
+      // rather than a path segment. It is an opaque id and pure presentation state, so it joins the
+      // allow-list; without it, the first tray write here would rebuild the query and drop the selected
+      // RFQ, collapsing that page back to its picker. Absent on the per-RFQ route, where it is a no-op.
+      const nextRfq = searchParams.get("rfq");
+      if (nextRfq) next.set("rfq", nextRfq);
 
       const qs = next.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
