@@ -33,6 +33,10 @@ import type { RoutingInvitationsData } from "../../../(workspace)/buy/_component
 import type { AwardData } from "../../../(workspace)/buy/_components/award";
 import type { QuotationDetailData } from "../../../(workspace)/buy/_components/quotation-view-models";
 import type {
+  BuyerOrgQuotationListData,
+  ComparableRfqOption,
+} from "../../../(workspace)/buy/_components/quotations/org-quotation-view-models";
+import type {
   InboxItemView,
   RfqSnapshotView,
   InvitationView,
@@ -79,6 +83,42 @@ export interface BuyerRfqWorkflowReads {
   getAwardShortlist(rfqId: string): Promise<AwardData | null>;
   /** Mirrors `get_quotation` (visibility-gated; disclosed values only — Doc-3 §9.1). */
   getQuotationDetail(rfqId: string, quotationId: string): Promise<QuotationDetailData | null>;
+
+  /**
+   * Received Quotes — the buyer-org CROSS-RFQ quotation list.
+   *
+   * ⚠ GATED: unlike every other method on this interface, this one mirrors NO frozen read. The corpus has
+   * only the per-RFQ `list_quotations_for_rfq` and the per-document `get_quotation`; a buyer-org-wide
+   * aggregate is the OPEN escalation `ESC-BUY-QUOTES-LIST` (esc_registry.md; additive Doc-5E patch, human
+   * Board — BOARD-PACKET-BUYER-FE-CONTRACT-GAPS_v1.0 row 1, still unruled). Nothing here mints that read:
+   * this is the explicit integration SEAM the page binds to, and the proposed contract name travels only
+   * as a pointer in a comment. When the Board rules, the wired resolver implements this method and the
+   * page does not change.
+   *
+   * At wiring the read MUST be buyer-org-scoped, `quotation_visibility`-gated identically to the per-RFQ
+   * read (R5), cursor-paginated (GI-03), and returned in a contract-governed order carrying no ranking
+   * semantics (R6 / GI-04). Counts travel WITH the page as server-computed figures (R7).
+   *
+   * RESOLUTION CONTRACT — the two absences are different and must stay different:
+   *   • `null`        ⇒ the read is UNAVAILABLE (no authoritative integration, or a transport failure).
+   *                     The surface renders a recoverable ERROR state. It must never be shown as "empty".
+   *   • `items: []`   ⇒ genuine emptiness — the org has received no quotations yet. Reads as "awaiting
+   *                     vendor responses"; never implies a vendor was excluded (Inv #11 / GI-12).
+   */
+  listOrgQuotations(): Promise<BuyerOrgQuotationListData | null>;
+
+  /**
+   * Compare Quotes — the selectable RFQ set (those with enough disclosed quotations to compare).
+   *
+   * Comparison is ALWAYS single-RFQ (quotations answer different specifications; a cross-RFQ grid would be
+   * incomparable and one step from the forbidden cross-vendor leaderboard — R6). This read therefore backs
+   * an RFQ PICKER that opens the existing per-RFQ comparison; it needs no new comparison contract, because
+   * the frozen `get_comparison_statement` already serves the comparison itself.
+   *
+   * Eligibility (`eligible` / `ineligibleReason`) is a SERVER fact (GI-10) — the client never derives it.
+   * `null` ⇒ read unavailable (error state); `[]` ⇒ genuinely nothing comparable yet.
+   */
+  listComparableRfqs(): Promise<ComparableRfqOption[] | null>;
 }
 
 /**
