@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Buyer Quotations — Prototype · iVendorz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ── iVendorz design tokens (copied from app/globals.css — light mode) ───── */
+  :root{
+    --iv-brand-50:#eef3fd; --iv-brand-100:#dbe6fa; --iv-brand-200:#b8cef5; --iv-brand-300:#8fb0ea;
+    --iv-brand-400:#5f8ad9; --iv-brand-500:#2f5eb8; --iv-brand-600:#23438f; --iv-brand-700:#1c3672;
+    --iv-brand-800:#162a58; --iv-brand-900:#101f40; --iv-brand-950:#0b1530;
+    --iv-navy-50:#eef2f8; --iv-navy-100:#d9e1ef; --iv-navy-200:#b7c6e0; --iv-navy-300:#8ba0c6;
+    --iv-navy-400:#5a74a3; --iv-navy-500:#375081; --iv-navy-600:#283f6a; --iv-navy-700:#1f3154;
+    --iv-navy-800:#182643; --iv-navy-900:#111c33; --iv-navy-950:#0b1322;
+    --iv-amber-400:#cda434; --iv-amber-500:#b8860b;
+    --iv-light-base:#f6f8fa; --iv-light-raised:#ffffff; --iv-light-muted:#f8fafc;
+    --iv-light-border:#e6e9ee; --iv-light-hover:#f8fafc;
+    --iv-success-base:#16a34a; --iv-success-subtle:rgba(22,163,74,.08);
+    --iv-warning-base:#ca8a04; --iv-warning-subtle:rgba(202,138,4,.08);
+    --iv-danger-base:#dc2626;
+    --iv-info-base:#2563eb; --iv-info-subtle:rgba(37,99,235,.08);
+    --iv-neutral-base:#6b7280; --iv-neutral-subtle:rgba(107,114,128,.08);
+    --fg:#1a2333; --fg-muted:#5b6472; --fg-soft:#8b93a1;
+    --radius:10px; --radius-sm:7px;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--sans);font-size:14px;color:var(--fg);background:var(--iv-light-base);
+    -webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  .mono{font-family:var(--mono)}
+
+  /* ── review chrome ───────────────────────────────────────────────────────── */
+  .proto-banner{display:flex;align-items:center;gap:10px;padding:7px 16px;background:var(--iv-navy-950);
+    color:#cbd5e1;font-size:12px;border-bottom:1px solid #1e2a3b}
+  .proto-banner .tag{background:var(--iv-amber-500);color:#fff;font-weight:700;font-size:10.5px;
+    letter-spacing:.06em;padding:2px 7px;border-radius:4px;text-transform:uppercase}
+  .proto-banner .sp{flex:1}
+  .proto-banner label{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+  .note{display:none;border:1.5px dashed var(--iv-amber-400);background:#fffdf4;border-radius:var(--radius);
+    padding:12px 16px;font-size:12.5px;color:#6b5a1e;line-height:1.55;margin:0 0 18px}
+  .note b{color:#4a3504}
+  body.show-notes .note{display:block}
+  .demo-states{display:inline-flex;gap:2px;background:#141f33;border:1px solid #223048;border-radius:7px;padding:2px}
+  .demo-states button{font-size:11px;font-weight:600;color:#9fb0c8;padding:3px 10px;border-radius:5px;transition:background .15s ease-out}
+  .demo-states button[aria-pressed="true"]{background:var(--iv-brand-600);color:#fff}
+  .sk{display:block;height:12px;border-radius:5px;background:linear-gradient(90deg,#e9edf2 25%,#f4f7fa 37%,#e9edf2 63%);
+    background-size:400% 100%;animation:sk 1.4s ease infinite}
+  @keyframes sk{0%{background-position:100% 50%}100%{background-position:0 50%}}
+  .error-ic{color:var(--iv-danger-base)}
+
+  /* ── top bar (matches built shell) ───────────────────────────────────────── */
+  .topbar{display:flex;align-items:center;gap:18px;height:56px;padding:0 16px;
+    background:var(--iv-navy-950);color:#e2e8f0}
+  .brand{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+  .brand-mark{width:30px;height:30px;border-radius:7px;background:var(--iv-brand-600);color:#fff;
+    display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+  .topsearch{flex:0 1 400px;display:flex;align-items:center;gap:9px;height:36px;padding:0 14px;
+    background:#141f33;border:1px solid #223048;border-radius:999px;color:#7d8aa0;font-size:13.5px}
+  .topbar .sp{flex:1}
+  .btn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:8px;
+    font-weight:600;font-size:13.5px;transition:background .15s ease-out}
+  .btn-primary{background:var(--iv-brand-500);color:#fff}
+  .btn-primary:hover{background:var(--iv-brand-600)}
+  .btn-ghost-dark{color:#9fb0c8;width:36px;justify-content:center;padding:0;border-radius:8px}
+  .btn-ghost-dark:hover{background:#141f33}
+  .btn-outline{border:1px solid var(--iv-light-border);background:var(--iv-light-raised);color:var(--fg)}
+  .btn-outline:hover{background:var(--iv-light-hover)}
+  .account{display:flex;align-items:center;gap:9px;cursor:pointer;padding:4px 8px;border-radius:8px}
+  .account:hover{background:#141f33}
+  .avatar{width:30px;height:30px;border-radius:999px;background:var(--iv-brand-500);color:#fff;
+    display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+  .account .who{line-height:1.25;font-size:12.5px}
+  .account .who b{display:block;font-size:13px;color:#f1f5f9;font-weight:600}
+  .account .who span{color:#7d8aa0}
+
+  /* ── layout ──────────────────────────────────────────────────────────────── */
+  .frame{display:flex;min-height:calc(100vh - 56px)}
+  .sidebar{width:248px;flex-shrink:0;background:var(--iv-light-raised);
+    border-right:1px solid var(--iv-light-border);display:flex;flex-direction:column}
+  .ws-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--iv-navy-50);
+    border-bottom:1px solid var(--iv-light-border)}
+  .ws-head .ic-box{width:30px;height:30px;border-radius:7px;background:var(--iv-brand-100);
+    color:var(--iv-brand-700);display:inline-flex;align-items:center;justify-content:center}
+  .ws-head .t b{display:block;font-size:13.5px;font-weight:700;color:var(--iv-navy-800)}
+  .ws-head .t span{font-size:11.5px;color:var(--fg-muted)}
+  nav.side{flex:1;overflow-y:auto;padding:10px 10px 16px}
+  .grp{margin-top:14px}
+  .grp:first-child{margin-top:4px}
+  .grp>p{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--fg-soft);padding:0 10px;margin-bottom:4px}
+  .nav-item{display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:8px;
+    font-size:13.5px;font-weight:500;color:#3c4657;width:100%;text-align:left}
+  .nav-item:hover{background:var(--iv-light-hover)}
+  .nav-item svg{flex-shrink:0;color:var(--fg-soft)}
+  .nav-item .chev{margin-left:auto;transition:transform .15s ease-out}
+  .nav-item[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .nav-sub{list-style:none;padding-left:30px;margin:1px 0 3px}
+  .nav-sub a{display:flex;height:31px;align-items:center;padding:0 10px;border-radius:8px;
+    font-size:13px;color:#4c5666}
+  .nav-sub a:hover{background:var(--iv-light-hover)}
+  .nav-sub a[aria-current="page"]{background:var(--iv-brand-100);color:var(--iv-brand-800);font-weight:600}
+  .side-foot{border-top:1px solid var(--iv-light-border);padding:10px 14px;font-size:13px;color:var(--fg-muted);
+    display:flex;align-items:center;gap:8px}
+
+  main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .page{flex:1;max-width:1120px;width:100%;margin:0 auto;padding:26px 34px 48px}
+  .crumb{font-size:13px;color:var(--fg-muted);margin-bottom:12px}
+  .crumb a{color:var(--fg-muted)} .crumb a:hover{color:var(--iv-brand-600)}
+  .crumb .sep{margin:0 7px;color:var(--fg-soft)}
+  .crumb .cur{color:var(--fg);font-weight:500}
+  .page-head{display:flex;align-items:flex-start;gap:16px;padding-bottom:18px;
+    border-bottom:1px solid var(--iv-light-border);margin-bottom:22px}
+  .page-head h1{font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--iv-navy-900)}
+  .page-head .sub{margin-top:5px;color:var(--fg-muted);font-size:14px;max-width:640px;line-height:1.5}
+  .page-head .sp{flex:1}
+  .meta-line{margin-top:7px;font-size:12px;color:var(--fg-soft)}
+  footer.app{border-top:1px solid var(--iv-light-border);padding:14px 34px;display:flex;
+    font-size:12.5px;color:var(--fg-muted)}
+  footer.app .sp{flex:1}
+
+  /* ── cards / tiles ───────────────────────────────────────────────────────── */
+  .card{background:var(--iv-light-raised);border:1px solid var(--iv-light-border);border-radius:var(--radius)}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .tile{padding:14px 16px}
+  .tile b{display:block;font-size:22px;font-weight:800;color:var(--iv-navy-900);font-variant-numeric:tabular-nums}
+  .tile span{font-size:12.5px;color:var(--fg-muted);line-height:1.35;display:block;margin-top:2px}
+  .tile.warn b{color:var(--iv-warning-base)}
+
+  /* ── filters ─────────────────────────────────────────────────────────────── */
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .search{display:flex;align-items:center;gap:8px;height:36px;padding:0 12px;flex:0 1 320px;
+    background:var(--iv-light-raised);border:1px solid var(--iv-light-border);border-radius:8px}
+  .search input{border:0;outline:0;flex:1;font:inherit;font-size:13.5px;color:var(--fg);background:transparent}
+  .search svg{color:var(--fg-soft)}
+  select.rfq-filter{height:36px;border:1px solid var(--iv-light-border);border-radius:8px;background:var(--iv-light-raised);
+    font:inherit;font-size:13px;color:var(--fg);padding:0 10px;outline:none;max-width:280px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chips button{height:30px;padding:0 12px;border-radius:999px;font-size:12.5px;font-weight:600;
+    border:1px solid var(--iv-light-border);background:var(--iv-light-raised);color:var(--fg-muted)}
+  .chips button:hover{background:var(--iv-light-hover)}
+  .chips button[aria-pressed="true"]{background:var(--iv-navy-800);border-color:var(--iv-navy-800);color:#fff}
+  .chips button i{font-style:normal;opacity:.65;margin-left:5px;font-variant-numeric:tabular-nums}
+
+  /* ── table ───────────────────────────────────────────────────────────────── */
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--iv-light-raised)}
+  caption{text-align:left;position:absolute;left:-9999px}
+  thead th{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-soft);
+    text-align:left;padding:11px 14px;border-bottom:1px solid var(--iv-light-border);white-space:nowrap}
+  tbody td{padding:13px 14px;border-bottom:1px solid var(--iv-light-border);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr{transition:background .15s ease-out}
+  tbody tr:hover{background:var(--iv-light-hover)}
+  td.num,th.num{text-align:right}
+  .cell-main{font-weight:600;color:var(--iv-navy-900)}
+  .cell-sub{font-size:12px;color:var(--fg-soft);margin-top:2px}
+  .cell-sub.mono,{font-size:11.5px}
+  .qref{font-family:var(--mono);font-size:11.5px;color:var(--fg-soft);margin-top:2px}
+  .money{font-family:var(--mono);font-weight:600;color:var(--iv-brand-700);white-space:nowrap;font-size:13px}
+  .rfqlink{color:var(--fg);font-weight:500}
+  .rfqlink:hover{color:var(--iv-brand-600)}
+  .validity .exp{display:inline-flex;align-items:center;gap:4px;color:var(--iv-warning-base);font-weight:600;font-size:12px}
+  .rowact{white-space:nowrap;text-align:right}
+  .rowact a{font-size:12.5px;font-weight:600;color:var(--iv-brand-600);margin-left:12px}
+  .rowact a:hover{text-decoration:underline}
+  .empty{padding:46px 20px;text-align:center;color:var(--fg-muted)}
+  .empty b{display:block;font-size:15px;color:var(--fg);margin:10px 0 4px}
+  .empty svg{color:var(--fg-soft)}
+
+  /* ── state chips (frozen Doc-4M quotation states) ────────────────────────── */
+  .st{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10.5px;font-weight:700;
+    letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+  .st-submitted{background:var(--iv-info-subtle);color:var(--iv-info-base)}
+  .st-shortlisted{background:var(--iv-brand-100);color:var(--iv-brand-700)}
+  .st-selected{background:var(--iv-success-subtle);color:var(--iv-success-base)}
+  .st-not_selected{background:var(--iv-neutral-subtle);color:var(--iv-neutral-base)}
+  .st-withdrawn{background:var(--iv-neutral-subtle);color:var(--iv-neutral-base)}
+  .st-expired{background:var(--iv-warning-subtle);color:var(--iv-warning-base)}
+
+  /* ── compare view ────────────────────────────────────────────────────────── */
+  .rfq-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+  .rfq-card{text-align:left;padding:15px 16px;border-radius:var(--radius);
+    border:1px solid var(--iv-light-border);background:var(--iv-light-raised);
+    transition:border-color .15s ease-out, box-shadow .15s ease-out}
+  .rfq-card:hover{border-color:var(--iv-brand-300)}
+  .rfq-card[aria-pressed="true"]{border-color:var(--iv-brand-500);box-shadow:0 0 0 1px var(--iv-brand-500)}
+  .rfq-card .ref{font-family:var(--mono);font-size:11px;color:var(--fg-soft)}
+  .rfq-card b{display:block;font-size:13.5px;font-weight:600;color:var(--iv-navy-900);margin:4px 0 8px;line-height:1.4}
+  .rfq-card .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .rfq-card .cnt{display:inline-block;padding:2.5px 8px;border-radius:999px;background:var(--iv-navy-50);
+    color:var(--iv-navy-700);font-size:11.5px;font-weight:600}
+  .rfq-card[disabled]{opacity:.55;cursor:not-allowed}
+  .rfq-card[disabled]:hover{border-color:var(--iv-light-border)}
+  .cmp-note{display:flex;align-items:center;gap:10px;padding:13px 18px;margin-bottom:14px;font-size:13.5px}
+  .cmp-note .sp{flex:1}
+  .cmp-note .ver{font-size:12px;color:var(--fg-soft)}
+  .cmp-table thead th{font-size:11px}
+  .cmp-table tbody th{font-weight:600;color:var(--fg);text-align:left;padding:13px 14px;
+    border-bottom:1px solid var(--iv-light-border);width:180px;background:var(--iv-light-muted);font-size:13px}
+  .cmp-table tbody tr:last-child th{border-bottom:0}
+  .lowcell{white-space:nowrap}
+  .attach{color:var(--fg-muted)}
+
+  /* sticky attribute rail + horizontal scale (tested to 5 vendor columns) */
+  .cmp-table{min-width:640px}
+  .cmp-table th,.cmp-table td{min-width:150px}
+  .cmp-table thead th:first-child,.cmp-table tbody th{position:sticky;left:0;z-index:1;
+    background:var(--iv-light-muted);min-width:180px;max-width:200px;
+    box-shadow:1px 0 0 var(--iv-light-border)}
+  .cmp-table thead th:first-child{background:var(--iv-light-raised)}
+  .sec-h{font-size:13px;font-weight:700;color:var(--fg-muted);text-transform:uppercase;
+    letter-spacing:.06em;margin:22px 0 10px}
+  .li-table tbody td .up{display:block;font-size:11px;color:var(--fg-soft);font-family:var(--mono);margin-top:2px}
+  .li-table tbody .li-desc{display:block;font-weight:500;color:var(--fg)}
+  .li-table tbody .li-meta{display:block;font-size:11.5px;color:var(--fg-soft);margin-top:2px}
+  .li-table tfoot th,.li-table tfoot td{padding:13px 14px;border-top:2px solid var(--iv-navy-200);
+    font-weight:700;color:var(--iv-navy-900);background:var(--iv-light-muted)}
+  .li-table tfoot th{position:sticky;left:0;background:var(--iv-light-muted)}
+  .li-table td.num .money{font-weight:600}
+
+  /* print — Download PDF is the browser's print-to-PDF (user-agent), matching the built CS page */
+  .print-head{display:none}
+  @media print{
+    body{background:#fff}
+    .proto-banner,.topbar,.sidebar,.note,.crumb,.page-head,.sec-h.picker-h,.rfq-picker,
+    footer.app,.toast,#view-received{display:none!important}
+    .view{display:none!important}.view.on{display:block!important}
+    .frame{display:block;min-height:0}
+    .page{max-width:none;padding:0}
+    .card{border-color:#d5dae2;border-radius:4px;box-shadow:none}
+    .tablewrap{overflow:visible}
+    .cmp-table{min-width:0}
+    .cmp-table thead th:first-child,.cmp-table tbody th,.li-table tfoot th{position:static}
+    .print-head{display:block;margin-bottom:16px;border-bottom:2px solid #111c33;padding-bottom:12px}
+    .print-head h2{font-size:19px;font-weight:800;color:#111c33}
+    .print-head p{font-size:12px;color:#5b6472;margin-top:4px}
+  }
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(8px);opacity:0;
+    background:var(--iv-navy-900);color:#e2e8f0;font-size:13px;padding:10px 18px;border-radius:9px;
+    pointer-events:none;transition:opacity .2s ease-out,transform .2s ease-out;max-width:560px;text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .view{display:none} .view.on{display:block}
+  @media (max-width:1000px){.tiles{grid-template-columns:repeat(2,1fr)}.rfq-picker{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body class="show-notes">
+
+<!-- ═══ review chrome ═══ -->
+<div class="proto-banner">
+  <span class="tag">Prototype</span>
+  <span><b>buyer-quotations</b> · non-authoritative · design artifact for <span class="mono">ESC-BUY-QUOTES-LIST</span> — coins nothing, demo data only</span>
+  <span class="sp"></span>
+  <span class="demo-states" role="group" aria-label="Preview data state (Received Quotes)">
+    <button data-demo="data" aria-pressed="true">Populated</button>
+    <button data-demo="loading" aria-pressed="false">Loading</button>
+    <button data-demo="empty" aria-pressed="false">Empty</button>
+    <button data-demo="error" aria-pressed="false">Error</button>
+  </span>
+  <label style="margin-left:14px"><input type="checkbox" id="notes-toggle" checked /> Review notes</label>
+</div>
+
+<!-- ═══ top bar ═══ -->
+<header class="topbar">
+  <a class="brand" href="#/received"><span class="brand-mark">iV</span></a>
+  <div class="topsearch">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    Search RFQs, vendors, products…
+  </div>
+  <span class="sp"></span>
+  <button class="btn btn-primary" data-toast="Opens the global Create menu — not part of this prototype.">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Create
+  </button>
+  <button class="btn btn-ghost-dark" data-toast="Notifications — not part of this prototype.">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+  </button>
+  <div class="account" data-toast="Workspace &amp; account menu — not part of this prototype.">
+    <span class="avatar">AO</span>
+    <div class="who"><b>Active organization</b><span>Buyer</span></div>
+  </div>
+</header>
+
+<div class="frame">
+  <!-- ═══ sidebar — BX-04 buyer IA, verbatim ═══ -->
+  <aside class="sidebar">
+    <div class="ws-head">
+      <span class="ic-box"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+      <div class="t"><b>Buyer Workspace</b><span>Buyer</span></div>
+    </div>
+    <nav class="side">
+      <div class="grp">
+        <button class="nav-item" data-toast="Dashboard is built in the app — not part of this prototype.">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Dashboard
+        </button>
+      </div>
+      <div class="grp">
+        <p>Procurement</p>
+        <button class="nav-item" data-toast="The RFQ lifecycle pages are built in the app — not part of this prototype.">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+          RFQs
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button class="nav-item" aria-expanded="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+          Quotations
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <ul class="nav-sub">
+          <li><a href="#/received" data-nav="received">Received Quotes</a></li>
+          <li><a href="#/compare" data-nav="compare">Compare Quotes</a></li>
+        </ul>
+        <button class="nav-item" data-toast="Purchase Orders — not part of this prototype.">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>
+          Purchase Orders
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <button class="nav-item" data-toast="Documents hub is built in the app — not part of this prototype.">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h16"/><path d="M6 16V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8"/></svg>
+          Documents
+        </button>
+      </div>
+      <div class="grp">
+        <p>Marketplace</p>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Vendor Directory</button>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11.5 3.6 13.7 8l4.9.7-3.5 3.5.8 4.9-4.4-2.3-4.4 2.3.8-4.9L4.4 8.7 9.3 8Z"/></svg>Saved Vendors</button>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>Specification Library</button>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Vendor CRM</button>
+      </div>
+      <div class="grp">
+        <p>Communication</p>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg>Messages</button>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Notifications</button>
+      </div>
+      <div class="grp">
+        <p>Analytics</p>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Reports &amp; Analytics</button>
+      </div>
+      <div class="grp">
+        <p>Organization</p>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Team</button>
+        <button class="nav-item" data-toast="Not part of this prototype."><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg>Organization</button>
+      </div>
+    </nav>
+    <div class="side-foot">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m16 15-3-3 3-3"/></svg>
+      Collapse
+    </div>
+  </aside>
+
+  <!-- ═══ main ═══ -->
+  <main>
+
+    <!-- ─────────────────────────── RECEIVED QUOTES ─────────────────────────── -->
+    <section class="view" id="view-received" aria-labelledby="rq-h1">
+      <div class="page">
+        <div class="crumb"><a href="#/received">Quotations</a><span class="sep">›</span><span class="cur">Received Quotes</span></div>
+        <div class="page-head">
+          <div>
+            <h1 id="rq-h1">Received Quotes</h1>
+            <p class="sub">Every quotation vendors have submitted across your organization's RFQs, in one place.</p>
+            <p class="meta-line">Disclosed quotations only · states are the frozen quotation lifecycle · nothing here is ranked</p>
+          </div>
+          <span class="sp"></span>
+        </div>
+
+        <div class="note"><b>Review note — what this page proposes.</b> A buyer-org-wide quotation
+          list does not exist in the frozen corpus (quotations are readable only per-RFQ via
+          <span class="mono">list_quotations_for_rfq</span> or per-document via <span class="mono">get_quotation</span>).
+          This page is the design artifact for <b><span class="mono">ESC-BUY-QUOTES-LIST</span></b> — the proposed
+          additive read <span class="mono">rfq.list_quotations_for_buyer_org.v1</span>, an org-scoped aggregate of
+          already-disclosed quotations. It adds <b>no new disclosure</b>: every row is data the buyer can already
+          see on some P-BUY-09 page. The four tiles are the read's server-computed <span class="mono">stateCounts</span>
+          summary (counts by frozen state + validity window) — contract projections, not client analytics (R7).
+          Row links land on the already-built per-RFQ pages (P-BUY-14 detail · P-BUY-15 comparison). Use the
+          <b>Populated / Loading / Empty / Error</b> switch (top-right) to review every list state.</div>
+
+        <div class="tiles">
+          <div class="card tile"><b id="tile-review">–</b><span>Awaiting your review<br/><small style="color:var(--fg-soft)">state: submitted</small></span></div>
+          <div class="card tile"><b id="tile-short">–</b><span>Shortlisted<br/><small style="color:var(--fg-soft)">in comparison &amp; evaluation</small></span></div>
+          <div class="card tile warn"><b id="tile-expiring">–</b><span>Validity expiring soon<br/><small style="color:var(--fg-soft)">within 7 days</small></span></div>
+          <div class="card tile"><b id="tile-concluded">–</b><span>Concluded<br/><small style="color:var(--fg-soft)">selected · not selected · withdrawn · expired</small></span></div>
+        </div>
+
+        <div class="toolbar" id="rq-toolbar">
+          <div class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="rq-search" type="search" placeholder="Search vendor, RFQ or reference" aria-label="Search received quotes" />
+          </div>
+          <select class="rfq-filter" id="rq-rfq" aria-label="Filter by RFQ"><option value="">All RFQs</option></select>
+          <div class="chips" id="rq-chips" role="group" aria-label="Filter by quotation state"></div>
+        </div>
+
+        <div class="card tablewrap" id="rq-tablecard">
+          <table>
+            <caption>Received quotations</caption>
+            <thead><tr>
+              <th>Quotation</th><th>RFQ</th><th>State</th><th class="num">Quoted price</th>
+              <th>Valid until</th><th>Received</th><th></th>
+            </tr></thead>
+            <tbody id="rq-body"></tbody>
+          </table>
+          <div class="empty" id="rq-empty" hidden>
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+            <b>No quotations match</b>
+            Clear the search or state filters to see all received quotations.
+          </div>
+        </div>
+
+        <!-- first-run empty state (no quotations received org-wide yet) -->
+        <div class="card empty" id="rq-firstrun" hidden>
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+          <b>No quotations received yet</b>
+          When vendors respond to your RFQs, their quotations appear here — across every RFQ, in one place.
+          <div style="margin-top:14px"><button class="btn btn-outline" style="display:inline-flex" data-toast="Opens your RFQ list — built in the app.">View your RFQs</button></div>
+        </div>
+
+        <!-- error state -->
+        <div class="card empty" id="rq-error" hidden>
+          <svg class="error-ic" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+          <b>Couldn't load your quotations</b>
+          Something went wrong fetching this list. Your data is safe — try again in a moment.
+          <div style="margin-top:14px"><button class="btn btn-primary" id="rq-retry" style="display:inline-flex">Retry</button></div>
+        </div>
+      </div>
+      <footer class="app">© iVendorz — Industrial Procurement OS.<span class="sp"></span>BDT</footer>
+    </section>
+
+    <!-- ─────────────────────────── COMPARE QUOTES ──────────────────────────── -->
+    <section class="view" id="view-compare" aria-labelledby="cq-h1">
+      <div class="page">
+        <div class="crumb"><a href="#/received">Quotations</a><span class="sep">›</span><span class="cur">Compare Quotes</span></div>
+        <div class="page-head">
+          <div>
+            <h1 id="cq-h1">Compare Quotes</h1>
+            <p class="sub">Pick an RFQ to lay its quotations side by side. Comparison is always within one
+              RFQ — quotes answering different requests aren't comparable.</p>
+            <p class="meta-line">Descriptive · not ranked</p>
+          </div>
+          <span class="sp"></span>
+          <button class="btn btn-outline" data-toast="Opens the full Comparative Statement workspace for the selected RFQ (P-BUY-15) — built in the app.">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+            Comparative Statement
+          </button>
+          <button class="btn btn-primary" id="cq-pdf">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+            Download PDF
+          </button>
+        </div>
+
+        <div class="note"><b>Review note — the design decision.</b> A free "pick any quotes across any
+          RFQs" comparison is deliberately <b>not offered</b>: the frozen comparison read
+          (<span class="mono">get_comparison_statement</span>) is scoped to one RFQ, and mixing RFQs would
+          invite exactly the cross-request ranking that R6 (<i>comparison never recommends</i>) forbids.
+          This page is therefore an <b>accelerator</b>: it surfaces every RFQ that has two or more disclosed
+          quotations and opens its existing per-RFQ comparison in place — one click instead of four.
+          Vendors are shown <b>in the order provided, never ranked</b>; no best-value badge, no highlighted
+          winner, no lowest-price emphasis.</div>
+
+        <h2 class="sec-h picker-h" style="margin-top:0">Select an RFQ</h2>
+        <div class="rfq-picker" id="cq-picker"></div>
+
+        <div id="cq-result">
+          <div class="print-head">
+            <h2 id="cq-print-title"></h2>
+            <p>System-generated comparison · descriptive · never recommends (R6) · vendors in the order provided — not ranked</p>
+            <p id="cq-print-meta"></p>
+          </div>
+          <div class="card cmp-note">
+            <span id="cq-summary"></span>
+            <span class="sp"></span>
+            <span class="ver" id="cq-version"></span>
+          </div>
+          <div class="card tablewrap">
+            <table class="cmp-table" id="cq-table">
+              <caption>Quotation comparison</caption>
+              <thead id="cq-thead"></thead>
+              <tbody id="cq-tbody"></tbody>
+            </table>
+          </div>
+
+          <h2 class="sec-h">Line items — as quoted per vendor</h2>
+          <div class="note"><b>Review note.</b> Line items render <b>mock data until the
+            <span class="mono">ESC-CS-LINEITEMS</span> schema is ratified</b> (RFQ
+            <span class="mono">content_jsonb</span> / quotation <span class="mono">price_breakdown_jsonb</span>
+            are opaque today) — the same posture as the built Comparative Statement page. Per-vendor
+            line totals reconcile exactly to the quoted price above. "Download PDF" is the browser's
+            own print-to-PDF (user-agent capability, the built CS page's stance); a generated file
+            export stays gated as <span class="mono">ESC-CS-EXPORT</span>.</div>
+          <div class="card tablewrap">
+            <table class="cmp-table li-table" id="cq-items">
+              <caption>Line-item comparison</caption>
+              <thead id="cq-items-head"></thead>
+              <tbody id="cq-items-body"></tbody>
+              <tfoot id="cq-items-foot"></tfoot>
+            </table>
+          </div>
+
+          <h2 class="sec-h">Commercial terms — as quoted per vendor</h2>
+          <div class="card tablewrap">
+            <table class="cmp-table" id="cq-terms">
+              <caption>Commercial terms comparison</caption>
+              <thead id="cq-terms-head"></thead>
+              <tbody id="cq-terms-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <footer class="app">© iVendorz — Industrial Procurement OS.<span class="sp"></span>BDT</footer>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════════════
+   Demo data — illustrative seed per prototype convention. Entities reuse the
+   app's mock rfq-universe (same RFQs, vendors, amounts) so the prototype reads
+   as the same demo world. Demo clock ≈ Jul 5, 2026 (the universe's clock).
+   Quotation states are the FROZEN Doc-4M §5.3 set, verbatim — buyer-visible
+   subset only (vendor-private drafts never appear here).
+   ═══════════════════════════════════════════════════════════════════════════ */
+const DEMO_TODAY = new Date("2026-07-05T09:00:00+06:00");
+const STATES = {
+  submitted:   "Submitted",
+  shortlisted: "Shortlisted",
+  selected:    "Selected",
+  not_selected:"Not selected",
+  withdrawn:   "Withdrawn",
+  expired:     "Expired",
+};
+const RFQS = {
+  "rfq-000119": { ref:"RFQ-2026-000119", title:"Substation transformer servicing — service", stage:"Quotes received" },
+  "rfq-000123": { ref:"RFQ-2026-000123", title:"Boiler feed-water pumps — supply & install", stage:"Shortlist & award" },
+  "rfq-000117": { ref:"RFQ-2026-000117", title:"Effluent pump spares — supply", stage:"Awarded" },
+  "rfq-000208": { ref:"RFQ-2026-000208", title:"Fire hydrant system — annual maintenance", stage:"Matching & invited" },
+  "rfq-000318": { ref:"RFQ-2026-000318", title:"MS plate 10 mm — 20 ton, delivered to Savar EPZ", stage:"Closed without award" },
+};
+const QUOTES = [
+  { ref:"QTN-2026-000611", vendor:"Dhaka Power Services Ltd.",       rfq:"rfq-000119", state:"submitted",    amount:745000,  validUntil:"2026-07-28", received:"2026-07-02", version:1 },
+  { ref:"QTN-2026-000612", vendor:"Eastern Grid Engineering",        rfq:"rfq-000119", state:"submitted",    amount:799000,  validUntil:"2026-07-25", received:"2026-07-03", version:1 },
+  { ref:"QTN-2026-000613", vendor:"Rupsha Electromech",              rfq:"rfq-000119", state:"submitted",    amount:712000,  validUntil:"2026-07-26", received:"2026-07-04", version:1 },
+  { ref:"QTN-2026-000614", vendor:"Ashuganj Power & Maintenance",    rfq:"rfq-000119", state:"submitted",    amount:768000,  validUntil:"2026-07-27", received:"2026-07-04", version:1 },
+  { ref:"QTN-2026-000615", vendor:"Titas Switchgear Services",       rfq:"rfq-000119", state:"submitted",    amount:731000,  validUntil:"2026-07-30", received:"2026-07-05", version:1 },
+  { ref:"QTN-2026-000587", vendor:"Meghna Industrial Supplies Ltd.", rfq:"rfq-000123", state:"shortlisted",  amount:2695000, validUntil:"2026-07-15", received:"2026-06-30", version:2 },
+  { ref:"QTN-2026-000588", vendor:"Padma Engineering Works",         rfq:"rfq-000123", state:"shortlisted",  amount:2810000, validUntil:"2026-07-10", received:"2026-07-01", version:1 },
+  { ref:"QTN-2026-000602", vendor:"Chattogram Marine Hardware",      rfq:"rfq-000117", state:"selected",     amount:486000,  validUntil:null,         received:"2026-06-12", version:1 },
+  { ref:"QTN-2026-000603", vendor:"Khulna Fluid Systems",            rfq:"rfq-000117", state:"not_selected", amount:512000,  validUntil:null,         received:"2026-06-13", version:1 },
+  { ref:"QTN-2026-000598", vendor:"Bengal Fire Protection Ltd.",     rfq:"rfq-000208", state:"withdrawn",    amount:340000,  validUntil:null,         received:"2026-06-25", version:1 },
+  { ref:"QTN-2026-000575", vendor:"Savar Steel Traders",             rfq:"rfq-000318", state:"expired",      amount:1790000, validUntil:"2026-06-30", received:"2026-06-08", version:1 },
+];
+
+/* Per-RFQ comparison universes (RFQ-123 summary rows mirror the BUILT P-BUY-15 page).
+   `items` are MOCK until the ESC-CS-LINEITEMS schema is ratified (built-CS posture);
+   every vendor's line totals sum EXACTLY to its quoted price. */
+const COMPARISONS = {
+  "rfq-000123": {
+    version:"Version 2 · Generated Jul 2, 2026, 9:10 AM",
+    vendors:["Meghna Industrial Supplies Ltd.","Padma Engineering Works"],
+    rows:[
+      ["Status",       {chip:"shortlisted"}, {chip:"shortlisted"}],
+      ["Quoted price", {money:2695000},      {money:2810000}],
+      ["Delivery",     "6 weeks from PO",    "4 weeks from PO"],
+      ["Warranty",     "18 months from commissioning", "12 months from commissioning"],
+      ["Valid until",  "Jul 15, 2026",       "Jul 10, 2026"],
+      ["Compliance",   "ISO 5199 compliant", "ISO 5199 compliant"],
+      ["Attachments",  {files:3},            {files:2}],
+    ],
+    items:[
+      { desc:"Centrifugal feed-water pump, 45 m³/h @ 62 m", unit:"SET", qty:2, unitPrices:[590000, 620000] },
+      { desc:"Electric motor 75 kW, 2-pole, IE3",           unit:"PCS", qty:2, unitPrices:[260000, 254000] },
+      { desc:"Valves, strainers & instrument set",          unit:"LOT", qty:1, unitPrices:[129000, 123500] },
+      { desc:"Piping spools, supports & grouting",          unit:"LOT", qty:1, unitPrices:[318000, 344000] },
+      { desc:"Mechanical seal, wear-ring & gasket spares",  unit:"SET", qty:1, unitPrices:[118000, 126000] },
+      { desc:"Delivery to Gazipur site",                    unit:"LOT", qty:1, unitPrices:[52000,  46500]  },
+      { desc:"Installation, commissioning & operator training", unit:"LOT", qty:1, unitPrices:[378000, 422000] },
+    ],
+    terms:[
+      ["Payment terms",         "30% advance · 60% on delivery · 10% on commissioning", "40% advance · 60% on delivery"],
+      ["Price basis",           "Delivered Gazipur plant, installation included", "Delivered Gazipur plant, installation included"],
+      ["VAT & duties",          "Included in quoted price", "Excluded — as per rules"],
+      ["Liquidated damages",    "0.5% per week of delay, capped at 5%", "Not accepted"],
+      ["Performance guarantee", "10% bank guarantee until warranty end", "5% retention until commissioning"],
+    ],
+  },
+  "rfq-000119": {
+    version:"Version 2 · Generated Jul 5, 2026, 10:05 AM",
+    vendors:["Dhaka Power Services Ltd.","Eastern Grid Engineering","Rupsha Electromech","Ashuganj Power & Maintenance","Titas Switchgear Services"],
+    rows:[
+      ["Status",            {chip:"submitted"}, {chip:"submitted"}, {chip:"submitted"}, {chip:"submitted"}, {chip:"submitted"}],
+      ["Quoted price",      {money:745000},     {money:799000},     {money:712000},     {money:768000},     {money:731000}],
+      ["Mobilization",      "1 week from PO",   "2 weeks from PO",  "1 week from PO",   "1 week from PO",   "2 weeks from PO"],
+      ["Completion window", "10-day shutdown",  "8-day shutdown",   "12-day shutdown",  "9-day shutdown",   "10-day shutdown"],
+      ["Warranty on works", "12 months",        "12 months",        "6 months",         "12 months",        "9 months"],
+      ["Valid until",       "Jul 28, 2026",     "Jul 25, 2026",     "Jul 26, 2026",     "Jul 27, 2026",     "Jul 30, 2026"],
+      ["Test certificates", "Included",         "Included",         "On request",       "Included",         "Included"],
+      ["Attachments",       {files:2},          {files:1},          {files:2},          {files:3},          {files:2}],
+    ],
+    items:[
+      { desc:"Transformer overhaul & oil filtration — 2 × 1000 kVA", unit:"LOT", qty:1, unitPrices:[420000, 455000, 405000, 430000, 415000] },
+      { desc:"Bushings, gaskets & consumables",                      unit:"SET", qty:2, unitPrices:[92500,  99500,  86000,  96500,  90500]  },
+      { desc:"Testing, calibration & recommissioning report",        unit:"LOT", qty:1, unitPrices:[95000,  100000, 90000,  100000, 95000]  },
+      { desc:"Site HSE, scaffolding & crane support",                unit:"LOT", qty:1, unitPrices:[45000,  45000,  45000,  45000,  40000]  },
+    ],
+    terms:[
+      ["Payment terms",         "50% on completion · 50% after test report", "30% advance · 70% on completion", "100% after recommissioning", "40% advance · 60% on completion", "50% advance · 50% on completion"],
+      ["Price basis",           "At site, Tongi substation", "At site, Tongi substation", "At site, Tongi substation", "At site, Tongi substation", "At site, Tongi substation"],
+      ["VAT & duties",          "Included in quoted price", "Excluded — as per rules", "Included in quoted price", "Included in quoted price", "Included in quoted price"],
+      ["Liquidated damages",    "0.5% per day beyond window, capped at 5%", "0.25% per day, capped at 3%", "Not accepted", "0.5% per day, capped at 5%", "0.5% per day, capped at 4%"],
+      ["Performance guarantee", "5% retention until warranty end", "Bank guarantee 5%", "None offered", "5% retention until warranty end", "3% retention, 6 months"],
+    ],
+  },
+};
+
+/* ── helpers ── */
+const $ = (s) => document.querySelector(s);
+const money = (n) => "BDT " + n.toLocaleString("en-US");   // platform rule: no trailing .00
+const fmtDate = (iso) => iso ? new Date(iso + "T00:00:00+06:00")
+  .toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "—";
+const daysLeft = (iso) => iso ? Math.ceil((new Date(iso+"T00:00:00+06:00") - DEMO_TODAY)/864e5) : null;
+const expiring = (q) => (q.state==="submitted"||q.state==="shortlisted") &&
+  daysLeft(q.validUntil)!==null && daysLeft(q.validUntil)>=0 && daysLeft(q.validUntil)<=7;
+const chip = (s) => `<span class="st st-${s}">${STATES[s]}</span>`;
+
+let toastTimer;
+function toast(msg){
+  const t=$("#toast"); t.textContent=msg; t.classList.add("on");
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("on"),2600);
+}
+document.addEventListener("click",(e)=>{
+  const el=e.target.closest("[data-toast]");
+  if(el){ toast(el.dataset.toast); }
+});
+$("#notes-toggle").addEventListener("change",(e)=>
+  document.body.classList.toggle("show-notes", e.target.checked));
+
+/* ── Received Quotes ── */
+const rqState = { q:"", rfq:"", state:"" };
+
+function tiles(){
+  $("#tile-review").textContent    = QUOTES.filter(q=>q.state==="submitted").length;
+  $("#tile-short").textContent     = QUOTES.filter(q=>q.state==="shortlisted").length;
+  $("#tile-expiring").textContent  = QUOTES.filter(expiring).length;
+  $("#tile-concluded").textContent = QUOTES.filter(q=>["selected","not_selected","withdrawn","expired"].includes(q.state)).length;
+}
+function chips(){
+  const counts={ "":QUOTES.length };
+  for(const k of Object.keys(STATES)) counts[k]=QUOTES.filter(q=>q.state===k).length;
+  $("#rq-chips").innerHTML = Object.entries({ "":"All", ...STATES })
+    .filter(([k])=>counts[k]>0)
+    .map(([k,label])=>`<button aria-pressed="${rqState.state===k}" data-state="${k}">${label}<i>${counts[k]}</i></button>`)
+    .join("");
+}
+function rfqFilter(){
+  $("#rq-rfq").innerHTML = `<option value="">All RFQs</option>` +
+    Object.entries(RFQS).filter(([id])=>QUOTES.some(q=>q.rfq===id))
+      .map(([id,r])=>`<option value="${id}">${r.ref} — ${r.title}</option>`).join("");
+}
+function renderRows(){
+  const rows = QUOTES.filter(q=>{
+    if(rqState.state && q.state!==rqState.state) return false;
+    if(rqState.rfq && q.rfq!==rqState.rfq) return false;
+    if(rqState.q){
+      const hay=(q.vendor+" "+q.ref+" "+RFQS[q.rfq].ref+" "+RFQS[q.rfq].title).toLowerCase();
+      if(!hay.includes(rqState.q.toLowerCase())) return false;
+    }
+    return true;
+  });
+  $("#rq-empty").hidden = rows.length>0;
+  $("#rq-body").innerHTML = rows.map(q=>{
+    const r=RFQS[q.rfq];
+    const exp = expiring(q)
+      ? `<div class="exp"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${daysLeft(q.validUntil)} days left</div>` : "";
+    const canCompare = (COMPARISONS[q.rfq]!==undefined);
+    return `<tr>
+      <td><div class="cell-main">${q.vendor}</div><div class="qref">${q.ref}${q.version>1?` · v${q.version}`:""}</div></td>
+      <td><a class="rfqlink" href="#" data-toast="Opens ${r.ref} — the RFQ detail is built in the app.">${r.title}</a><div class="qref">${r.ref}</div></td>
+      <td>${chip(q.state)}</td>
+      <td class="num"><span class="money">${money(q.amount)}</span></td>
+      <td class="validity">${fmtDate(q.validUntil)}${exp}</td>
+      <td>${fmtDate(q.received)}</td>
+      <td class="rowact">
+        <a href="#" data-toast="Opens quotation detail ${q.ref} (P-BUY-14) — built in the app.">View</a>${canCompare?`
+        <a href="#/compare?rfq=${q.rfq}">Compare</a>`:""}
+      </td>
+    </tr>`;
+  }).join("");
+}
+$("#rq-search").addEventListener("input",(e)=>{ rqState.q=e.target.value; renderRows(); });
+$("#rq-rfq").addEventListener("change",(e)=>{ rqState.rfq=e.target.value; renderRows(); });
+$("#rq-chips").addEventListener("click",(e)=>{
+  const b=e.target.closest("button[data-state]");
+  if(!b) return;
+  rqState.state=b.dataset.state; chips(); renderRows();
+});
+
+/* ── Received Quotes: data-state matrix (loading · first-run empty · error · populated) ──
+   The proposed read `rfq.list_quotations_for_buyer_org.v1` can resolve to any of these; the
+   switch in the review chrome previews each so the state matrix is reviewable, not just described. */
+let rqDemoState = "data";
+const TILE_IDS = ["#tile-review","#tile-short","#tile-expiring","#tile-concluded"];
+const setTiles = (fn) => TILE_IDS.forEach(id => fn($(id)));
+const skRows = (n) => {
+  const wide  = `<td><span class="sk" style="width:72%"></span><span class="sk" style="width:44%;margin-top:6px"></span></td>`;
+  const cell  = `<td><span class="sk" style="width:64px"></span></td>`;
+  return Array.from({length:n}).map(()=>`<tr>${wide}${wide}${cell}`+
+    `<td class="num"><span class="sk" style="width:84px;margin-left:auto"></span></td>${cell}${cell}<td></td></tr>`).join("");
+};
+function applyReceivedState(){
+  const s = rqDemoState;
+  $("#rq-toolbar").hidden   = s!=="data";
+  $("#rq-tablecard").hidden = (s==="empty"||s==="error");
+  $("#rq-firstrun").hidden  = s!=="empty";
+  $("#rq-error").hidden     = s!=="error";
+  if(s==="loading"){
+    setTiles(el=>el.innerHTML=`<span class="sk" style="width:40px;height:24px"></span>`);
+    $("#rq-body").innerHTML = skRows(6);
+    $("#rq-empty").hidden = true;
+  } else if(s==="empty"){
+    setTiles(el=>el.textContent="0");
+  } else if(s==="error"){
+    setTiles(el=>el.textContent="–");
+    $("#rq-body").innerHTML = "";
+  } else { /* data */
+    tiles(); chips(); renderRows();
+  }
+}
+document.querySelectorAll(".demo-states button").forEach(b=>b.addEventListener("click",()=>{
+  rqDemoState = b.dataset.demo;
+  document.querySelectorAll(".demo-states button").forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+  applyReceivedState();
+}));
+$("#rq-retry").addEventListener("click",()=>{
+  rqDemoState="data";
+  document.querySelectorAll(".demo-states button").forEach(x=>x.setAttribute("aria-pressed", String(x.dataset.demo==="data")));
+  applyReceivedState();
+});
+
+/* ── Compare Quotes ── */
+let cqSelected = "rfq-000123";
+
+function renderPicker(){
+  const ids = Object.keys(RFQS).filter(id=>QUOTES.some(q=>q.rfq===id));
+  $("#cq-picker").innerHTML = ids.map(id=>{
+    const r=RFQS[id];
+    const n=QUOTES.filter(q=>q.rfq===id && !["withdrawn","expired"].includes(q.state)).length;
+    const comparable = COMPARISONS[id]!==undefined;
+    if(!comparable){
+      const concluded = ["Awarded","Closed without award"].includes(r.stage);
+      const why = concluded ? `Concluded — ${r.stage.toLowerCase()}`
+        : n===0 ? "No active quotations" : "1 quotation — nothing to compare yet";
+      return `<button class="rfq-card" disabled title="${why}">
+        <span class="ref">${r.ref}</span><b>${r.title}</b>
+        <span class="meta"><span class="cnt">${why}</span></span></button>`;
+    }
+    return `<button class="rfq-card" data-rfq="${id}" aria-pressed="${cqSelected===id}">
+      <span class="ref">${r.ref}</span><b>${r.title}</b>
+      <span class="meta"><span class="cnt">${n} quotations</span><span class="cnt">${r.stage}</span></span></button>`;
+  }).join("");
+}
+function renderComparison(){
+  const c=COMPARISONS[cqSelected], r=RFQS[cqSelected];
+  const heads = `<tr><th>Attribute</th>${c.vendors.map(v=>`<th>${v}</th>`).join("")}</tr>`;
+  $("#cq-summary").innerHTML =
+    `Comparing <b>${c.vendors.length} quotations</b> for <b>${r.ref}</b> side by side. Shown in the order provided — not ranked.`;
+  $("#cq-version").textContent = c.version;
+  $("#cq-print-title").textContent = `Comparative Statement — ${r.ref} · ${r.title}`;
+  $("#cq-print-meta").textContent = c.version;
+
+  /* summary attributes */
+  $("#cq-thead").innerHTML = heads;
+  $("#cq-tbody").innerHTML = c.rows.map(([label,...cells])=>
+    `<tr><th scope="row">${label}</th>${cells.map(cell=>{
+      if(cell && cell.chip)  return `<td>${chip(cell.chip)}</td>`;
+      if(cell && cell.money) return `<td><span class="money">${money(cell.money)}</span></td>`;
+      if(cell && cell.files) return `<td class="attach">${cell.files} file${cell.files>1?"s":""}</td>`;
+      return `<td class="lowcell">${cell}</td>`;
+    }).join("")}</tr>`).join("");
+
+  /* line items — per-vendor line total (qty × unit price), unit price disclosed beneath */
+  $("#cq-items-head").innerHTML =
+    `<tr><th>Item</th>${c.vendors.map(v=>`<th class="num">${v}</th>`).join("")}</tr>`;
+  $("#cq-items-body").innerHTML = c.items.map(it=>
+    `<tr><th scope="row"><span class="li-desc">${it.desc}</span><span class="li-meta">${it.qty} × ${it.unit}</span></th>${
+      it.unitPrices.map(up=>
+        `<td class="num"><span class="money">${money(up*it.qty)}</span>${it.qty>1?`<span class="up">@ ${money(up)} / ${it.unit.toLowerCase()}</span>`:""}</td>`
+      ).join("")}</tr>`).join("");
+  const totals = c.vendors.map((_,vi)=>c.items.reduce((s,it)=>s+it.unitPrices[vi]*it.qty,0));
+  $("#cq-items-foot").innerHTML =
+    `<tr><th scope="row">Quoted total</th>${totals.map(t=>`<td class="num"><span class="money">${money(t)}</span></td>`).join("")}</tr>`;
+
+  /* commercial terms */
+  $("#cq-terms-head").innerHTML = heads;
+  $("#cq-terms-body").innerHTML = c.terms.map(([label,...cells])=>
+    `<tr><th scope="row">${label}</th>${cells.map(cell=>`<td>${cell}</td>`).join("")}</tr>`).join("");
+}
+$("#cq-pdf").addEventListener("click",()=>window.print());
+$("#cq-picker").addEventListener("click",(e)=>{
+  const b=e.target.closest("button[data-rfq]");
+  if(!b) return;
+  cqSelected=b.dataset.rfq; renderPicker(); renderComparison();
+});
+
+/* ── hash router ── */
+function route(){
+  const h=location.hash||"#/received";
+  const [path,query]=h.replace(/^#\//,"").split("?");
+  const view = path==="compare" ? "compare" : "received";
+  if(query){
+    const rfq=new URLSearchParams(query).get("rfq");
+    if(rfq && COMPARISONS[rfq]){ cqSelected=rfq; renderPicker(); renderComparison(); }
+  }
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on", v.id==="view-"+view));
+  $(".demo-states").style.display = view==="received" ? "" : "none";  // the state switch scopes to Received Quotes
+  document.querySelectorAll("[data-nav]").forEach(a=>{
+    if(a.dataset.nav===view) a.setAttribute("aria-current","page");
+    else a.removeAttribute("aria-current");
+  });
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+
+/* ── boot ── */
+rfqFilter(); applyReceivedState(); renderPicker(); renderComparison(); route();
+</script>
+</body>
+</html>
